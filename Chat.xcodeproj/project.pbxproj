@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		400142E6282EBA8400E5D497 /* ChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400142E5282EBA8400E5D497 /* ChatApp.swift */; };
-		400142E8282EBA8400E5D497 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400142E7282EBA8400E5D497 /* ContentView.swift */; };
+		400142E8282EBA8400E5D497 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400142E7282EBA8400E5D497 /* RootView.swift */; };
 		400142EA282EBA8500E5D497 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 400142E9282EBA8500E5D497 /* Assets.xcassets */; };
 		400142ED282EBA8500E5D497 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 400142EC282EBA8500E5D497 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -16,7 +16,7 @@
 /* Begin PBXFileReference section */
 		400142E2282EBA8400E5D497 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		400142E5282EBA8400E5D497 /* ChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatApp.swift; sourceTree = "<group>"; };
-		400142E7282EBA8400E5D497 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		400142E7282EBA8400E5D497 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		400142E9282EBA8500E5D497 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		400142EC282EBA8500E5D497 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -51,8 +51,10 @@
 		400142E4282EBA8400E5D497 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				400142F5282EBACF00E5D497 /* Model */,
+				400142F4282EBAC000E5D497 /* ModelView */,
+				400142F3282EBAB900E5D497 /* View */,
 				400142E5282EBA8400E5D497 /* ChatApp.swift */,
-				400142E7282EBA8400E5D497 /* ContentView.swift */,
 				400142E9282EBA8500E5D497 /* Assets.xcassets */,
 				400142EB282EBA8500E5D497 /* Preview Content */,
 			);
@@ -65,6 +67,28 @@
 				400142EC282EBA8500E5D497 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		400142F3282EBAB900E5D497 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				400142E7282EBA8400E5D497 /* RootView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		400142F4282EBAC000E5D497 /* ModelView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ModelView;
+			sourceTree = "<group>";
+		};
+		400142F5282EBACF00E5D497 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,7 +161,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				400142E8282EBA8400E5D497 /* ContentView.swift in Sources */,
+				400142E8282EBA8400E5D497 /* RootView.swift in Sources */,
 				400142E6282EBA8400E5D497 /* ChatApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
