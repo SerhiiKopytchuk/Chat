@@ -15,6 +15,7 @@
 		405FD373282F84DC00361396 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 405FD372282F84DC00361396 /* FirebaseAuth */; };
 		405FD375282F84DC00361396 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 405FD374282F84DC00361396 /* FirebaseCrashlytics */; };
 		405FD37F282FEFD200361396 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405FD37E282FEFD200361396 /* LoginView.swift */; };
+		4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4094461428301F8D00239F7B /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		400142E9282EBA8500E5D497 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Chat/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		400142EC282EBA8500E5D497 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		405FD37E282FEFD200361396 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		4094461428301F8D00239F7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 		400142E4282EBA8400E5D497 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				4094461428301F8D00239F7B /* GoogleService-Info.plist */,
 				400142F5282EBACF00E5D497 /* Model */,
 				400142F4282EBAC000E5D497 /* ModelView */,
 				400142F3282EBAB900E5D497 /* View */,
@@ -176,6 +179,7 @@
 			files = (
 				400142ED282EBA8500E5D497 /* Preview Assets.xcassets in Resources */,
 				400142EA282EBA8500E5D497 /* Assets.xcassets in Resources */,
+				4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

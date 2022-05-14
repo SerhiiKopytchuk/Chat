@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
-
+import FirebaseAuth
 // Apple HIG
 // Apple Human Interface Guidelines
 
 // SF Symbols
 struct RootView: View {
+    
+    
     
     @State var fullName:String = ""
     @State var email:String = ""
