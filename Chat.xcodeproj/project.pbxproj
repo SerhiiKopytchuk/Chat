@@ -14,14 +14,16 @@
 		405FD371282F84DC00361396 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 405FD370282F84DC00361396 /* FirebaseAnalytics */; };
 		405FD373282F84DC00361396 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 405FD372282F84DC00361396 /* FirebaseAuth */; };
 		405FD375282F84DC00361396 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 405FD374282F84DC00361396 /* FirebaseCrashlytics */; };
+		405FD37F282FEFD200361396 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405FD37E282FEFD200361396 /* LoginView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		400142E2282EBA8400E5D497 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		400142E5282EBA8400E5D497 /* ChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatApp.swift; sourceTree = "<group>"; };
 		400142E7282EBA8400E5D497 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		400142E9282EBA8500E5D497 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		400142E9282EBA8500E5D497 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Chat/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		400142EC282EBA8500E5D497 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		405FD37E282FEFD200361396 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				400142E7282EBA8400E5D497 /* RootView.swift */,
+				405FD37E282FEFD200361396 /* LoginView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -183,6 +186,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				405FD37F282FEFD200361396 /* LoginView.swift in Sources */,
 				400142E8282EBA8400E5D497 /* RootView.swift in Sources */,
 				400142E6282EBA8400E5D497 /* ChatApp.swift in Sources */,
 			);

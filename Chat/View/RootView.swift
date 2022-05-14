@@ -20,61 +20,81 @@ struct RootView: View {
     
     @State var isShowingAlert: Bool = false
     @State var isButtonDisabled: Bool = true
+    @State var isPresentLoginView: Bool = false
     
     private func updateButton() {
+        let time:Double = 0.3
         //check if enable button
         if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty{
-            isButtonDisabled = true
+            withAnimation(.easeInOut(duration: time)) {
+                isButtonDisabled = true
+            }
             
         }else{
             if password == retryPassword{
                 if password.count >= 8{
                     if email.contains("@gmail.com") || email.contains("@email.com"){
-                        isButtonDisabled = false
+                        withAnimation(.easeInOut(duration: time)) {
+                            isButtonDisabled = false
+                        }
                     }else{
-                        isButtonDisabled = true
+                        withAnimation(.easeInOut(duration: time)) {
+                            isButtonDisabled = true
+                        }
                     }
                 }else{
-                    isButtonDisabled = true
+                    withAnimation(.easeInOut(duration: time)) {
+                        isButtonDisabled = true
+                    }
                 }
             }else{
-                isButtonDisabled = true
+                withAnimation(.easeInOut(duration: time)) {
+                    isButtonDisabled = true
+                }
             }
         }
     }
     
     var body: some View {
         
-        ZStack {
-            //            VStack {
-            //            here I can make a gradiend
-            //            }
-            //            .edgesIgnoringSafeArea(.all)
-            
-            
+        
+        NavigationView{
             VStack(spacing: 30) {
                 Spacer()
                 HStack{
                     Text("Sign Up")
-                        .font(.system(.title, design: .rounded))
+                        .font(.system(.largeTitle, design: .rounded))
                         .fontWeight(.bold)
                         .padding(.leading, 10)
                         .padding()
+                        .foregroundColor(.orange)
                     Spacer()
                 }
                 
-                
-                
                 VStack{
                     Group {
+                        HStack{
+                            Image(systemName: "person")
+                                .foregroundColor(.gray)
+                            TextField("Full Name", text: $fullName.onUpdate(updateButton))
+                        }
                         
-                        TextField("Full Name", text: $fullName.onUpdate(updateButton))
+                        HStack{
+                            Image(systemName: "mail")
+                                .foregroundColor(.gray)
+                            TextField("Email", text: $email.onUpdate(updateButton))
+                        }
                         
-                        TextField("Email", text: $email.onUpdate(updateButton))
-                        
-                        SecureField("Password", text: $password.onUpdate(updateButton))
-                        
-                        SecureField("Retry password", text: $retryPassword.onUpdate(updateButton))
+                        HStack{
+                            Image(systemName: "lock")
+                                .foregroundColor(.gray)
+                            SecureField("Password", text: $password.onUpdate(updateButton))
+                        }
+                        HStack{
+                            Image(systemName: "lock")
+                                .foregroundColor(.gray)
+                            SecureField("Retry password", text: $retryPassword.onUpdate(updateButton))
+                        }
                     }
                     .padding()
                     .padding(.leading, 10)
@@ -86,11 +106,7 @@ struct RootView: View {
                             .padding(.trailing, 20)
                             .padding(5)
                     )
-                    
-                    
-                    
                 }
-                
                 
                 Spacer()
                 VStack {
@@ -105,28 +121,23 @@ struct RootView: View {
                     .background(isButtonDisabled ? Color.gray : Color.orange)
                     .cornerRadius(30)
                     .disabled(isButtonDisabled)
-                    Spacer()
+                    .shadow(color:isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
                     
                     Button("Log In") {
-                        //firebase login
+                        //go to login Vc
+                        self.isPresentLoginView = true
                     }
-                    .foregroundColor(.blue)
+                    .foregroundColor(.brown)
+                    .padding(.top, 20)
+                    Spacer()
+                    
                 }
-                
-                
-                
-                
-                .alert("Invalid Entry", isPresented: $isShowingAlert) {
-                    EmptyView()
-                } message: {
-                    Text("You entered an invalid string")
-                }
-                
-                //                Spacer()
+                NavigationLink(destination: LoginView(), isActive: $isPresentLoginView){}.navigationTitle(" Sign Up").navigationBarHidden(true)
             }
-        }
+        }.accentColor(.orange)
     }
 }
+
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
         RootView()
