@@ -37,6 +37,7 @@
 			children = (
 				400142E4282EBA8400E5D497 /* Chat */,
 				400142E3282EBA8400E5D497 /* Products */,
+				400142F7282EC07900E5D497 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -91,6 +92,13 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		400142F7282EC07900E5D497 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -135,6 +143,8 @@
 				Base,
 			);
 			mainGroup = 400142D9282EBA8400E5D497;
+			packageReferences = (
+			);
 			productRefGroup = 400142E3282EBA8400E5D497 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
