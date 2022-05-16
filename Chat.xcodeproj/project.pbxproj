@@ -118,7 +118,6 @@
 				C26B5DF84EDC9F14036E988A /* Pods-Chat.debug.xcconfig */,
 				06ABDC3974206FEF677CB546 /* Pods-Chat.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

@@ -10,7 +10,7 @@ import Firebase
 
 @main
 struct ChatApp: App {
-    
+
     init() {
         FirebaseApp.configure()
       }

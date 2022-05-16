@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-//import FirebaseAuth
+import Firebase
 // Apple HIG
 // Apple Human Interface Guidelines
 
@@ -24,6 +24,8 @@ struct RootView: View {
     @State var isPresentLoginView: Bool = false
     @State var isShowingPassword:Bool = false
     @State var isShowingRetryPassword:Bool = false
+    @State var canCreateUser = false
+    @State var showMainView = false
     
     private func updateButton() {
         let time:Double = 0.3
@@ -71,7 +73,10 @@ struct RootView: View {
                         HStack{
                             Image(systemName: "person")
                                 .foregroundColor(.gray)
-                            TextField("Full Name", text: $fullName.onUpdate(updateButton))
+                            TextField("Full Name", text: $fullName)
+                                .onChange(of: fullName) { _ in
+                                    updateButton()
+                                }
                         }
                         
                         HStack{
@@ -138,18 +143,27 @@ struct RootView: View {
                 }
                 
                 Spacer()
+                
                 VStack {
-                    Button("Create Account") {
-                        //how to automaticly change prop
-                        
+                    Button("Create Account"){
+                        Auth.auth().createUser(withEmail: self.email, password: self.password) { Result, Error in
+                            if let error = Error{
+                                print(Error ?? "errror")
+                            }else{
+                                self.canCreateUser = true
+                            }
+                        }
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 80)
                     .padding()
                     .background(isButtonDisabled ? Color.gray : Color.orange)
                     .cornerRadius(30)
-                    .disabled(isButtonDisabled)
+
                     .shadow(color:isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
+
+     
+                    
                     
                     Button("Log In") {
                         //go to login Vc
@@ -157,12 +171,14 @@ struct RootView: View {
                     }
                     .foregroundColor(.brown)
                     .padding(.top, 20)
-                    Spacer()
                     
+                    Spacer()
+
                 }
-                NavigationLink(destination: LoginView(), isActive: $isPresentLoginView){}.navigationTitle(" Sign Up").navigationBarHidden(true)
+                NavigationLink(destination: LoginView(), isActive: $isPresentLoginView){}
+                NavigationLink(destination: EmptyView(), isActive: $canCreateUser){}
             }
-        }.accentColor(.orange)
+        }.navigationBarHidden(true).accentColor(.orange)
     }
 }
 
