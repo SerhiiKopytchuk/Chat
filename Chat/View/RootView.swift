@@ -6,13 +6,12 @@
 //
 
 import SwiftUI
-import FirebaseAuth
+//import FirebaseAuth
 // Apple HIG
 // Apple Human Interface Guidelines
 
 // SF Symbols
 struct RootView: View {
-    
     
     
     @State var fullName:String = ""
@@ -23,34 +22,28 @@ struct RootView: View {
     @State var isShowingAlert: Bool = false
     @State var isButtonDisabled: Bool = true
     @State var isPresentLoginView: Bool = false
+    @State var isShowingPassword:Bool = false
+    @State var isShowingRetryPassword:Bool = false
     
     private func updateButton() {
         let time:Double = 0.3
         //check if enable button
-        if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty{
-            withAnimation(.easeInOut(duration: time)) {
+        
+        withAnimation(.easeInOut(duration: time)) {
+            if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty{
                 isButtonDisabled = true
-            }
-            
-        }else{
-            if password == retryPassword{
-                if password.count >= 8{
-                    if email.contains("@gmail.com") || email.contains("@email.com"){
-                        withAnimation(.easeInOut(duration: time)) {
+            }else{
+                if password == retryPassword{
+                    if password.count >= 8{
+                        if email.contains("@gmail.com") || email.contains("@email.com"){
                             isButtonDisabled = false
-                        }
-                    }else{
-                        withAnimation(.easeInOut(duration: time)) {
+                        }else{
                             isButtonDisabled = true
                         }
-                    }
-                }else{
-                    withAnimation(.easeInOut(duration: time)) {
+                    }else{
                         isButtonDisabled = true
                     }
-                }
-            }else{
-                withAnimation(.easeInOut(duration: time)) {
+                }else{
                     isButtonDisabled = true
                 }
             }
@@ -90,17 +83,51 @@ struct RootView: View {
                         HStack{
                             Image(systemName: "lock")
                                 .foregroundColor(.gray)
-                            SecureField("Password", text: $password.onUpdate(updateButton))
+                            if self.isShowingPassword{
+                                    
+                                TextField("Password", text: $password.onUpdate(updateButton))
+                                Button {
+                                    self.isShowingPassword.toggle()
+                                } label: {
+                                    Image(systemName: "eye.slash")
+                                        .foregroundColor(.gray)
+                                }
+                            }else{
+                                SecureField("Password", text: $password.onUpdate(updateButton))
+                                Button {
+                                    self.isShowingPassword.toggle()
+                                } label: {
+                                    Image(systemName: "eye")
+                                        .foregroundColor(.gray)
+                                }
+                            }
                         }
                         HStack{
                             Image(systemName: "lock")
                                 .foregroundColor(.gray)
-                            SecureField("Retry password", text: $retryPassword.onUpdate(updateButton))
+                            if self.isShowingRetryPassword{
+                              
+                                TextField("Re-enter", text: $retryPassword.onUpdate(updateButton))
+                                Button {
+                                    self.isShowingRetryPassword.toggle()
+                                } label: {
+                                    Image(systemName: "eye.slash")
+                                        .foregroundColor(.gray)
+                                }
+                            }else{
+                                SecureField("Re-enter", text: $retryPassword.onUpdate(updateButton))
+                                Button {
+                                    self.isShowingRetryPassword.toggle()
+                                } label: {
+                                    Image(systemName: "eye")
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                           
                         }
                     }
                     .padding()
-                    .padding(.leading, 10)
-                    .padding(.trailing, 20)
+                    .padding(.horizontal, 20)
                     .overlay(
                         RoundedRectangle(cornerRadius: 25)
                             .stroke(Color.gray, lineWidth: 1)
@@ -117,8 +144,7 @@ struct RootView: View {
                         
                     }
                     .foregroundColor(.white)
-                    .padding(.leading, 80)
-                    .padding(.trailing, 80)
+                    .padding(.horizontal, 80)
                     .padding()
                     .background(isButtonDisabled ? Color.gray : Color.orange)
                     .cornerRadius(30)
