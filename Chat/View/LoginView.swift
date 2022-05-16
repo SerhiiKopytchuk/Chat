@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-//import Firebase
+import Firebase
 
 struct LoginView: View {
     
@@ -15,6 +15,7 @@ struct LoginView: View {
     
     @State var isButtonDisabled: Bool = true
     @State var isShowingPassword:Bool = false
+    @State var canLoginUser = false
     
     //    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
@@ -50,13 +51,17 @@ struct LoginView: View {
                     .padding()
                     .foregroundColor(.orange)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 VStack{
                     Group {
                         HStack{
                             Image(systemName: "mail")
                                 .foregroundColor(.gray)
-                            TextField("Email", text: $email.onUpdate(updateButton))
+                            TextField("Email", text: $email)
+                                .disableAutocorrection(true)
+                                .onChange(of: email) { _ in
+                                    updateButton()
+                                }
                         }
                         
                         HStack{
@@ -64,7 +69,11 @@ struct LoginView: View {
                                 .foregroundColor(.gray)
                             if self.isShowingPassword{
                                 
-                                TextField("Password", text: $password.onUpdate(updateButton))
+                                TextField("Password", text: $password)
+                                    .disableAutocorrection(true)
+                                    .onChange(of: password) { _ in
+                                        updateButton()
+                                    }
                                 Button {
                                     self.isShowingPassword.toggle()
                                 } label: {
@@ -72,7 +81,11 @@ struct LoginView: View {
                                         .foregroundColor(.gray)
                                 }
                             }else{
-                                SecureField("Password", text: $password.onUpdate(updateButton))
+                                SecureField("Password", text: $password)
+                                    .disableAutocorrection(true)
+                                    .onChange(of: password) { _ in
+                                        updateButton()
+                                    }
                                 Button {
                                     self.isShowingPassword.toggle()
                                 } label: {
@@ -96,6 +109,14 @@ struct LoginView: View {
                 VStack {
                     Button("Log in") {
                         //how to automaticly change prop
+                        Auth.auth().signIn(withEmail: self.email, password: self.password) { result, error in
+                            if error != nil{
+                                print("error")
+                            }else{
+                                self.canLoginUser = true
+                                print("succes")
+                            }
+                        }
                     }
                     .foregroundColor(.white)
                     .padding(.leading, 80)
@@ -131,6 +152,7 @@ struct LoginView: View {
             }
             
         }
+        NavigationLink(destination: MainView(), isActive: $canLoginUser){}
     }
 }
 

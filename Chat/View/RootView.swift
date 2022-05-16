@@ -25,7 +25,6 @@ struct RootView: View {
     @State var isShowingPassword:Bool = false
     @State var isShowingRetryPassword:Bool = false
     @State var canCreateUser = false
-    @State var showMainView = false
     
     private func updateButton() {
         let time:Double = 0.3
@@ -74,6 +73,7 @@ struct RootView: View {
                             Image(systemName: "person")
                                 .foregroundColor(.gray)
                             TextField("Full Name", text: $fullName)
+                                .disableAutocorrection(true)
                                 .onChange(of: fullName) { _ in
                                     updateButton()
                                 }
@@ -82,7 +82,11 @@ struct RootView: View {
                         HStack{
                             Image(systemName: "mail")
                                 .foregroundColor(.gray)
-                            TextField("Email", text: $email.onUpdate(updateButton))
+                            TextField("Email", text: $email)
+                                .disableAutocorrection(true)
+                                .onChange(of: email) { _ in
+                                    updateButton()
+                                }
                         }
                         
                         HStack{
@@ -90,7 +94,11 @@ struct RootView: View {
                                 .foregroundColor(.gray)
                             if self.isShowingPassword{
                                     
-                                TextField("Password", text: $password.onUpdate(updateButton))
+                                TextField("Password", text: $password)
+                                    .disableAutocorrection(true)
+                                    .onChange(of: password) { _ in
+                                        updateButton()
+                                    }
                                 Button {
                                     self.isShowingPassword.toggle()
                                 } label: {
@@ -98,7 +106,11 @@ struct RootView: View {
                                         .foregroundColor(.gray)
                                 }
                             }else{
-                                SecureField("Password", text: $password.onUpdate(updateButton))
+                                SecureField("Password", text: $password)
+                                    .disableAutocorrection(true)
+                                    .onChange(of: password) { _ in
+                                        updateButton()
+                                    }
                                 Button {
                                     self.isShowingPassword.toggle()
                                 } label: {
@@ -112,7 +124,11 @@ struct RootView: View {
                                 .foregroundColor(.gray)
                             if self.isShowingRetryPassword{
                               
-                                TextField("Re-enter", text: $retryPassword.onUpdate(updateButton))
+                                TextField("Re-enter", text: $retryPassword)
+                                    .disableAutocorrection(true)
+                                    .onChange(of: retryPassword) { _ in
+                                        updateButton()
+                                    }
                                 Button {
                                     self.isShowingRetryPassword.toggle()
                                 } label: {
@@ -120,7 +136,11 @@ struct RootView: View {
                                         .foregroundColor(.gray)
                                 }
                             }else{
-                                SecureField("Re-enter", text: $retryPassword.onUpdate(updateButton))
+                                SecureField("Re-enter", text: $retryPassword)
+                                    .disableAutocorrection(true)
+                                    .onChange(of: retryPassword) { _ in
+                                        updateButton()
+                                    }
                                 Button {
                                     self.isShowingRetryPassword.toggle()
                                 } label: {
@@ -147,7 +167,7 @@ struct RootView: View {
                 VStack {
                     Button("Create Account"){
                         Auth.auth().createUser(withEmail: self.email, password: self.password) { Result, Error in
-                            if let error = Error{
+                            if  Error != nil{
                                 print(Error ?? "errror")
                             }else{
                                 self.canCreateUser = true
@@ -176,7 +196,7 @@ struct RootView: View {
 
                 }
                 NavigationLink(destination: LoginView(), isActive: $isPresentLoginView){}
-                NavigationLink(destination: EmptyView(), isActive: $canCreateUser){}
+                NavigationLink(destination: MainView(), isActive: $canCreateUser){}
             }
         }.navigationBarHidden(true).accentColor(.orange)
     }
@@ -185,6 +205,7 @@ struct RootView: View {
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
         RootView()
+.previewInterfaceOrientation(.portrait)
     }
 }
 
