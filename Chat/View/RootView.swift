@@ -19,11 +19,16 @@ struct RootView: View {
     var body: some View {
         
         NavigationView{
-            if viewModel.signedIn{
-                MainView().navigationBarHidden(true).navigationBarBackButtonHidden(true)
-            }else{
-                SignUpView()
+            VStack{
+                if viewModel.signedIn{
+                    MainView()
+                }else{
+                    SignUpView()
+                }
             }
+            .navigationBarHidden(true)
+//            .navigationBarBackButtonHidden(true)
+            
         }
     }
 }

@@ -17,7 +17,6 @@ struct MainView: View {
     
         
     var body: some View {
-        NavigationView{
             VStack{
                 HStack{
                     Button {
@@ -52,7 +51,6 @@ struct MainView: View {
                     }
                 }
             }
-        }
     }
 }
 
