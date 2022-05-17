@@ -8,7 +8,7 @@
 import SwiftUI
 import Firebase
 
-struct LoginView: View {
+struct SignInView: View {
     
     @State var email:String = ""
     @State var password:String = ""
@@ -16,6 +16,9 @@ struct LoginView: View {
     @State var isButtonDisabled: Bool = true
     @State var isShowingPassword:Bool = false
     @State var canLoginUser = false
+    
+    @EnvironmentObject var viewModel: AppViewModel
+
     
     //    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
@@ -109,14 +112,7 @@ struct LoginView: View {
                 VStack {
                     Button("Log in") {
                         //how to automaticly change prop
-                        Auth.auth().signIn(withEmail: self.email, password: self.password) { result, error in
-                            if error != nil{
-                                print("error")
-                            }else{
-                                self.canLoginUser = true
-                                print("succes")
-                            }
-                        }
+                        viewModel.signIn(email: self.email, password: self.password)
                     }
                     .foregroundColor(.white)
                     .padding(.leading, 80)
@@ -152,13 +148,12 @@ struct LoginView: View {
             }
             
         }
-        NavigationLink(destination: MainView(), isActive: $canLoginUser){}
     }
 }
 
-struct LoginView_Previews: PreviewProvider {
+struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        SignInView()
     }
 }
 

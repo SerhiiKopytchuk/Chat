@@ -17,7 +17,10 @@ struct ChatApp: App {
     
     var body: some Scene {
         WindowGroup {
+            
+            let ViewModel = AppViewModel()
             RootView()
+                .environmentObject(ViewModel)
         }
         
     }
