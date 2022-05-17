@@ -6,16 +6,33 @@
 //
 
 import SwiftUI
+import Firebase
+// Apple HIG
+// Apple Human Interface Guidelines
 
+// SF Symbols
 struct RootView: View {
+    
+    @ObservedObject var viewModel: AppViewModel = AppViewModel()
+    
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        
+        NavigationView{
+            if viewModel.signedIn{
+                MainView().navigationBarHidden(true).navigationBarBackButtonHidden(true)
+            }else{
+                SignUpView()
+            }
+        }
     }
 }
 
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
         RootView()
+.previewInterfaceOrientation(.portrait)
     }
 }
+
+
