@@ -129,7 +129,7 @@ struct SignInView: View {
                         .foregroundColor(.gray)
                     
                     
-                    
+                    //add google photo
                     Button("Google Log In") {
                         //how to automaticly change prop
                     }

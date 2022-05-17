@@ -13,20 +13,17 @@ import Firebase
 // SF Symbols
 struct RootView: View {
     
-    @EnvironmentObject var viewModel: AppViewModel
+    @ObservedObject var viewModel: AppViewModel = AppViewModel()
     
     
     var body: some View {
         
         NavigationView{
             if viewModel.signedIn{
-                MainView()
+                MainView().navigationBarHidden(true).navigationBarBackButtonHidden(true)
             }else{
                 SignUpView()
             }
-        }
-        .onAppear {
-            viewModel.signedIn = viewModel.isSignedIn
         }
     }
 }

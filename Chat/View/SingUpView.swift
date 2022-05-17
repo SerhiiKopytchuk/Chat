@@ -167,7 +167,7 @@ struct SignUpView: View {
                 
                 VStack {
                     Button("Create Account"){
-                        viewModel.signUp(email: self.email, password: self.password)
+                        viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 80)
