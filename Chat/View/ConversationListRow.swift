@@ -34,7 +34,7 @@ struct ConversationListRow: View {
                     .foregroundColor(.secondary)
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 20)
+            .frame(height: 40)
             .onTapGesture {
                 rowTapped()
             }

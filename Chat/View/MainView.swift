@@ -12,7 +12,7 @@ struct MainView: View {
     
 //    @EnvironmentObject var viewModel: AppViewModel
     @ObservedObject var viewModel: AppViewModel = AppViewModel()
-    
+    @ObservedObject var chatListsViewModel = ChatListViewModel()
 
     
         
@@ -44,15 +44,12 @@ struct MainView: View {
                     .padding()
                 
                 List{
-                    ConversationListRow(name: "Serhii", textMessage: "hello", time: "12:45") {
-//                        NavigationLink(destination: EmptyView())
-                        print("clicked row")
+                    ForEach(chatListsViewModel.chats, id: \.id){ chat in
+                        ConversationListRow(name: chat.name, textMessage: chat.lastMessage, time: chat.time) {
+                            print("tapped")
+                        }
+                        
                     }
-//                    ConversationListRow(name: "serhii", textMessage: "hello", time: "12:45")
-//                    ConversationListRow(name: "serhii", textMessage: "hello", time: "12:45")
-//                    ForEach(conversations, id: \.self) { conversation
-//                    ConversationListRow(name: conversation.name, textMessage: conversation.textMessage, time: <#T##String#>)
-//                    }
                 }
             }
         }
