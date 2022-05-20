@@ -21,12 +21,14 @@ struct RootView: View {
         NavigationView{
             VStack{
                 if viewModel.signedIn{
+                    
                     MainView()
+                        .navigationTitle("chats")
                 }else{
                     SignUpView()
                 }
             }
-            .navigationBarHidden(true)
+            .navigationBarBackButtonHidden(true)
             
         }.accentColor(.orange)
     }

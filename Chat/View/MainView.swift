@@ -10,13 +10,53 @@ import Firebase
 
 struct MainView: View {
     
-//    @EnvironmentObject var viewModel: AppViewModel
+
+    @State private var isShowingSideMenu = false
+    
+        
+    var body: some View {
+        ZStack {
+            if isShowingSideMenu{
+                SideMenuView(isShowingSideMenu: $isShowingSideMenu)
+            }
+            HomeView()
+                .cornerRadius(isShowingSideMenu ? 20 : 10)
+                .offset(x: isShowingSideMenu ? 300 : 0, y: isShowingSideMenu ? 44 : 0)
+                .scaleEffect(isShowingSideMenu ? 0.8 : 1)
+                .navigationBarItems(leading: Button(action: {
+                    withAnimation(.spring()){
+                        isShowingSideMenu.toggle()
+                    }
+                }, label: {
+                    Image(systemName: "list.bullet")
+                        .foregroundColor(.black)
+                }) )
+                .shadow(color: .black, radius: isShowingSideMenu ? 30 : 0)
+        }
+        .onAppear{
+            isShowingSideMenu = false
+        }
+        
+            
+    }
+}
+
+struct MainView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainView()
+    }
+}
+
+
+struct HomeView: View {
+    
     @ObservedObject var viewModel: AppViewModel = AppViewModel()
     @ObservedObject var chatListsViewModel = ChatListViewModel()
 
     
-        
     var body: some View {
+        ZStack{
+            Color(.white)
             VStack{
                 HStack{
                     Button {
@@ -33,15 +73,10 @@ struct MainView: View {
                     }
                     Spacer()
                     Text(viewModel.username)
-
+                    
                 }
                 
                 
-
-                Text("Chats")
-                    .font(.system(.largeTitle, design: .rounded))
-                    .foregroundColor(.orange)
-                    .padding()
                 
                 List{
                     ForEach(chatListsViewModel.chats, id: \.id){ chat in
@@ -52,12 +87,6 @@ struct MainView: View {
                     }
                 }
             }
+        }
     }
 }
-
-struct MainView_Previews: PreviewProvider {
-    static var previews: some View {
-        MainView()
-    }
-}
-
