@@ -23,6 +23,7 @@ struct SignUpView: View {
     @State var isPresentLoginView: Bool = false
     @State var isShowingPassword:Bool = false
     @State var isShowingRetryPassword:Bool = false
+    @State var isShowAlert = false
     
     
     @EnvironmentObject var viewModel: AppViewModel
@@ -55,7 +56,7 @@ struct SignUpView: View {
     var body: some View {
         
         
-        NavigationView{
+        ZStack{
             VStack(spacing: 30) {
                 Spacer()
                 HStack{
@@ -67,7 +68,6 @@ struct SignUpView: View {
                         .foregroundColor(.orange)
                     Spacer()
                 }
-                
                 VStack{
                     Group {
                         HStack{
@@ -79,7 +79,6 @@ struct SignUpView: View {
                                     updateButton()
                                 }
                         }
-                        
                         HStack{
                             Image(systemName: "mail")
                                 .foregroundColor(.gray)
@@ -89,7 +88,6 @@ struct SignUpView: View {
                                     updateButton()
                                 }
                         }
-                        
                         HStack{
                             Image(systemName: "lock")
                                 .foregroundColor(.gray)
@@ -162,19 +160,23 @@ struct SignUpView: View {
                             .padding(5)
                     )
                 }
-                
                 Spacer()
-                
                 VStack {
                     Button("Create Account"){
-                        viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
+                        if isButtonDisabled{
+                            withAnimation {
+                                isShowAlert.toggle()
+                            }
+                           
+                        }else{
+                            viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
+                        }
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 80)
                     .padding()
                     .background(isButtonDisabled ? Color.gray : Color.orange)
                     .cornerRadius(30)
-
                     .shadow(color:isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
 
      
@@ -191,8 +193,20 @@ struct SignUpView: View {
 
                 }
                 NavigationLink(destination: SignInView(), isActive: $isPresentLoginView){}
+                    
+            }.navigationBarHidden(true).navigationBarBackButtonHidden(true)
+            if isShowAlert{
+                GeometryReader{ geometry in
+                    customAlert(show: $isShowAlert)
+                        .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                        
+                }.background(Color.white.opacity(0.65))
+                    .edgesIgnoringSafeArea(.all)
+                
             }
-        }.navigationBarHidden(true).accentColor(.orange)
+    
+        }
+            
     }
 }
 

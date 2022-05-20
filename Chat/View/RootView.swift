@@ -27,9 +27,8 @@ struct RootView: View {
                 }
             }
             .navigationBarHidden(true)
-//            .navigationBarBackButtonHidden(true)
             
-        }
+        }.accentColor(.orange)
     }
 }
 

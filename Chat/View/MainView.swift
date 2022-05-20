@@ -22,6 +22,7 @@ struct MainView: View {
                     Button {
                         try! Auth.auth().signOut()
                         viewModel.signedIn = false
+                        
                     } label: {
                         Text("Sign Out")
                             .padding(10)
