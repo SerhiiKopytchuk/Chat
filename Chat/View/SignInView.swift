@@ -64,6 +64,7 @@ struct SignInView: View {
                                 Image(systemName: "mail")
                                     .foregroundColor(.gray)
                                 TextField("Email", text: $email)
+                                    .autocapitalization(.none)
                                     .disableAutocorrection(true)
                                     .onChange(of: email) { _ in
                                         updateButton()
@@ -76,6 +77,7 @@ struct SignInView: View {
                                 if self.isShowingPassword{
                                     
                                     TextField("Password", text: $password)
+                                        .autocapitalization(.none)
                                         .disableAutocorrection(true)
                                         .onChange(of: password) { _ in
                                             updateButton()

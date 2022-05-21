@@ -83,6 +83,7 @@ struct SignUpView: View {
                             Image(systemName: "mail")
                                 .foregroundColor(.gray)
                             TextField("Email", text: $email)
+                                .autocapitalization(.none)
                                 .disableAutocorrection(true)
                                 .onChange(of: email) { _ in
                                     updateButton()
@@ -94,6 +95,7 @@ struct SignUpView: View {
                             if self.isShowingPassword{
                                     
                                 TextField("Password", text: $password)
+                                    .autocapitalization(.none)
                                     .disableAutocorrection(true)
                                     .onChange(of: password) { _ in
                                         updateButton()
@@ -106,6 +108,7 @@ struct SignUpView: View {
                                 }
                             }else{
                                 SecureField("Password", text: $password)
+                                    .autocapitalization(.none)
                                     .disableAutocorrection(true)
                                     .onChange(of: password) { _ in
                                         updateButton()
@@ -124,6 +127,7 @@ struct SignUpView: View {
                             if self.isShowingRetryPassword{
                               
                                 TextField("Re-enter", text: $retryPassword)
+                                    .autocapitalization(.none)
                                     .disableAutocorrection(true)
                                     .onChange(of: retryPassword) { _ in
                                         updateButton()
@@ -136,6 +140,7 @@ struct SignUpView: View {
                                 }
                             }else{
                                 SecureField("Re-enter", text: $retryPassword)
+                                    .autocapitalization(.none)
                                     .disableAutocorrection(true)
                                     .onChange(of: retryPassword) { _ in
                                         updateButton()
