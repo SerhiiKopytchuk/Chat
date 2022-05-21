@@ -116,7 +116,7 @@ struct SignInView: View {
                         Button("Log in") {
                             //how to automaticly change prop
                             if isButtonDisabled{
-                                withAnimation {
+                                withAnimation (.easeInOut){
                                     isShowAlert.toggle()
                                 }
                             }else{

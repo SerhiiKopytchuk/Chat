@@ -22,7 +22,6 @@ struct customAlert:View{
             Text("Please fill all fields properly!")
                 .font(.body)
                 .padding()
-                .padding(.vertical, 20)
                 .foregroundColor(.white)
                 .frame(alignment: .center)
             Button {

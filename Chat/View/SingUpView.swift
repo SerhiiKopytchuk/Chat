@@ -164,7 +164,7 @@ struct SignUpView: View {
                 VStack {
                     Button("Create Account"){
                         if isButtonDisabled{
-                            withAnimation {
+                            withAnimation(.easeInOut) {
                                 isShowAlert.toggle()
                             }
                            
