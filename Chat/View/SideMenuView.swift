@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import Firebase
+
 
 struct SideMenuView: View {
-    
+    @EnvironmentObject var viewModel:AppViewModel
     @Binding var isShowingSideMenu: Bool
     
     var body: some View {
@@ -22,9 +24,18 @@ struct SideMenuView: View {
                     .frame(height: 240)
                 
                 ForEach(SideMenuViewModel.allCases, id: \.self){ option in
-                        NavigationLink(destination: Text(option.title)) {
-                            SideMenuOptionView(viewModel: option)
+                    Button {
+                        if option == SideMenuViewModel.logout{
+                            withAnimation (){
+                                viewModel.signOut()
+                            }
+                            
                         }
+                    } label: {
+                        SideMenuOptionView(viewModel: option)
+                    }
+
+                    
                 }
                 Spacer()
             }

@@ -13,7 +13,7 @@ import Firebase
 // SF Symbols
 struct RootView: View {
     
-    @ObservedObject var viewModel: AppViewModel = AppViewModel()
+    @EnvironmentObject var viewModel:AppViewModel
     
     
     var body: some View {
@@ -21,23 +21,26 @@ struct RootView: View {
         NavigationView{
             VStack{
                 if viewModel.signedIn{
-                    
                     MainView()
+                        .navigationViewStyle(.stack)
                         .navigationTitle("chats")
                 }else{
                     SignUpView()
                 }
             }
             .navigationBarBackButtonHidden(true)
-            
-        }.accentColor(.orange)
+        }
+        .onAppear{
+            viewModel.signedIn = viewModel.isSignedIn
+        }
+        .accentColor(.orange)
     }
 }
 
 struct RootView_Previews: PreviewProvider {
     static var previews: some View {
         RootView()
-.previewInterfaceOrientation(.portrait)
+            .previewInterfaceOrientation(.portrait)
     }
 }
 

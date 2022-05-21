@@ -9,13 +9,22 @@ import Foundation
 import Firebase
 import SwiftUI
 
+
 class AppViewModel: ObservableObject{
     let auth = Auth.auth()
     
     @Published var signedIn = false
+    
+    var isSignedIn:Bool{
+         return auth.currentUser != nil
+    }
+    
+    
     @Published var username: String = ""
+    
 
     // published mean broadcast
+    
     
     func signIn(email: String, password:String){
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
@@ -23,24 +32,22 @@ class AppViewModel: ObservableObject{
                 return
             }
             DispatchQueue.main.async {
+                self?.signedIn = true
                 self?.username = Auth.auth().currentUser?.displayName ?? ""
             }
-            self?.signedIn = true
+           
         }
     }
     
-    func signUp(username: String, email:String, password:String){
+    func signUp(username: String,  email:String, password:String){
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else{
                 return
             }
             DispatchQueue.main.async {
+                self?.signedIn = true
             self?.setUserName(username: username)
             }
-            
-                self?.signedIn = true
-            
-            
         }
     }
     
@@ -57,9 +64,15 @@ class AppViewModel: ObservableObject{
         })
     }
     
-    init(){
-        self.signedIn = auth.currentUser != nil
-        self.username = auth.currentUser?.displayName ?? ""
+    func signOut(){
+        try! auth.signOut()
+        self.signedIn = false
+        
     }
+    
+//    init(){
+//        self.signedIn = self.isSignedIn
+//        self.username = auth.currentUser?.displayName ?? ""
+//    }
     
 }
