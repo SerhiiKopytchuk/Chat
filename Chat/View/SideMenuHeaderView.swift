@@ -10,8 +10,11 @@ import SwiftUI
 struct SideMenuHeaderView: View {
     
     @Binding var isShowingSideMenu: Bool
+    @EnvironmentObject var viewModel:AppViewModel
 
     var body: some View {
+        
+        
 
         ZStack(alignment: .topTrailing) {
             Button {
@@ -35,10 +38,10 @@ struct SideMenuHeaderView: View {
                     .clipShape(Circle())
                     .padding(.bottom, 16)
                 
-                Text("Koch")
+                Text(viewModel.username)
                     .font(.system(size: 24, weight: .semibold))
                     
-                Text("@koch.wwww")
+                Text(viewModel.gmail)
                     .font(.system(size: 14 ))
                     .padding(.bottom, 24)
                 HStack{

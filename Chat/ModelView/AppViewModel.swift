@@ -21,6 +21,7 @@ class AppViewModel: ObservableObject{
     
     
     @Published var username: String = ""
+    @Published var gmail: String = ""
     
 
     // published mean broadcast
@@ -34,6 +35,7 @@ class AppViewModel: ObservableObject{
             DispatchQueue.main.async {
                 self?.signedIn = true
                 self?.username = Auth.auth().currentUser?.displayName ?? ""
+                self?.gmail = email
             }
            
         }
@@ -46,7 +48,8 @@ class AppViewModel: ObservableObject{
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
-            self?.setUserName(username: username)
+                self?.setUserName(username: username)
+                self?.gmail = email
             }
         }
     }
@@ -67,12 +70,11 @@ class AppViewModel: ObservableObject{
     func signOut(){
         try! auth.signOut()
         self.signedIn = false
-        
     }
     
-//    init(){
-//        self.signedIn = self.isSignedIn
-//        self.username = auth.currentUser?.displayName ?? ""
-//    }
+    init(){
+        self.username = auth.currentUser?.displayName ?? ""
+        self.gmail = auth.currentUser?.email ?? ""
+    }
     
 }

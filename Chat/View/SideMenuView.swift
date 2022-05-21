@@ -15,7 +15,7 @@ struct SideMenuView: View {
     
     var body: some View {
         ZStack{
-            LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .top, endPoint: .bottom)
+            LinearGradient(gradient: Gradient(colors: [.orange, .purple]), startPoint: .topLeading, endPoint: .bottomTrailing)
                 .ignoresSafeArea()
             
             VStack{

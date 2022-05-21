@@ -31,7 +31,7 @@ struct MainView: View {
                     Image(systemName: "list.bullet")
                         .foregroundColor(.black)
                 }) )
-                .shadow(color: .black, radius: isShowingSideMenu ? 30 : 0)
+                .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
         }
         .onAppear{
             isShowingSideMenu = false

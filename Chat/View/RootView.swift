@@ -23,7 +23,8 @@ struct RootView: View {
                 if viewModel.signedIn{
                     MainView()
                         .navigationViewStyle(.stack)
-                        .navigationTitle("chats")
+                        .navigationBarTitle("Chats")
+                        
                 }else{
                     SignUpView()
                 }
