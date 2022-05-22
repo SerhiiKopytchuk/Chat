@@ -22,7 +22,6 @@ struct SideMenuView: View {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
                     .foregroundColor(.white)
                     .frame(height: 240)
-                
                 ForEach(SideMenuViewModel.allCases, id: \.self){ option in
                     Button {
                         if option == SideMenuViewModel.logout{

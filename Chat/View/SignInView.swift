@@ -48,7 +48,6 @@ struct SignInView: View {
     
     
     var body: some View {
-//        NavigationView{
             ZStack{
                 VStack(spacing: 30){
                     Text("Log In")
@@ -132,7 +131,7 @@ struct SignInView: View {
                         .padding()
                         .background(isButtonDisabled ? Color.gray : Color.orange)
                         .cornerRadius(30)
-    //                    .disabled(isButtonDisabled)
+
                         .shadow(color:isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
                         
                         Text("OR")
@@ -142,47 +141,16 @@ struct SignInView: View {
                         
                         
                         //add google photo
-                        Button {
-                            //handle singin
-                            
-                            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-
-                            // Create Google Sign In configuration object.
-                            let config = GIDConfiguration(clientID: clientID)
-                            
-                            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()){[self] user, error in
-                                
-                                if error != nil {
-                                   return
-                                 }
-
-                                 guard
-                                   let authentication = user?.authentication,
-                                   let idToken = authentication.idToken
-                                 else {
-                                   return
-                                 }
-                                
-                                let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                                                 accessToken: authentication.accessToken)
-                                
-                                viewModel.signIn(credential: credential)
-                            }
-                        } label: {
-                            Image("google")
-                                .resizable()
-                                .frame(width: 32, height: 32)
-                        }
-                        .foregroundColor(.brown)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 35)
-                                .stroke(Color.brown, lineWidth: 2)
-                        )
-                        .background(.clear)
-                        
-                        .cornerRadius(35)
-                        .padding(.top, 50)
+                        googleButton
+                            .foregroundColor(.brown)
+                            .padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 35)
+                                    .stroke(Color.brown, lineWidth: 2)
+                            )
+                            .background(.clear)
+                            .cornerRadius(35)
+                            .padding(.top, 50)
 
                         
                         
@@ -199,8 +167,43 @@ struct SignInView: View {
                     
                 }
             }
-//        }
+
     }
+    
+    var googleButton: some View{
+        Button {
+            //handle singin
+            
+            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+            // Create Google Sign In configuration object.
+            let config = GIDConfiguration(clientID: clientID)
+            
+            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()){[self] user, error in
+                
+                if error != nil {
+                   return
+                 }
+
+                 guard
+                   let authentication = user?.authentication,
+                   let idToken = authentication.idToken
+                 else {
+                   return
+                 }
+                
+                let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                                 accessToken: authentication.accessToken)
+                
+                viewModel.signIn(credential: credential)
+            }
+        } label: {
+            Image("google")
+                .resizable()
+                .frame(width: 32, height: 32)
+        }
+    }
+    
 }
 
 struct SignInView_Previews: PreviewProvider {

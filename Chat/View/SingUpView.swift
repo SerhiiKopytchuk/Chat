@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import GoogleSignIn
 // Apple HIG
 // Apple Human Interface Guidelines
 
@@ -177,12 +178,12 @@ struct SignUpView: View {
                             viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
                         }
                     }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 80)
-                    .padding()
-                    .background(isButtonDisabled ? Color.gray : Color.orange)
-                    .cornerRadius(30)
-                    .shadow(color:isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 80)
+                        .padding()
+                        .background(isButtonDisabled ? Color.gray : Color.orange)
+                        .cornerRadius(30)
+                        .shadow(color:isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
 
      
                     
@@ -193,7 +194,21 @@ struct SignUpView: View {
                     }
                     .foregroundColor(.brown)
                     .padding(.top, 20)
-                    
+                    Text("OR")
+                        .padding(.top, 50)
+                        .font(.system(.title3, design: .rounded))
+                        .foregroundColor(.gray)
+                    Spacer()
+                    googleButton
+                        .foregroundColor(.brown)
+                        .padding()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 35)
+                                .stroke(Color.brown, lineWidth: 2)
+                        )
+                        .background(.clear)
+                        .cornerRadius(35)
+                        .padding(.top, 50)
                     Spacer()
 
                 }
@@ -212,6 +227,40 @@ struct SignUpView: View {
     
         }
             
+    }
+    
+    var googleButton: some View{
+        Button {
+            //handle singin
+            
+            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+            // Create Google Sign In configuration object.
+            let config = GIDConfiguration(clientID: clientID)
+            
+            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()){[self] user, error in
+                
+                if error != nil {
+                   return
+                 }
+
+                 guard
+                   let authentication = user?.authentication,
+                   let idToken = authentication.idToken
+                 else {
+                   return
+                 }
+                
+                let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                                 accessToken: authentication.accessToken)
+                
+                viewModel.signIn(credential: credential)
+            }
+        } label: {
+            Image("google")
+                .resizable()
+                .frame(width: 32, height: 32)
+        }
     }
 }
 
