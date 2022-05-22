@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import GoogleSignIn
 
 struct SignInView: View {
     
@@ -142,7 +143,31 @@ struct SignInView: View {
                         
                         //add google photo
                         Button {
+                            //handle singin
                             
+                            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+                            // Create Google Sign In configuration object.
+                            let config = GIDConfiguration(clientID: clientID)
+                            
+                            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()){[self] user, error in
+                                
+                                if error != nil {
+                                   return
+                                 }
+
+                                 guard
+                                   let authentication = user?.authentication,
+                                   let idToken = authentication.idToken
+                                 else {
+                                   return
+                                 }
+                                
+                                let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                                                 accessToken: authentication.accessToken)
+                                
+                                viewModel.signIn(credential: credential)
+                            }
                         } label: {
                             Image("google")
                                 .resizable()
@@ -181,6 +206,22 @@ struct SignInView: View {
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
         SignInView()
+    }
+    
+
+}
+
+extension View{
+    func getRootViewController()->UIViewController{
+        guard let screen = UIApplication.shared.connectedScenes.first as? UIWindowScene else{
+            return .init()
+        }
+        
+        guard let root = screen.windows.first?.rootViewController else{
+            return .init()
+        }
+        
+        return root
     }
 }
 
