@@ -70,103 +70,7 @@ struct SignUpView: View {
                         .foregroundColor(.orange)
                     Spacer()
                 }
-                VStack{
-                    Group {
-                        HStack{
-                            Image(systemName: "person")
-                                .foregroundColor(.gray)
-                            TextField("Full Name", text: $fullName)
-                                .disableAutocorrection(true)
-                                .onChange(of: fullName) { _ in
-                                    updateButton()
-                                }
-                        }
-                        HStack{
-                            Image(systemName: "mail")
-                                .foregroundColor(.gray)
-                            TextField("Email", text: $email)
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                .onChange(of: email) { _ in
-                                    updateButton()
-                                }
-                        }
-                        HStack{
-                            Image(systemName: "lock")
-                                .foregroundColor(.gray)
-                            if self.isShowingPassword{
-                                    
-                                TextField("Password", text: $password)
-                                    .autocapitalization(.none)
-                                    .disableAutocorrection(true)
-                                    .onChange(of: password) { _ in
-                                        updateButton()
-                                    }
-                                Button {
-                                    self.isShowingPassword.toggle()
-                                } label: {
-                                    Image(systemName: "eye.slash")
-                                        .foregroundColor(.gray)
-                                }
-                            }else{
-                                SecureField("Password", text: $password)
-                                    .autocapitalization(.none)
-                                    .disableAutocorrection(true)
-                                    .onChange(of: password) { _ in
-                                        updateButton()
-                                    }
-                                Button {
-                                    self.isShowingPassword.toggle()
-                                } label: {
-                                    Image(systemName: "eye")
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                        }
-                        HStack{
-                            Image(systemName: "lock")
-                                .foregroundColor(.gray)
-                            if self.isShowingRetryPassword{
-                              
-                                TextField("Re-enter", text: $retryPassword)
-                                    .autocapitalization(.none)
-                                    .disableAutocorrection(true)
-                                    .onChange(of: retryPassword) { _ in
-                                        updateButton()
-                                    }
-                                Button {
-                                    self.isShowingRetryPassword.toggle()
-                                } label: {
-                                    Image(systemName: "eye.slash")
-                                        .foregroundColor(.gray)
-                                }
-                            }else{
-                                SecureField("Re-enter", text: $retryPassword)
-                                    .autocapitalization(.none)
-                                    .disableAutocorrection(true)
-                                    .onChange(of: retryPassword) { _ in
-                                        updateButton()
-                                    }
-                                Button {
-                                    self.isShowingRetryPassword.toggle()
-                                } label: {
-                                    Image(systemName: "eye")
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                           
-                        }
-                    }
-                    .padding()
-                    .padding(.horizontal, 20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 25)
-                            .stroke(Color.gray, lineWidth: 1)
-                            .padding(.leading, 10)
-                            .padding(.trailing, 20)
-                            .padding(5)
-                    )
-                }
+                Fields
                 Spacer()
                 VStack {
                     Button("Create Account"){
@@ -243,6 +147,106 @@ struct SignUpView: View {
            
         }
             
+    }
+    
+    @ViewBuilder var Fields: some View{
+        VStack{
+            Group {
+                HStack{
+                    Image(systemName: "person")
+                        .foregroundColor(.gray)
+                    TextField("Full Name", text: $fullName)
+                        .disableAutocorrection(true)
+                        .onChange(of: fullName) { _ in
+                            updateButton()
+                        }
+                }
+                HStack{
+                    Image(systemName: "mail")
+                        .foregroundColor(.gray)
+                    TextField("Email", text: $email)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .onChange(of: email) { _ in
+                            updateButton()
+                        }
+                }
+                HStack{
+                    Image(systemName: "lock")
+                        .foregroundColor(.gray)
+                    if self.isShowingPassword{
+                            
+                        TextField("Password", text: $password)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .onChange(of: password) { _ in
+                                updateButton()
+                            }
+                        Button {
+                            self.isShowingPassword.toggle()
+                        } label: {
+                            Image(systemName: "eye.slash")
+                                .foregroundColor(.gray)
+                        }
+                    }else{
+                        SecureField("Password", text: $password)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .onChange(of: password) { _ in
+                                updateButton()
+                            }
+                        Button {
+                            self.isShowingPassword.toggle()
+                        } label: {
+                            Image(systemName: "eye")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+                HStack{
+                    Image(systemName: "lock")
+                        .foregroundColor(.gray)
+                    if self.isShowingRetryPassword{
+                      
+                        TextField("Re-enter", text: $retryPassword)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .onChange(of: retryPassword) { _ in
+                                updateButton()
+                            }
+                        Button {
+                            self.isShowingRetryPassword.toggle()
+                        } label: {
+                            Image(systemName: "eye.slash")
+                                .foregroundColor(.gray)
+                        }
+                    }else{
+                        SecureField("Re-enter", text: $retryPassword)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .onChange(of: retryPassword) { _ in
+                                updateButton()
+                            }
+                        Button {
+                            self.isShowingRetryPassword.toggle()
+                        } label: {
+                            Image(systemName: "eye")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                   
+                }
+            }
+            .padding()
+            .padding(.horizontal, 20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 25)
+                    .stroke(Color.gray, lineWidth: 1)
+                    .padding(.leading, 10)
+                    .padding(.trailing, 20)
+                    .padding(5)
+            )
+        }
     }
     
     var googleButton: some View{
