@@ -224,7 +224,8 @@ struct SignUpView: View {
                     .edgesIgnoringSafeArea(.all)
                 
             }
-    
+            
+           
         }
             
     }

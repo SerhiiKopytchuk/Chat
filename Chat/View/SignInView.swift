@@ -157,6 +157,7 @@ struct SignInView: View {
                     }
                     Spacer()
                 }
+                
                 if isShowAlert{
                     GeometryReader{ geometry in
                         customAlert(show: $isShowAlert)
@@ -166,6 +167,8 @@ struct SignInView: View {
                         .edgesIgnoringSafeArea(.all)
                     
                 }
+
+
             }
 
     }

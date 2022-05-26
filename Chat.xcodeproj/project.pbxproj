@@ -140,9 +140,7 @@
 				4056D63A2833D8E8000A0872 /* SingUpView.swift */,
 				4056D6402834024B000A0872 /* ConversationListRow.swift */,
 				4024EB00283802130082E739 /* CustomAlert.swift */,
-				4024EB0228382AE80082E739 /* SideMenuView.swift */,
-				4024EB0628382B030082E739 /* SideMenuHeaderView.swift */,
-				4024EB0828382B190082E739 /* SideMenuOptionView.swift */,
+				40C3A105283AA2DB00A9683A /* SideMenuViews */,
 				4024EB0E28393CF40082E739 /* HomeView.swift */,
 			);
 			path = View;
@@ -179,6 +177,16 @@
 				4024EB16283944D20082E739 /* ChatTests.swift */,
 			);
 			path = ChatTests;
+			sourceTree = "<group>";
+		};
+		40C3A105283AA2DB00A9683A /* SideMenuViews */ = {
+			isa = PBXGroup;
+			children = (
+				4024EB0228382AE80082E739 /* SideMenuView.swift */,
+				4024EB0628382B030082E739 /* SideMenuHeaderView.swift */,
+				4024EB0828382B190082E739 /* SideMenuOptionView.swift */,
+			);
+			path = SideMenuViews;
 			sourceTree = "<group>";
 		};
 		D3AA5A23459CEF3DE164D5E8 /* Pods */ = {
