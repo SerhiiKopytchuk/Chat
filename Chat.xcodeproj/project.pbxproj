@@ -23,6 +23,7 @@
 		4056D63D2833DD17000A0872 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63C2833DD17000A0872 /* AppViewModel.swift */; };
 		4056D6412834024B000A0872 /* ConversationListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D6402834024B000A0872 /* ConversationListRow.swift */; };
 		405FD37F282FEFD200361396 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405FD37E282FEFD200361396 /* SignInView.swift */; };
+		4076E0AB283FA46900E21131 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4076E0AA283FA46900E21131 /* FirebaseAuth */; };
 		4077703728341D1400BDD8A6 /* ChatListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4077703628341D1400BDD8A6 /* ChatListViewModel.swift */; };
 		408E26122832C44800CE108E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E26112832C44800CE108E /* MainView.swift */; };
 		4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4094461428301F8D00239F7B /* GoogleService-Info.plist */; };
@@ -73,6 +74,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				380AFA9F592E410719BD78F1 /* Pods_Chat.framework in Frameworks */,
+				4076E0AB283FA46900E21131 /* FirebaseAuth in Frameworks */,
 				40C3A103283A94E500A9683A /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -209,7 +211,6 @@
 				400142DE282EBA8400E5D497 /* Sources */,
 				400142DF282EBA8400E5D497 /* Frameworks */,
 				400142E0282EBA8400E5D497 /* Resources */,
-				17E11775F79AE831E3D9A7E8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -218,6 +219,7 @@
 			name = Chat;
 			packageProductDependencies = (
 				40C3A102283A94E500A9683A /* GoogleSignIn */,
+				4076E0AA283FA46900E21131 /* FirebaseAuth */,
 			);
 			productName = Chat;
 			productReference = 400142E2282EBA8400E5D497 /* Chat.app */;
@@ -271,6 +273,7 @@
 			mainGroup = 400142D9282EBA8400E5D497;
 			packageReferences = (
 				40C3A101283A94E500A9683A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				4076E0A9283FA46900E21131 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 400142E3282EBA8400E5D497 /* Products */;
 			projectDirPath = "";
@@ -323,23 +326,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		17E11775F79AE831E3D9A7E8 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Chat/Pods-Chat-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Chat/Pods-Chat-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Chat/Pods-Chat-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -638,6 +624,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4076E0A9283FA46900E21131 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		40C3A101283A94E500A9683A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -649,6 +643,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4076E0AA283FA46900E21131 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4076E0A9283FA46900E21131 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
 		40C3A102283A94E500A9683A /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 40C3A101283A94E500A9683A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;

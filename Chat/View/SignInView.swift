@@ -17,7 +17,6 @@ struct SignInView: View {
     @State var isButtonDisabled: Bool = true
     @State var isShowingPassword:Bool = false
     @State var canLoginUser = false
-
     @State var isShowAlert = false
     
     @EnvironmentObject var viewModel: AppViewModel
@@ -157,7 +156,6 @@ struct SignInView: View {
                     }
                     Spacer()
                 }
-                
                 if isShowAlert{
                     GeometryReader{ geometry in
                         customAlert(show: $isShowAlert)
@@ -167,7 +165,15 @@ struct SignInView: View {
                         .edgesIgnoringSafeArea(.all)
                     
                 }
-
+                
+                if viewModel.showLoader{
+                    withAnimation {
+                        GeometryReader{ reader in
+                            Loader()
+                                .position(x: reader.size.width/2, y:  reader.size.height/2)
+                        }.background(Color.black.opacity(0.45).edgesIgnoringSafeArea(.all))
+                    }
+                }
 
             }
 
