@@ -26,6 +26,7 @@ struct SignUpView: View {
     @State var isShowingRetryPassword:Bool = false
     @State var isShowAlert = false
     @State var isShowLoader = false
+    @State var alertText = ""
     
     @EnvironmentObject var viewModel: AppViewModel
     
@@ -171,6 +172,7 @@ struct SignUpView: View {
                     Button("Create Account"){
                         if isButtonDisabled{
                             withAnimation(.easeInOut) {
+                                alertText = "Fill all fields properly!"
                                 isShowAlert.toggle()
                             }
                            
@@ -215,11 +217,16 @@ struct SignUpView: View {
                 NavigationLink(destination: SignInView(), isActive: $isPresentLoginView){}
                     
             }.navigationBarHidden(true).navigationBarBackButtonHidden(true)
-            if isShowAlert{
+            if isShowAlert || viewModel.showAlert{
                 GeometryReader{ geometry in
-                    customAlert(show: $isShowAlert)
-                        .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                        
+                    if viewModel.showAlert{
+                        customAlert(show: $isShowAlert, text: $viewModel.alertText)
+                            .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                    }else{
+                        customAlert(show: $isShowAlert, text: $alertText)
+                            .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                    }
+                     
                 }.background(Color.white.opacity(0.65))
                     .edgesIgnoringSafeArea(.all)
                 
@@ -275,7 +282,7 @@ struct SignUpView: View {
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView()
+        SignUpView().environmentObject(AppViewModel())
 .previewInterfaceOrientation(.portrait)
     }
 }

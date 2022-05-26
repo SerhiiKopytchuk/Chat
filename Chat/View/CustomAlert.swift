@@ -11,6 +11,10 @@ import SwiftUI
 struct customAlert:View{
     
     @Binding var show:Bool
+    @Binding var text:String
+    
+    @EnvironmentObject var viewModel: AppViewModel
+
     
     var body: some View{
         VStack{
@@ -19,17 +23,18 @@ struct customAlert:View{
                 .font(.system(.title, design: .rounded))
                 .padding()
                 .foregroundColor(.white)
-            Text("Please fill all fields properly!")
+            Text(text)
                 .font(.body)
                 .padding()
                 .foregroundColor(.white)
                 .frame(alignment: .center)
             Button {
                 withAnimation {
-                    show.toggle()
+                    show = false
+                    viewModel.showAlert = false
                 }
             } label: {
-                Text("close")
+                Text("Close")
             }
             .padding()
             .padding(.horizontal, 60)

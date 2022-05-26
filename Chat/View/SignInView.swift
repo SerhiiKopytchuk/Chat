@@ -18,6 +18,7 @@ struct SignInView: View {
     @State var isShowingPassword:Bool = false
     @State var canLoginUser = false
     @State var isShowAlert = false
+    @State var alertText = ""
     
     @EnvironmentObject var viewModel: AppViewModel
 
@@ -49,75 +50,21 @@ struct SignInView: View {
     var body: some View {
             ZStack{
                 VStack(spacing: 30){
-                    Text("Log In")
+                    Text("Sign In")
                         .font(.system(.largeTitle, design: .rounded))
                         .fontWeight(.bold)
                         .padding(.leading, 10)
                         .padding()
                         .foregroundColor(.orange)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    VStack{
-                        Group {
-                            HStack{
-                                Image(systemName: "mail")
-                                    .foregroundColor(.gray)
-                                TextField("Email", text: $email)
-                                    .autocapitalization(.none)
-                                    .disableAutocorrection(true)
-                                    .onChange(of: email) { _ in
-                                        updateButton()
-                                    }
-                            }
-                            
-                            HStack{
-                                Image(systemName: "lock")
-                                    .foregroundColor(.gray)
-                                if self.isShowingPassword{
-                                    
-                                    TextField("Password", text: $password)
-                                        .autocapitalization(.none)
-                                        .disableAutocorrection(true)
-                                        .onChange(of: password) { _ in
-                                            updateButton()
-                                        }
-                                    Button {
-                                        self.isShowingPassword.toggle()
-                                    } label: {
-                                        Image(systemName: "eye.slash")
-                                            .foregroundColor(.gray)
-                                    }
-                                }else{
-                                    SecureField("Password", text: $password)
-                                        .disableAutocorrection(true)
-                                        .onChange(of: password) { _ in
-                                            updateButton()
-                                        }
-                                    Button {
-                                        self.isShowingPassword.toggle()
-                                    } label: {
-                                        Image(systemName: "eye")
-                                            .foregroundColor(.gray)
-                                    }
-                                }
-                            }
-                        }
-                        .padding()
-                        .padding(.horizontal, 20)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 25)
-                                .stroke(Color.gray, lineWidth: 1)
-                                .padding(.leading, 10)
-                                .padding(.trailing, 20)
-                                .padding(5)
-                        )
-                    }
-                    
+                
+                    InputFields
                     VStack {
-                        Button("Log in") {
+                        Button("Sign in") {
                             //how to automaticly change prop
                             if isButtonDisabled{
                                 withAnimation (.easeInOut){
+                                    alertText = "Fill all fields properly!"
                                     isShowAlert.toggle()
                                 }
                             }else{
@@ -156,11 +103,16 @@ struct SignInView: View {
                     }
                     Spacer()
                 }
-                if isShowAlert{
+                if isShowAlert || viewModel.showAlert{
                     GeometryReader{ geometry in
-                        customAlert(show: $isShowAlert)
-                            .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                            
+                        if viewModel.showAlert{
+                            customAlert(show: $isShowAlert, text: $viewModel.alertText)
+                                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                        }else{
+                            customAlert(show: $isShowAlert, text: $alertText)
+                                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                        }
+                         
                     }.background(Color.white.opacity(0.65))
                         .edgesIgnoringSafeArea(.all)
                     
@@ -177,6 +129,64 @@ struct SignInView: View {
 
             }
 
+    }
+    
+    @ViewBuilder var InputFields: some View{
+        VStack{
+            Group {
+                HStack{
+                    Image(systemName: "mail")
+                        .foregroundColor(.gray)
+                    TextField("Email", text: $email)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .onChange(of: email) { _ in
+                            updateButton()
+                        }
+                }
+                
+                HStack{
+                    Image(systemName: "lock")
+                        .foregroundColor(.gray)
+                    if self.isShowingPassword{
+                        
+                        TextField("Password", text: $password)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .onChange(of: password) { _ in
+                                updateButton()
+                            }
+                        Button {
+                            self.isShowingPassword.toggle()
+                        } label: {
+                            Image(systemName: "eye.slash")
+                                .foregroundColor(.gray)
+                        }
+                    }else{
+                        SecureField("Password", text: $password)
+                            .disableAutocorrection(true)
+                            .onChange(of: password) { _ in
+                                updateButton()
+                            }
+                        Button {
+                            self.isShowingPassword.toggle()
+                        } label: {
+                            Image(systemName: "eye")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+            }
+            .padding()
+            .padding(.horizontal, 20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 25)
+                    .stroke(Color.gray, lineWidth: 1)
+                    .padding(.leading, 10)
+                    .padding(.trailing, 20)
+                    .padding(5)
+            )
+        }
     }
     
     var googleButton: some View{
@@ -217,7 +227,7 @@ struct SignInView: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView()
+        SignInView().environmentObject(AppViewModel())
     }
     
 
@@ -228,11 +238,11 @@ extension View{
         guard let screen = UIApplication.shared.connectedScenes.first as? UIWindowScene else{
             return .init()
         }
-        
+
         guard let root = screen.windows.first?.rootViewController else{
             return .init()
         }
-        
+
         return root
     }
 }

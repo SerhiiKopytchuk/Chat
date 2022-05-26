@@ -23,6 +23,8 @@ class AppViewModel: ObservableObject{
     
     @Published var username: String = ""
     @Published var gmail: String = ""
+    @Published var alertText: String = ""
+    @Published var showAlert = false
     
 
     // published mean broadcast
@@ -32,6 +34,8 @@ class AppViewModel: ObservableObject{
         showLoader = true
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else{
+                self?.alertText = error?.localizedDescription ?? ""
+                self?.showAlert = true
                 self?.showLoader = false
                 return
             }
@@ -64,6 +68,8 @@ class AppViewModel: ObservableObject{
         showLoader = true
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else{
+                self?.alertText = error?.localizedDescription ?? ""
+                self?.showAlert = true
                 self?.showLoader = false
                 return
             }
