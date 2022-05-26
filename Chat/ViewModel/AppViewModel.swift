@@ -14,6 +14,7 @@ class AppViewModel: ObservableObject{
     let auth = Auth.auth()
     
     @Published var signedIn = false
+    @Published var showLoader = false
     
     var isSignedIn:Bool{
          return auth.currentUser != nil
@@ -28,14 +29,17 @@ class AppViewModel: ObservableObject{
     
     
     func signIn(email: String, password:String){
+        showLoader = true
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else{
+                self?.showLoader = false
                 return
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
                 self?.username = Auth.auth().currentUser?.displayName ?? ""
                 self?.gmail = email
+                self?.showLoader = false
             }
            
         }
@@ -44,25 +48,30 @@ class AppViewModel: ObservableObject{
     func signIn(credential: AuthCredential){
         Auth.auth().signIn(with: credential){ [weak self] result, error in
             guard result != nil, error == nil else{
+                
                 return
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
                 self?.username = Auth.auth().currentUser?.displayName ?? ""
                 self?.gmail = Auth.auth().currentUser?.email ?? ""
+               
             }
         }
     }
     
     func signUp(username: String,  email:String, password:String){
+        showLoader = true
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else{
+                self?.showLoader = false
                 return
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
                 self?.setUserName(username: username)
                 self?.gmail = email
+                self?.showLoader = false
             }
         }
     }
