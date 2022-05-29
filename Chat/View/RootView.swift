@@ -26,15 +26,15 @@ struct RootView: View {
                         .navigationBarTitle("Chats")
                         
                 }else{
-                    SignUpView()
+                    SignUpView()        
                 }
             }
             .navigationBarBackButtonHidden(true)
         }
+        .accentColor(.orange)
         .onAppear{
             viewModel.signedIn = viewModel.isSignedIn
         }
-        .accentColor(.orange)
     }
 }
 

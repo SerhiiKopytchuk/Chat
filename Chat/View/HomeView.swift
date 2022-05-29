@@ -13,21 +13,43 @@ struct HomeView: View {
     
     @EnvironmentObject var viewModel: AppViewModel
     @ObservedObject var chatListsViewModel = ChatListViewModel()
-
+    @State var currentTab: Tab = .chats
+    
+    init(){
+        UITabBar.appearance().isHidden = true
+    }
     
     var body: some View {
         ZStack{
-            Color(.white)
-            VStack{
-                List{
-                    ForEach(chatListsViewModel.chats, id: \.id){ chat in
-                        ConversationListRow(name: chat.name, textMessage: chat.lastMessage, time: chat.time) {
-                            print("tapped")
+            VStack(spacing: 0){
+                TabView(selection: $currentTab){
+                    
+                    VStack{
+                        List{
+                            ForEach(chatListsViewModel.chats, id: \.id){ chat in
+                                ConversationListRow(name: chat.name, textMessage: chat.lastMessage, time: chat.time) {
+                                    print("tapped")
+                                }
+                                
+                            }
                         }
-                        
-                    }
+                    }.tag(Tab.chats)
+                    
+                    Text("Chanels")
+                        .tag(Tab.chanels)
                 }
+                CustomTabBar(currentTab: $currentTab)
+                    .background(.white)
             }
         }
     }
+}
+
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView()
+    }
+}
+
+extension View{
 }
