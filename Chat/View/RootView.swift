@@ -15,7 +15,6 @@ struct RootView: View {
     
     @EnvironmentObject var viewModel:AppViewModel
     
-    
     var body: some View {
         
         NavigationView{

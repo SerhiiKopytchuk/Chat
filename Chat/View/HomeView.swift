@@ -14,9 +14,12 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @ObservedObject var chatListsViewModel = ChatListViewModel()
     @State var currentTab: Tab = .chats
+
     
     init(){
         UITabBar.appearance().isHidden = true
+        UITableView.appearance().backgroundColor = .white
+        //can we make bg of list like this?
     }
     
     var body: some View {
@@ -30,9 +33,9 @@ struct HomeView: View {
                                 ConversationListRow(name: chat.name, textMessage: chat.lastMessage, time: chat.time) {
                                     print("tapped")
                                 }
-                                
-                            }
+                            } 
                         }
+
                     }.tag(Tab.chats)
                     
                     Text("Chanels")

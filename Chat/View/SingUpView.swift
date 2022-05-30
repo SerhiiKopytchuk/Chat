@@ -73,17 +73,7 @@ struct SignUpView: View {
                 Fields
                 Spacer()
                 VStack {
-                    Button("Create Account"){
-                        if isButtonDisabled{
-                            withAnimation(.easeInOut) {
-                                alertText = "Fill all fields properly!"
-                                isShowAlert.toggle()
-                            }
-                           
-                        }else{
-                            viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
-                        }
-                    }
+                    createAccountButton
                         .foregroundColor(.white)
                         .padding(.horizontal, 80)
                         .padding()
@@ -104,7 +94,9 @@ struct SignUpView: View {
                         .padding(.top, 50)
                         .font(.system(.title3, design: .rounded))
                         .foregroundColor(.gray)
+                    
                     Spacer()
+                    
                     googleButton
                         .foregroundColor(.brown)
                         .padding()
@@ -121,6 +113,7 @@ struct SignUpView: View {
                 NavigationLink(destination: SignInView(), isActive: $isPresentLoginView){}
                     
             }.navigationBarHidden(true).navigationBarBackButtonHidden(true)
+            
             if isShowAlert || viewModel.showAlert{
                 GeometryReader{ geometry in
                     if viewModel.showAlert{
@@ -246,6 +239,21 @@ struct SignUpView: View {
                     .padding(.trailing, 20)
                     .padding(5)
             )
+        }
+    }
+    
+    
+    var createAccountButton: some View{
+        Button("Create Account"){
+            if isButtonDisabled{
+                withAnimation(.easeInOut) {
+                    alertText = "Fill all fields properly!"
+                    isShowAlert.toggle()
+                }
+                
+            }else{
+                viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
+            }
         }
     }
     

@@ -17,26 +17,7 @@ struct CustomTabBar: View {
             let width = proxy.size.width
             HStack(spacing: 0){
                 ForEach(Tab.allCases, id: \.rawValue){ tab in
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)){
-                            currentTab = tab
-                            yOfset = 60
-                        }
-                        withAnimation(.easeInOut(duration: 0.1).delay(0.1)){
-                            yOfset = 0
-                        }
-                        
-                    } label: {
-                        Image(systemName: tab.rawValue)
-                            .renderingMode(.template)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 30)
-                            .frame(maxWidth: .infinity )
-                            .foregroundColor(currentTab == tab ? Color.purple : .gray)
-                            .scaleEffect(currentTab == tab && yOfset != 0 ? 1.5 : 1)
-                    }
-
+                    barButton(tab: tab)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -53,6 +34,28 @@ struct CustomTabBar: View {
         .padding([.horizontal,.top])
     }
     
+    func barButton(tab:Tab)-> some View{
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)){
+                currentTab = tab
+                yOfset = 60
+            }
+            withAnimation(.easeInOut(duration: 0.1).delay(0.1)){
+                yOfset = 0
+            }
+            
+        } label: {
+            Image(systemName: tab.rawValue)
+                .renderingMode(.template)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 20, height: 30)
+                .frame(maxWidth: .infinity )
+                .foregroundColor(currentTab == tab ? Color.purple : .gray)
+                .scaleEffect(currentTab == tab && yOfset != 0 ? 1.5 : 1)
+        }
+    }
+    
     func indicatorOffset(width: CGFloat) -> CGFloat{
         let index = CGFloat(getIndex())
         if index == 0 {return 0}
@@ -61,6 +64,7 @@ struct CustomTabBar: View {
         
         return index * buttonWidth
     }
+    
     func getIndex()-> Int{
         switch currentTab {
         case .chats:
