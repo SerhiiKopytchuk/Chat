@@ -14,6 +14,7 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @ObservedObject var chatListsViewModel = ChatListViewModel()
     @State var currentTab: Tab = .chats
+    @State var GoToConversation = false
 
     
     init(){
@@ -31,7 +32,7 @@ struct HomeView: View {
                         List{
                             ForEach(chatListsViewModel.chats, id: \.id){ chat in
                                 ConversationListRow(name: chat.name, textMessage: chat.lastMessage, time: chat.time) {
-                                    print("tapped")
+                                    GoToConversation.toggle()
                                 }
                             } 
                         }
@@ -43,6 +44,12 @@ struct HomeView: View {
                 }
                 CustomTabBar(currentTab: $currentTab)
                     .background(.white)
+                NavigationLink(isActive: $GoToConversation) {
+                    ConversationView()
+                } label: {
+                    
+                }
+
             }
         }
     }
