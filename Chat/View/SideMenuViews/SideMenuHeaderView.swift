@@ -38,10 +38,10 @@ struct SideMenuHeaderView: View {
                     .clipShape(Circle())
                     .padding(.bottom, 16)
                 
-                Text(viewModel.username)
+                Text(viewModel.user.name)
                     .font(.system(size: 24, weight: .semibold))
                     
-                Text(viewModel.gmail)
+                Text(viewModel.user.gmail)
                     .font(.system(size: 14 ))
                     .padding(.bottom, 24)
                 HStack{

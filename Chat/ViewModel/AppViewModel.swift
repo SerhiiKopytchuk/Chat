@@ -17,21 +17,22 @@ class AppViewModel: ObservableObject{
     
     @Published var signedIn = false
     @Published var showLoader = false
+    @Published var user:User = User(chats: [], gmail: "", id: "", name: "")
+    @Published var users:[User] = []
     
     var isSignedIn:Bool{
-         return auth.currentUser != nil
+        return auth.currentUser != nil
     }
     
     
-    @Published var username: String = ""
-    @Published var gmail: String = ""
+
     @Published var alertText: String = ""
     @Published var showAlert = false
     @Published private(set) var messages:[Message] = []
     @Published private(set) var lastMessageId = ""
-
+    
     // published mean broadcast
-
+    
     let db = Firestore.firestore()
     
     func getMessages(){
@@ -67,6 +68,15 @@ class AppViewModel: ObservableObject{
         }
     }
     
+    func createFbUser(name:String, gmail:String){
+        do{
+            let newUser = User(chats: [], gmail: gmail, id: Auth.auth().currentUser?.uid ?? "\(UUID())", name: name)
+            try db.collection("users").document("\(newUser.id)").setData(from: newUser)
+        }catch{
+            print("error adding message to Firestore:: \(error)")
+        }
+    }
+    
     func signIn(email: String, password:String){
         showLoader = true
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
@@ -78,12 +88,27 @@ class AppViewModel: ObservableObject{
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
-                self?.username = Auth.auth().currentUser?.displayName ?? ""
-                self?.gmail = email
                 self?.showLoader = false
+                self?.getCurrentUesr()
             }
-           
+            
         }
+    }
+    
+    func getCurrentUesr(){
+        let docRef = self.db.collection("users").document(Auth.auth().currentUser?.uid ?? "")
+        
+        docRef.getDocument(as: User.self) { result in
+          switch result {
+          case .success(let user):
+            // A Book value was successfully initialized from the DocumentSnapshot.
+            self.user = user
+          case .failure(let error):
+            print(error)
+          }
+        }
+      
+        
     }
     
     func signIn(credential: AuthCredential){
@@ -94,9 +119,7 @@ class AppViewModel: ObservableObject{
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
-                self?.username = Auth.auth().currentUser?.displayName ?? ""
-                self?.gmail = Auth.auth().currentUser?.email ?? ""
-               
+                self?.getCurrentUesr()
             }
         }
     }
@@ -112,25 +135,31 @@ class AppViewModel: ObservableObject{
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
-                self?.setUserName(username: username)
-                self?.gmail = email
                 self?.showLoader = false
+                self?.createFbUser(name: Auth.auth().currentUser?.displayName ?? "", gmail: Auth.auth().currentUser?.email ?? "")
             }
         }
     }
     
-    func setUserName(username: String) {
-        let changeProfileRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-        changeProfileRequest?.displayName = username
-        changeProfileRequest?.commitChanges(completion: { [weak self] error in
-            guard let self = self else { return }
-            if error != nil{
-                print(error ?? "error")
-            }else{
-                self.username = username
+    func getAllUsers(){
+        db.collection("users").addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else{
+                print("Error fetching documets: \(String(describing: error))")
+                return
             }
-        })
+            
+            
+            self.users = documents.compactMap { document -> User? in
+                do{
+                    return try document.data(as: User.self)
+                }catch{
+                    print("error deconding documet into Message: \(error)")
+                    return nil
+                }
+            }
+        }
     }
+    
     
     func signOut(){
         try! auth.signOut()
@@ -142,9 +171,10 @@ class AppViewModel: ObservableObject{
     }
     
     init(){
-        self.username = auth.currentUser?.displayName ?? ""
-        self.gmail = auth.currentUser?.email ?? ""
+        
         getMessages()
+        getAllUsers()
+        getCurrentUesr()
     }
     
 }

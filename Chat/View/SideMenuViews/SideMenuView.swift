@@ -30,7 +30,7 @@ struct SideMenuView: View {
                             }
                         }
                         if option == SideMenuViewModel.profile{
-//                            viewModel.printUserId()
+                            print(viewModel.users)
                         }
                     } label: {
                         SideMenuOptionView(viewModel: option)
