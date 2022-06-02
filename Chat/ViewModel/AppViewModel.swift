@@ -58,9 +58,9 @@ class AppViewModel: ObservableObject{
         }
     }
     
-    func sendMessage(text: String){
+    func sendMessage(text: String, UID:String){
         do{
-            let newMessage = Message(id: "\(UUID())", text: text, received: false, timestamp: Date())
+            let newMessage = Message(id: "\(UUID())", text: text, senderId: UID, timestamp: Date())
             try db.collection("messages").document().setData(from: newMessage)
         }catch{
             print("error adding message to Firestore:: \(error)")
@@ -135,6 +135,10 @@ class AppViewModel: ObservableObject{
     func signOut(){
         try! auth.signOut()
         self.signedIn = false
+    }
+    
+    func getUserUID()->String{
+        return self.auth.currentUser?.uid ?? "no UID"
     }
     
     init(){

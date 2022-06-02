@@ -28,12 +28,14 @@ struct SideMenuView: View {
                             withAnimation (){
                                 viewModel.signOut()
                             }
-                            
+                        }
+                        if option == SideMenuViewModel.profile{
+//                            viewModel.printUserId()
                         }
                     } label: {
                         SideMenuOptionView(viewModel: option)
                     }
-
+                    
                     
                 }
                 Spacer()
