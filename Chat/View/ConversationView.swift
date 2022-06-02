@@ -9,22 +9,32 @@ import SwiftUI
 
 struct ConversationView: View {
     var messages = ["Hello", "How are you doing?", "I've benn building apllications from scratch"]
+    @StateObject var messagesManager:AppViewModel = AppViewModel()
     
     var body: some View {
         VStack {
             VStack{
                 TitleRow()
-                ScrollView{
-                    ForEach(messages, id: \.self){ text in
-                        MessageBubble(message: Message(id: "", text: text, recived: true, timestamp: Date()))
+                ScrollViewReader{ proxy in
+                    ScrollView{
+                        ForEach(messagesManager.messages, id: \.id){ message in
+                            MessageBubble(message: message)
+                        }
+                    }
+                    
+                    .padding(.top, 10)
+                    .background(.white)
+                    .cornerRadius(30, corners: [.topLeft, .topRight])
+                    .onChange(of: messagesManager.lastMessageId) { id in
+                        withAnimation {
+                            proxy.scrollTo(id, anchor: .bottom)
+                        }
                     }
                 }
-                .padding(.top, 10)
-                .background(.white)
-                .cornerRadius(30, corners: [.topLeft, .topRight])
             }
             .background(Color("Peach"))
             MessageField()
+                .environmentObject(messagesManager)
         }
         
     }

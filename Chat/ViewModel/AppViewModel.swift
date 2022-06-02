@@ -7,6 +7,8 @@
 
 import Foundation
 import Firebase
+import FirebaseFirestoreSwift
+import FirebaseFirestore
 import SwiftUI
 
 
@@ -25,10 +27,45 @@ class AppViewModel: ObservableObject{
     @Published var gmail: String = ""
     @Published var alertText: String = ""
     @Published var showAlert = false
-    
+    @Published private(set) var messages:[Message] = []
+    @Published private(set) var lastMessageId = ""
 
     // published mean broadcast
+
+    let db = Firestore.firestore()
     
+    func getMessages(){
+        db.collection("messages").addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else{
+                print("Error fetching documets: \(String(describing: error))")
+                return
+            }
+            
+            
+            self.messages = documents.compactMap { document -> Message? in
+                do{
+                    return try document.data(as: Message.self)
+                }catch{
+                    print("error deconding documet into Message: \(error)")
+                    return nil
+                }
+            }
+            self.messages.sort{ $0.timestamp < $1.timestamp}
+            
+            if let id = self.messages.last?.id{
+                self.lastMessageId = id
+            }
+        }
+    }
+    
+    func sendMessage(text: String){
+        do{
+            let newMessage = Message(id: "\(UUID())", text: text, received: false, timestamp: Date())
+            try db.collection("messages").document().setData(from: newMessage)
+        }catch{
+            print("error adding message to Firestore:: \(error)")
+        }
+    }
     
     func signIn(email: String, password:String){
         showLoader = true
@@ -103,6 +140,7 @@ class AppViewModel: ObservableObject{
     init(){
         self.username = auth.currentUser?.displayName ?? ""
         self.gmail = auth.currentUser?.email ?? ""
+        getMessages()
     }
     
 }
