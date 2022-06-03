@@ -12,6 +12,7 @@ import Firebase
 struct SideMenuView: View {
     @EnvironmentObject var viewModel:AppViewModel
     @Binding var isShowingSideMenu: Bool
+    @Binding var isShowingSearchUsers: Bool
     
     var body: some View {
         ZStack{
@@ -23,20 +24,31 @@ struct SideMenuView: View {
                     .foregroundColor(.white)
                     .frame(height: 240)
                 ForEach(SideMenuViewModel.allCases, id: \.self){ option in
-                    Button {
-                        if option == SideMenuViewModel.logout{
-                            withAnimation (){
-                                viewModel.signOut()
+                    if option == SideMenuViewModel.searchUsers{
+                        NavigationLink {
+                            SearchUsersView()
+                        } label: {
+                            SideMenuOptionView(viewModel: option)
+                        }
+
+                    }else{
+                        Button {
+                            if option == SideMenuViewModel.logout{
+                                withAnimation (){
+                                    viewModel.signOut()
+                                }
                             }
+                            if option == SideMenuViewModel.profile{
+                                print(viewModel.users)
+                            }
+//                            if option == SideMenuViewModel.searchUsers{
+//                                viewModel.getAllUsers()
+//                                isShowingSideMenu = true
+//                            }
+                        } label: {
+                            SideMenuOptionView(viewModel: option)
                         }
-                        if option == SideMenuViewModel.profile{
-                            print(viewModel.users)
-                        }
-                    } label: {
-                        SideMenuOptionView(viewModel: option)
                     }
-                    
-                    
                 }
                 Spacer()
             }
@@ -46,6 +58,7 @@ struct SideMenuView: View {
 
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
-        SideMenuView(isShowingSideMenu: .constant(true))
+        SideMenuView(isShowingSideMenu: .constant(true), isShowingSearchUsers: .constant(false))
+            .environmentObject(AppViewModel())
     }
 }

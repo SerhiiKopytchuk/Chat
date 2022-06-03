@@ -173,7 +173,7 @@ class AppViewModel: ObservableObject{
     init(){
         
         getMessages()
-        getAllUsers()
+        
         getCurrentUesr()
     }
     

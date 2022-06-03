@@ -12,12 +12,12 @@ struct MainView: View {
     
 
     @State private var isShowingSideMenu = false
-    
+    @State private var showSearchUsers = false
         
     var body: some View {
         ZStack {
             if isShowingSideMenu{
-                SideMenuView(isShowingSideMenu: $isShowingSideMenu)
+                SideMenuView(isShowingSideMenu: $isShowingSideMenu, isShowingSearchUsers: $showSearchUsers)
             }
             HomeView()
                 .cornerRadius(isShowingSideMenu ? 20 : 10)
@@ -32,14 +32,16 @@ struct MainView: View {
                         .foregroundColor(.black)
                 }) )
                 .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
+           
         }
         .onAppear{
             isShowingSideMenu = false
         }
         .navigationViewStyle(.columns)
-            
-    }
         
+        
+    }
+    
 }
 
 struct MainView_Previews: PreviewProvider {
