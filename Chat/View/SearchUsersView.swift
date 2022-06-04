@@ -14,10 +14,14 @@ struct SearchUsersView: View {
     @State var searchText = ""
     
     
+    
     var body: some View {
         VStack{
             HStack {
-                TextField("Search users", text: $searchText)
+                TextField("Search users", text: $searchText).onChange(of: searchText, perform: { newValue in
+                    viewModel.searchText = newValue
+                    viewModel.getAllUsers()
+                })
                     .textFieldStyle(DefaultTextFieldStyle())
                     
                 Image(systemName: "magnifyingglass")
@@ -25,11 +29,13 @@ struct SearchUsersView: View {
                     .frame(width: 50, height: 50)
                 
             }
-            .padding(.horizontal)
+            .padding(.leading, 30)
             List{
-//                ForEach(viewModel.users, id: \.id){ user in 
-//                    Text(user.name)
-//                }
+                ForEach(viewModel.users, id: \.id){ user in
+                   
+                        Text(user.name)
+                    
+                }
             }
         }
     }

@@ -41,10 +41,6 @@ struct SideMenuView: View {
                             if option == SideMenuViewModel.profile{
                                 print(viewModel.users)
                             }
-//                            if option == SideMenuViewModel.searchUsers{
-//                                viewModel.getAllUsers()
-//                                isShowingSideMenu = true
-//                            }
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }

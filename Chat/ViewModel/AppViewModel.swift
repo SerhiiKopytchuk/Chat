@@ -19,7 +19,8 @@ class AppViewModel: ObservableObject{
     @Published var showLoader = false
     @Published var user:User = User(chats: [], gmail: "", id: "", name: "")
     @Published var users:[User] = []
-    
+    @Published var searchText = ""
+
     var isSignedIn:Bool{
         return auth.currentUser != nil
     }
@@ -151,7 +152,12 @@ class AppViewModel: ObservableObject{
             
             self.users = documents.compactMap { document -> User? in
                 do{
-                    return try document.data(as: User.self)
+                 
+                    let user = try document.data(as: User.self)
+                    if user.name.contains(self.searchText){
+                        return user
+                    }
+                    return nil
                 }catch{
                     print("error deconding documet into Message: \(error)")
                     return nil
@@ -171,6 +177,7 @@ class AppViewModel: ObservableObject{
     }
     
     init(){
+        getAllUsers()
         
         getMessages()
         
