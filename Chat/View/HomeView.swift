@@ -12,7 +12,6 @@ import FirebaseAuth
 struct HomeView: View {
     
     @EnvironmentObject var viewModel: AppViewModel
-    @ObservedObject var chatListsViewModel = ChatListViewModel()
     @State var currentTab: Tab = .chats
     @State var GoToConversation = false
 
@@ -31,9 +30,12 @@ struct HomeView: View {
                     VStack{
                         List{
                             ForEach(viewModel.chats, id: \.id){ chat in
-                                ConversationListRow(name: chat.id, textMessage: "lastMessage ", time: "12:43") {
+                                ConversationListRow(chat: chat){
                                     GoToConversation.toggle()
+                                }.onAppear{
+                                    viewModel.getUesr(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
                                 }
+                                
                             } 
                         }
 

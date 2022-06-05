@@ -8,9 +8,15 @@
 import Foundation
 
 
-struct Conversation: Codable, Identifiable{
+struct Chat: Codable, Identifiable{
     var id:String
     var user1Id:String
     var user2Id:String
-//    var messages:[Message]
+    var messages:[Message]
+}
+
+struct ChatPart: Codable, Identifiable{
+    var id:String
+    var user1Id:String
+    var user2Id:String
 }

@@ -18,9 +18,10 @@ class AppViewModel: ObservableObject{
     @Published var signedIn = false
     @Published var showLoader = false
     @Published var user:User = User(chats: [], gmail: "", id: "", name: "")
+    @Published var secondUser = User(chats: [], gmail: "", id: "", name: "")
     @Published var users:[User] = []
     @Published var searchText = ""
-    @Published var chats:[Conversation] = []
+    @Published var chats:[Chat] = []
 
     var isSignedIn:Bool{
         return auth.currentUser != nil
@@ -103,7 +104,6 @@ class AppViewModel: ObservableObject{
         docRef.getDocument(as: User.self) { result in
           switch result {
           case .success(let user):
-            // A Book value was successfully initialized from the DocumentSnapshot.
             self.user = user
               self.getChats()
           case .failure(let error):
@@ -114,15 +114,29 @@ class AppViewModel: ObservableObject{
         
     }
     
+    func getUesr(id:String){
+        let docRef = self.db.collection("users").document(id)
+        docRef.getDocument(as: User.self) { result in
+          switch result {
+          case .success(let user):
+              self.secondUser = user
+          case .failure(let error):
+            print(error)
+              
+          }
+        }
+    }
+    
     func getChats(){
         for chatId in user.chats{
             let docRef = db.collection("Chats").document(chatId)
 
-            docRef.getDocument(as: Conversation.self) { result in
+            docRef.getDocument(as: ChatPart.self) { result in
                 
                 switch result {
                 case .success(let chat):
-                    self.chats.append(chat)
+                    let chatFull = Chat(id: chat.id, user1Id: chat.user1Id, user2Id: chat.user2Id, messages: [])
+                    self.chats.append(chatFull)
                 case .failure(let error):
                     print("Error decoding city: \(error)")
                 }
