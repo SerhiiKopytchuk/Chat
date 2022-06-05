@@ -29,12 +29,10 @@ struct SearchUsersView: View {
                     .frame(width: 50, height: 50)
                 
             }
-            .padding(.leading, 30)
+            .padding()
             List{
                 ForEach(viewModel.users, id: \.id){ user in
-                   
-                        Text(user.name)
-                    
+                    searchUserCell(user: user.name, userGmail: user.gmail)
                 }
             }
         }

@@ -20,6 +20,7 @@ class AppViewModel: ObservableObject{
     @Published var user:User = User(chats: [], gmail: "", id: "", name: "")
     @Published var users:[User] = []
     @Published var searchText = ""
+    @Published var chats:[Conversation] = []
 
     var isSignedIn:Bool{
         return auth.currentUser != nil
@@ -104,12 +105,29 @@ class AppViewModel: ObservableObject{
           case .success(let user):
             // A Book value was successfully initialized from the DocumentSnapshot.
             self.user = user
+              self.getChats()
           case .failure(let error):
             print(error)
           }
         }
       
         
+    }
+    
+    func getChats(){
+        for chatId in user.chats{
+            let docRef = db.collection("Chats").document(chatId)
+
+            docRef.getDocument(as: Conversation.self) { result in
+                
+                switch result {
+                case .success(let chat):
+                    self.chats.append(chat)
+                case .failure(let error):
+                    print("Error decoding city: \(error)")
+                }
+            }
+        }
     }
     
     func signIn(credential: AuthCredential){
@@ -166,6 +184,7 @@ class AppViewModel: ObservableObject{
         }
     }
     
+
     
     func signOut(){
         try! auth.signOut()
@@ -180,7 +199,6 @@ class AppViewModel: ObservableObject{
         getAllUsers()
         
         getMessages()
-        
         getCurrentUesr()
     }
     

@@ -30,8 +30,8 @@ struct HomeView: View {
                     
                     VStack{
                         List{
-                            ForEach(chatListsViewModel.chats, id: \.id){ chat in
-                                ConversationListRow(name: chat.name, textMessage: chat.lastMessage, time: chat.time) {
+                            ForEach(viewModel.chats, id: \.id){ chat in
+                                ConversationListRow(name: chat.id, textMessage: "lastMessage ", time: "12:43") {
                                     GoToConversation.toggle()
                                 }
                             } 

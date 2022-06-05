@@ -27,10 +27,12 @@ struct SideMenuView: View {
                     if option == SideMenuViewModel.searchUsers{
                         NavigationLink {
                             SearchUsersView()
+                                .navigationBarTitle("", displayMode: .inline)
+                            
+//                                .navigationBarHidden(true)
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
-
                     }else{
                         Button {
                             if option == SideMenuViewModel.logout{
