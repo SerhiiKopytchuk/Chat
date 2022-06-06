@@ -12,8 +12,8 @@ struct SearchUsersView: View {
     @EnvironmentObject var viewModel:AppViewModel
     @State var showSearchBar = false
     @State var searchText = ""
-    
-    
+    @State var goToConversation = false
+    @State var userWithConversation = User(chats: [], gmail: "", id: "", name: "")
     
     var body: some View {
         VStack{
@@ -32,9 +32,17 @@ struct SearchUsersView: View {
             .padding()
             List{
                 ForEach(viewModel.users, id: \.id){ user in
-                    searchUserCell(user: user.name, userGmail: user.gmail)
+                    searchUserCell(user: user.name, userGmail: user.gmail, rowTapped: {
+                        self.userWithConversation = user
+                        goToConversation.toggle()
+                    })
                 }
             }
+        }
+        NavigationLink(isActive: $goToConversation) {
+            ConversationView(user: self.userWithConversation)
+        }label: {
+            
         }
     }
 }

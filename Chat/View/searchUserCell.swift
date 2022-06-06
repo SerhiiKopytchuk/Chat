@@ -12,6 +12,7 @@ import SwiftUI
 struct searchUserCell: View {
     var user:String
     var userGmail:String
+    let rowTapped: () -> ()
     var body: some View {
         
             HStack{
@@ -25,13 +26,14 @@ struct searchUserCell: View {
                     Text(userGmail)
                         .font(.caption)
                 }
+            }.onTapGesture {
+                rowTapped()
             }
-           
     }
 }
 
 struct searchUserCell_Previews: PreviewProvider {
     static var previews: some View {
-        searchUserCell(user: "Georgy", userGmail: "georgy@gmail.com")
+        searchUserCell(user: "Georgy", userGmail: "georgy@gmail.com", rowTapped:{})
     }
 }

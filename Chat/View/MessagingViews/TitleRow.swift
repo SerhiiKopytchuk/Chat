@@ -10,6 +10,7 @@ import SwiftUI
 import SwiftUI
 
 struct TitleRow: View {
+    var user:User
     var imageURL = URL(string: "https://images.unsplash.com/photo-1653762383590-1196972043fe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80")
     var name = "Sarah Smith"
     
@@ -24,7 +25,7 @@ struct TitleRow: View {
                 ProgressView()
             }
             VStack(alignment: .leading){
-                Text(name)
+                Text(user.name)
                     .font(.title).bold()
                   
                 Text("Online")
@@ -45,7 +46,7 @@ struct TitleRow: View {
 
 struct TitleRow_Previews: PreviewProvider {
     static var previews: some View {
-        TitleRow()
+        TitleRow(user: User(chats: [], gmail: "", id: "", name: ""))
             .background(Color("Peach"))
     }
 }

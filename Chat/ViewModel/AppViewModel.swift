@@ -22,6 +22,7 @@ class AppViewModel: ObservableObject{
     @Published var users:[User] = []
     @Published var searchText = ""
     @Published var chats:[Chat] = []
+    @Published var currentChat:Chat = Chat(id: "", user1Id: "", user2Id: "", messages: [])
 
     var isSignedIn:Bool{
         return auth.currentUser != nil
@@ -37,6 +38,73 @@ class AppViewModel: ObservableObject{
     // published mean broadcast
     
     let db = Firestore.firestore()
+    
+    func getMessages(chatId: String){
+        db.collection("Chats").document(chatId).collection("messages").addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else{
+                print("Error fetching documets: \(String(describing: error))")
+                return
+            }
+            
+            
+            self.currentChat.messages = documents.compactMap { document -> Message? in
+                do{
+                    return try document.data(as: Message.self)
+                }catch{
+                    print("error deconding documet into Message: \(error)")
+                    return nil
+                }
+            }
+            self.currentChat.messages?.sort{ $0.timestamp < $1.timestamp}
+            
+            if let id = self.currentChat.messages?.last?.id{
+                self.lastMessageId = id
+            }
+        }
+    }
+    
+    func getCurrentChat(chat: Chat, userNumber:Int){
+        if userNumber == 1{
+            db.collection("Chats").whereField("user1Id", isEqualTo: chat.user1Id)
+                .getDocuments() { (querySnapshot, err) in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                    } else {
+                        
+                        for document in querySnapshot!.documents {
+                            do{
+                                self.currentChat = try document.data(as: Chat.self)
+                                self.getMessages(chatId: self.currentChat.id)
+                            }catch{
+                                print("erorr to get Chat data")
+                            }
+                            
+                        }
+                    }
+                }
+        }else{
+            if userNumber == 2{
+                db.collection("Chats").whereField("user2Id", isEqualTo: chat.user2Id)
+                    .getDocuments() { (querySnapshot, err) in
+                        if let err = err {
+                            print("Error getting documents: \(err)")
+                        } else {
+                            
+                            for document in querySnapshot!.documents {
+                                do{
+                                    self.currentChat = try document.data(as: Chat.self)
+                                    self.getMessages(chatId: self.currentChat.id)
+                                }catch{
+                                    print("erorr to get Chat data")
+                                }
+                                
+                            }
+                        }
+                    }
+            }
+            
+        }
+    }
     
     func getMessages(){
         db.collection("messages").addSnapshotListener { querySnapshot, error in
@@ -122,7 +190,6 @@ class AppViewModel: ObservableObject{
               self.secondUser = user
           case .failure(let error):
             print(error)
-              
           }
         }
     }
@@ -131,7 +198,7 @@ class AppViewModel: ObservableObject{
         for chatId in user.chats{
             let docRef = db.collection("Chats").document(chatId)
 
-            docRef.getDocument(as: ChatPart.self) { result in
+            docRef.getDocument(as: Chat.self) { result in
                 
                 switch result {
                 case .success(let chat):
@@ -197,8 +264,6 @@ class AppViewModel: ObservableObject{
             }
         }
     }
-    
-
     
     func signOut(){
         try! auth.signOut()

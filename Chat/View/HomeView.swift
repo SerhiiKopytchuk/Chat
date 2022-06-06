@@ -14,7 +14,7 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @State var currentTab: Tab = .chats
     @State var GoToConversation = false
-
+    
     
     init(){
         UITabBar.appearance().isHidden = true
@@ -31,6 +31,8 @@ struct HomeView: View {
                         List{
                             ForEach(viewModel.chats, id: \.id){ chat in
                                 ConversationListRow(chat: chat){
+                                    viewModel.getUesr(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
+                                    viewModel.getCurrentChat(chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2)
                                     GoToConversation.toggle()
                                 }.onAppear{
                                     viewModel.getUesr(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
@@ -47,7 +49,7 @@ struct HomeView: View {
                 CustomTabBar(currentTab: $currentTab)
                     .background(.white)
                 NavigationLink(isActive: $GoToConversation) {
-                    ConversationView()
+                    ConversationView(user: viewModel.secondUser)
                 } label: {
                     
                 }

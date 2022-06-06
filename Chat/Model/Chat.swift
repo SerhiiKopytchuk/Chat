@@ -6,17 +6,19 @@
 //
 
 import Foundation
-
+import FirebaseFirestore
+import Firebase
+import FirebaseFirestoreSwift
 
 struct Chat: Codable, Identifiable{
     var id:String
     var user1Id:String
     var user2Id:String
-    var messages:[Message]
+    var messages:[Message]?
 }
 
-struct ChatPart: Codable, Identifiable{
-    var id:String
-    var user1Id:String
-    var user2Id:String
-}
+//struct ChatPart: Codable, Identifiable{
+//    var id:String
+//    var user1Id:String
+//    var user2Id:String
+//}
