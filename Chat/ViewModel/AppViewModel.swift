@@ -116,33 +116,7 @@ class AppViewModel: ObservableObject{
         }
     }
     
-    func createFbUser(name:String, gmail:String){
-        do{
-            let newUser = User(chats: [], gmail: gmail, id: Auth.auth().currentUser?.uid ?? "\(UUID())", name: name)
-            try db.collection("users").document("\(newUser.id)").setData(from: newUser)
-        }catch{
-            print("error adding message to Firestore:: \(error)")
-        }
-    }
     
-    func signIn(email: String, password:String){
-        showLoader = true
-        auth.signIn(withEmail: email, password: password) { [weak self] result, error in
-            guard result != nil, error == nil else{
-                self?.alertText = error?.localizedDescription ?? ""
-                self?.showAlert = true
-                self?.showLoader = false
-                return
-            }
-            DispatchQueue.main.async {
-                self?.signedIn = true
-                self?.showLoader = false
-                self?.getCurrentUesr()
-                self?.getChats()
-            }
-            
-        }
-    }
     
     func getCurrentUesr(){
         let docRef = self.db.collection("users").document(Auth.auth().currentUser?.uid ?? "")
@@ -190,6 +164,45 @@ class AppViewModel: ObservableObject{
         }
     }
     
+   
+    
+    func getAllUsers(){
+        db.collection("users").addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else{
+                print("Error fetching documets: \(String(describing: error))")
+                return
+            }
+            
+            
+            self.users = documents.compactMap { document -> User? in
+                do{
+                 
+                    let user = try document.data(as: User.self)
+                    if user.name.contains(self.searchText){
+                        return user
+                    }
+                    return nil
+                }catch{
+                    print("error deconding documet into Message: \(error)")
+                    return nil
+                }
+            }
+        }
+    }
+    
+    
+    
+    func getUserUID()->String{
+        return self.auth.currentUser?.uid ?? "no UID"
+    }
+    
+    //MARK: - authorization
+    
+    func signOut(){
+        try! auth.signOut()
+        self.signedIn = false
+    }
+    
     func signIn(credential: AuthCredential){
         Auth.auth().signIn(with: credential){ [weak self] result, error in
             guard result != nil, error == nil else{
@@ -222,37 +235,32 @@ class AppViewModel: ObservableObject{
         }
     }
     
-    func getAllUsers(){
-        db.collection("users").addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else{
-                print("Error fetching documets: \(String(describing: error))")
+    func signIn(email: String, password:String){
+        showLoader = true
+        auth.signIn(withEmail: email, password: password) { [weak self] result, error in
+            guard result != nil, error == nil else{
+                self?.alertText = error?.localizedDescription ?? ""
+                self?.showAlert = true
+                self?.showLoader = false
                 return
             }
-            
-            
-            self.users = documents.compactMap { document -> User? in
-                do{
-                 
-                    let user = try document.data(as: User.self)
-                    if user.name.contains(self.searchText){
-                        return user
-                    }
-                    return nil
-                }catch{
-                    print("error deconding documet into Message: \(error)")
-                    return nil
-                }
+            DispatchQueue.main.async {
+                self?.signedIn = true
+                self?.showLoader = false
+                self?.getCurrentUesr()
+                self?.getChats()
             }
+            
         }
     }
     
-    func signOut(){
-        try! auth.signOut()
-        self.signedIn = false
-    }
-    
-    func getUserUID()->String{
-        return self.auth.currentUser?.uid ?? "no UID"
+    func createFbUser(name:String, gmail:String){
+        do{
+            let newUser = User(chats: [], gmail: gmail, id: Auth.auth().currentUser?.uid ?? "\(UUID())", name: name)
+            try db.collection("users").document("\(newUser.id)").setData(from: newUser)
+        }catch{
+            print("error adding message to Firestore:: \(error)")
+        }
     }
     
     init(){
