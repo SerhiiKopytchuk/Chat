@@ -16,7 +16,7 @@ struct MessageField: View {
             CustomTextField(placeholder: Text("Enter your message here"), text: $message)
             
             Button {
-                viewModel.sendMessage(text: message, UID: viewModel.getUserUID())
+                viewModel.sendMessage(text: message)
                 message = ""
             } label: {
                 Image(systemName: "paperplane.fill")

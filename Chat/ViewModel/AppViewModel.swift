@@ -106,34 +106,11 @@ class AppViewModel: ObservableObject{
         }
     }
     
-    func getMessages(){
-        db.collection("messages").addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else{
-                print("Error fetching documets: \(String(describing: error))")
-                return
-            }
-            
-            
-            self.messages = documents.compactMap { document -> Message? in
-                do{
-                    return try document.data(as: Message.self)
-                }catch{
-                    print("error deconding documet into Message: \(error)")
-                    return nil
-                }
-            }
-            self.messages.sort{ $0.timestamp < $1.timestamp}
-            
-            if let id = self.messages.last?.id{
-                self.lastMessageId = id
-            }
-        }
-    }
     
-    func sendMessage(text: String, UID:String){
+    func sendMessage(text: String){
         do{
-            let newMessage = Message(id: "\(UUID())", text: text, senderId: UID, timestamp: Date())
-            try db.collection("messages").document().setData(from: newMessage)
+            let newMessage = Message(id: "\(UUID())", text: text, senderId: user.id, timestamp: Date())
+            try db.collection("Chats").document(self.currentChat.id).collection("messages").document().setData(from: newMessage)
         }catch{
             print("error adding message to Firestore:: \(error)")
         }
@@ -276,8 +253,6 @@ class AppViewModel: ObservableObject{
     
     init(){
         getAllUsers()
-        
-        getMessages()
         getCurrentUesr()
     }
     

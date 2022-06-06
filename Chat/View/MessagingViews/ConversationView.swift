@@ -18,7 +18,7 @@ struct ConversationView: View {
                 TitleRow(user: user)
                 ScrollViewReader{ proxy in
                     ScrollView{
-                        ForEach(viewModel.currentChat.messages ?? [Message(id: "", text: "Something was wrong", senderId: "", timestamp: Date())], id: \.id){ message in
+                        ForEach(viewModel.currentChat.messages ?? [Message(id: "", text: "Ups, something went wrong(", senderId: "", timestamp: Date())], id: \.id){ message in
                             MessageBubble(message: message)
                         }
                     }
