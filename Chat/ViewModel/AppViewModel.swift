@@ -138,6 +138,7 @@ class AppViewModel: ObservableObject{
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.getCurrentUesr()
+                self?.getChats()
             }
             
         }
@@ -159,7 +160,7 @@ class AppViewModel: ObservableObject{
         
     }
     
-    func getUesr(id:String){
+    func getUser(id:String){
         let docRef = self.db.collection("users").document(id)
         docRef.getDocument(as: User.self) { result in
           switch result {
@@ -172,6 +173,7 @@ class AppViewModel: ObservableObject{
     }
     
     func getChats(){
+        self.chats = []
         for chatId in user.chats{
             let docRef = db.collection("Chats").document(chatId)
 
@@ -197,6 +199,7 @@ class AppViewModel: ObservableObject{
             DispatchQueue.main.async {
                 self?.signedIn = true
                 self?.getCurrentUesr()
+                self?.getChats()
             }
         }
     }
@@ -211,6 +214,7 @@ class AppViewModel: ObservableObject{
                 return
             }
             DispatchQueue.main.async {
+                self?.getChats()
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.createFbUser(name: Auth.auth().currentUser?.displayName ?? "", gmail: Auth.auth().currentUser?.email ?? "")
@@ -254,6 +258,7 @@ class AppViewModel: ObservableObject{
     init(){
         getAllUsers()
         getCurrentUesr()
+        getChats()
     }
     
 }

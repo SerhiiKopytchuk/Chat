@@ -31,11 +31,11 @@ struct HomeView: View {
                         List{
                             ForEach(viewModel.chats, id: \.id){ chat in
                                 ConversationListRow(chat: chat){
-                                    viewModel.getUesr(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
+                                    viewModel.getUser(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
                                     viewModel.getCurrentChat(chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2)
                                     GoToConversation.toggle()
                                 }.onAppear{
-                                    viewModel.getUesr(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
+                                    viewModel.getUser(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
                                 }
                                 
                             } 
