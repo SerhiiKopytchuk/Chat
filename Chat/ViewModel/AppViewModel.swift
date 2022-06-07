@@ -23,6 +23,7 @@ class AppViewModel: ObservableObject{
     @Published var searchText = ""
     @Published var chats:[Chat] = []
     @Published var currentChat:Chat = Chat(id: "", user1Id: "", user2Id: "", messages: [])
+    @Published var didFindChat = false
 
     var isSignedIn:Bool{
         return auth.currentUser != nil
@@ -63,20 +64,63 @@ class AppViewModel: ObservableObject{
         }
     }
     
+    func getCurrentChat(SecondUser:User){
+        self.didFindChat = false
+        db.collection("Chats").whereField("user1Id", isEqualTo: SecondUser.id).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Error getting documents: \(error)")
+                self.didFindChat = false
+            } else {
+                for document in querySnapshot!.documents{
+                    do{
+                        self.currentChat = try document.data(as: Chat.self)
+                        self.getCurrentChat(chat: self.currentChat, userNumber: 1)
+                        self.didFindChat = true
+                    }catch{
+                        print("erorr to get Chat data")
+                        self.didFindChat = false
+                    }
+                }
+            }
+        }
+        db.collection("Chats").whereField("user2Id", isEqualTo: SecondUser.id).getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Error getting documents: \(error)")
+                self.didFindChat = false
+            } else {
+                for document in querySnapshot!.documents{
+                    do{
+                        self.currentChat = try document.data(as: Chat.self)
+                        self.getCurrentChat(chat: self.currentChat, userNumber: 2)
+                        self.didFindChat = true
+                    }catch{
+                        print("erorr to get Chat data")
+                        self.didFindChat = false
+                    }
+                }
+            }
+        }
+    
+    }
+    
     func getCurrentChat(chat: Chat, userNumber:Int){
+        
         if userNumber == 1{
             db.collection("Chats").whereField("user1Id", isEqualTo: chat.user1Id)
                 .getDocuments() { (querySnapshot, err) in
                     if let err = err {
                         print("Error getting documents: \(err)")
+                        self.didFindChat = false
                     } else {
                         
                         for document in querySnapshot!.documents {
                             do{
                                 self.currentChat = try document.data(as: Chat.self)
                                 self.getMessages(chatId: self.currentChat.id)
+                                self.didFindChat = true
                             }catch{
                                 print("erorr to get Chat data")
+                                self.didFindChat = false
                             }
                             
                         }
@@ -88,14 +132,17 @@ class AppViewModel: ObservableObject{
                     .getDocuments() { (querySnapshot, err) in
                         if let err = err {
                             print("Error getting documents: \(err)")
+                            self.didFindChat = false
                         } else {
                             
                             for document in querySnapshot!.documents {
                                 do{
                                     self.currentChat = try document.data(as: Chat.self)
                                     self.getMessages(chatId: self.currentChat.id)
+                                    self.didFindChat = true
                                 }catch{
                                     print("erorr to get Chat data")
+                                    self.didFindChat = false
                                 }
                                 
                             }
@@ -106,7 +153,6 @@ class AppViewModel: ObservableObject{
         }
     }
     
-    
     func sendMessage(text: String){
         do{
             let newMessage = Message(id: "\(UUID())", text: text, senderId: user.id, timestamp: Date())
@@ -116,10 +162,8 @@ class AppViewModel: ObservableObject{
         }
     }
     
-    
-    
     func getCurrentUesr(){
-        let docRef = self.db.collection("users").document(Auth.auth().currentUser?.uid ?? "")
+        let docRef = self.db.collection("users").document(Auth.auth().currentUser?.uid ?? "SomeId")
         
         docRef.getDocument(as: User.self) { result in
           switch result {
@@ -163,8 +207,6 @@ class AppViewModel: ObservableObject{
             }
         }
     }
-    
-   
     
     func getAllUsers(){
         db.collection("users").addSnapshotListener { querySnapshot, error in

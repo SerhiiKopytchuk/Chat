@@ -16,8 +16,8 @@ struct SearchUsersView: View {
     @State var userWithConversation = User(chats: [], gmail: "", id: "", name: "")
     
     var body: some View {
-        VStack{
-            HStack {
+        VStack(alignment: .leading){
+            HStack{
                 TextField("Search users", text: $searchText).onChange(of: searchText, perform: { newValue in
                     viewModel.searchText = newValue
                     viewModel.getAllUsers()
@@ -34,16 +34,18 @@ struct SearchUsersView: View {
                 ForEach(viewModel.users, id: \.id){ user in
                     searchUserCell(user: user.name, userGmail: user.gmail, rowTapped: {
                         self.userWithConversation = user
-                        goToConversation.toggle()
+                        viewModel.secondUser = user
+                        viewModel.getCurrentChat(SecondUser: user)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            goToConversation.toggle()
+                        }
                     })
                 }
             }
         }
         NavigationLink(isActive: $goToConversation) {
             ConversationView(user: self.userWithConversation)
-        }label: {
-            
-        }
+        }label: {}
     }
 }
 

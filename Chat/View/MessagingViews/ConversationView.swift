@@ -16,22 +16,37 @@ struct ConversationView: View {
         VStack {
             VStack{
                 TitleRow(user: user)
-                ScrollViewReader{ proxy in
-                    ScrollView{
-                        ForEach(viewModel.currentChat.messages ?? [Message(id: "", text: "Ups, something went wrong(", senderId: "", timestamp: Date())], id: \.id){ message in
-                            MessageBubble(message: message)
+                if viewModel.didFindChat{
+                    ScrollViewReader{ proxy in
+                        ScrollView{
+                            ForEach(viewModel.currentChat.messages ?? [Message(id: "", text: "Ups, something went wrong(", senderId: "", timestamp: Date())], id: \.id){ message in
+                                MessageBubble(message: message)
+                            }
                         }
+                        
+                        .padding(.top, 10)
+                        .background(.white)
+                        .cornerRadius(30, corners: [.topLeft, .topRight])
+    //                    .onChange(of: messagesManager.lastMessageId) { id in
+    //                        withAnimation {
+    //                            proxy.scrollTo(id, anchor: .bottom)
+    //                        }
+    //                    }
                     }
-                    
-                    .padding(.top, 10)
-                    .background(.white)
-                    .cornerRadius(30, corners: [.topLeft, .topRight])
-//                    .onChange(of: messagesManager.lastMessageId) { id in
-//                        withAnimation {
-//                            proxy.scrollTo(id, anchor: .bottom)
-//                        }
-//                    }
+                }else{
+                    VStack{
+                        Button {
+    //                        viewModel.startChat()
+                        } label: {
+                            Text("Start Chat")
+                                .font(.title)
+                                .padding()
+                                .background(.white)
+                                .cornerRadius(20)
+                        }
+                    }.frame(maxHeight: .infinity)
                 }
+                
             }
             .background(Color("Peach"))
             MessageField()

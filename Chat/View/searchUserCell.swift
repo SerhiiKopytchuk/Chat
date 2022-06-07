@@ -25,8 +25,10 @@ struct searchUserCell: View {
                         .font(.title)
                     Text(userGmail)
                         .font(.caption)
+                        .foregroundColor(.gray)
                 }
-            }.onTapGesture {
+            }
+            .onTapGesture {
                 rowTapped()
             }
     }
