@@ -14,6 +14,7 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @State var currentTab: Tab = .chats
     @State var GoToConversation = false
+
     
     
     init(){
@@ -30,12 +31,13 @@ struct HomeView: View {
                     VStack{
                         List{
                             ForEach(viewModel.chats, id: \.id){ chat in
+                                
                                 ConversationListRow(chat: chat){
-                                    viewModel.getUser(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
+                                    _ = viewModel.getUser(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
                                     viewModel.getCurrentChat(chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2)
                                     GoToConversation.toggle()
                                 }.onAppear{
-                                    viewModel.getUser(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
+                                    _ = viewModel.getUser(id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id)
                                 }
                                 
                             } 

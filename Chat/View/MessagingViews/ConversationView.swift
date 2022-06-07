@@ -36,7 +36,7 @@ struct ConversationView: View {
                 }else{
                     VStack{
                         Button {
-    //                        viewModel.startChat()
+                            viewModel.createChat()
                         } label: {
                             Text("Start Chat")
                                 .font(.title)

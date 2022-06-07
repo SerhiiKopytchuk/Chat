@@ -116,7 +116,7 @@ class AppViewModel: ObservableObject{
                         for document in querySnapshot!.documents {
                             do{
                                 self.currentChat = try document.data(as: Chat.self)
-                                self.getMessages(chatId: self.currentChat.id)
+                                self.getMessages(chatId: self.currentChat.id ?? "someChatId")
                                 self.didFindChat = true
                             }catch{
                                 print("erorr to get Chat data")
@@ -138,7 +138,7 @@ class AppViewModel: ObservableObject{
                             for document in querySnapshot!.documents {
                                 do{
                                     self.currentChat = try document.data(as: Chat.self)
-                                    self.getMessages(chatId: self.currentChat.id)
+                                    self.getMessages(chatId: self.currentChat.id ?? "someChatId" )
                                     self.didFindChat = true
                                 }catch{
                                     print("erorr to get Chat data")
@@ -153,13 +153,30 @@ class AppViewModel: ObservableObject{
         }
     }
     
-    func sendMessage(text: String){
+    func createChat(){
         do{
-            let newMessage = Message(id: "\(UUID())", text: text, senderId: user.id, timestamp: Date())
-            try db.collection("Chats").document(self.currentChat.id).collection("messages").document().setData(from: newMessage)
+            let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id)
+            let newMessage = Message(id: "\(UUID().uuidString)", text: "Hello!", senderId: user.id, timestamp: Date())
+            try db.collection("Chats").document().setData(from: newChat)
+            try self.db.collection("Chats").document(newChat.id ?? "someChatId").collection("messages").document().setData(from: newMessage)
+            self.currentChat = newChat
+            addChatsIdToUsers()
+            getCurrentChat(SecondUser: secondUser)
+            getChats()
         }catch{
-            print("error adding message to Firestore:: \(error)")
+            print("error creating chat to Firestore:: \(error)")
         }
+    }
+    
+    func sendMessage(text: String){
+        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
+        try? self.db.collection("Chats").document(currentChat.id ?? "SomeChatId").collection("messages").document().setData(from: newMessage)
+    }
+    
+    private func addChatsIdToUsers(){
+        db.collection("users").document(user.id).updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
+        db.collection("users").document(secondUser.id).updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
+
     }
     
     func getCurrentUesr(){
@@ -174,23 +191,41 @@ class AppViewModel: ObservableObject{
             print(error)
           }
         }
-      
-        
     }
     
-    func getUser(id:String){
+    func getUser(id:String) -> User{
         let docRef = self.db.collection("users").document(id)
+        var userToReturn:User = User(chats: [], gmail: "", id: "", name: "")
         docRef.getDocument(as: User.self) { result in
           switch result {
           case .success(let user):
               self.secondUser = user
+              userToReturn = user
           case .failure(let error):
             print(error)
           }
         }
+        return userToReturn
+    }
+    
+    func getUserByChat(chat:Chat, competition: @escaping (User)->Void){
+        
+        
+        
+        db.collection("users").document(self.user.id != chat.user1Id ? chat.user1Id  : chat.user2Id).getDocument { document, err in
+            if let err = err {
+                print("Error getting documents: \(err)")
+                self.didFindChat = false
+            } else {
+                if let locUser = try? document?.data(as: User.self) as? User{
+                    competition(locUser)
+                }
+            }
+        }
     }
     
     func getChats(){
+        
         self.chats = []
         for chatId in user.chats{
             let docRef = db.collection("Chats").document(chatId)
@@ -202,7 +237,7 @@ class AppViewModel: ObservableObject{
                     let chatFull = Chat(id: chat.id, user1Id: chat.user1Id, user2Id: chat.user2Id, messages: [])
                     self.chats.append(chatFull)
                 case .failure(let error):
-                    print("Error decoding city: \(error)")
+                    print("Error decoding chat: \(error)")
                 }
             }
         }
@@ -269,7 +304,11 @@ class AppViewModel: ObservableObject{
                 return
             }
             DispatchQueue.main.async {
+                
+                self?.getAllUsers()
+                self?.getCurrentUesr()
                 self?.getChats()
+                
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.createFbUser(name: Auth.auth().currentUser?.displayName ?? "", gmail: Auth.auth().currentUser?.email ?? "")
@@ -289,6 +328,7 @@ class AppViewModel: ObservableObject{
             DispatchQueue.main.async {
                 self?.signedIn = true
                 self?.showLoader = false
+                self?.getAllUsers()
                 self?.getCurrentUesr()
                 self?.getChats()
             }
