@@ -179,13 +179,14 @@ class AppViewModel: ObservableObject{
 
     }
     
-    func getCurrentUesr(){
+    func getCurrentUser(competition: @escaping (User)->Void){
         let docRef = self.db.collection("users").document(Auth.auth().currentUser?.uid ?? "SomeId")
         
         docRef.getDocument(as: User.self) { result in
           switch result {
           case .success(let user):
             self.user = user
+              competition(user)
               self.getChats()
           case .failure(let error):
             print(error)
@@ -288,7 +289,7 @@ class AppViewModel: ObservableObject{
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
-                self?.getCurrentUesr()
+                self?.getCurrentUser(competition: { _ in })
                 self?.getChats()
             }
         }
@@ -306,12 +307,12 @@ class AppViewModel: ObservableObject{
             DispatchQueue.main.async {
                 
                 self?.getAllUsers()
-                self?.getCurrentUesr()
+                self?.getCurrentUser(competition: { _ in })
                 self?.getChats()
                 
                 self?.signedIn = true
                 self?.showLoader = false
-                self?.createFbUser(name: Auth.auth().currentUser?.displayName ?? "", gmail: Auth.auth().currentUser?.email ?? "")
+                self?.createFbUser(name: username , gmail: Auth.auth().currentUser?.email ?? "")
             }
         }
     }
@@ -329,7 +330,7 @@ class AppViewModel: ObservableObject{
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.getAllUsers()
-                self?.getCurrentUesr()
+                self?.getCurrentUser(competition: { _ in })
                 self?.getChats()
             }
             
@@ -347,7 +348,7 @@ class AppViewModel: ObservableObject{
     
     init(){
         getAllUsers()
-        getCurrentUesr()
+        getCurrentUser(competition: { _ in })
         getChats()
     }
     

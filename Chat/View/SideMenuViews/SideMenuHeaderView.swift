@@ -11,7 +11,7 @@ struct SideMenuHeaderView: View {
     
     @Binding var isShowingSideMenu: Bool
     @EnvironmentObject var viewModel:AppViewModel
-
+    @State var user:User = User(chats: [], gmail: "", id: "", name: "")
     var body: some View {
         
         
@@ -38,10 +38,10 @@ struct SideMenuHeaderView: View {
                     .clipShape(Circle())
                     .padding(.bottom, 16)
                 
-                Text(viewModel.user.name)
+                Text(user.name)
                     .font(.system(size: 24, weight: .semibold))
                     
-                Text(viewModel.user.gmail)
+                Text(user.gmail)
                     .font(.system(size: 14 ))
                     .padding(.bottom, 24)
                 HStack{
@@ -57,6 +57,13 @@ struct SideMenuHeaderView: View {
                 }
                 Spacer()
             }.padding()
+        }
+        .onAppear{
+            self.viewModel.getCurrentUser { user in
+                withAnimation {
+                    self.user = user
+                }
+            }
         }
     }
 }
