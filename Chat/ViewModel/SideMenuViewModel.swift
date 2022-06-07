@@ -11,7 +11,7 @@ enum SideMenuViewModel: Int ,CaseIterable{
     case profile
     case bookmarks
     case searchUsers
-    case notifications
+    case subscriptions
     case logout
     
     var title: String{
@@ -19,7 +19,7 @@ enum SideMenuViewModel: Int ,CaseIterable{
         case .profile: return "Profile"
         case .bookmarks: return "Bookmarks"
         case .searchUsers: return "Search"
-        case .notifications: return "Notifications"
+        case .subscriptions: return "Subscriptions"
         case .logout: return "Logout"
         }
     }
@@ -29,7 +29,7 @@ enum SideMenuViewModel: Int ,CaseIterable{
         case .profile: return "person"
         case .bookmarks: return "bookmark"
         case .searchUsers: return "magnifyingglass"
-        case .notifications: return "bell"
+        case .subscriptions: return "star"
         case .logout: return "arrow.left.square"
         }
     }
