@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct CustomTabBar: View {
-    
+
     @Binding var currentTab: Tab
-    
+
     @State var yOfset: CGFloat = 0
     var body: some View {
-        GeometryReader{ proxy in
+        GeometryReader { proxy in
             let width = proxy.size.width
-            HStack(spacing: 0){
-                ForEach(Tab.allCases, id: \.rawValue){ tab in
+            HStack(spacing: 0) {
+                ForEach(Tab.allCases, id: \.rawValue) { tab in
                     barButton(tab: tab)
                 }
             }
@@ -31,19 +31,19 @@ struct CustomTabBar: View {
         }
         .frame(height: 30)
         .padding(.bottom, 10)
-        .padding([.horizontal,.top])
+        .padding([.horizontal, .top])
     }
-    
-    func barButton(tab:Tab)-> some View{
+
+    func barButton(tab: Tab)-> some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.2)){
+            withAnimation(.easeInOut(duration: 0.2)) {
                 currentTab = tab
                 yOfset = 60
             }
-            withAnimation(.easeInOut(duration: 0.1).delay(0.1)){
+            withAnimation(.easeInOut(duration: 0.1).delay(0.1)) {
                 yOfset = 0
             }
-            
+
         } label: {
             Image(systemName: tab.rawValue)
                 .renderingMode(.template)
@@ -55,17 +55,17 @@ struct CustomTabBar: View {
                 .scaleEffect(currentTab == tab && yOfset != 0 ? 1.5 : 1)
         }
     }
-    
-    func indicatorOffset(width: CGFloat) -> CGFloat{
+
+    func indicatorOffset(width: CGFloat) -> CGFloat {
         let index = CGFloat(getIndex())
         if index == 0 {return 0}
-        
+
         let buttonWidth = width / CGFloat(Tab.allCases.count)
-        
+
         return index * buttonWidth
     }
-    
-    func getIndex()-> Int{
+
+    func getIndex() -> Int {
         switch currentTab {
         case .chats:
             return 0

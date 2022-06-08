@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Tab: String, CaseIterable{
+enum Tab: String, CaseIterable {
     case chats = "character.bubble"
     case chanels = "fibrechannel"
 }

@@ -9,25 +9,25 @@ import SwiftUI
 
 struct ConversationListRow: View {
     // Inject properties into the struct
-    @EnvironmentObject var viewModel:AppViewModel
-    @State var person:User?
-    let chat:Chat
-    
-    let rowTapped: () -> ()
-    
+    @EnvironmentObject var viewModel: AppViewModel
+    @State var person: User?
+    let chat: Chat
+
+    let rowTapped: () -> Void
+
     var body: some View {
-        HStack{
+        HStack {
             Image(systemName: "person")
                 .padding(.trailing)
-            VStack(alignment: .leading){
-                HStack{
+            VStack(alignment: .leading) {
+                HStack {
                     Text(person?.name ?? "")
                     Spacer()
                     Text("12:34")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Text(person?.gmail ?? "")
                     .font(.caption)
                     .italic()
@@ -39,7 +39,7 @@ struct ConversationListRow: View {
             .onTapGesture {
                 rowTapped()
             }
-            .onAppear{
+            .onAppear {
                 self.viewModel.getUserByChat(chat: self.chat) { user in
                     withAnimation {
                         self.person = user
@@ -47,7 +47,5 @@ struct ConversationListRow: View {
                 }
             }
     }
-    
-
 
 }

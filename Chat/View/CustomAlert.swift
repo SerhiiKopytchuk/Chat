@@ -8,18 +8,17 @@
 import Foundation
 import SwiftUI
 
-struct customAlert:View{
-    
-    @Binding var show:Bool
-    @Binding var text:String
-    
+struct CustomAlert: View {
+
+    @Binding var show: Bool
+    @Binding var text: String
+
     @EnvironmentObject var viewModel: AppViewModel
 
-    
-    var body: some View{
-        VStack{
+    var body: some View {
+        VStack {
             Text("Error")
-                
+
                 .font(.system(.title, design: .rounded))
                 .padding()
                 .foregroundColor(.white)

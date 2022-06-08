@@ -8,39 +8,39 @@
 import SwiftUI
 import Firebase
 
-
 struct SideMenuView: View {
-    @EnvironmentObject var viewModel:AppViewModel
+    @EnvironmentObject var viewModel: AppViewModel
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
-    
+
     var body: some View {
-        ZStack{
-            LinearGradient(gradient: Gradient(colors: [.orange, .purple]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        ZStack {
+            LinearGradient(gradient:
+                            Gradient(colors: [.orange, .purple]), startPoint: .topLeading, endPoint: .bottomTrailing)
                 .ignoresSafeArea()
-            
-            VStack{
+
+            VStack {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
                     .foregroundColor(.white)
                     .frame(height: 240)
-                ForEach(SideMenuViewModel.allCases, id: \.self){ option in
-                    if option == SideMenuViewModel.searchUsers{
+                ForEach(SideMenuViewModel.allCases, id: \.self) { option in
+                    if option == SideMenuViewModel.searchUsers {
                         NavigationLink {
                             SearchUsersView()
                                 .navigationBarTitle("", displayMode: .inline)
-                            
+
 //                                .navigationBarHidden(true)
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
-                    }else{
+                    } else {
                         Button {
-                            if option == SideMenuViewModel.logout{
-                                withAnimation (){
+                            if option == SideMenuViewModel.logout {
+                                withAnimation {
                                     viewModel.signOut()
                                 }
                             }
-                            if option == SideMenuViewModel.profile{
+                            if option == SideMenuViewModel.profile {
                                 print(viewModel.users)
                             }
                         } label: {

@@ -7,20 +7,18 @@
 
 import SwiftUI
 
-
-
-struct searchUserCell: View {
-    var user:String
-    var userGmail:String
-    let rowTapped: () -> ()
+struct SearchUserCell: View {
+    var user: String
+    var userGmail: String
+    let rowTapped: () -> Void
     var body: some View {
-        
-            HStack{
+
+            HStack {
                 Image(systemName: "person.crop.circle")
                     .resizable()
                     .frame(width: 30, height: 30)
                     .padding()
-                VStack(alignment: .leading){
+                VStack(alignment: .leading) {
                     Text(user)
                         .font(.title)
                     Text(userGmail)
@@ -34,8 +32,8 @@ struct searchUserCell: View {
     }
 }
 
-struct searchUserCell_Previews: PreviewProvider {
+struct SearchUserCell_Previews: PreviewProvider {
     static var previews: some View {
-        searchUserCell(user: "Georgy", userGmail: "georgy@gmail.com", rowTapped:{})
+        SearchUserCell( user: "Georgy", userGmail: "georgy@gmail.com", rowTapped: { })
     }
 }

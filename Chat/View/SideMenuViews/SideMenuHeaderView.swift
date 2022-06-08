@@ -8,28 +8,25 @@
 import SwiftUI
 
 struct SideMenuHeaderView: View {
-    
+
     @Binding var isShowingSideMenu: Bool
-    @EnvironmentObject var viewModel:AppViewModel
-    @State var user:User = User(chats: [], gmail: "", id: "", name: "")
+    @EnvironmentObject var viewModel: AppViewModel
+    @State var user: User = User(chats: [], gmail: "", id: "", name: "")
     var body: some View {
-        
-        
 
         ZStack(alignment: .topTrailing) {
             Button {
-                withAnimation(.spring()){
+                withAnimation(.spring()) {
                     isShowingSideMenu.toggle()
                 }
             } label: {
                 Image(systemName: "xmark")
                     .frame(width: 32, height: 32)
-                    
+
                     .padding()
             }
 
-            
-            VStack(alignment: .leading){
+            VStack(alignment: .leading) {
                 Image("profileImage")
                     .resizable()
                     .scaledToFill()
@@ -37,19 +34,19 @@ struct SideMenuHeaderView: View {
                     .frame(width: 65, height: 65)
                     .clipShape(Circle())
                     .padding(.bottom, 16)
-                
+
                 Text(user.name)
                     .font(.system(size: 24, weight: .semibold))
-                    
+
                 Text(user.gmail)
                     .font(.system(size: 14 ))
                     .padding(.bottom, 24)
-                HStack{
-                    HStack{
+                HStack {
+                    HStack {
                         Text("12").bold()
                         Text("Chats")
                     }
-                    HStack{
+                    HStack {
                         Text("4").bold()
                         Text("Chanels")
                     }
@@ -58,7 +55,7 @@ struct SideMenuHeaderView: View {
                 Spacer()
             }.padding()
         }
-        .onAppear{
+        .onAppear {
             self.viewModel.getCurrentUser { user in
                 withAnimation {
                     self.user = user

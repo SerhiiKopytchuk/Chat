@@ -9,14 +9,13 @@ import SwiftUI
 import Firebase
 
 struct MainView: View {
-    
 
     @State private var isShowingSideMenu = false
     @State private var showSearchUsers = false
-        
+
     var body: some View {
         ZStack {
-            if isShowingSideMenu{
+            if isShowingSideMenu {
                 SideMenuView(isShowingSideMenu: $isShowingSideMenu, isShowingSearchUsers: $showSearchUsers)
             }
             HomeView()
@@ -24,7 +23,7 @@ struct MainView: View {
                 .offset(x: isShowingSideMenu ? 300 : 0, y: isShowingSideMenu ? 44 : 0)
                 .scaleEffect(isShowingSideMenu ? 0.8 : 1)
                 .navigationBarItems(leading: Button(action: {
-                    withAnimation(.spring()){
+                    withAnimation(.spring()) {
                         isShowingSideMenu.toggle()
                     }
                 }, label: {
@@ -32,24 +31,20 @@ struct MainView: View {
                         .foregroundColor(.black)
                 }) )
                 .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
-           
+
         }
-        .onAppear{
+        .onAppear {
             isShowingSideMenu = false
         }
         .navigationViewStyle(.columns)
-        
-        
+
     }
-    
+
 }
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
-            
+
     }
 }
-
-
-

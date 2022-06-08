@@ -13,55 +13,53 @@ import GoogleSignIn
 
 // SF Symbols
 struct SignUpView: View {
-    
-    
-    @State var fullName:String = ""
-    @State var email:String = ""
-    @State var password:String = ""
-    @State var retryPassword:String = ""
-    
+
+    @State var fullName: String = ""
+    @State var email: String = ""
+    @State var password: String = ""
+    @State var retryPassword: String = ""
+
     @State var isButtonDisabled: Bool = true
     @State var isPresentLoginView: Bool = false
-    @State var isShowingPassword:Bool = false
-    @State var isShowingRetryPassword:Bool = false
+    @State var isShowingPassword: Bool = false
+    @State var isShowingRetryPassword: Bool = false
     @State var isShowAlert = false
     @State var isShowLoader = false
     @State var alertText = ""
-    
+
     @EnvironmentObject var viewModel: AppViewModel
-    
+
     private func updateButton() {
-        let time:Double = 0.3
-        //check if enable button
-        
+        let time: Double = 0.3
+        // check if enable button
+
         withAnimation(.easeInOut(duration: time)) {
-            if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty{
+            if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty {
                 isButtonDisabled = true
-            }else{
-                if password == retryPassword{
-                    if password.count >= 8{
-                        if email.contains("@gmail.com") || email.contains("@email.com"){
+            } else {
+                if password == retryPassword {
+                    if password.count >= 8 {
+                        if email.contains("@gmail.com") || email.contains("@email.com") {
                             isButtonDisabled = false
-                        }else{
+                        } else {
                             isButtonDisabled = true
                         }
-                    }else{
+                    } else {
                         isButtonDisabled = true
                     }
-                }else{
+                } else {
                     isButtonDisabled = true
                 }
             }
         }
     }
-    
+
     var body: some View {
-        
-        
-        ZStack{
+
+        ZStack {
             VStack(spacing: 30) {
                 Spacer()
-                HStack{
+                HStack {
                     Text("Sign Up")
                         .font(.system(.largeTitle, design: .rounded))
                         .fontWeight(.bold)
@@ -70,7 +68,7 @@ struct SignUpView: View {
                         .foregroundColor(.orange)
                     Spacer()
                 }
-                Fields
+                fields
                 Spacer()
                 VStack {
                     createAccountButton
@@ -79,13 +77,9 @@ struct SignUpView: View {
                         .padding()
                         .background(isButtonDisabled ? Color.gray : Color.orange)
                         .cornerRadius(30)
-                        .shadow(color:isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
+                        .shadow(color: isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
 
-     
-                    
-                    
                     Button("Log In") {
-                        //go to login Vc
                         self.isPresentLoginView = true
                     }
                     .foregroundColor(.brown)
@@ -94,9 +88,9 @@ struct SignUpView: View {
                         .padding(.top, 50)
                         .font(.system(.title3, design: .rounded))
                         .foregroundColor(.gray)
-                    
+
                     Spacer()
-                    
+
                     googleButton
                         .foregroundColor(.brown)
                         .padding()
@@ -110,42 +104,42 @@ struct SignUpView: View {
                     Spacer()
 
                 }
-                NavigationLink(destination: SignInView(), isActive: $isPresentLoginView){}
-                    
+                NavigationLink(destination: SignInView(), isActive: $isPresentLoginView) { }
+
             }.navigationBarHidden(true).navigationBarBackButtonHidden(true)
-            
-            if isShowAlert || viewModel.showAlert{
-                GeometryReader{ geometry in
-                    if viewModel.showAlert{
-                        customAlert(show: $isShowAlert, text: $viewModel.alertText)
+
+            if isShowAlert || viewModel.showAlert {
+                GeometryReader { geometry in
+                    if viewModel.showAlert {
+                        CustomAlert(show: $isShowAlert, text: $viewModel.alertText)
                             .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    }else{
-                        customAlert(show: $isShowAlert, text: $alertText)
+                    } else {
+                        CustomAlert(show: $isShowAlert, text: $alertText)
                             .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                     }
-                     
+
                 }.background(Color.white.opacity(0.65))
                     .edgesIgnoringSafeArea(.all)
-                
+
             }
-            
-            if viewModel.showLoader{
+
+            if viewModel.showLoader {
                 withAnimation {
-                    GeometryReader{ reader in
+                    GeometryReader { reader in
                         Loader()
-                            .position(x: reader.size.width/2, y:  reader.size.height/2)
+                            .position(x: reader.size.width/2, y: reader.size.height/2)
                     }.background(Color.black.opacity(0.45).edgesIgnoringSafeArea(.all))
                 }
             }
-           
+
         }
-            
+
     }
-    
-    @ViewBuilder var Fields: some View{
-        VStack{
+
+    @ViewBuilder var fields: some View {
+        VStack {
             Group {
-                HStack{
+                HStack {
                     Image(systemName: "person")
                         .foregroundColor(.gray)
                     TextField("Full Name", text: $fullName)
@@ -154,7 +148,7 @@ struct SignUpView: View {
                             updateButton()
                         }
                 }
-                HStack{
+                HStack {
                     Image(systemName: "mail")
                         .foregroundColor(.gray)
                     TextField("Email", text: $email)
@@ -164,11 +158,11 @@ struct SignUpView: View {
                             updateButton()
                         }
                 }
-                HStack{
+                HStack {
                     Image(systemName: "lock")
                         .foregroundColor(.gray)
-                    if self.isShowingPassword{
-                            
+                    if self.isShowingPassword {
+
                         TextField("Password", text: $password)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
@@ -181,7 +175,7 @@ struct SignUpView: View {
                             Image(systemName: "eye.slash")
                                 .foregroundColor(.gray)
                         }
-                    }else{
+                    } else {
                         SecureField("Password", text: $password)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
@@ -196,11 +190,11 @@ struct SignUpView: View {
                         }
                     }
                 }
-                HStack{
+                HStack {
                     Image(systemName: "lock")
                         .foregroundColor(.gray)
-                    if self.isShowingRetryPassword{
-                      
+                    if self.isShowingRetryPassword {
+
                         TextField("Re-enter", text: $retryPassword)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
@@ -213,7 +207,7 @@ struct SignUpView: View {
                             Image(systemName: "eye.slash")
                                 .foregroundColor(.gray)
                         }
-                    }else{
+                    } else {
                         SecureField("Re-enter", text: $retryPassword)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
@@ -227,7 +221,7 @@ struct SignUpView: View {
                                 .foregroundColor(.gray)
                         }
                     }
-                   
+
                 }
             }
             .padding()
@@ -241,33 +235,32 @@ struct SignUpView: View {
             )
         }
     }
-    
-    
-    var createAccountButton: some View{
-        Button("Create Account"){
-            if isButtonDisabled{
+
+    var createAccountButton: some View {
+        Button("Create Account") {
+            if isButtonDisabled {
                 withAnimation(.easeInOut) {
                     alertText = "Fill all fields properly!"
                     isShowAlert.toggle()
                 }
-                
-            }else{
+
+            } else {
                 viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
             }
         }
     }
-    
-    var googleButton: some View{
+
+    var googleButton: some View {
         Button {
-            //handle singin
-            
+            // handle singin
+
             guard let clientID = FirebaseApp.app()?.options.clientID else { return }
 
             // Create Google Sign In configuration object.
             let config = GIDConfiguration(clientID: clientID)
-            
-            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()){[self] user, error in
-                
+
+            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
+
                 if error != nil {
                    return
                  }
@@ -278,10 +271,10 @@ struct SignUpView: View {
                  else {
                    return
                  }
-                
+
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                  accessToken: authentication.accessToken)
-                
+
                 viewModel.signIn(credential: credential)
             }
         } label: {
@@ -298,7 +291,3 @@ struct SignUpView_Previews: PreviewProvider {
 .previewInterfaceOrientation(.portrait)
     }
 }
-
-
-
-

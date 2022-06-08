@@ -8,34 +8,34 @@
 import SwiftUI
 
 struct SearchUsersView: View {
-    
-    @EnvironmentObject var viewModel:AppViewModel
+
+    @EnvironmentObject var viewModel: AppViewModel
     @State var showSearchBar = false
     @State var searchText = ""
     @State var goToConversation = false
     @State var userWithConversation = User(chats: [], gmail: "", id: "", name: "")
-    
+
     var body: some View {
-        VStack(alignment: .leading){
-            HStack{
+        VStack(alignment: .leading) {
+            HStack {
                 TextField("Search users", text: $searchText).onChange(of: searchText, perform: { newValue in
                     viewModel.searchText = newValue
                     viewModel.getAllUsers()
                 })
                     .textFieldStyle(DefaultTextFieldStyle())
-                    
+
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                     .frame(width: 50, height: 50)
-                
+
             }
             .padding()
-            List{
-                ForEach(viewModel.users, id: \.id){ user in
-                    searchUserCell(user: user.name, userGmail: user.gmail, rowTapped: {
+            List {
+                ForEach(viewModel.users, id: \.id) { user in
+                    SearchUserCell(user: user.name, userGmail: user.gmail, rowTapped: {
                         self.userWithConversation = user
                         viewModel.secondUser = user
-                        viewModel.getCurrentChat(SecondUser: user)
+                        viewModel.getCurrentChat(secondUser: user)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             goToConversation.toggle()
                         }

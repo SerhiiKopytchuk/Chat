@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct MessageBubble: View {
-    
+
     var message: Message
     @State private var showTime = false
-    @EnvironmentObject var viewModel:AppViewModel
-    
+    @EnvironmentObject var viewModel: AppViewModel
+
     var body: some View {
-        VStack(alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing){
-            HStack{
+        VStack(alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing) {
+            HStack {
                 Text(message.text)
                     .padding()
                     .background(message.senderId != viewModel.getUserUID() ? Color("Gray") : Color("Peach"))
@@ -25,8 +25,8 @@ struct MessageBubble: View {
             .onTapGesture {
                 showTime.toggle()
             }
-            
-            if showTime{
+
+            if showTime {
                 Text("\(message.timestamp.formatted(.dateTime.hour().minute()))")
                     .font(.caption2)
                     .foregroundColor(.gray)
@@ -41,7 +41,13 @@ struct MessageBubble: View {
 
 struct MessageBubble_Previews: PreviewProvider {
     static var previews: some View {
-        MessageBubble(message: Message(id: "1243`", text: "I've been coding chat app, that so interestion", senderId: "false", timestamp: Date()))
+        MessageBubble(message:
+                        Message(id: "1243`",
+                                text: "I've been coding chat app, that so interestion",
+                                senderId: "false",
+                                timestamp: Date()
+                               )
+        )
             .environmentObject(AppViewModel())
     }
 }

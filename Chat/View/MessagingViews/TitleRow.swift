@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct TitleRow: View {
-    var user:User
+    var user: User
+
+    // swiftlint:disable:next line_length
     var imageURL = URL(string: "https://images.unsplash.com/photo-1653762383590-1196972043fe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80")
     var name = "Sarah Smith"
-    
+
     var body: some View {
-        HStack(spacing: 20){
+        HStack(spacing: 20) {
             AsyncImage(url: imageURL) { image in
                 image.resizable()
                     .aspectRatio(contentMode: .fill)
@@ -24,14 +24,14 @@ struct TitleRow: View {
             } placeholder: {
                 ProgressView()
             }
-            VStack(alignment: .leading){
+            VStack(alignment: .leading) {
                 Text(user.name)
                     .font(.title).bold()
-                  
+
                 Text("Online")
                     .font(.caption)
                     .foregroundColor(.gray)
-                
+
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Image(systemName: "phone.fill")
@@ -50,4 +50,3 @@ struct TitleRow_Previews: PreviewProvider {
             .background(Color("Peach"))
     }
 }
-

@@ -6,18 +6,11 @@
 //
 
 import Foundation
-//import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-struct Chat: Codable, Identifiable{
+struct Chat: Codable, Identifiable {
     @DocumentID var id = "\(UUID())"
-    var user1Id:String
-    var user2Id:String
-    var messages:[Message]?
+    var user1Id: String
+    var user2Id: String
+    var messages: [Message]?
 }
-
-//struct ChatPart: Codable, Identifiable{
-//    var id:String
-//    var user1Id:String
-//    var user2Id:String
-//}

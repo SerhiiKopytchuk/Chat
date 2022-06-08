@@ -9,12 +9,12 @@ import SwiftUI
 
 struct MessageField: View {
     @State private var message = ""
-    @EnvironmentObject var viewModel:AppViewModel
-    
+    @EnvironmentObject var viewModel: AppViewModel
+
     var body: some View {
-        HStack{
+        HStack {
             CustomTextField(placeholder: Text("Enter your message here"), text: $message)
-            
+
             Button {
                 viewModel.sendMessage(text: message)
                 message = ""
@@ -42,15 +42,15 @@ struct MessageField_Previews: PreviewProvider {
     }
 }
 
-struct CustomTextField: View{
+struct CustomTextField: View {
     var placeholder: Text
     @Binding var text: String
-    var editingChanged: (Bool) -> () = {_ in }
-    var commit: () -> () = {}
-    
-    var body: some View{
-        ZStack(alignment: .leading){
-            if text.isEmpty{
+    var editingChanged: (Bool) -> Void = {_ in }
+    var commit: () -> Void = {}
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            if text.isEmpty {
                 placeholder
                     .opacity(0.5)
             }
@@ -58,4 +58,3 @@ struct CustomTextField: View{
         }
     }
 }
-

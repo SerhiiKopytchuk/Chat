@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct User: Identifiable, Codable{
-    var chats:[String]
-    var gmail:String
-    var id:String
-    var name:String
+struct User: Identifiable, Codable {
+    var chats: [String]
+    var gmail: String
+    var id: String
+    var name: String
 }

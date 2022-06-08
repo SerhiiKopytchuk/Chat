@@ -12,30 +12,27 @@ import Firebase
 
 // SF Symbols
 struct RootView: View {
-    
-    @EnvironmentObject var viewModel:AppViewModel
-    
+
+    @EnvironmentObject var viewModel: AppViewModel
+
     var body: some View {
-        
-        NavigationView{
-            VStack{
-                if viewModel.signedIn{
+
+        NavigationView {
+            VStack {
+                if viewModel.signedIn {
                     MainView()
                         .navigationViewStyle(.stack)
                         .navigationBarTitle("Chats")
-                        
-                }else{
-                    SignUpView()        
+
+                } else {
+                    SignUpView()
                 }
             }
             .navigationBarBackButtonHidden(true)
         }
         .accentColor(.orange)
-        .onAppear{
+        .onAppear {
             viewModel.signedIn = viewModel.isSignedIn
         }
     }
 }
-
-
-
