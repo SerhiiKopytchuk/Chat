@@ -58,7 +58,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func getCurrentChat( secondUser: User) {
+    func getCurrentChat( secondUser: User, competition: @escaping (Chat) -> Void) {
         self.didFindChat = false
         dataBase.collection("Chats")
             .whereField("user1Id", isEqualTo: secondUser.id)
@@ -71,7 +71,9 @@ class AppViewModel: ObservableObject {
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
-                        self.getCurrentChat(chat: self.currentChat, userNumber: 1)
+                        self.getCurrentChat(chat: self.currentChat, userNumber: 1) { chat in
+                            competition(chat)
+                        }
                         self.didFindChat = true
                     } catch {
                         print("erorr to get Chat data")
@@ -91,7 +93,9 @@ class AppViewModel: ObservableObject {
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
-                        self.getCurrentChat(chat: self.currentChat, userNumber: 2)
+                        self.getCurrentChat(chat: self.currentChat, userNumber: 2) { chat in
+                            competition(chat)
+                        }
                         self.didFindChat = true
                     } catch {
                         print("erorr to get Chat data")
@@ -102,10 +106,11 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func getCurrentChat(chat: Chat, userNumber: Int) {
+    func getCurrentChat(chat: Chat, userNumber: Int, competition: @escaping (Chat) -> Void) {
         if userNumber == 1 {
             dataBase.collection("Chats")
                 .whereField("user1Id", isEqualTo: chat.user1Id)
+                .whereField("user2Id", isEqualTo: chat.user2Id)
                 .getDocuments {querySnapshot, err in
                     if let err = err {
                         print("Error getting documents: \(err)")
@@ -114,6 +119,7 @@ class AppViewModel: ObservableObject {
                         for document in querySnapshot!.documents {
                             do {
                                 self.currentChat = try document.data(as: Chat.self)
+                                competition(self.currentChat)
                                 self.getMessages(chatId: self.currentChat.id ?? "someChatId")
                                 self.didFindChat = true
                             } catch {
@@ -125,7 +131,9 @@ class AppViewModel: ObservableObject {
                 }
         } else {
             if userNumber == 2 {
-                dataBase.collection("Chats").whereField("user2Id", isEqualTo: chat.user2Id)
+                dataBase.collection("Chats")
+                    .whereField("user1Id", isEqualTo: chat.user1Id)
+                    .whereField("user2Id", isEqualTo: chat.user2Id)
                     .getDocuments { (querySnapshot, err) in
                         if let err = err {
                             print("Error getting documents: \(err)")
@@ -134,6 +142,7 @@ class AppViewModel: ObservableObject {
                             for document in querySnapshot!.documents {
                                 do {
                                     self.currentChat = try document.data(as: Chat.self)
+                                    competition(self.currentChat)
                                     self.getMessages(chatId: self.currentChat.id ?? "someChatId" )
                                     self.didFindChat = true
                                 } catch {
@@ -150,14 +159,17 @@ class AppViewModel: ObservableObject {
     func createChat() {
         do {
             let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id)
-            let newMessage = Message(id: "\(UUID().uuidString)", text: "Hello!", senderId: user.id, timestamp: Date())
+//            let newMessage = Message(id: "\(UUID().uuidString)", text: "Hello!", senderId: user.id, timestamp: Date())
             try dataBase.collection("Chats").document().setData(from: newChat)
-            try self.dataBase.collection("Chats").document(newChat.id ?? "someChatId").collection("messages")
-                .document().setData(from: newMessage)
-            self.currentChat = newChat
-            addChatsIdToUsers()
-            getCurrentChat(secondUser: secondUser)
-            getChats()
+//            try self.dataBase.collection("Chats").document(newChat.id ?? "someChatId").collection("messages")
+//                .document().setData(from: newMessage)
+//            self.currentChat = newChat
+
+            getCurrentChat(secondUser: secondUser) { chat in
+                self.currentChat = chat
+                self.addChatsIdToUsers()
+                self.getChats()
+            }
         } catch {
             print("error creating chat to Firestore:: \(error)")
         }

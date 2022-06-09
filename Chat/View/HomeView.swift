@@ -34,9 +34,11 @@ struct HomeView: View {
                                     _ = viewModel.getUser(
                                         id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
                                     )
+
                                     viewModel.getCurrentChat(
                                         chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
-                                    )
+                                    ) { _ in }
+
                                     goToConversation.toggle()
                                 }.onAppear {
                                     _ = viewModel.getUser(
