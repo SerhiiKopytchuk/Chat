@@ -6,16 +6,33 @@
 //
 
 import SwiftUI
+import Firebase
+// Apple HIG
+// Apple Human Interface Guidelines
 
+// SF Symbols
 struct RootView: View {
-    var body: some View {
-        Text("Hello, world!")
-            .padding()
-    }
-}
 
-struct RootView_Previews: PreviewProvider {
-    static var previews: some View {
-        RootView()
+    @EnvironmentObject var viewModel: AppViewModel
+
+    var body: some View {
+
+        NavigationView {
+            VStack {
+                if viewModel.signedIn {
+                    MainView()
+                        .navigationViewStyle(.stack)
+                        .navigationBarTitle("Chats")
+
+                } else {
+                    SignUpView()
+                }
+            }
+            .navigationBarBackButtonHidden(true)
+        }
+        .accentColor(.orange)
+        .onAppear {
+            viewModel.signedIn = viewModel.isSignedIn
+        }
     }
 }
