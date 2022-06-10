@@ -9,40 +9,43 @@ import SwiftUI
 
 struct ConversationListRow: View {
     // Inject properties into the struct
-    let name: String
-    let textMessage:String
-    let time:String
-    
-    let rowTapped: () -> ()
+    @EnvironmentObject var viewModel: AppViewModel
+    @State var person: User?
+    let chat: Chat
+
+    let rowTapped: () -> Void
 
     var body: some View {
-        HStack{
+        HStack {
             Image(systemName: "person")
                 .padding(.trailing)
-            VStack(alignment: .leading){
-                HStack{
-                    Text(name)
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(person?.name ?? "")
                     Spacer()
-                    Text(time)
+                    Text("12:34")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
-                Text(textMessage)
+
+                Text(person?.gmail ?? "")
                     .font(.caption)
                     .italic()
                     .foregroundColor(.secondary)
             }
-        }.frame(maxWidth: .infinity, alignment: .leading)
+        }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 40)
             .onTapGesture {
                 rowTapped()
             }
+            .onAppear {
+                self.viewModel.getUserByChat(chat: self.chat) { user in
+                    withAnimation {
+                        self.person = user
+                    }
+                }
+            }
     }
-}
 
-struct ConversationListRow_Previews: PreviewProvider {
-    static var previews: some View {
-        ConversationListRow(name: "Serhii", textMessage: "some message", time: "12:45", rowTapped: { print("tapped") })
-    }
 }
