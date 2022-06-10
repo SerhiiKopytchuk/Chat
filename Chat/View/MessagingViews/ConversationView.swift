@@ -21,7 +21,7 @@ struct ConversationView: View {
                             ForEach(
                                 viewModel.currentChat.messages ??
                                 [
-                                    Message(id: "", text: "Ups, something went wrong(", senderId: "", timestamp: Date())
+                                    Message(id: "", text: "", senderId: "", timestamp: Date())
                                 ],
                                 id: \.id) { message in
                                 MessageBubble(message: message)

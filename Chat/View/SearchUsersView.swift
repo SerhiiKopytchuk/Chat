@@ -36,7 +36,7 @@ struct SearchUsersView: View {
                         self.userWithConversation = user
                         viewModel.secondUser = user
                         viewModel.getCurrentChat(secondUser: user) { _ in }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                             goToConversation.toggle()
                         }
                     })

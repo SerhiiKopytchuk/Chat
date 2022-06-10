@@ -159,11 +159,8 @@ class AppViewModel: ObservableObject {
     func createChat() {
         do {
             let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id)
-//            let newMessage = Message(id: "\(UUID().uuidString)", text: "Hello!", senderId: user.id, timestamp: Date())
+
             try dataBase.collection("Chats").document().setData(from: newChat)
-//            try self.dataBase.collection("Chats").document(newChat.id ?? "someChatId").collection("messages")
-//                .document().setData(from: newMessage)
-//            self.currentChat = newChat
 
             getCurrentChat(secondUser: secondUser) { chat in
                 self.currentChat = chat
@@ -281,6 +278,7 @@ class AppViewModel: ObservableObject {
     func signOut() {
         try? auth.signOut()
         self.signedIn = false
+        self.chats = []
     }
 
     func signIn(credential: AuthCredential) {
@@ -291,7 +289,6 @@ class AppViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self?.signedIn = true
                 self?.getCurrentUser(competition: { _ in })
-                self?.getChats()
             }
         }
     }
@@ -309,7 +306,6 @@ class AppViewModel: ObservableObject {
 
                 self?.getAllUsers()
                 self?.getCurrentUser(competition: { _ in })
-                self?.getChats()
 
                 self?.signedIn = true
                 self?.showLoader = false
@@ -332,7 +328,6 @@ class AppViewModel: ObservableObject {
                 self?.showLoader = false
                 self?.getAllUsers()
                 self?.getCurrentUser(competition: { _ in })
-                self?.getChats()
             }
         }
     }

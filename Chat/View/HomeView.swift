@@ -30,7 +30,7 @@ struct HomeView: View {
                         List {
                             ForEach(viewModel.chats, id: \.id) { chat in
 
-                                ConversationListRow(chat: chat) {
+                                ConversationListRow(chat: chat) {d
                                     _ = viewModel.getUser(
                                         id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
                                     )
@@ -38,14 +38,10 @@ struct HomeView: View {
                                     viewModel.getCurrentChat(
                                         chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
                                     ) { _ in }
-
-                                    goToConversation.toggle()
-                                }.onAppear {
-                                    _ = viewModel.getUser(
-                                        id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                                    )
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        goToConversation.toggle()
+                                    }
                                 }
-
                             }
                         }
 
