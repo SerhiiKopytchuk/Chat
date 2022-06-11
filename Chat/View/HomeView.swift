@@ -40,7 +40,7 @@ struct HomeView: View {
                                     viewModel.getCurrentChat(
                                         chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
                                     ) { _ in }
-                                    
+
                                 }
                             }
                         }
