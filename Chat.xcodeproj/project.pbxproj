@@ -134,10 +134,9 @@
 		400142F3282EBAB900E5D497 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4039A6602854A01D00C74377 /* authetication */,
 				400142E7282EBA8400E5D497 /* RootView.swift */,
-				405FD37E282FEFD200361396 /* SignInView.swift */,
 				408E26112832C44800CE108E /* MainView.swift */,
-				4056D63A2833D8E8000A0872 /* SingUpView.swift */,
 				4056D6402834024B000A0872 /* ConversationListRow.swift */,
 				4024EB00283802130082E739 /* CustomAlert.swift */,
 				40C3A105283AA2DB00A9683A /* SideMenuViews */,
@@ -169,6 +168,15 @@
 				406DC3A4284C8F6500A41964 /* Chat.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		4039A6602854A01D00C74377 /* authetication */ = {
+			isa = PBXGroup;
+			children = (
+				405FD37E282FEFD200361396 /* SignInView.swift */,
+				4056D63A2833D8E8000A0872 /* SingUpView.swift */,
+			);
+			path = authetication;
 			sourceTree = "<group>";
 		};
 		406DC3A3284C8E1400A41964 /* MessagingViews */ = {
