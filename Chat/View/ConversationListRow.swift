@@ -11,6 +11,8 @@ struct ConversationListRow: View {
     // Inject properties into the struct
     @EnvironmentObject var viewModel: AppViewModel
     @State var person: User?
+    @State var message = Message(id: "", text: "", senderId: "", timestamp: Date())
+    let formater = DateFormatter()
     let chat: Chat
 
     let rowTapped: () -> Void
@@ -23,12 +25,12 @@ struct ConversationListRow: View {
                 HStack {
                     Text(person?.name ?? "")
                     Spacer()
-                    Text("12:34")
+                    Text("\(message.timestamp.formatted(.dateTime.hour().minute()))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
 
-                Text(person?.gmail ?? "")
+                Text(message.text )
                     .font(.caption)
                     .italic()
                     .foregroundColor(.secondary)
@@ -43,6 +45,11 @@ struct ConversationListRow: View {
                 self.viewModel.getUserByChat(chat: self.chat) { user in
                     withAnimation {
                         self.person = user
+                    }
+                }
+                self.viewModel.getMessages(chatId: chat.id ?? "someId") { messages in
+                    withAnimation {
+                        self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
                     }
                 }
             }

@@ -36,22 +36,26 @@ class AppViewModel: ObservableObject {
     // published mean broadcast
     let dataBase = Firestore.firestore()
 
-    func getMessages(chatId: String) {
-    dataBase.collection("Chats").document(chatId).collection("messages").addSnapshotListener { querySnapshot, error in
+    func getMessages(chatId: String, competition: @escaping ([Message]) -> Void) {
+        var messages: [Message] = []
+        dataBase.collection("Chats").document(chatId).collection("messages")
+            .addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 print("Error fetching documets: \(String(describing: error))")
                 return
             }
-        self.currentChat.messages = documents.compactMap { document -> Message? in
+            self.currentChat.messages = documents.compactMap { document -> Message? in
                 do {
+                    messages.append(try document.data(as: Message.self))
                     return try document.data(as: Message.self)
                 } catch {
                     print("error deconding documet into Message: \(error)")
                     return nil
                 }
             }
-        self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
-
+            self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
+            messages.sort {$0.timestamp < $1.timestamp }
+            competition(messages)
             if let id = self.currentChat.messages?.last?.id {
                 self.lastMessageId = id
             }
@@ -120,7 +124,7 @@ class AppViewModel: ObservableObject {
                             do {
                                 self.currentChat = try document.data(as: Chat.self)
                                 competition(self.currentChat)
-                                self.getMessages(chatId: self.currentChat.id ?? "someChatId")
+                                self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
                                 self.didFindChat = true
                             } catch {
                                 print("erorr to get Chat data")
@@ -143,7 +147,7 @@ class AppViewModel: ObservableObject {
                                 do {
                                     self.currentChat = try document.data(as: Chat.self)
                                     competition(self.currentChat)
-                                    self.getMessages(chatId: self.currentChat.id ?? "someChatId" )
+                                    self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
                                     self.didFindChat = true
                                 } catch {
                                     print("erorr to get Chat data")
