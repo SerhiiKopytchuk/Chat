@@ -18,6 +18,9 @@
 		4024EB0928382B190082E739 /* SideMenuOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0828382B190082E739 /* SideMenuOptionView.swift */; };
 		4024EB0B28382D960082E739 /* SideMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0A28382D960082E739 /* SideMenuViewModel.swift */; };
 		4024EB0F28393CF40082E739 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0E28393CF40082E739 /* HomeView.swift */; };
+		4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6612854B4F000C74377 /* ImagePicker.swift */; };
+		4039A6652854BB9600C74377 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 4039A6642854BB9600C74377 /* FirebaseStorage */; };
+		4039A6672854BDAA00C74377 /* ImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6662854BDAA00C74377 /* ImageViewModel.swift */; };
 		4056D63B2833D8E8000A0872 /* SingUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63A2833D8E8000A0872 /* SingUpView.swift */; };
 		4056D63D2833DD17000A0872 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63C2833DD17000A0872 /* AppViewModel.swift */; };
 		4056D6412834024B000A0872 /* ConversationListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D6402834024B000A0872 /* ConversationListRow.swift */; };
@@ -54,6 +57,8 @@
 		4024EB0828382B190082E739 /* SideMenuOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuOptionView.swift; sourceTree = "<group>"; };
 		4024EB0A28382D960082E739 /* SideMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuViewModel.swift; sourceTree = "<group>"; };
 		4024EB0E28393CF40082E739 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		4039A6612854B4F000C74377 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		4039A6662854BDAA00C74377 /* ImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewModel.swift; sourceTree = "<group>"; };
 		4056D63A2833D8E8000A0872 /* SingUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingUpView.swift; sourceTree = "<group>"; };
 		4056D63C2833DD17000A0872 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		4056D6402834024B000A0872 /* ConversationListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListRow.swift; sourceTree = "<group>"; };
@@ -82,6 +87,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				40C3A103283A94E500A9683A /* GoogleSignIn in Frameworks */,
+				4039A6652854BB9600C74377 /* FirebaseStorage in Frameworks */,
 				40EF997728474E730062612E /* FirebaseAuth in Frameworks */,
 				40EF997928474E730062612E /* FirebaseFirestoreSwift in Frameworks */,
 			);
@@ -155,6 +161,8 @@
 			children = (
 				4056D63C2833DD17000A0872 /* AppViewModel.swift */,
 				4024EB0A28382D960082E739 /* SideMenuViewModel.swift */,
+				4039A6612854B4F000C74377 /* ImagePicker.swift */,
+				4039A6662854BDAA00C74377 /* ImageViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -221,6 +229,7 @@
 				40C3A102283A94E500A9683A /* GoogleSignIn */,
 				40EF997628474E730062612E /* FirebaseAuth */,
 				40EF997828474E730062612E /* FirebaseFirestoreSwift */,
+				4039A6642854BB9600C74377 /* FirebaseStorage */,
 			);
 			productName = Chat;
 			productReference = 400142E2282EBA8400E5D497 /* Chat.app */;
@@ -253,6 +262,7 @@
 			packageReferences = (
 				40C3A101283A94E500A9683A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				40EF997528474E730062612E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				4039A6632854BB9600C74377 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 400142E3282EBA8400E5D497 /* Products */;
 			projectDirPath = "";
@@ -305,6 +315,7 @@
 				406DC3A2284C8B5E00A41964 /* SearchUserCell.swift in Sources */,
 				4056D63B2833D8E8000A0872 /* SingUpView.swift in Sources */,
 				40EF996828474B6F0062612E /* MessageField.swift in Sources */,
+				4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */,
 				4024EB0F28393CF40082E739 /* HomeView.swift in Sources */,
 				409AC7642849E9A300BD00F9 /* SearchUsersView.swift in Sources */,
 				4076E0AD283FB54A00E21131 /* LoaderView.swift in Sources */,
@@ -315,6 +326,7 @@
 				4024EB01283802130082E739 /* CustomAlert.swift in Sources */,
 				4024EB0928382B190082E739 /* SideMenuOptionView.swift in Sources */,
 				40EF996628474AA60062612E /* Extensions.swift in Sources */,
+				4039A6672854BDAA00C74377 /* ImageViewModel.swift in Sources */,
 				40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */,
 				40EF9964284748250062612E /* MessageBubble.swift in Sources */,
 				4024EB0728382B030082E739 /* SideMenuHeaderView.swift in Sources */,
@@ -538,6 +550,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4039A6632854BB9600C74377 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		40C3A101283A94E500A9683A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -557,6 +577,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4039A6642854BB9600C74377 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 40EF997528474E730062612E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
 		40C3A102283A94E500A9683A /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 40C3A101283A94E500A9683A /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;

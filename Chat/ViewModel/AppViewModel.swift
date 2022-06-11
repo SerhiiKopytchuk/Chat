@@ -298,7 +298,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func signUp(username: String, email: String, password: String) {
+    func signUp(username: String, email: String, password: String, competition: @escaping (Bool) -> Void) {
         showLoader = true
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else {
@@ -315,6 +315,7 @@ class AppViewModel: ObservableObject {
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.createFbUser(name: username, gmail: Auth.auth().currentUser?.email ?? "")
+                competition(true)
             }
         }
     }

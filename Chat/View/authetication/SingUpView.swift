@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import GoogleSignIn
+import FirebaseStorage
 // Apple HIG
 // Apple Human Interface Guidelines
 
@@ -26,8 +27,11 @@ struct SignUpView: View {
     @State var isShowAlert = false
     @State var isShowLoader = false
     @State var alertText = ""
+    @State var isShowingImagePicker = false
+    @State var image: UIImage?
 
     @EnvironmentObject var viewModel: AppViewModel
+    @ObservedObject var imageViewModel = ImageViewModel()
 
     private func updateButton() {
         let time: Double = 0.3
@@ -68,6 +72,44 @@ struct SignUpView: View {
                         .foregroundColor(.orange)
                     Spacer()
                 }
+                Button {
+                    isShowingImagePicker.toggle()
+                } label: {
+                    if let image = self.image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .scaledToFill()
+                            .cornerRadius(50)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 50)
+                                    .stroke(.black, lineWidth: 3)
+                                    .shadow(radius: 10)
+                            )
+
+                    } else {
+                        ZStack {
+                            Image(systemName: "person.crop.circle")
+                                .resizable()
+                                .frame(width: 100, height: 100)
+                                .foregroundColor(.gray)
+                            VStack(alignment: .trailing) {
+                                Spacer()
+                                HStack {
+                                    Spacer()
+                                    Image(systemName: "photo.circle")
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                        .background(.gray)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(30)
+                                }
+                            }
+
+                        }
+                    }
+                }.frame(width: 100, height: 100)
+
                 fields
                 Spacer()
                 VStack {
@@ -84,12 +126,11 @@ struct SignUpView: View {
                     }
                     .foregroundColor(.brown)
                     .padding(.top, 20)
+
                     Text("OR")
-                        .padding(.top, 50)
+                        .padding(.top, 10)
                         .font(.system(.title3, design: .rounded))
                         .foregroundColor(.gray)
-
-                    Spacer()
 
                     googleButton
                         .foregroundColor(.brown)
@@ -100,7 +141,7 @@ struct SignUpView: View {
                         )
                         .background(.clear)
                         .cornerRadius(35)
-                        .padding(.top, 50)
+                        .padding(.top, 10)
                     Spacer()
 
                 }
@@ -133,7 +174,9 @@ struct SignUpView: View {
             }
 
         }
-
+        .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
+            ImagePicker(image: $image)
+        }
     }
 
     @ViewBuilder var fields: some View {
@@ -245,7 +288,10 @@ struct SignUpView: View {
                 }
 
             } else {
-                viewModel.signUp(username: self.fullName, email: self.email, password: self.password)
+                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { _ in
+                    imageViewModel.saveImage(image: self.image ?? UIImage())
+                }
+
             }
         }
     }
@@ -283,6 +329,7 @@ struct SignUpView: View {
                 .frame(width: 32, height: 32)
         }
     }
+
 }
 
 struct SignUpView_Previews: PreviewProvider {
