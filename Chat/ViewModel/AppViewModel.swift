@@ -320,7 +320,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func signIn(email: String, password: String) {
+    func signIn(email: String, password: String, competition: @escaping (User) -> Void ) {
         showLoader = true
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else {
@@ -333,7 +333,9 @@ class AppViewModel: ObservableObject {
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.getAllUsers()
-                self?.getCurrentUser(competition: { _ in })
+                self?.getCurrentUser(competition: { user in
+                    competition(user)
+                })
             }
         }
     }
@@ -351,5 +353,6 @@ class AppViewModel: ObservableObject {
         getAllUsers()
         getCurrentUser(competition: { _ in })
         getChats()
+        ImageViewModel().getMyImage()
     }
 }

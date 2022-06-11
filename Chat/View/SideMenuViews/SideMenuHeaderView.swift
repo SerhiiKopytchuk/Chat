@@ -11,6 +11,7 @@ struct SideMenuHeaderView: View {
 
     @Binding var isShowingSideMenu: Bool
     @EnvironmentObject var viewModel: AppViewModel
+    @State var imageViewModel = ImageViewModel()
     @State var user: User = User(chats: [], gmail: "", id: "", name: "")
     var body: some View {
 
@@ -27,7 +28,7 @@ struct SideMenuHeaderView: View {
             }
 
             VStack(alignment: .leading) {
-                Image("profileImage")
+                Image(uiImage: imageViewModel.myImage)
                     .resizable()
                     .scaledToFill()
                     .clipped()
@@ -68,5 +69,6 @@ struct SideMenuHeaderView: View {
 struct SideMenuHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         SideMenuHeaderView(isShowingSideMenu: .constant(true))
+            .environmentObject(AppViewModel())
     }
 }

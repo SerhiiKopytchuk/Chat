@@ -13,7 +13,7 @@ import FirebaseAuth
 class ImageViewModel: ObservableObject {
 
     @Published var imageURL: String?
-    @Published var myImage: UIImage?
+    @Published var myImage = UIImage()
 
     func saveImage(image: UIImage) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -39,6 +39,19 @@ class ImageViewModel: ObservableObject {
                 competition(image ?? UIImage())
             }
 
+        }
+    }
+
+    func getMyImage() {
+        let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
+        print("ref to my img:" + "\(ref)")
+        ref.getData(maxSize: (1 * 1024 * 1024)) { data, err in
+            if self.isError(message: "Failed to download image: ", err: err) { return }
+            if let imageData = data {
+                let image = UIImage(data: imageData)
+                print(image?.size)
+                self.myImage = image ?? UIImage()
+            }
         }
     }
 

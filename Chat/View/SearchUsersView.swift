@@ -10,6 +10,7 @@ import SwiftUI
 struct SearchUsersView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
+    @State var imageViewModel = ImageViewModel()
     @State var showSearchBar = false
     @State var searchText = ""
     @State var goToConversation = false

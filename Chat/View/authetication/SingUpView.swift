@@ -290,6 +290,7 @@ struct SignUpView: View {
             } else {
                 viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { _ in
                     imageViewModel.saveImage(image: self.image ?? UIImage())
+                    imageViewModel.getMyImage()
                 }
 
             }

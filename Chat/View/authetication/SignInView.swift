@@ -20,6 +20,8 @@ struct SignInView: View {
     @State var isShowAlert = false
     @State var alertText = ""
 
+    @ObservedObject var imageViewModel = ImageViewModel()
+
     @EnvironmentObject var viewModel: AppViewModel
 
     //    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -66,7 +68,9 @@ struct SignInView: View {
                                     isShowAlert.toggle()
                                 }
                             } else {
-                                viewModel.signIn(email: self.email, password: self.password)
+                                viewModel.signIn(email: self.email, password: self.password) { _ in
+                                    imageViewModel.getMyImage()
+                                }
                             }
                         }
                         .foregroundColor(.white)
@@ -196,18 +200,18 @@ struct SignInView: View {
             GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
 
                 if error != nil {
-                   return
-                 }
+                    return
+                }
 
-                 guard
-                   let authentication = user?.authentication,
-                   let idToken = authentication.idToken
-                 else {
-                   return
-                 }
+                guard
+                    let authentication = user?.authentication,
+                    let idToken = authentication.idToken
+                else {
+                    return
+                }
 
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                                 accessToken: authentication.accessToken)
+                                                               accessToken: authentication.accessToken)
 
                 viewModel.signIn(credential: credential)
             }
