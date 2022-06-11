@@ -262,7 +262,7 @@ class AppViewModel: ObservableObject {
                 do {
 
                     let user = try document.data(as: User.self)
-                    if user.name.contains(self.searchText) {
+                    if user.name.contains(self.searchText) && user.name != self.user.name {
                         return user
                     }
                     return nil
