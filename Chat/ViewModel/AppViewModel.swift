@@ -200,7 +200,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func getUser(id: String) -> User {
+    func getUser(id: String, competition: @escaping (User) -> Void) -> User {
         let docRef = self.dataBase.collection("users").document(id)
         var userToReturn: User = User(chats: [], gmail: "", id: "", name: "")
         docRef.getDocument(as: User.self) { result in
@@ -208,6 +208,7 @@ class AppViewModel: ObservableObject {
           case .success(let user):
               self.secondUser = user
               userToReturn = user
+              competition(user)
           case .failure(let error):
             print(error)
           }
