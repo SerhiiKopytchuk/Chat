@@ -62,15 +62,15 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func getCurrentChat( secondUser: User, competition: @escaping (Chat) -> Void) {
+    func getCurrentChat( secondUser: User, competition: @escaping (Chat) -> Void, failure: @escaping (String) -> Void) {
         self.didFindChat = false
         dataBase.collection("Chats")
             .whereField("user1Id", isEqualTo: secondUser.id)
             .whereField("user2Id", isEqualTo: user.id)
             .getDocuments { querySnapshot, error in
-            if let error = error {
-                print("Error getting documents: \(error)")
+                if error != nil {
                 self.didFindChat = false
+                    failure("Error getting documents: \(String(describing: error))")
             } else {
                 for document in querySnapshot!.documents {
                     do {
@@ -80,8 +80,7 @@ class AppViewModel: ObservableObject {
                         }
                         self.didFindChat = true
                     } catch {
-                        print("erorr to get Chat data")
-                        self.didFindChat = false
+
                     }
                 }
             }
@@ -91,9 +90,14 @@ class AppViewModel: ObservableObject {
             .whereField("user1Id", isEqualTo: user.id)
             .getDocuments { querySnapshot, error in
             if let error = error {
-                print("Error getting documents: \(error)")
+
                 self.didFindChat = false
+                failure("Error getting documents: \(error)")
             } else {
+                if querySnapshot?.documents.count == 0 {
+                    self.didFindChat = false
+                    failure("No chats")
+                }
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
@@ -102,8 +106,8 @@ class AppViewModel: ObservableObject {
                         }
                         self.didFindChat = true
                     } catch {
-                        print("erorr to get Chat data")
                         self.didFindChat = false
+                        failure("erorr to get Chat data")
                     }
                 }
             }
@@ -170,7 +174,8 @@ class AppViewModel: ObservableObject {
                 self.currentChat = chat
                 self.addChatsIdToUsers()
                 self.getChats()
-            }
+            } failure: { _ in }
+
         } catch {
             print("error creating chat to Firestore:: \(error)")
         }
@@ -298,7 +303,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func signUp(username: String, email: String, password: String) {
+    func signUp(username: String, email: String, password: String, competition: @escaping (Bool) -> Void) {
         showLoader = true
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else {
@@ -315,11 +320,12 @@ class AppViewModel: ObservableObject {
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.createFbUser(name: username, gmail: Auth.auth().currentUser?.email ?? "")
+                competition(true)
             }
         }
     }
 
-    func signIn(email: String, password: String) {
+    func signIn(email: String, password: String, competition: @escaping (User) -> Void ) {
         showLoader = true
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else {
@@ -332,7 +338,9 @@ class AppViewModel: ObservableObject {
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.getAllUsers()
-                self?.getCurrentUser(competition: { _ in })
+                self?.getCurrentUser(competition: { user in
+                    competition(user)
+                })
             }
         }
     }

@@ -34,6 +34,7 @@ struct ConversationView: View {
                 } else {
                     VStack {
                         Button {
+                            // sometimes get back, when creating chat
                             viewModel.createChat()
                         } label: {
                             Text("Start Chat")
