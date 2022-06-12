@@ -353,6 +353,5 @@ class AppViewModel: ObservableObject {
         getAllUsers()
         getCurrentUser(competition: { _ in })
         getChats()
-        ImageViewModel().getMyImage()
     }
 }

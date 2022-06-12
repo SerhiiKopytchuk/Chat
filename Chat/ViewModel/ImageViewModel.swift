@@ -9,11 +9,12 @@ import Foundation
 import UIKit
 import FirebaseStorage
 import FirebaseAuth
+import SDWebImageSwiftUI
 
 class ImageViewModel: ObservableObject {
 
     @Published var imageURL: String?
-    @Published var myImage = UIImage()
+    @Published var myImage = WebImage(url: URL(string: ""))
 
     func saveImage(image: UIImage) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -42,25 +43,19 @@ class ImageViewModel: ObservableObject {
         }
     }
 
-    func getMyImage() {
+    func getMyImage(competition: @escaping (WebImage) -> Void) {
         let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
-        print("ref to my img:" + "\(ref)")
-        ref.getData(maxSize: (1 * 1024 * 1024)) { data, err in
-            if self.isError(message: "Failed to download image: ", err: err) { return }
-            if let imageData = data {
-                let image = UIImage(data: imageData)
-                print(image?.size)
-                self.myImage = image ?? UIImage()
-            }
+        ref.downloadURL { url, err in
+            if self.isError(message: "Faiure to get my Image", err: err) { return }
+            competition(WebImage(url: url))
         }
     }
 
-    private func isError(message: String, err: Error?) -> Bool {
+    func isError(message: String, err: Error?) -> Bool {
         if let err = err {
             print(message + err.localizedDescription)
             return true
         }
         return false
     }
-
 }

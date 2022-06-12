@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
-
+import FirebaseStorage
+import FirebaseAuth
+import SDWebImageSwiftUI
 struct SideMenuHeaderView: View {
 
     @Binding var isShowingSideMenu: Bool
     @EnvironmentObject var viewModel: AppViewModel
-    @State var imageViewModel = ImageViewModel()
     @State var user: User = User(chats: [], gmail: "", id: "", name: "")
+    @State var myImageUrl = URL(string: "")
+    @State var isFindUserImage = true
+    let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
     var body: some View {
 
         ZStack(alignment: .topTrailing) {
@@ -28,13 +32,35 @@ struct SideMenuHeaderView: View {
             }
 
             VStack(alignment: .leading) {
-                Image(uiImage: imageViewModel.myImage)
-                    .resizable()
-                    .scaledToFill()
-                    .clipped()
-                    .frame(width: 65, height: 65)
-                    .clipShape(Circle())
-                    .padding(.bottom, 16)
+                if isFindUserImage {
+                    WebImage(url: myImageUrl)
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+                        .frame(width: 65, height: 65)
+                        .clipShape(Circle())
+                        .padding(.bottom, 16)
+                        .onAppear {
+                            ref.downloadURL { url, err in
+                                if let err = err {
+                                    print("failed to get my image" + (err.localizedDescription ))
+                                    self.isFindUserImage = false
+                                    return
+                                }
+                                withAnimation(.easeInOut) {
+                                    self.myImageUrl = url
+                                }
+                            }
+                        }
+                } else {
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+                        .frame(width: 65, height: 65)
+                        .clipShape(Circle())
+                        .padding(.bottom, 16)
+                }
 
                 Text(user.name)
                     .font(.system(size: 24, weight: .semibold))

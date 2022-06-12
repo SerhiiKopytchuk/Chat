@@ -78,8 +78,8 @@ struct SignUpView: View {
                     if let image = self.image {
                         Image(uiImage: image)
                             .resizable()
-                            .frame(width: 100, height: 100)
                             .scaledToFill()
+                            .frame(width: 100, height: 100)
                             .cornerRadius(50)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 50)
@@ -290,7 +290,6 @@ struct SignUpView: View {
             } else {
                 viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { _ in
                     imageViewModel.saveImage(image: self.image ?? UIImage())
-                    imageViewModel.getMyImage()
                 }
 
             }

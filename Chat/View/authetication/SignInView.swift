@@ -69,7 +69,6 @@ struct SignInView: View {
                                 }
                             } else {
                                 viewModel.signIn(email: self.email, password: self.password) { _ in
-                                    imageViewModel.getMyImage()
                                 }
                             }
                         }
