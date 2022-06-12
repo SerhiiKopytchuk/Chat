@@ -70,7 +70,7 @@ class AppViewModel: ObservableObject {
             .getDocuments { querySnapshot, error in
                 if error != nil {
                 self.didFindChat = false
-                failure("Error getting documents: \(error)")
+                    failure("Error getting documents: \(String(describing: error))")
             } else {
                 for document in querySnapshot!.documents {
                     do {

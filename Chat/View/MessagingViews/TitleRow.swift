@@ -6,24 +6,31 @@
 //
 
 import SwiftUI
+import FirebaseStorage
+import SDWebImageSwiftUI
 
 struct TitleRow: View {
     var user: User
 
-    // swiftlint:disable:next line_length
-    var imageURL = URL(string: "https://images.unsplash.com/photo-1653762383590-1196972043fe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80")
-    var name = "Sarah Smith"
+    @State var imageUrl = URL(string: "")
+    @State var isFindUserImage = true
 
     var body: some View {
         HStack(spacing: 20) {
-            AsyncImage(url: imageURL) { image in
-                image.resizable()
+            if isFindUserImage {
+                WebImage(url: imageUrl)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .cornerRadius(50)
+            } else {
+                Image(systemName: "person.crop.circle")
+                    .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 50, height: 50)
                     .cornerRadius(50)
-            } placeholder: {
-                ProgressView()
             }
+
             VStack(alignment: .leading) {
                 Text(user.name)
                     .font(.title).bold()
@@ -41,6 +48,18 @@ struct TitleRow: View {
                 .cornerRadius(40 )
         }
         .padding()
+        .onAppear {
+            let ref = Storage.storage().reference(withPath: user.id )
+            ref.downloadURL { url, err in
+                if err != nil {
+                    self.isFindUserImage = false
+                    return
+                }
+                withAnimation(.easeInOut) {
+                    self.imageUrl = url
+                }
+            }
+        }
     }
 }
 

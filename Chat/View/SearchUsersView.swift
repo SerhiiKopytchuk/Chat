@@ -33,7 +33,7 @@ struct SearchUsersView: View {
             .padding()
             List {
                 ForEach(viewModel.users, id: \.id) { user in
-                    SearchUserCell(user: user.name, userGmail: user.gmail, rowTapped: {
+                    SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
                         self.userWithConversation = user
                         viewModel.secondUser = user
                         viewModel.getCurrentChat(secondUser: user) { _ in
