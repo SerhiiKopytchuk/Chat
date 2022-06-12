@@ -37,7 +37,14 @@ struct SearchUsersView: View {
                         self.userWithConversation = user
                         viewModel.secondUser = user
                         viewModel.getCurrentChat(secondUser: user) { _ in
-                            goToConversation.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                goToConversation = true
+                            }
+                            // why with dispathchQueu.main.asynkAfter its working, but not with clusures?
+                        } failure: { _ in
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                goToConversation = true
+                            }
                         }
                     })
                 }

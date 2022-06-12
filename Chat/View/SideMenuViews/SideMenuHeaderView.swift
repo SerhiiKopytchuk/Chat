@@ -42,8 +42,7 @@ struct SideMenuHeaderView: View {
                         .padding(.bottom, 16)
                         .onAppear {
                             ref.downloadURL { url, err in
-                                if let err = err {
-                                    print("failed to get my image" + (err.localizedDescription ))
+                                if err != nil {
                                     self.isFindUserImage = false
                                     return
                                 }
