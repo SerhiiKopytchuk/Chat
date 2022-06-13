@@ -30,14 +30,15 @@ struct EditProfileView: View {
                            endPoint: .bottomTrailing)
             .ignoresSafeArea()
 
-            ZStack {
+            ZStack(alignment: .top) {
                 Color.white
                     .cornerRadius(30, corners: [.topLeft, .topRight])
-                    .offset(x: 0, y: 100)
+                    .offset(x: 0, y: 50)
                 VStack {
                      changeProfileImageButton
                 }
             }
+//            .offset(y: 200)
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
             imageViewModel.saveImage(image: newImage)
@@ -52,6 +53,9 @@ struct EditProfileView: View {
             .resizable()
             .frame(width: 100, height: 100)
             .foregroundColor(.black.opacity(0.70))
+            .background(.white)
+            .cornerRadius(50)
+
     }
 
     var changeProfileImageButton: some View {
