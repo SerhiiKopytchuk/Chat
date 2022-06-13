@@ -20,9 +20,13 @@ struct EditProfileView: View {
     @State var isChangedImage = false
 
     @EnvironmentObject var viewModel: AppViewModel
+    @ObservedObject var imageViewModel = ImageViewModel()
 
     var body: some View {
         ZStack {
+            LinearGradient(gradient:
+                            Gradient(colors: [.orange, .purple]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                .ignoresSafeArea()
             VStack {
                 Button {
                     isShowingImagePicker.toggle()
@@ -95,6 +99,9 @@ struct EditProfileView: View {
                 }
             }
         }
+        .onChange(of: profileImage ?? UIImage(), perform: { newImage in
+            imageViewModel.saveImage(image: newImage)
+        })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $profileImage)
         }
@@ -115,7 +122,7 @@ struct EditProfileView: View {
                 Image(systemName: "photo.circle")
                     .resizable()
                     .frame(width: 30, height: 30)
-                    .background(.white)
+                    .background(.white.opacity(0))
                     .foregroundColor(.black.opacity(70))
                     .cornerRadius(30)
             }
