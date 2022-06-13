@@ -24,78 +24,18 @@ struct EditProfileView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient:
-                            Gradient(colors: [.orange, .purple]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                .ignoresSafeArea()
-            VStack {
-                Button {
-                    isShowingImagePicker.toggle()
-                } label: {
-                    if isFindUserImage {
-                        if self.profileImage != nil {
-                            ZStack {
-                                Image(uiImage: self.profileImage ?? UIImage())
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .cornerRadius(50)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 50)
-                                            .stroke(.black, lineWidth: 3)
-                                            .shadow(radius: 10)
-                                    )
-                                rightDownImage
-                            }
-                        } else {
-                            ZStack {
-                                WebImage(url: imageUrl)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .cornerRadius(50)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 50)
-                                            .stroke(.black, lineWidth: 3)
-                                            .shadow(radius: 10)
-                                    )
-                                rightDownImage
-                            }
-                        }
-                    } else {
-                        if self.profileImage != nil {
-                            ZStack {
-                                Image(uiImage: self.profileImage ?? UIImage())
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .cornerRadius(50)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 50)
-                                            .stroke(.black, lineWidth: 3)
-                                            .shadow(radius: 10)
-                                    )
-                                rightDownImage
-                            }
-                        } else {
-                            ZStack {
-                                emptyImage
-                                rightDownImage
-                            }
-                        }
-                    }
-                }
-                .frame(width: 100, height: 100)
-                .onAppear {
-                    let ref = Storage.storage().reference(withPath: viewModel.user.id )
-                    ref.downloadURL { url, err in
-                        if err != nil {
-                            self.isFindUserImage = false
-                            return
-                        }
-                        withAnimation(.easeInOut) {
-                            self.imageUrl = url
-                        }
-                    }
+            LinearGradient(gradient: Gradient(
+                colors: [.purple, .white, .white]),
+                           startPoint: .topLeading,
+                           endPoint: .bottomTrailing)
+            .ignoresSafeArea()
+
+            ZStack {
+                Color.white
+                    .cornerRadius(30, corners: [.topLeft, .topRight])
+                    .offset(x: 0, y: 100)
+                VStack {
+                     changeProfileImageButton
                 }
             }
         }
@@ -114,20 +54,92 @@ struct EditProfileView: View {
             .foregroundColor(.black.opacity(0.70))
     }
 
-    var rightDownImage: some View {
-        VStack(alignment: .trailing) {
-            Spacer()
-            HStack {
-                Spacer()
-                Image(systemName: "photo.circle")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                    .background(.white.opacity(0))
-                    .foregroundColor(.black.opacity(70))
-                    .cornerRadius(30)
+    var changeProfileImageButton: some View {
+        Button {
+            isShowingImagePicker.toggle()
+        } label: {
+            if isFindUserImage {
+                if self.profileImage != nil {
+                    ZStack {
+                        Image(uiImage: self.profileImage ?? UIImage())
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(50)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 50)
+                                    .stroke(.black, lineWidth: 3)
+                                    .shadow(radius: 10)
+                            )
+//                                    rightDownImage
+                    }
+                } else {
+                    ZStack {
+                        WebImage(url: imageUrl)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(50)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 50)
+                                    .stroke(.black, lineWidth: 3)
+                                    .shadow(radius: 10)
+                            )
+//                                    rightDownImage
+                    }
+                }
+            } else {
+                if self.profileImage != nil {
+                    ZStack {
+                        Image(uiImage: self.profileImage ?? UIImage())
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(50)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 50)
+                                    .stroke(.black, lineWidth: 3)
+                                    .shadow(radius: 10)
+                            )
+//                                    rightDownImage
+                    }
+                } else {
+                    ZStack {
+                        emptyImage
+//                                    rightDownImage
+                    }
+                }
+            }
+        }
+        .frame(width: 100, height: 100)
+        .onAppear {
+            let ref = Storage.storage().reference(withPath: viewModel.user.id )
+            ref.downloadURL { url, err in
+                if err != nil {
+                    self.isFindUserImage = false
+                    return
+                }
+                withAnimation(.easeInOut) {
+                    self.imageUrl = url
+                }
             }
         }
     }
+
+//    var rightDownImage: some View {
+//        VStack(alignment: .trailing) {
+//            Spacer()
+//            HStack {
+//                Spacer()
+//                Image(systemName: "photo.circle")
+//                    .resizable()
+//                    .frame(width: 30, height: 30)
+//                    .background(.white.opacity(0))
+//                    .foregroundColor(.black.opacity(70))
+//                    .cornerRadius(30)
+//            }
+//        }
+//    }
 }
 
 struct EditProfileView_Previews: PreviewProvider {
