@@ -12,7 +12,7 @@ import UIKit
 
 struct EditProfileView: View {
 
-    @State var image: UIImage?
+    @State var profileImage: UIImage?
     @State var isShowingImagePicker = false
 
     @State var imageUrl = URL(string: "")
@@ -28,59 +28,54 @@ struct EditProfileView: View {
                     isShowingImagePicker.toggle()
                 } label: {
                     if isFindUserImage {
-                        if self.image != nil {
-                            Image(uiImage: self.image ?? UIImage())
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .cornerRadius(50)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 50)
-                                        .stroke(.black, lineWidth: 3)
-                                        .shadow(radius: 10)
-                                )
-                        } else {
-                            WebImage(url: imageUrl)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .cornerRadius(50)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 50)
-                                        .stroke(.black, lineWidth: 3)
-                                        .shadow(radius: 10)
-                                )
-                        }
-                    } else {
-                        if self.image != nil {
-                            Image(uiImage: self.image ?? UIImage())
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .cornerRadius(50)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 50)
-                                        .stroke(.black, lineWidth: 3)
-                                        .shadow(radius: 10)
-                                )
+                        if self.profileImage != nil {
+                            ZStack {
+                                Image(uiImage: self.profileImage ?? UIImage())
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 100, height: 100)
+                                    .cornerRadius(50)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 50)
+                                            .stroke(.black, lineWidth: 3)
+                                            .shadow(radius: 10)
+                                    )
+                                rightDownImage
+                            }
                         } else {
                             ZStack {
-                                Image(systemName: "person.crop.circle")
+                                WebImage(url: imageUrl)
                                     .resizable()
+                                    .scaledToFill()
                                     .frame(width: 100, height: 100)
-                                    .foregroundColor(.gray)
-                                VStack(alignment: .trailing) {
-                                    Spacer()
-                                    HStack {
-                                        Spacer()
-                                        Image(systemName: "photo.circle")
-                                            .resizable()
-                                            .frame(width: 30, height: 30)
-                                            .background(.gray)
-                                            .foregroundColor(.white)
-                                            .cornerRadius(30)
-                                    }
-                                }
+                                    .cornerRadius(50)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 50)
+                                            .stroke(.black, lineWidth: 3)
+                                            .shadow(radius: 10)
+                                    )
+                                rightDownImage
+                            }
+                        }
+                    } else {
+                        if self.profileImage != nil {
+                            ZStack {
+                                Image(uiImage: self.profileImage ?? UIImage())
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 100, height: 100)
+                                    .cornerRadius(50)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 50)
+                                            .stroke(.black, lineWidth: 3)
+                                            .shadow(radius: 10)
+                                    )
+                                rightDownImage
+                            }
+                        } else {
+                            ZStack {
+                                emptyImage
+                                rightDownImage
                             }
                         }
                     }
@@ -101,7 +96,29 @@ struct EditProfileView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $image)
+            ImagePicker(image: $profileImage)
+        }
+    }
+
+    var emptyImage: some View {
+        Image(systemName: "person.crop.circle")
+            .resizable()
+            .frame(width: 100, height: 100)
+            .foregroundColor(.black.opacity(0.70))
+    }
+
+    var rightDownImage: some View {
+        VStack(alignment: .trailing) {
+            Spacer()
+            HStack {
+                Spacer()
+                Image(systemName: "photo.circle")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .background(.white)
+                    .foregroundColor(.black.opacity(70))
+                    .cornerRadius(30)
+            }
         }
     }
 }
