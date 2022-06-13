@@ -24,7 +24,13 @@ struct SideMenuView: View {
                     .foregroundColor(.white)
                     .frame(height: 240)
                 ForEach(SideMenuViewModel.allCases, id: \.self) { option in
-                    if option == SideMenuViewModel.searchUsers {
+                    if option == SideMenuViewModel.profile {
+                        NavigationLink {
+                            EditProfileView()
+                        } label: {
+                            SideMenuOptionView(viewModel: option)
+                        }
+                    } else if option == SideMenuViewModel.searchUsers {
                         NavigationLink {
                             SearchUsersView()
                                 .navigationBarTitle("", displayMode: .inline)
@@ -39,9 +45,6 @@ struct SideMenuView: View {
                                 withAnimation {
                                     viewModel.signOut()
                                 }
-                            }
-                            if option == SideMenuViewModel.profile {
-                                print(viewModel.users)
                             }
                         } label: {
                             SideMenuOptionView(viewModel: option)
