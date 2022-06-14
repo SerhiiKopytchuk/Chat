@@ -14,6 +14,8 @@ struct EditProfileView: View {
 
     @State var profileImage: UIImage?
     @State var isShowingImagePicker = false
+    @State var isShowingChangeName = false
+    @State var newName: String = ""
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
@@ -35,16 +37,26 @@ struct EditProfileView: View {
                     .cornerRadius(30, corners: [.topLeft, .topRight])
                     .offset(x: 0, y: 50)
                 VStack {
-                     changeProfileImageButton
+                    changeProfileImageButton
+                    changeProfileNameButton
+                    if isShowingChangeName {
+                        HStack {
+
+                            TextField("Enter your new name!", text: $newName)
+                                .underlineTextField()
+                                .padding(.leading, 20)
+                            saveButton
+                                .padding(.horizontal, 20)
+                        }
+                    }
                 }
             }
-//            .offset(y: 200)
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
             imageViewModel.saveImage(image: newImage)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $profileImage)
+                ImagePicker(image: $profileImage)
         }
     }
 
@@ -130,6 +142,43 @@ struct EditProfileView: View {
         }
     }
 
+    var changeProfileNameButton: some View {
+        Button {
+            withAnimation(.interactiveSpring()) {
+                isShowingChangeName.toggle()
+            }
+        } label: {
+            HStack {
+//                Text("Serhii Kopythuk")
+                Text(viewModel.user.name)
+                    .font(.system(.title, design: .rounded))
+//                    .underline()
+                    .foregroundColor(.black)
+                    .padding(.vertical)
+                Image(systemName: "pencil")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(.black)
+            }
+        }
+        .padding()
+    }
+
+    var saveButton: some View {
+        Button {
+            viewModel.changeName(newName: newName)
+        } label: {
+                Text("save")
+                    .frame(width: 60)
+                    .padding(10)
+                    .foregroundColor(.white)
+                    .background(.orange)
+                    .cornerRadius(10)
+                    .shadow(color: newName == "" ? .gray : .orange, radius: 7)
+        }
+
+    }
+
 //    var rightDownImage: some View {
 //        VStack(alignment: .trailing) {
 //            Spacer()
@@ -150,5 +199,18 @@ struct EditProfileView_Previews: PreviewProvider {
     static var previews: some View {
         EditProfileView()
             .environmentObject(AppViewModel())
+    }
+}
+
+extension View {
+    func underlineTextField() -> some View {
+        self
+            .padding(.vertical, 10)
+            .overlay(
+                Rectangle()
+                .frame(height: 2).padding(.top, 35)
+                .foregroundColor(.orange)
+            )
+            .padding(10)
     }
 }

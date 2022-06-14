@@ -36,6 +36,18 @@ class AppViewModel: ObservableObject {
     // published mean broadcast
     let dataBase = Firestore.firestore()
 
+    func changeName(newName: String) {
+        dataBase.collection("users").document(user.id).getDocument { querrySnapshot, err in
+            if err != nil {
+                print("Error to get user: " + (err?.localizedDescription ?? ""))
+                return
+            }
+
+            querrySnapshot?.reference.updateData([ "name": newName])
+            self.getCurrentUser(competition: { _ in })
+        }
+    }
+
     func getMessages(chatId: String, competition: @escaping ([Message]) -> Void) {
         var messages: [Message] = []
         dataBase.collection("Chats").document(chatId).collection("messages")
