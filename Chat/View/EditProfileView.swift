@@ -11,19 +11,19 @@ import FirebaseStorage
 import UIKit
 
 struct EditProfileView: View {
-
+    
     @State var profileImage: UIImage?
     @State var isShowingImagePicker = false
     @State var isShowingChangeName = false
     @State var newName: String = ""
-
+    
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
     @State var isChangedImage = false
-
+    
     @EnvironmentObject var viewModel: AppViewModel
     @ObservedObject var imageViewModel = ImageViewModel()
-
+    
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(
@@ -31,7 +31,7 @@ struct EditProfileView: View {
                            startPoint: .topLeading,
                            endPoint: .bottomTrailing)
             .ignoresSafeArea()
-
+            
             ZStack(alignment: .top) {
                 Color.white
                     .cornerRadius(30, corners: [.topLeft, .topRight])
@@ -41,7 +41,6 @@ struct EditProfileView: View {
                     changeProfileNameButton
                     if isShowingChangeName {
                         HStack {
-
                             TextField("Enter your new name!", text: $newName)
                                 .underlineTextField()
                                 .padding(.leading, 20)
@@ -49,6 +48,11 @@ struct EditProfileView: View {
                                 .padding(.horizontal, 20)
                         }
                     }
+                    Text(viewModel.user.gmail)
+                        .font(.callout)
+                        .foregroundColor(.gray)
+                        .padding()
+                    
                 }
             }
         }
@@ -56,10 +60,10 @@ struct EditProfileView: View {
             imageViewModel.saveImage(image: newImage)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-                ImagePicker(image: $profileImage)
+            ImagePicker(image: $profileImage)
         }
     }
-
+    
     var emptyImage: some View {
         Image(systemName: "person.crop.circle")
             .resizable()
@@ -67,9 +71,9 @@ struct EditProfileView: View {
             .foregroundColor(.black.opacity(0.70))
             .background(.white)
             .cornerRadius(50)
-
+        
     }
-
+    
     var changeProfileImageButton: some View {
         Button {
             isShowingImagePicker.toggle()
@@ -87,7 +91,7 @@ struct EditProfileView: View {
                                     .stroke(.black, lineWidth: 3)
                                     .shadow(radius: 10)
                             )
-//                                    rightDownImage
+                        //                                    rightDownImage
                     }
                 } else {
                     ZStack {
@@ -101,7 +105,7 @@ struct EditProfileView: View {
                                     .stroke(.black, lineWidth: 3)
                                     .shadow(radius: 10)
                             )
-//                                    rightDownImage
+                        //                                    rightDownImage
                     }
                 }
             } else {
@@ -117,12 +121,12 @@ struct EditProfileView: View {
                                     .stroke(.black, lineWidth: 3)
                                     .shadow(radius: 10)
                             )
-//                                    rightDownImage
+                        //                                    rightDownImage
                     }
                 } else {
                     ZStack {
                         emptyImage
-//                                    rightDownImage
+                        //                                    rightDownImage
                     }
                 }
             }
@@ -141,7 +145,7 @@ struct EditProfileView: View {
             }
         }
     }
-
+    
     var changeProfileNameButton: some View {
         Button {
             withAnimation(.interactiveSpring()) {
@@ -149,10 +153,10 @@ struct EditProfileView: View {
             }
         } label: {
             HStack {
-//                Text("Serhii Kopythuk")
+                //                Text("Serhii Kopythuk")
                 Text(viewModel.user.name)
                     .font(.system(.title, design: .rounded))
-//                    .underline()
+                //                    .underline()
                     .foregroundColor(.black)
                     .padding(.vertical)
                 Image(systemName: "pencil")
@@ -161,38 +165,40 @@ struct EditProfileView: View {
                     .foregroundColor(.black)
             }
         }
-        .padding()
+        .padding(.top)
+        //        .padding(.horizontal)
     }
-
+    
     var saveButton: some View {
         Button {
             viewModel.changeName(newName: newName)
         } label: {
-                Text("save")
-                    .frame(width: 60)
-                    .padding(10)
-                    .foregroundColor(.white)
-                    .background(newName == "" ? .black : .orange)
-                    .cornerRadius(10)
-                    .shadow(color: newName == "" ? .gray : .orange, radius: 3)
+            Text("save")
+                .frame(width: 60)
+                .padding(10)
+                .foregroundColor(.white)
+                .background(newName.count < 4 ? .gray : .orange)
+                .cornerRadius(10)
+                .shadow(color: newName.count < 4 ? .gray : .orange, radius: 3)
         }
-
+        .disabled(newName.count > 3 ? true : false)
+        
     }
-
-//    var rightDownImage: some View {
-//        VStack(alignment: .trailing) {
-//            Spacer()
-//            HStack {
-//                Spacer()
-//                Image(systemName: "photo.circle")
-//                    .resizable()
-//                    .frame(width: 30, height: 30)
-//                    .background(.white.opacity(0))
-//                    .foregroundColor(.black.opacity(70))
-//                    .cornerRadius(30)
-//            }
-//        }
-//    }
+    
+    //    var rightDownImage: some View {
+    //        VStack(alignment: .trailing) {
+    //            Spacer()
+    //            HStack {
+    //                Spacer()
+    //                Image(systemName: "photo.circle")
+    //                    .resizable()
+    //                    .frame(width: 30, height: 30)
+    //                    .background(.white.opacity(0))
+    //                    .foregroundColor(.black.opacity(70))
+    //                    .cornerRadius(30)
+    //            }
+    //        }
+    //    }
 }
 
 struct EditProfileView_Previews: PreviewProvider {
@@ -208,8 +214,8 @@ extension View {
             .padding(.vertical, 10)
             .overlay(
                 Rectangle()
-                .frame(height: 2).padding(.top, 35)
-                .foregroundColor(.black)
+                    .frame(height: 2).padding(.top, 35)
+                    .foregroundColor(.black)
             )
             .padding(10)
     }
