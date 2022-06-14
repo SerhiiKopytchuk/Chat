@@ -11,19 +11,19 @@ import FirebaseStorage
 import UIKit
 
 struct EditProfileView: View {
-    
+
     @State var profileImage: UIImage?
     @State var isShowingImagePicker = false
     @State var isShowingChangeName = false
     @State var newName: String = ""
-    
+
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
     @State var isChangedImage = false
-    
+
     @EnvironmentObject var viewModel: AppViewModel
     @ObservedObject var imageViewModel = ImageViewModel()
-    
+
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(
@@ -31,7 +31,7 @@ struct EditProfileView: View {
                            startPoint: .topLeading,
                            endPoint: .bottomTrailing)
             .ignoresSafeArea()
-            
+
             ZStack(alignment: .top) {
                 Color.white
                     .cornerRadius(30, corners: [.topLeft, .topRight])
@@ -52,7 +52,7 @@ struct EditProfileView: View {
                         .font(.callout)
                         .foregroundColor(.gray)
                         .padding()
-                    
+
                 }
             }
         }
@@ -63,7 +63,7 @@ struct EditProfileView: View {
             ImagePicker(image: $profileImage)
         }
     }
-    
+
     var emptyImage: some View {
         Image(systemName: "person.crop.circle")
             .resizable()
@@ -71,9 +71,9 @@ struct EditProfileView: View {
             .foregroundColor(.black.opacity(0.70))
             .background(.white)
             .cornerRadius(50)
-        
+
     }
-    
+
     var changeProfileImageButton: some View {
         Button {
             isShowingImagePicker.toggle()
@@ -145,7 +145,7 @@ struct EditProfileView: View {
             }
         }
     }
-    
+
     var changeProfileNameButton: some View {
         Button {
             withAnimation(.interactiveSpring()) {
@@ -168,7 +168,7 @@ struct EditProfileView: View {
         .padding(.top)
         //        .padding(.horizontal)
     }
-    
+
     var saveButton: some View {
         Button {
             viewModel.changeName(newName: newName)
@@ -181,10 +181,10 @@ struct EditProfileView: View {
                 .cornerRadius(10)
                 .shadow(color: newName.count < 4 ? .gray : .orange, radius: 3)
         }
-        .disabled(newName.count > 3 ? true : false)
-        
+        .disabled(newName.count > 3 ? false : true)
+
     }
-    
+
     //    var rightDownImage: some View {
     //        VStack(alignment: .trailing) {
     //            Spacer()
