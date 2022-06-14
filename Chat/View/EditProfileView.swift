@@ -172,9 +172,9 @@ struct EditProfileView: View {
                     .frame(width: 60)
                     .padding(10)
                     .foregroundColor(.white)
-                    .background(.orange)
+                    .background(newName == "" ? .black : .orange)
                     .cornerRadius(10)
-                    .shadow(color: newName == "" ? .gray : .orange, radius: 7)
+                    .shadow(color: newName == "" ? .gray : .orange, radius: 3)
         }
 
     }
@@ -209,7 +209,7 @@ extension View {
             .overlay(
                 Rectangle()
                 .frame(height: 2).padding(.top, 35)
-                .foregroundColor(.orange)
+                .foregroundColor(.black)
             )
             .padding(10)
     }
