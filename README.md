@@ -1,8 +1,8 @@
 # Chat App
 
 <p float="left">
- <img width="431" alt="Screenshot 2022-06-18 at 18 26 13" src="https://user-images.githubusercontent.com/97970279/174445489-6439e11d-0998-4304-9e9e-87660570054b.png">
- <img width="461" alt="Screenshot 2022-06-13 at 15 50 29" src="https://user-images.githubusercontent.com/97970279/174445767-51fd5c09-70a8-4846-8e93-ff05bebbcdac.png">
+ <img width="375" alt="Screenshot 2022-06-18 at 18 26 13" src="https://user-images.githubusercontent.com/97970279/174445489-6439e11d-0998-4304-9e9e-87660570054b.png">
+ <img width="375" alt="Screenshot 2022-06-13 at 15 50 29" src="https://user-images.githubusercontent.com/97970279/174445767-51fd5c09-70a8-4846-8e93-ff05bebbcdac.png">
 </p>
 
  ### :white_check_mark: Messaging between 2 users using Firebase Firestore
@@ -15,8 +15,8 @@
  ### :white_check_mark: Editing and storing profile image using Firebase Storage
 ----
  <p float="left">
-<img width="475" alt="Screenshot 2022-06-18 at 18 27 07" src="https://user-images.githubusercontent.com/97970279/174445515-8d7ab913-adca-4431-9353-5e7fdad10031.png">
-<img width="475" alt="Screenshot 2022-06-18 at 18 27 03" src="https://user-images.githubusercontent.com/97970279/174445520-10027081-74ef-49f6-983e-b63203236b2f.png">
+<img width="375" alt="Screenshot 2022-06-18 at 18 27 07" src="https://user-images.githubusercontent.com/97970279/174445515-8d7ab913-adca-4431-9353-5e7fdad10031.png">
+<img width="375" alt="Screenshot 2022-06-18 at 18 27 03" src="https://user-images.githubusercontent.com/97970279/174445520-10027081-74ef-49f6-983e-b63203236b2f.png">
  </p>
 
  ### :white_check_mark: Signup and SignIn using Firebase Auth
