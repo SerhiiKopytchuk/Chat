@@ -9,12 +9,16 @@ import Foundation
 import UIKit
 import FirebaseStorage
 import FirebaseAuth
+import FirebaseFirestore
 import SDWebImageSwiftUI
 
-class ImageViewModel: ObservableObject {
+class EditProfileViewModel: ObservableObject {
 
+    @Published var user: User = User(chats: [], gmail: "", id: "", name: "")
     @Published var imageURL: String?
     @Published var myImage = WebImage(url: URL(string: ""))
+
+    let dataBase = Firestore.firestore()
 
     func saveImage(image: UIImage) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -48,6 +52,18 @@ class ImageViewModel: ObservableObject {
         ref.downloadURL { url, err in
             if self.isError(message: "Faiure to get my Image", err: err) { return }
             competition(WebImage(url: url))
+        }
+    }
+
+    func changeName(newName: String, userId: String) {
+        
+        dataBase.collection("users").document(userId).getDocument { querrySnapshot, err in
+            if err != nil {
+                print("Error to get user: " + (err?.localizedDescription ?? ""))
+                return
+            }
+
+            querrySnapshot?.reference.updateData([ "name": newName])
         }
     }
 

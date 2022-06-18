@@ -20,7 +20,7 @@ struct SignInView: View {
     @State var isShowAlert = false
     @State var alertText = ""
 
-    @ObservedObject var imageViewModel = ImageViewModel()
+    @ObservedObject var imageViewModel = EditProfileViewModel()
 
     @EnvironmentObject var viewModel: AppViewModel
 

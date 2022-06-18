@@ -10,22 +10,23 @@ import SwiftUI
 struct ConversationView: View {
     @State var user: User
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var messagingViewModel: MessagingViewModel
 
     var body: some View {
         VStack {
             VStack {
                 TitleRow(user: user)
+                    .onTapGesture {
+                        print(messagingViewModel.currentChat)
+                    }
                 if viewModel.didFindChat {
                     ScrollViewReader { _ in
                         ScrollView {
                             ForEach(
-                                viewModel.currentChat.messages ??
-                                [
-                                    Message(id: "", text: "", senderId: "", timestamp: Date())
-                                ],
+                                self.messagingViewModel.currentChat.messages ?? [],
                                 id: \.id) { message in
-                                MessageBubble(message: message)
-                            }
+                                    MessageBubble(message: message)
+                                }
                         }
                         .padding(.top, 10)
                         .background(.white)
@@ -46,10 +47,10 @@ struct ConversationView: View {
                     }.frame(maxHeight: .infinity)
                 }
             }
-            .background(Color("Peach"))
-            MessageField()
-                .environmentObject(viewModel)
         }
+        .background(Color("Peach"))
+        MessageField()
+            .environmentObject(viewModel)
     }
 }
 

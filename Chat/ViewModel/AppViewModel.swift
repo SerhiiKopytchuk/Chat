@@ -36,43 +36,6 @@ class AppViewModel: ObservableObject {
     // published mean broadcast
     let dataBase = Firestore.firestore()
 
-    func changeName(newName: String) {
-        dataBase.collection("users").document(user.id).getDocument { querrySnapshot, err in
-            if err != nil {
-                print("Error to get user: " + (err?.localizedDescription ?? ""))
-                return
-            }
-
-            querrySnapshot?.reference.updateData([ "name": newName])
-            self.getCurrentUser(competition: { _ in })
-        }
-    }
-
-    func getMessages(chatId: String, competition: @escaping ([Message]) -> Void) {
-        var messages: [Message] = []
-        dataBase.collection("Chats").document(chatId).collection("messages")
-            .addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documets: \(String(describing: error))")
-                return
-            }
-            self.currentChat.messages = documents.compactMap { document -> Message? in
-                do {
-                    messages.append(try document.data(as: Message.self))
-                    return try document.data(as: Message.self)
-                } catch {
-                    print("error deconding documet into Message: \(error)")
-                    return nil
-                }
-            }
-            self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
-            messages.sort {$0.timestamp < $1.timestamp }
-            competition(messages)
-            if let id = self.currentChat.messages?.last?.id {
-                self.lastMessageId = id
-            }
-        }
-    }
 
     func getCurrentChat( secondUser: User, competition: @escaping (Chat) -> Void, failure: @escaping (String) -> Void) {
         self.didFindChat = false
@@ -140,10 +103,10 @@ class AppViewModel: ObservableObject {
                             do {
                                 self.currentChat = try document.data(as: Chat.self)
                                 competition(self.currentChat)
-                                self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
+//                                self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
                                 self.didFindChat = true
                             } catch {
-                                print("erorr to get Chat data")
+                                print("error to get Chat data")
                                 self.didFindChat = false
                             }
                         }
@@ -163,7 +126,7 @@ class AppViewModel: ObservableObject {
                                 do {
                                     self.currentChat = try document.data(as: Chat.self)
                                     competition(self.currentChat)
-                                    self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
+//                                    self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
                                     self.didFindChat = true
                                 } catch {
                                     print("erorr to get Chat data")
@@ -193,12 +156,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func sendMessage(text: String) {
-        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
-        try? self.dataBase.collection("Chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-            .document().setData(from: newMessage)
-    }
-
+   
     private func addChatsIdToUsers() {
         dataBase.collection("users").document(user.id)
             .updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])

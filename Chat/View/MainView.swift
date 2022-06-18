@@ -31,6 +31,7 @@ struct MainView: View {
                         .foregroundColor(.black)
                 }) )
                 .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
+                .environmentObject(MessagingViewModel())
 
         }
         .onAppear {

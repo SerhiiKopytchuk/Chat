@@ -22,7 +22,7 @@ struct EditProfileView: View {
     @State var isChangedImage = false
 
     @EnvironmentObject var viewModel: AppViewModel
-    @ObservedObject var imageViewModel = ImageViewModel()
+    @ObservedObject var editProfileView = EditProfileViewModel()
 
     var body: some View {
         ZStack {
@@ -57,7 +57,8 @@ struct EditProfileView: View {
             }
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
-            imageViewModel.saveImage(image: newImage)
+            editProfileView.user = self.viewModel.user
+            editProfileView.saveImage(image: newImage)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $profileImage)
@@ -171,7 +172,7 @@ struct EditProfileView: View {
 
     var saveButton: some View {
         Button {
-            viewModel.changeName(newName: newName)
+            editProfileView.changeName(newName: newName, userId: viewModel.user.id )
         } label: {
             Text("save")
                 .frame(width: 60)
