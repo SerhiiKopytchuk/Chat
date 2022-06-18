@@ -1,7 +1,7 @@
 # Chat App
 
 <p float="left">
- <img width="375" alt="Screenshot 2022-06-18 at 18 26 13" src="https://user-images.githubusercontent.com/97970279/174445489-6439e11d-0998-4304-9e9e-87660570054b.png">
+ <img width="350" alt="Screenshot 2022-06-18 at 18 26 13" src="https://user-images.githubusercontent.com/97970279/174445489-6439e11d-0998-4304-9e9e-87660570054b.png">
  <img width="375" alt="Screenshot 2022-06-13 at 15 50 29" src="https://user-images.githubusercontent.com/97970279/174445767-51fd5c09-70a8-4846-8e93-ff05bebbcdac.png">
 </p>
 
