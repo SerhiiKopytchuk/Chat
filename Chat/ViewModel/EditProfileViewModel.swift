@@ -56,7 +56,7 @@ class EditProfileViewModel: ObservableObject {
     }
 
     func changeName(newName: String, userId: String) {
-        
+
         dataBase.collection("users").document(userId).getDocument { querrySnapshot, err in
             if err != nil {
                 print("Error to get user: " + (err?.localizedDescription ?? ""))

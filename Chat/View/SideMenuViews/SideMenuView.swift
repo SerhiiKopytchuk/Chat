@@ -10,6 +10,7 @@ import Firebase
 
 struct SideMenuView: View {
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var messagingViewModel: MessagingViewModel
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
 
@@ -33,9 +34,8 @@ struct SideMenuView: View {
                     } else if option == SideMenuViewModel.searchUsers {
                         NavigationLink {
                             SearchUsersView()
+                                .environmentObject(messagingViewModel)
                                 .navigationBarTitle("", displayMode: .inline)
-
-//                                .navigationBarHidden(true)
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }

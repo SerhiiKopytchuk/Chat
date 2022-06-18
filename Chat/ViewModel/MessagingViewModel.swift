@@ -8,7 +8,6 @@
 import Foundation
 import FirebaseFirestore
 
-
 class MessagingViewModel: ObservableObject {
 
     @Published var currentChat: Chat = Chat(id: "someId", user1Id: "", user2Id: "", messages: [])
@@ -38,8 +37,8 @@ class MessagingViewModel: ObservableObject {
             }
             self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
             messages.sort {$0.timestamp < $1.timestamp }
-            competition(messages)
-        }
+                competition(messages)
+            }
     }
 
     func sendMessage(text: String) {

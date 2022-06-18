@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct ConversationView: View {
+
     @State var user: User
-    @EnvironmentObject var viewModel: AppViewModel
+    @State var isFindedChat: Bool
+
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var viewModel: AppViewModel
 
     var body: some View {
         VStack {
@@ -19,7 +22,7 @@ struct ConversationView: View {
                     .onTapGesture {
                         print(messagingViewModel.currentChat)
                     }
-                if viewModel.didFindChat {
+                if isFindedChat {
                     ScrollViewReader { _ in
                         ScrollView {
                             ForEach(
@@ -50,12 +53,13 @@ struct ConversationView: View {
         }
         .background(Color("Peach"))
         MessageField()
+            .environmentObject(messagingViewModel)
             .environmentObject(viewModel)
     }
 }
 
 struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
-        ConversationView(user: User(chats: [], gmail: "", id: "", name: ""))
+        ConversationView(user: User(chats: [], gmail: "", id: "", name: ""), isFindedChat: true)
     }
 }
