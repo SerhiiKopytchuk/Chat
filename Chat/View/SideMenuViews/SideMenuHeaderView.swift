@@ -69,11 +69,11 @@ struct SideMenuHeaderView: View {
                     .padding(.bottom, 24)
                 HStack {
                     HStack {
-                        Text("12").bold()
+                        Text("\(viewModel.chats.count)").bold()
                         Text("Chats")
                     }
                     HStack {
-                        Text("4").bold()
+                        Text("0").bold()
                         Text("Chanels")
                     }
                     Spacer()
