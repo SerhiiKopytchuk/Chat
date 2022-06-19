@@ -22,7 +22,6 @@ class AppViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var chats: [Chat] = []
     @Published var currentChat: Chat = Chat(id: "", user1Id: "", user2Id: "", messages: [])
-    @Published var didFindChat = false
 
     var isSignedIn: Bool {
         return auth.currentUser != nil
@@ -36,67 +35,41 @@ class AppViewModel: ObservableObject {
     // published mean broadcast
     let dataBase = Firestore.firestore()
 
-    func getMessages(chatId: String, competition: @escaping ([Message]) -> Void) {
-        var messages: [Message] = []
-        dataBase.collection("Chats").document(chatId).collection("messages")
-            .addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documets: \(String(describing: error))")
-                return
-            }
-            self.currentChat.messages = documents.compactMap { document -> Message? in
-                do {
-                    messages.append(try document.data(as: Message.self))
-                    return try document.data(as: Message.self)
-                } catch {
-                    print("error deconding documet into Message: \(error)")
-                    return nil
-                }
-            }
-            self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
-            messages.sort {$0.timestamp < $1.timestamp }
-            competition(messages)
-            if let id = self.currentChat.messages?.last?.id {
-                self.lastMessageId = id
-            }
-        }
-    }
-
     func getCurrentChat( secondUser: User, competition: @escaping (Chat) -> Void, failure: @escaping (String) -> Void) {
-        self.didFindChat = false
+
         dataBase.collection("Chats")
             .whereField("user1Id", isEqualTo: secondUser.id)
             .whereField("user2Id", isEqualTo: user.id)
             .getDocuments { querySnapshot, error in
                 if error != nil {
-                self.didFindChat = false
                     failure("Error getting documents: \(String(describing: error))")
+                    return
             } else {
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
                         self.getCurrentChat(chat: self.currentChat, userNumber: 1) { chat in
                             competition(chat)
+
                         }
-                        self.didFindChat = true
                     } catch {
 
                     }
                 }
             }
         }
+
         dataBase.collection("Chats")
             .whereField("user2Id", isEqualTo: secondUser.id)
             .whereField("user1Id", isEqualTo: user.id)
             .getDocuments { querySnapshot, error in
             if let error = error {
-
-                self.didFindChat = false
                 failure("Error getting documents: \(error)")
+                return
             } else {
                 if querySnapshot?.documents.count == 0 {
-                    self.didFindChat = false
                     failure("No chats")
+                    return
                 }
                 for document in querySnapshot!.documents {
                     do {
@@ -104,10 +77,9 @@ class AppViewModel: ObservableObject {
                         self.getCurrentChat(chat: self.currentChat, userNumber: 2) { chat in
                             competition(chat)
                         }
-                        self.didFindChat = true
                     } catch {
-                        self.didFindChat = false
                         failure("erorr to get Chat data")
+                        return
                     }
                 }
             }
@@ -122,17 +94,17 @@ class AppViewModel: ObservableObject {
                 .getDocuments {querySnapshot, err in
                     if let err = err {
                         print("Error getting documents: \(err)")
-                        self.didFindChat = false
+                        return
                     } else {
                         for document in querySnapshot!.documents {
                             do {
                                 self.currentChat = try document.data(as: Chat.self)
                                 competition(self.currentChat)
-                                self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
-                                self.didFindChat = true
+//                                self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
+
                             } catch {
-                                print("erorr to get Chat data")
-                                self.didFindChat = false
+                                print("error to get Chat data")
+                                return
                             }
                         }
                     }
@@ -145,17 +117,16 @@ class AppViewModel: ObservableObject {
                     .getDocuments { (querySnapshot, err) in
                         if let err = err {
                             print("Error getting documents: \(err)")
-                            self.didFindChat = false
+                            return
                         } else {
                             for document in querySnapshot!.documents {
                                 do {
                                     self.currentChat = try document.data(as: Chat.self)
                                     competition(self.currentChat)
-                                    self.getMessages(chatId: self.currentChat.id ?? "someChatId") { _ in }
-                                    self.didFindChat = true
+
                                 } catch {
                                     print("erorr to get Chat data")
-                                    self.didFindChat = false
+                                    return
                                 }
                             }
                         }
@@ -179,12 +150,6 @@ class AppViewModel: ObservableObject {
         } catch {
             print("error creating chat to Firestore:: \(error)")
         }
-    }
-
-    func sendMessage(text: String) {
-        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
-        try? self.dataBase.collection("Chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-            .document().setData(from: newMessage)
     }
 
     private func addChatsIdToUsers() {
@@ -230,7 +195,6 @@ class AppViewModel: ObservableObject {
             .getDocument { document, err in
             if let err = err {
                 print("Error getting documents: \(err)")
-                self.didFindChat = false
             } else {
                 if let locUser = try? document?.data(as: User.self) as? User {
                     competition(locUser)

@@ -17,6 +17,7 @@ struct MainView: View {
         ZStack {
             if isShowingSideMenu {
                 SideMenuView(isShowingSideMenu: $isShowingSideMenu, isShowingSearchUsers: $showSearchUsers)
+                    .environmentObject(MessagingViewModel())
             }
             HomeView()
                 .cornerRadius(isShowingSideMenu ? 20 : 10)
@@ -31,6 +32,7 @@ struct MainView: View {
                         .foregroundColor(.black)
                 }) )
                 .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
+                .environmentObject(MessagingViewModel())
 
         }
         .onAppear {

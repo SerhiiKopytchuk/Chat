@@ -12,6 +12,7 @@ import FirebaseAuth
 struct HomeView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var messagingViewModel: MessagingViewModel
     @State var currentTab: Tab = .chats
     @State var goToConversation = false
 
@@ -33,15 +34,21 @@ struct HomeView: View {
                                 ConversationListRow(chat: chat) {
                                     _ = viewModel.getUser(
                                         id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                                    ) { _ in
-                                        goToConversation.toggle()
+                                    ) { user in
+                                        messagingViewModel.secondUser = user
                                     }
 
                                     viewModel.getCurrentChat(
                                         chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
-                                    ) { _ in }
-
+                                    ) { chat in
+                                        messagingViewModel.user = self.viewModel.user
+                                        messagingViewModel.currentChat = chat
+                                        messagingViewModel.getMessages { _ in
+                                            goToConversation.toggle()
+                                        }
+                                    }
                                 }
+                                .environmentObject(messagingViewModel)
                             }
                         }
 
@@ -53,7 +60,8 @@ struct HomeView: View {
                 CustomTabBar(currentTab: $currentTab)
                     .background(.white)
                 NavigationLink(isActive: $goToConversation) {
-                    ConversationView(user: viewModel.secondUser)
+                    ConversationView(user: viewModel.secondUser, isFindChat: true)
+                        .environmentObject(messagingViewModel)
                 } label: {
 
                 }

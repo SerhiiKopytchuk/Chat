@@ -10,13 +10,14 @@ import SwiftUI
 struct MessageField: View {
     @State private var message = ""
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var messagingViewModel: MessagingViewModel
 
     var body: some View {
         HStack {
             CustomTextField(placeholder: Text("Enter your message here"), text: $message)
 
             Button {
-                viewModel.sendMessage(text: message)
+                messagingViewModel.sendMessage(text: message)
                 message = ""
             } label: {
                 Image(systemName: "paperplane.fill")

@@ -13,6 +13,7 @@ import SDWebImageSwiftUI
 struct ConversationListRow: View {
     // Inject properties into the struct
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var messageViewModel: MessagingViewModel
     @State var person: User?
     @State var message = Message(id: "", text: "", senderId: "", timestamp: Date())
     @State var imageUrl = URL(string: "")
@@ -83,7 +84,8 @@ struct ConversationListRow: View {
                         }
                     }
                 }
-                self.viewModel.getMessages(chatId: chat.id ?? "someId") { messages in
+                self.messageViewModel.currentChat = self.chat
+                self.messageViewModel.getMessages { messages in
                     withAnimation {
                         self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
                     }
