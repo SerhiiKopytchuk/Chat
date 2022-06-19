@@ -10,7 +10,7 @@ import SwiftUI
 struct ConversationView: View {
 
     @State var user: User
-    @State var isFindedChat: Bool
+    @State var isFindChat: Bool
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var viewModel: AppViewModel
@@ -22,7 +22,7 @@ struct ConversationView: View {
                     .onTapGesture {
                         print(messagingViewModel.currentChat)
                     }
-                if isFindedChat {
+                if isFindChat {
                     ScrollViewReader { _ in
                         ScrollView {
                             ForEach(
@@ -60,6 +60,6 @@ struct ConversationView: View {
 
 struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
-        ConversationView(user: User(chats: [], gmail: "", id: "", name: ""), isFindedChat: true)
+        ConversationView(user: User(chats: [], gmail: "", id: "", name: ""), isFindChat: true)
     }
 }

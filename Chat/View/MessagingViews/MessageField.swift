@@ -17,8 +17,6 @@ struct MessageField: View {
             CustomTextField(placeholder: Text("Enter your message here"), text: $message)
 
             Button {
-                messagingViewModel.currentChat = self.viewModel.currentChat
-                messagingViewModel.user = self.viewModel.user
                 messagingViewModel.sendMessage(text: message)
                 message = ""
             } label: {

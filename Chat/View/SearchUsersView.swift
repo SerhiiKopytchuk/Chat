@@ -16,7 +16,7 @@ struct SearchUsersView: View {
     @State var searchText = ""
     @State var goToConversation = false
     @State var userWithConversation = User(chats: [], gmail: "", id: "", name: "")
-    @State var isFindedChat = true
+    @State var isFindChat = true
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -36,7 +36,7 @@ struct SearchUsersView: View {
             List {
                 ForEach(viewModel.users, id: \.id) { user in
                     NavigationLink(isActive: $goToConversation) {
-                        ConversationView(user: self.userWithConversation, isFindedChat: self.isFindedChat)
+                        ConversationView(user: self.userWithConversation, isFindChat: self.isFindChat)
                             .environmentObject(messagingViewModel)
                     }label: {
                         SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
@@ -46,13 +46,12 @@ struct SearchUsersView: View {
 
                             viewModel.getCurrentChat(secondUser: user) { chat in
                                 self.messagingViewModel.currentChat = chat
-                                self.messagingViewModel.getMessages { messages in
-                                    self.messagingViewModel.currentChat.messages = messages
-                                    isFindedChat = true
+                                self.messagingViewModel.getMessages { _ in
+                                    isFindChat = true
                                     goToConversation.toggle()
                                 }
                             } failure: { _ in
-                                isFindedChat = false
+                                isFindChat = false
                                 goToConversation.toggle()
                             }
                         })

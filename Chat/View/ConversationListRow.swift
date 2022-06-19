@@ -85,7 +85,7 @@ struct ConversationListRow: View {
                     }
                 }
                 self.messageViewModel.currentChat = self.chat
-                self.messageViewModel.getMessages(){ messages in
+                self.messageViewModel.getMessages { messages in
                     withAnimation {
                         self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
                     }

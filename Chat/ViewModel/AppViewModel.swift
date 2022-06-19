@@ -23,7 +23,6 @@ class AppViewModel: ObservableObject {
     @Published var chats: [Chat] = []
     @Published var currentChat: Chat = Chat(id: "", user1Id: "", user2Id: "", messages: [])
 
-
     var isSignedIn: Bool {
         return auth.currentUser != nil
     }

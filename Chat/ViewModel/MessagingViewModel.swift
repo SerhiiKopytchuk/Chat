@@ -29,7 +29,7 @@ class MessagingViewModel: ObservableObject {
             self.currentChat.messages = documents.compactMap { document -> Message? in
                 do {
                     messages.append(try document.data(as: Message.self))
-                    return try document.data(as: Message.self)
+                    return  messages.last
                 } catch {
                     print("error deconding documet into Message: \(error)")
                     return nil
@@ -37,14 +37,22 @@ class MessagingViewModel: ObservableObject {
             }
             self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
             messages.sort {$0.timestamp < $1.timestamp }
-                competition(messages)
+                DispatchQueue.main.async {
+                    competition(messages)
+                }
+                return
             }
     }
 
     func sendMessage(text: String) {
         let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
-        try? self.dataBase.collection("Chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-            .document().setData(from: newMessage)
+        do {
+            try self.dataBase.collection("Chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+                .document().setData(from: newMessage)
+        } catch {
+            print("failed to send message" + error.localizedDescription)
+        }
+
     }
 
 }
