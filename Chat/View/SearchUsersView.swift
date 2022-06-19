@@ -10,11 +10,13 @@ import SwiftUI
 struct SearchUsersView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
-    @State var imageViewModel = ImageViewModel()
+    @EnvironmentObject var messagingViewModel: MessagingViewModel
+
     @State var showSearchBar = false
     @State var searchText = ""
     @State var goToConversation = false
     @State var userWithConversation = User(chats: [], gmail: "", id: "", name: "")
+    @State var isFindChat = true
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -33,26 +35,32 @@ struct SearchUsersView: View {
             .padding()
             List {
                 ForEach(viewModel.users, id: \.id) { user in
-                    SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
-                        self.userWithConversation = user
-                        viewModel.secondUser = user
-                        viewModel.getCurrentChat(secondUser: user) { _ in
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                goToConversation = true
+                    NavigationLink(isActive: $goToConversation) {
+                        ConversationView(user: self.userWithConversation, isFindChat: self.isFindChat)
+                            .environmentObject(messagingViewModel)
+                    }label: {
+                        SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
+                            self.userWithConversation = user
+                            self.viewModel.secondUser = user
+                            self.messagingViewModel.secondUser = user
+
+                            viewModel.getCurrentChat(secondUser: user) { chat in
+                                self.messagingViewModel.currentChat = chat
+                                self.messagingViewModel.getMessages { _ in
+                                    isFindChat = true
+                                    goToConversation.toggle()
+                                }
+                            } failure: { _ in
+                                isFindChat = false
+                                goToConversation.toggle()
                             }
-                            // why with dispathchQueu.main.asynkAfter its working, but not with clusures?
-                        } failure: { _ in
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                goToConversation = true
-                            }
-                        }
-                    })
+                        })
+                    }
+
                 }
             }
+
         }
-        NavigationLink(isActive: $goToConversation) {
-            ConversationView(user: self.userWithConversation)
-        }label: {}
     }
 }
 

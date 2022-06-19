@@ -31,7 +31,7 @@ struct SignUpView: View {
     @State var image: UIImage?
 
     @EnvironmentObject var viewModel: AppViewModel
-    @ObservedObject var imageViewModel = ImageViewModel()
+    @ObservedObject var imageViewModel = EditProfileViewModel()
 
     private func updateButton() {
         let time: Double = 0.3
