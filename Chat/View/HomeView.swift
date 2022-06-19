@@ -44,9 +44,8 @@ struct HomeView: View {
                                         messagingViewModel.user = self.viewModel.user
                                         messagingViewModel.currentChat = chat
                                         messagingViewModel.getMessages { _ in
+                                            goToConversation.toggle()
                                         }
-                                        goToConversation.toggle()
-
                                     }
                                 }
                                 .environmentObject(messagingViewModel)

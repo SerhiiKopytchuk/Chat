@@ -19,9 +19,6 @@ struct ConversationView: View {
         VStack {
             VStack {
                 TitleRow(user: user)
-                    .onTapGesture {
-                        print(messagingViewModel.currentChat)
-                    }
                 if isFindChat {
                     ScrollViewReader { _ in
                         ScrollView {
