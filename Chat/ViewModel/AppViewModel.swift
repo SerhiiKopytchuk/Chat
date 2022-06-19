@@ -43,8 +43,8 @@ class AppViewModel: ObservableObject {
             .whereField("user2Id", isEqualTo: user.id)
             .getDocuments { querySnapshot, error in
                 if error != nil {
-
                     failure("Error getting documents: \(String(describing: error))")
+                    return
             } else {
                 for document in querySnapshot!.documents {
                     do {
@@ -59,29 +59,28 @@ class AppViewModel: ObservableObject {
                 }
             }
         }
+
         dataBase.collection("Chats")
             .whereField("user2Id", isEqualTo: secondUser.id)
             .whereField("user1Id", isEqualTo: user.id)
             .getDocuments { querySnapshot, error in
             if let error = error {
-
-
                 failure("Error getting documents: \(error)")
+                return
             } else {
                 if querySnapshot?.documents.count == 0 {
-
                     failure("No chats")
+                    return
                 }
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
                         self.getCurrentChat(chat: self.currentChat, userNumber: 2) { chat in
                             competition(chat)
-
                         }
                     } catch {
-
                         failure("erorr to get Chat data")
+                        return
                     }
                 }
             }
@@ -96,7 +95,7 @@ class AppViewModel: ObservableObject {
                 .getDocuments {querySnapshot, err in
                     if let err = err {
                         print("Error getting documents: \(err)")
-
+                        return
                     } else {
                         for document in querySnapshot!.documents {
                             do {
@@ -106,7 +105,7 @@ class AppViewModel: ObservableObject {
 
                             } catch {
                                 print("error to get Chat data")
-
+                                return
                             }
                         }
                     }
@@ -119,7 +118,7 @@ class AppViewModel: ObservableObject {
                     .getDocuments { (querySnapshot, err) in
                         if let err = err {
                             print("Error getting documents: \(err)")
-
+                            return
                         } else {
                             for document in querySnapshot!.documents {
                                 do {
@@ -128,7 +127,7 @@ class AppViewModel: ObservableObject {
 
                                 } catch {
                                     print("erorr to get Chat data")
-
+                                    return
                                 }
                             }
                         }

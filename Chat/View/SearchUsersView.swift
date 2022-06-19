@@ -41,6 +41,7 @@ struct SearchUsersView: View {
                     }label: {
                         SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
                             self.userWithConversation = user
+                            self.viewModel.secondUser = user
                             self.messagingViewModel.secondUser = user
 
                             viewModel.getCurrentChat(secondUser: user) { chat in
@@ -51,7 +52,7 @@ struct SearchUsersView: View {
                                     goToConversation.toggle()
                                 }
                             } failure: { _ in
-                                    isFindedChat = false
+                                isFindedChat = false
                                 goToConversation.toggle()
                             }
                         })
