@@ -35,32 +35,35 @@ struct SearchUsersView: View {
             .padding()
             List {
                 ForEach(viewModel.users, id: \.id) { user in
-                    NavigationLink(isActive: $goToConversation) {
-                        ConversationView(user: self.userWithConversation, isFindChat: self.isFindChat)
-                            .environmentObject(messagingViewModel)
-                    }label: {
-                        SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
-                            self.userWithConversation = user
-                            self.viewModel.secondUser = user
-                            self.messagingViewModel.secondUser = user
-                            self.messagingViewModel.user = viewModel.user
+                    SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
+                        self.userWithConversation = user
+                        self.viewModel.secondUser = user
+                        self.messagingViewModel.secondUser = user
+                        self.messagingViewModel.user = viewModel.user
 
-                            viewModel.getCurrentChat(secondUser: user) { chat in
-                                self.messagingViewModel.currentChat = chat
-                                
-                                self.messagingViewModel.getMessages { _ in
-                                    isFindChat = true
+                        viewModel.getCurrentChat(secondUser: user) { chat in
+                            self.messagingViewModel.currentChat = chat
+                            self.messagingViewModel.getMessages { _ in
+                                isFindChat = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                     goToConversation.toggle()
                                 }
-                            } failure: { _ in
-                                isFindChat = false
-                                goToConversation.toggle()
                             }
-                        })
-                    }
-
+                        } failure: { _ in
+                            isFindChat = false
+//                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                goToConversation.toggle()
+//                            }
+                        }
+                    })
                 }
             }
+
+        }
+        NavigationLink(isActive: $goToConversation) {
+            ConversationView(user: self.userWithConversation, isFindChat: self.isFindChat)
+                .environmentObject(messagingViewModel)
+        }label: {
 
         }
     }
