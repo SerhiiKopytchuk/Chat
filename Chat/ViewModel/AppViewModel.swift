@@ -48,10 +48,7 @@ class AppViewModel: ObservableObject {
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
-                        self.getCurrentChat(chat: self.currentChat, userNumber: 1) { chat in
-                            competition(chat)
-
-                        }
+                        competition(self.currentChat)
                     } catch {
 
                     }
@@ -74,9 +71,7 @@ class AppViewModel: ObservableObject {
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
-                        self.getCurrentChat(chat: self.currentChat, userNumber: 2) { chat in
-                            competition(chat)
-                        }
+                        competition(self.currentChat)
                     } catch {
                         failure("erorr to get Chat data")
                         return

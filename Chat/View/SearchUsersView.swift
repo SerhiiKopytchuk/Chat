@@ -43,9 +43,11 @@ struct SearchUsersView: View {
                             self.userWithConversation = user
                             self.viewModel.secondUser = user
                             self.messagingViewModel.secondUser = user
+                            self.messagingViewModel.user = viewModel.user
 
                             viewModel.getCurrentChat(secondUser: user) { chat in
                                 self.messagingViewModel.currentChat = chat
+                                
                                 self.messagingViewModel.getMessages { _ in
                                     isFindChat = true
                                     goToConversation.toggle()
