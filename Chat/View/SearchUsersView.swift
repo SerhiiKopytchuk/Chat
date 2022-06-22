@@ -15,7 +15,6 @@ struct SearchUsersView: View {
     @State var showSearchBar = false
     @State var searchText = ""
     @State var goToConversation = false
-    @State var userWithConversation = User(chats: [], gmail: "", id: "", name: "")
     @State var isFindChat = true
 
     var body: some View {
@@ -33,10 +32,22 @@ struct SearchUsersView: View {
 
             }
             .padding()
+            usersList
+
+        }
+        .background {
+            NavigationLink(isActive: $goToConversation) {
+                ConversationView(user: self.viewModel.secondUser, isFindChat: self.$isFindChat)
+                    .environmentObject(viewModel)
+                    .environmentObject(messagingViewModel)
+            }label: { Text("conversationView") }
+        }
+    }
+
+    @ViewBuilder var usersList: some View {
             List {
                 ForEach(viewModel.users, id: \.id) { user in
                     SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
-                        self.userWithConversation = user
                         self.viewModel.secondUser = user
                         self.messagingViewModel.secondUser = user
                         self.messagingViewModel.user = viewModel.user
@@ -45,27 +56,20 @@ struct SearchUsersView: View {
                             self.messagingViewModel.currentChat = chat
                             self.messagingViewModel.getMessages { _ in
                                 isFindChat = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    goToConversation.toggle()
+                                DispatchQueue.main.async {
+                                    goToConversation = true
                                 }
                             }
+
                         } failure: { _ in
                             isFindChat = false
-//                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                goToConversation.toggle()
-//                            }
+                                goToConversation = true
+
                         }
                     })
                 }
             }
 
-        }
-        NavigationLink(isActive: $goToConversation) {
-            ConversationView(user: self.userWithConversation, isFindChat: self.isFindChat)
-                .environmentObject(messagingViewModel)
-        }label: {
-
-        }
     }
 }
 

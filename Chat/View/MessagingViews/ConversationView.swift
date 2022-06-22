@@ -10,7 +10,7 @@ import SwiftUI
 struct ConversationView: View {
 
     @State var user: User
-    @State var isFindChat: Bool
+    @Binding var isFindChat: Bool
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var viewModel: AppViewModel
@@ -36,7 +36,11 @@ struct ConversationView: View {
                     VStack {
                         Button {
                             // sometimes get back, when creating chat
-                            viewModel.createChat()
+                            viewModel.createChat { chat in
+                                messagingViewModel.currentChat = chat
+                                messagingViewModel.getMessages(competition: { _ in })
+                                isFindChat.toggle()
+                            }
                         } label: {
                             Text("Start Chat")
                                 .font(.title)
@@ -49,14 +53,14 @@ struct ConversationView: View {
             }
         }
         .background(Color("Peach"))
-        MessageField()
-            .environmentObject(messagingViewModel)
-            .environmentObject(viewModel)
+        MessageField(messagingViewModel: messagingViewModel)
     }
 }
 
 struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
-        ConversationView(user: User(chats: [], gmail: "", id: "", name: ""), isFindChat: true)
+        ConversationView(user: User(chats: [], gmail: "", id: "", name: ""), isFindChat: .constant(true))
+            .environmentObject(MessagingViewModel())
+            .environmentObject(AppViewModel())
     }
 }

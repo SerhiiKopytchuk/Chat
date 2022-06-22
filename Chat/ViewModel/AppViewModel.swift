@@ -130,7 +130,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func createChat() {
+    func createChat(competition: @escaping (Chat) -> Void) {
         do {
             let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id)
 
@@ -140,6 +140,7 @@ class AppViewModel: ObservableObject {
                 self.currentChat = chat
                 self.addChatsIdToUsers()
                 self.getChats()
+                competition(chat)
             } failure: { _ in }
 
         } catch {

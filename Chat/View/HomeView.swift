@@ -61,8 +61,10 @@ struct HomeView: View {
                 }
                 CustomTabBar(currentTab: $currentTab)
                     .background(.white)
+
                 NavigationLink(isActive: $goToConversation) {
-                    ConversationView(user: viewModel.secondUser, isFindChat: true)
+                    ConversationView(user: viewModel.secondUser, isFindChat: .constant(true))
+                        .environmentObject(viewModel)
                         .environmentObject(messagingViewModel)
                 } label: {
 
