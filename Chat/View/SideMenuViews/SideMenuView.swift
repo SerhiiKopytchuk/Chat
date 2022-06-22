@@ -7,10 +7,13 @@
 
 import SwiftUI
 import Firebase
+import Contacts
 
 struct SideMenuView: View {
+
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
 
@@ -25,6 +28,7 @@ struct SideMenuView: View {
                     .foregroundColor(.white)
                     .frame(height: 240)
                 ForEach(SideMenuViewModel.allCases, id: \.self) { option in
+
                     if option == SideMenuViewModel.profile {
                         NavigationLink {
                             EditProfileView()
@@ -35,7 +39,8 @@ struct SideMenuView: View {
                         NavigationLink {
                             SearchUsersView()
                                 .environmentObject(messagingViewModel)
-                                .navigationBarTitle("", displayMode: .inline)
+                                .environmentObject(viewModel)
+                                .navigationBarTitle("Search Users", displayMode: .automatic)
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }

@@ -15,7 +15,6 @@ struct SearchUsersView: View {
     @State var showSearchBar = false
     @State var searchText = ""
     @State var goToConversation = false
-    @State var userWithConversation = User(chats: [], gmail: "", id: "", name: "")
     @State var isFindChat = true
 
     var body: some View {
@@ -33,34 +32,44 @@ struct SearchUsersView: View {
 
             }
             .padding()
+            usersList
+
+        }
+        .background {
+            NavigationLink(isActive: $goToConversation) {
+                ConversationView(user: self.viewModel.secondUser, isFindChat: self.$isFindChat)
+                    .environmentObject(viewModel)
+                    .environmentObject(messagingViewModel)
+            }label: { Text("conversationView") }
+        }
+    }
+
+    @ViewBuilder var usersList: some View {
             List {
                 ForEach(viewModel.users, id: \.id) { user in
-                    NavigationLink(isActive: $goToConversation) {
-                        ConversationView(user: self.userWithConversation, isFindChat: self.isFindChat)
-                            .environmentObject(messagingViewModel)
-                    }label: {
-                        SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
-                            self.userWithConversation = user
-                            self.viewModel.secondUser = user
-                            self.messagingViewModel.secondUser = user
+                    SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
+                        self.viewModel.secondUser = user
+                        self.messagingViewModel.secondUser = user
+                        self.messagingViewModel.user = viewModel.user
 
-                            viewModel.getCurrentChat(secondUser: user) { chat in
-                                self.messagingViewModel.currentChat = chat
-                                self.messagingViewModel.getMessages { _ in
-                                    isFindChat = true
-                                    goToConversation.toggle()
+                        viewModel.getCurrentChat(secondUser: user) { chat in
+                            self.messagingViewModel.currentChat = chat
+                            self.messagingViewModel.getMessages { _ in
+                                isFindChat = true
+                                DispatchQueue.main.async {
+                                    goToConversation = true
                                 }
-                            } failure: { _ in
-                                isFindChat = false
-                                goToConversation.toggle()
                             }
-                        })
-                    }
 
+                        } failure: { _ in
+                            isFindChat = false
+                                goToConversation = true
+
+                        }
+                    })
                 }
             }
 
-        }
     }
 }
 

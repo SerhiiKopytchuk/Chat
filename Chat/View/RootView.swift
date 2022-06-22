@@ -14,6 +14,7 @@ import Firebase
 struct RootView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var messagingViewModel: MessagingViewModel
 
     var body: some View {
 
@@ -21,6 +22,8 @@ struct RootView: View {
             VStack {
                 if viewModel.signedIn {
                     MainView()
+                        .environmentObject(viewModel)
+                        .environmentObject(messagingViewModel)
                         .navigationViewStyle(.stack)
                         .navigationBarTitle("Chats")
 
@@ -30,6 +33,7 @@ struct RootView: View {
             }
             .navigationBarBackButtonHidden(true)
         }
+        .navigationViewStyle(.stack)
         .accentColor(.orange)
         .onAppear {
             viewModel.signedIn = viewModel.isSignedIn
