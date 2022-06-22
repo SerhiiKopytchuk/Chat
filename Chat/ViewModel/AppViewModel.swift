@@ -48,10 +48,7 @@ class AppViewModel: ObservableObject {
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
-                        self.getCurrentChat(chat: self.currentChat, userNumber: 1) { chat in
-                            competition(chat)
-
-                        }
+                        competition(self.currentChat)
                     } catch {
 
                     }
@@ -74,9 +71,7 @@ class AppViewModel: ObservableObject {
                 for document in querySnapshot!.documents {
                     do {
                         self.currentChat = try document.data(as: Chat.self)
-                        self.getCurrentChat(chat: self.currentChat, userNumber: 2) { chat in
-                            competition(chat)
-                        }
+                        competition(self.currentChat)
                     } catch {
                         failure("erorr to get Chat data")
                         return
@@ -135,7 +130,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func createChat() {
+    func createChat(competition: @escaping (Chat) -> Void) {
         do {
             let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id)
 
@@ -145,6 +140,7 @@ class AppViewModel: ObservableObject {
                 self.currentChat = chat
                 self.addChatsIdToUsers()
                 self.getChats()
+                competition(chat)
             } failure: { _ in }
 
         } catch {

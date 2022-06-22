@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MessageField: View {
     @State private var message = ""
-    @EnvironmentObject var viewModel: AppViewModel
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
+
+    @ObservedObject var messagingViewModel: MessagingViewModel
 
     var body: some View {
         HStack {
@@ -38,7 +38,7 @@ struct MessageField: View {
 
 struct MessageField_Previews: PreviewProvider {
     static var previews: some View {
-        MessageField()
+        MessageField(messagingViewModel: MessagingViewModel())
             .environmentObject(AppViewModel())
     }
 }
