@@ -31,6 +31,7 @@ struct RootView: View {
 
                 } else {
                     SignUpView()
+                        .environmentObject(chattingViewModel)
                 }
             }
             .navigationBarBackButtonHidden(true)

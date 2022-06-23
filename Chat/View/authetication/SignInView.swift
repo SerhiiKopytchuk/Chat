@@ -22,9 +22,8 @@ struct SignInView: View {
 
     @ObservedObject var imageViewModel = EditProfileViewModel()
 
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var viewModel: AppViewModel
-
-    //    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     private func updateButton() {
         let time: Double = 0.3
@@ -68,7 +67,9 @@ struct SignInView: View {
                                     isShowAlert.toggle()
                                 }
                             } else {
-                                viewModel.signIn(email: self.email, password: self.password) { _ in
+                                viewModel.signIn(email: self.email, password: self.password) { user in
+                                    chattingViewModel.user = user
+                                    chattingViewModel.getChats()
                                 }
                             }
                         }
@@ -212,7 +213,10 @@ struct SignInView: View {
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                accessToken: authentication.accessToken)
 
-                viewModel.signIn(credential: credential)
+                viewModel.signIn(credential: credential) { user in
+                    chattingViewModel.user = user
+                    chattingViewModel.getChats()
+                }
             }
         } label: {
             Image("google")

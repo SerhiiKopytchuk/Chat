@@ -110,14 +110,17 @@ class AppViewModel: ObservableObject {
         self.signedIn = false
     }
 
-    func signIn(credential: AuthCredential) {
+    func signIn(credential: AuthCredential, competition: @escaping (User) -> Void ) {
         Auth.auth().signIn(with: credential) { [weak self] result, error in
             guard result != nil, error == nil else {
                 return
             }
             DispatchQueue.main.async {
                 self?.signedIn = true
-                self?.getCurrentUser(competition: { _ in })
+                self?.getCurrentUser(competition: { user in
+                    competition(user)
+                })
+
             }
         }
     }
