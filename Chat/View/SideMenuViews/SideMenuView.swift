@@ -13,6 +13,7 @@ struct SideMenuView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
@@ -40,6 +41,7 @@ struct SideMenuView: View {
                             SearchUsersView()
                                 .environmentObject(messagingViewModel)
                                 .environmentObject(viewModel)
+                                .environmentObject(chattingViewModel)
                                 .navigationBarTitle("Search Users", displayMode: .automatic)
                         } label: {
                             SideMenuOptionView(viewModel: option)
@@ -49,6 +51,7 @@ struct SideMenuView: View {
                             if option == SideMenuViewModel.logout {
                                 withAnimation {
                                     viewModel.signOut()
+                                    chattingViewModel.chats = []
                                 }
                             }
                         } label: {

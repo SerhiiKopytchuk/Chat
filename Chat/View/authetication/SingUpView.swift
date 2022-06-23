@@ -31,6 +31,7 @@ struct SignUpView: View {
     @State var image: UIImage?
 
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
     @ObservedObject var imageViewModel = EditProfileViewModel()
 
     private func updateButton() {
@@ -288,10 +289,11 @@ struct SignUpView: View {
                 }
 
             } else {
-                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { _ in
+                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
                     imageViewModel.saveImage(image: self.image ?? UIImage())
+                    chattingViewModel.user = viewModel.user
+                    chattingViewModel.getChats()
                 }
-
             }
         }
     }
@@ -321,7 +323,11 @@ struct SignUpView: View {
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                  accessToken: authentication.accessToken)
 
-                viewModel.signIn(credential: credential)
+                viewModel.signIn(credential: credential) { user in
+                    chattingViewModel.user = user
+                    chattingViewModel.getChats()
+                }
+
             }
         } label: {
             Image("google")
