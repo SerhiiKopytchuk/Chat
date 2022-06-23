@@ -15,6 +15,7 @@ struct RootView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     var body: some View {
 
@@ -24,6 +25,7 @@ struct RootView: View {
                     MainView()
                         .environmentObject(viewModel)
                         .environmentObject(messagingViewModel)
+                        .environmentObject(chattingViewModel)
                         .navigationViewStyle(.stack)
                         .navigationBarTitle("Chats")
 
