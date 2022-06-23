@@ -289,7 +289,7 @@ struct SignUpView: View {
                 }
 
             } else {
-                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { _ in
+                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
                     imageViewModel.saveImage(image: self.image ?? UIImage())
                     chattingViewModel.user = viewModel.user
                     chattingViewModel.getChats()
@@ -325,9 +325,9 @@ struct SignUpView: View {
 
                 viewModel.signIn(credential: credential) { user in
                     chattingViewModel.user = user
+                    chattingViewModel.getChats()
                 }
 
-                chattingViewModel.getChats()
             }
         } label: {
             Image("google")

@@ -38,7 +38,7 @@ struct HomeView: View {
                                         id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
                                     ) { user in
                                         messagingViewModel.secondUser = user
-                                    }
+                                    } failure: { }
 
                                     chattingViewModel.getCurrentChat(
                                         chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2

@@ -12,7 +12,6 @@ import FirebaseFirestore
 import SwiftUI
 
 class AppViewModel: ObservableObject {
-    let auth = Auth.auth()
 
     @Published var signedIn = false
     @Published var showLoader = false
@@ -29,6 +28,7 @@ class AppViewModel: ObservableObject {
     @Published var showAlert = false
 
     let dataBase = Firestore.firestore()
+    let auth = Auth.auth()
 
     // MARK: - functions
 
@@ -45,7 +45,7 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func getUser(id: String, competition: @escaping (User) -> Void) -> User {
+    func getUser(id: String, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
         let docRef = self.dataBase.collection("users").document(id)
         var userToReturn: User = User(chats: [], gmail: "", id: "", name: "")
         docRef.getDocument(as: User.self) { result in
@@ -56,6 +56,7 @@ class AppViewModel: ObservableObject {
               competition(user)
           case .failure(let error):
             print(error)
+            failure()
           }
         }
         return userToReturn
@@ -110,22 +111,46 @@ class AppViewModel: ObservableObject {
         self.signedIn = false
     }
 
+    private func doesUserExist(competition: @escaping (Bool) -> Void ) {
+        dataBase.collection("users").document(self.auth.currentUser?.uid ?? "someId").getDocument(as: User.self) { result in
+            switch result {
+            case .success:
+                competition(true)
+            case .failure:
+                competition(false)
+            }
+        }
+    }
+
     func signIn(credential: AuthCredential, competition: @escaping (User) -> Void ) {
         Auth.auth().signIn(with: credential) { [weak self] result, error in
             guard result != nil, error == nil else {
                 return
             }
-            DispatchQueue.main.async {
-                self?.signedIn = true
-                self?.getCurrentUser(competition: { user in
-                    competition(user)
-                })
+            self?.doesUserExist { exist in
+                if exist {
+                    DispatchQueue.main.async {
+                        self?.signedIn = true
+                        self?.getCurrentUser(competition: { user in
+                            competition(user)
+                        })
 
+                    }
+                } else {
+                    self?.createFbUser(name: self?.auth.currentUser?.displayName ?? "someName",
+                                 gmail: self?.auth.currentUser?.email ?? "someEmail@gmail.com")
+
+                    self?.signedIn = true
+                    self?.getCurrentUser(competition: { user in
+                        competition(user)
+                    })
+                }
             }
+
         }
     }
 
-    func signUp(username: String, email: String, password: String, competition: @escaping (Bool) -> Void) {
+    func signUp(username: String, email: String, password: String, competition: @escaping (User) -> Void) {
         showLoader = true
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
             guard result != nil, error == nil else {
@@ -137,12 +162,14 @@ class AppViewModel: ObservableObject {
             DispatchQueue.main.async {
 
                 self?.getAllUsers()
-                self?.getCurrentUser(competition: { _ in })
+                self?.getCurrentUser(competition: { user in
+                    competition(user)
+                })
 
                 self?.signedIn = true
                 self?.showLoader = false
                 self?.createFbUser(name: username, gmail: Auth.auth().currentUser?.email ?? "")
-                competition(true)
+
             }
         }
     }
@@ -175,5 +202,4 @@ class AppViewModel: ObservableObject {
             print("error adding message to Firestore:: \(error)")
         }
     }
-
 }
