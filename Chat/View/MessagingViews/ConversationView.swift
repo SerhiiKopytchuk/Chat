@@ -14,6 +14,7 @@ struct ConversationView: View {
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     var body: some View {
         VStack {
@@ -36,7 +37,7 @@ struct ConversationView: View {
                     VStack {
                         Button {
                             // sometimes get back, when creating chat
-                            viewModel.createChat { chat in
+                            chattingViewModel.createChat { chat in
                                 messagingViewModel.currentChat = chat
                                 messagingViewModel.getMessages(competition: { _ in })
                                 isFindChat.toggle()

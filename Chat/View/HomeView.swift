@@ -13,6 +13,8 @@ struct HomeView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
+
     @State var currentTab: Tab = .chats
     @State var goToConversation = false
 
@@ -29,16 +31,16 @@ struct HomeView: View {
 
                     VStack {
                         List {
-                            ForEach(viewModel.chats, id: \.id) { chat in
+                            ForEach(chattingViewModel.chats, id: \.id) { chat in
 
                                 ConversationListRow(chat: chat) {
                                     _ = viewModel.getUser(
                                         id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
                                     ) { user in
                                         messagingViewModel.secondUser = user
-                                    }
+                                    } failure: { }
 
-                                    viewModel.getCurrentChat(
+                                    chattingViewModel.getCurrentChat(
                                         chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
                                     ) { chat in
                                         messagingViewModel.user = self.viewModel.user
@@ -54,7 +56,8 @@ struct HomeView: View {
                             }
                         }
 
-                    }.tag(Tab.chats)
+                    }
+                    .tag(Tab.chats)
 
                     Text("Chanels")
                         .tag(Tab.chanels)

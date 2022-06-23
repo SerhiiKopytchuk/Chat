@@ -18,9 +18,17 @@ struct ChatApp: App {
         WindowGroup {
             let viewModel = AppViewModel()
             let messagingViewModel = MessagingViewModel()
+            let chattingViewModel = ChattingViewModel()
             RootView()
+                .onAppear {
+                        viewModel.getCurrentUser { user in
+                            chattingViewModel.user = user
+                            chattingViewModel.getChats()
+                        }
+                }
                 .environmentObject(viewModel)
                 .environmentObject(messagingViewModel)
+                .environmentObject(chattingViewModel)
         }
 
     }

@@ -11,6 +11,7 @@ struct SearchUsersView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     @State var showSearchBar = false
     @State var searchText = ""
@@ -40,6 +41,7 @@ struct SearchUsersView: View {
                 ConversationView(user: self.viewModel.secondUser, isFindChat: self.$isFindChat)
                     .environmentObject(viewModel)
                     .environmentObject(messagingViewModel)
+                    .environmentObject(chattingViewModel)
             }label: { Text("conversationView") }
         }
     }
@@ -48,11 +50,13 @@ struct SearchUsersView: View {
             List {
                 ForEach(viewModel.users, id: \.id) { user in
                     SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
-                        self.viewModel.secondUser = user
-                        self.messagingViewModel.secondUser = user
-                        self.messagingViewModel.user = viewModel.user
+                        viewModel.secondUser = user
+                        messagingViewModel.secondUser = user
+                        messagingViewModel.user = viewModel.user
+                        chattingViewModel.secondUser = user
+                        chattingViewModel.user = viewModel.user
 
-                        viewModel.getCurrentChat(secondUser: user) { chat in
+                        chattingViewModel.getCurrentChat(secondUser: user) { chat in
                             self.messagingViewModel.currentChat = chat
                             self.messagingViewModel.getMessages { _ in
                                 isFindChat = true
@@ -60,11 +64,9 @@ struct SearchUsersView: View {
                                     goToConversation = true
                                 }
                             }
-
                         } failure: { _ in
                             isFindChat = false
-                                goToConversation = true
-
+                            goToConversation = true
                         }
                     })
                 }
