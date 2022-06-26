@@ -10,6 +10,7 @@ import FirebaseFirestoreSwift
 
 struct Channel: Codable, Identifiable {
     @DocumentID var id = "\(UUID())"
+    var name: String
     var ownerId: String
     var subscribersId: [String]
     var messages: [Message]?

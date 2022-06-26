@@ -14,6 +14,7 @@
 		4001F19D2848950600D17CCA /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4001F19C2848950600D17CCA /* User.swift */; };
 		400E81A82868583A006A606E /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E81A72868583A006A606E /* Channel.swift */; };
 		400E81AA286859AD006A606E /* ChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E81A9286859AD006A606E /* ChannelViewModel.swift */; };
+		400E81AD286861EE006A606E /* CreateChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E81AC286861EE006A606E /* CreateChannelView.swift */; };
 		4024EB01283802130082E739 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB00283802130082E739 /* CustomAlert.swift */; };
 		4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0228382AE80082E739 /* SideMenuView.swift */; };
 		4024EB0728382B030082E739 /* SideMenuHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0628382B030082E739 /* SideMenuHeaderView.swift */; };
@@ -59,6 +60,7 @@
 		4001F19C2848950600D17CCA /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		400E81A72868583A006A606E /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		400E81A9286859AD006A606E /* ChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewModel.swift; sourceTree = "<group>"; };
+		400E81AC286861EE006A606E /* CreateChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChannelView.swift; sourceTree = "<group>"; };
 		4024EB00283802130082E739 /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		4024EB0228382AE80082E739 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		4024EB0628382B030082E739 /* SideMenuHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuHeaderView.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				4094461428301F8D00239F7B /* GoogleService-Info.plist */,
 				400142F5282EBACF00E5D497 /* Model */,
 				400142F4282EBAC000E5D497 /* ViewModel */,
+				400E81AB28686185006A606E /* SubView */,
 				400142F3282EBAB900E5D497 /* View */,
 				400142E5282EBA8400E5D497 /* ChatApp.swift */,
 				400142E9282EBA8500E5D497 /* Assets.xcassets */,
@@ -156,15 +159,14 @@
 				400142E7282EBA8400E5D497 /* RootView.swift */,
 				408E26112832C44800CE108E /* MainView.swift */,
 				4056D6402834024B000A0872 /* ConversationListRow.swift */,
-				4024EB00283802130082E739 /* CustomAlert.swift */,
 				40C3A105283AA2DB00A9683A /* SideMenuViews */,
 				4024EB0E28393CF40082E739 /* HomeView.swift */,
-				4076E0AC283FB54A00E21131 /* LoaderView.swift */,
 				40D5C41728429F580015DFBB /* CustomTabBar.swift */,
 				406DC3A3284C8E1400A41964 /* MessagingViews */,
 				409AC7632849E9A300BD00F9 /* SearchUsersView.swift */,
 				406DC3A1284C8B5E00A41964 /* SearchUserCell.swift */,
 				40FA6F6128576D01001AAC09 /* EditProfileView.swift */,
+				400E81AC286861EE006A606E /* CreateChannelView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -193,6 +195,15 @@
 				400E81A72868583A006A606E /* Channel.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		400E81AB28686185006A606E /* SubView */ = {
+			isa = PBXGroup;
+			children = (
+				4024EB00283802130082E739 /* CustomAlert.swift */,
+				4076E0AC283FB54A00E21131 /* LoaderView.swift */,
+			);
+			path = SubView;
 			sourceTree = "<group>";
 		};
 		4039A6602854A01D00C74377 /* authetication */ = {
@@ -355,6 +366,7 @@
 				4056D63D2833DD17000A0872 /* AppViewModel.swift in Sources */,
 				4024EB0B28382D960082E739 /* SideMenuViewModel.swift in Sources */,
 				40EEDDDE2864682D00B1F38C /* ChattingViewModel.swift in Sources */,
+				400E81AD286861EE006A606E /* CreateChannelView.swift in Sources */,
 				40D5C41628428B3A0015DFBB /* Tab.swift in Sources */,
 				408E26122832C44800CE108E /* MainView.swift in Sources */,
 				400142E8282EBA8400E5D497 /* RootView.swift in Sources */,

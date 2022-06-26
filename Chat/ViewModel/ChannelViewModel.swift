@@ -18,7 +18,7 @@ class ChannelViewModel: ObservableObject {
     @Published var subscribers: [String] = []
 
     @Published var channels: [Channel] = []
-    @Published var currentChannel: Channel = Channel(id: "", ownerId: "", subscribersId: [], messages: [])
+    @Published var currentChannel: Channel = Channel(id: "", name: "", ownerId: "", subscribersId: [], messages: [])
 
     let dataBase = Firestore.firestore()
 
@@ -40,7 +40,11 @@ class ChannelViewModel: ObservableObject {
     func createChannel(usersId: [String], competition: @escaping (Channel) -> Void) {
         do {
 
-            let newChannel = Channel(id: "\(UUID())", ownerId: currentUser.id, subscribersId: usersId, messages: [])
+            let newChannel = Channel(id: "\(UUID())",
+                                     name: "",
+                                     ownerId: currentUser.id,
+                                     subscribersId: usersId,
+                                     messages: [])
 
             try dataBase.collection("channels").document().setData(from: newChannel)
 
@@ -48,7 +52,6 @@ class ChannelViewModel: ObservableObject {
                 self.currentChannel = channel
                 self.addChannelsIdToUsers()
                 competition(channel)
-                // add channel id to users channels
             }
         } catch {
             print("error creating chat to Firestore:: \(error)")
