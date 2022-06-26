@@ -112,7 +112,9 @@ class AppViewModel: ObservableObject {
     }
 
     private func doesUserExist(competition: @escaping (Bool) -> Void ) {
-        dataBase.collection("users").document(self.auth.currentUser?.uid ?? "someId").getDocument(as: User.self) { result in
+        dataBase.collection("users")
+            .document(self.auth.currentUser?.uid ?? "someId")
+            .getDocument(as: User.self) { result in
             switch result {
             case .success:
                 competition(true)
@@ -134,12 +136,12 @@ class AppViewModel: ObservableObject {
                         self?.getCurrentUser(competition: { user in
                             competition(user)
                         })
-
                     }
                 } else {
-                    self?.createFbUser(name: self?.auth.currentUser?.displayName ?? "someName",
-                                 gmail: self?.auth.currentUser?.email ?? "someEmail@gmail.com")
-
+                    DispatchQueue.main.async {
+                        self?.createFbUser(name: self?.auth.currentUser?.displayName ?? "someName",
+                                     gmail: self?.auth.currentUser?.email ?? "someEmail@gmail.com")
+                    }
                     self?.signedIn = true
                     self?.getCurrentUser(competition: { user in
                         competition(user)
