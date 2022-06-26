@@ -60,7 +60,7 @@ struct ConversationView: View {
 
 struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
-        ConversationView(user: User(chats: [], gmail: "", id: "", name: ""), isFindChat: .constant(true))
+        ConversationView(user: User(chats: [], channels: [], gmail: "", id: "", name: ""), isFindChat: .constant(true))
             .environmentObject(MessagingViewModel())
             .environmentObject(AppViewModel())
     }

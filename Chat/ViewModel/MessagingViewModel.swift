@@ -11,8 +11,8 @@ import FirebaseFirestore
 class MessagingViewModel: ObservableObject {
 
     @Published var currentChat: Chat = Chat(id: "someId", user1Id: "", user2Id: "", messages: [])
-    @Published var user: User = User(chats: [], gmail: "", id: "someId", name: "")
-    @Published var secondUser = User(chats: [], gmail: "", id: "", name: "")
+    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "someId", name: "")
+    @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 
     @Published private(set) var messages: [Message] = []
 

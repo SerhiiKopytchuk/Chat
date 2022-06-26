@@ -14,7 +14,7 @@ import SDWebImageSwiftUI
 
 class EditProfileViewModel: ObservableObject {
 
-    @Published var user: User = User(chats: [], gmail: "", id: "", name: "")
+    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var imageURL: String?
     @Published var myImage = WebImage(url: URL(string: ""))
 

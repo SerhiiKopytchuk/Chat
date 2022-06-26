@@ -65,7 +65,7 @@ struct TitleRow: View {
 
 struct TitleRow_Previews: PreviewProvider {
     static var previews: some View {
-        TitleRow(user: User(chats: [], gmail: "", id: "", name: ""))
+        TitleRow(user: User(chats: [], channels: [], gmail: "", id: "", name: ""))
             .background(Color("Peach"))
     }
 }
