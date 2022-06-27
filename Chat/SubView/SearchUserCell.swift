@@ -19,7 +19,6 @@ struct SearchUserCell: View {
     @State var isFindUserImage = true
 
     var body: some View {
-
             HStack {
                 if isFindUserImage {
                     WebImage(url: imageUrl)

@@ -69,7 +69,7 @@ struct CustomTabBar: View {
         switch currentTab {
         case .chats:
             return 0
-        case .chanels:
+        case .channels:
             return 1
         }
     }

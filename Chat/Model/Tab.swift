@@ -9,5 +9,5 @@ import Foundation
 
 enum Tab: String, CaseIterable {
     case chats = "character.bubble"
-    case chanels = "fibrechannel"
+    case channels = "fibrechannel"
 }

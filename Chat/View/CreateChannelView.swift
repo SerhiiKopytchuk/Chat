@@ -16,10 +16,15 @@ struct CreateChannelView: View {
     @State var channelImage: UIImage?
     @State var isShowingImagePicker = false
     @State var name: String = ""
+    @State var description: String = ""
+    @State var searchText: String = ""
+    @State var usersToAddInChannel: [String] = []
 
     @State var imageUrl = URL(string: "")
     @State var isFindChannelImage = true
+    @State var isAddedToChannel = false
 
+    @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
     var body: some View {
@@ -35,19 +40,66 @@ struct CreateChannelView: View {
                     .cornerRadius(30, corners: [.topLeft, .topRight])
                     .offset(x: 0, y: 50)
                 VStack {
-                    changeProfileImageButton
+                    changeChannelImageView
+                    TextField("Enter name of your channel", text: $name)
+                        .underlineTextField()
+                        .padding(.horizontal, 20)
+                    TextField("Describe your channel", text: $description)
+                        .underlineTextField()
+                        .padding(.horizontal, 20)
+
                     HStack {
-                        TextField("Enter name of your channel", text: $name)
-                            .underlineTextField()
-                            .padding(.leading, 20)
-
+                        TextField("Search Users", text: $searchText)
+                            .textFieldStyle(.roundedBorder)
+                            .onChange(of: searchText) { newText in
+                                viewModel.searchText = newText
+                                viewModel.getAllUsers()
+                                // get all users with this name
+                            }
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
+                            .frame(width: 50, height: 50)
                     }
+                    .padding(.horizontal, 20)
 
+                    usersList
+                    createChannelButton
+                        .frame(maxWidth: .infinity)
+                        .padding()
                 }
             }
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $channelImage)
+        }
+    }
+
+    @ViewBuilder var usersList: some View {
+        List {
+            ForEach(viewModel.users, id: \.id) { user in
+                AddUserCreateChannelRow(user: user.name,
+                                        userGmail: user.gmail,
+                                        id: user.id,
+                                        addOrRemoveButtonTaped: { id in
+
+                    if self.isAddedToChannel {
+                        if let index = usersToAddInChannel.firstIndex(of: id) {
+                            usersToAddInChannel.remove(at: index)
+                        }
+                    } else {
+                        usersToAddInChannel.append(id)
+                    }
+
+                },
+                                        isAddedToChannel: $isAddedToChannel)
+                .onAppear {
+                    if usersToAddInChannel.contains(user.id) {
+                        isAddedToChannel = true
+                    } else {
+                        isAddedToChannel = false
+                    }
+                }
+            }
         }
     }
 
@@ -58,10 +110,9 @@ struct CreateChannelView: View {
             .foregroundColor(.black.opacity(0.70))
             .background(.white)
             .cornerRadius(50)
-
     }
 
-    var changeProfileImageButton: some View {
+    var changeChannelImageView: some View {
         Button {
             isShowingImagePicker.toggle()
         } label: {
@@ -77,32 +128,29 @@ struct CreateChannelView: View {
                                 .stroke(.black, lineWidth: 3)
                                 .shadow(radius: 10)
                         )
-                    //                                    rightDownImage
                 }
             } else {
-                ZStack {
-                    emptyImage
-                    //                                    rightDownImage
-                }
+                emptyImage
             }
 
         }
         .frame(width: 100, height: 100)
+    }
 
-        //    var saveButton: some View {
-        //        Button {
-        //        } label: {
-        //            Text("save")
-        //                .frame(width: 60)
-        //                .padding(10)
-        //                .foregroundColor(.white)
-        //                .background(newName.count < 4 ? .gray : .orange)
-        //                .cornerRadius(10)
-        //                .shadow(color: newName.count < 4 ? .gray : .orange, radius: 3)
-        //        }
-        //        .disabled(newName.count > 3 ? false : true)
-        //
-        //    }
+    var createChannelButton: some View {
+        Button {
+            print(self.usersToAddInChannel)
+        } label: {
+            Text("Create channel")
+                .frame(maxWidth: .infinity)
+                .padding()
+                .foregroundColor(.white)
+                .background(name.count < 4 ? .gray : .orange)
+                .cornerRadius(10)
+                .shadow(color: name.count < 4 ? .gray : .orange, radius: 3)
+        }
+        .disabled(name.count > 3 ? false : true)
+
     }
 }
 
@@ -110,5 +158,6 @@ struct CreateChannelView_Previews: PreviewProvider {
     static var previews: some View {
         CreateChannelView()
             .environmentObject(ChannelViewModel())
+            .environmentObject(AppViewModel())
     }
 }

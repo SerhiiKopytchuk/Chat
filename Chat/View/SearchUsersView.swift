@@ -25,7 +25,7 @@ struct SearchUsersView: View {
                     viewModel.searchText = newValue
                     viewModel.getAllUsers()
                 })
-                    .textFieldStyle(DefaultTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
 
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
@@ -49,7 +49,10 @@ struct SearchUsersView: View {
     @ViewBuilder var usersList: some View {
             List {
                 ForEach(viewModel.users, id: \.id) { user in
-                    SearchUserCell(user: user.name, userGmail: user.gmail, id: user.id, rowTapped: {
+                    SearchUserCell(user: user.name,
+                                   userGmail: user.gmail,
+                                   id: user.id,
+                                   rowTapped: {
                         viewModel.secondUser = user
                         messagingViewModel.secondUser = user
                         messagingViewModel.user = viewModel.user
@@ -79,5 +82,7 @@ struct SearchUsersView_Previews: PreviewProvider {
     static var previews: some View {
         SearchUsersView()
             .environmentObject(AppViewModel())
+            .environmentObject(MessagingViewModel())
+            .environmentObject(ChattingViewModel())
     }
 }

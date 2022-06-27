@@ -18,7 +18,12 @@ class ChannelViewModel: ObservableObject {
     @Published var subscribers: [String] = []
 
     @Published var channels: [Channel] = []
-    @Published var currentChannel: Channel = Channel(id: "", name: "", ownerId: "", subscribersId: [], messages: [])
+    @Published var currentChannel: Channel = Channel(id: "",
+                                                     name: "",
+                                                     description: "",
+                                                     ownerId: "",
+                                                     subscribersId: [],
+                                                     messages: [])
 
     let dataBase = Firestore.firestore()
 
@@ -37,13 +42,17 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    func createChannel(usersId: [String], competition: @escaping (Channel) -> Void) {
+    func createChannel(subscribersId: [String],
+                       name: String,
+                       description: String,
+                       competition: @escaping (Channel) -> Void) {
         do {
 
             let newChannel = Channel(id: "\(UUID())",
-                                     name: "",
+                                     name: name,
+                                     description: description,
                                      ownerId: currentUser.id,
-                                     subscribersId: usersId,
+                                     subscribersId: subscribersId,
                                      messages: [])
 
             try dataBase.collection("channels").document().setData(from: newChannel)
@@ -67,7 +76,7 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    private func updateChats() {
+    private func updateChannels() {
         DispatchQueue.main.async {
             self.dataBase.collection("users").document(self.currentUser.id)
                 .addSnapshotListener { document, error in
@@ -114,7 +123,7 @@ class ChannelViewModel: ObservableObject {
         }
 
         if !fromUpdate {
-            self.updateChats()
+            self.updateChannels()
         }
     }
 
