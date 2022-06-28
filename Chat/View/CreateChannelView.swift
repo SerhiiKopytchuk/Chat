@@ -26,7 +26,7 @@ struct CreateChannelView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
-//    @ObservedObject var imageViewModel = 
+    @ObservedObject var imageViewModel = ImageViewModel()
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
@@ -145,9 +145,11 @@ struct CreateChannelView: View {
         Button {
             channelViewModel.currentUser = viewModel.user
             channelViewModel.owner = viewModel.user
-            channelViewModel.createChannel(
-                subscribersId: usersToAddInChannel,
-                name: self.name, description: self.description) { _ in
+            channelViewModel.createChannel( subscribersId: usersToAddInChannel,
+                                            name: self.name,
+                                            description: self.description) { channel in
+                imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
+                                         imageName: channel.id ?? "some Id")
             }
             presentationMode.wrappedValue.dismiss()
         } label: {

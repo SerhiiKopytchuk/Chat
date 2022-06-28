@@ -15,7 +15,7 @@ struct ChannelListRow: View {
     // Inject properties into the struct
     @State var channel: Channel
     @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
+    @State var isFindChannelImage = true
 
     let formater = DateFormatter()
 
@@ -23,7 +23,7 @@ struct ChannelListRow: View {
 
     var body: some View {
         HStack {
-            if isFindUserImage {
+            if isFindChannelImage {
                 WebImage(url: imageUrl)
                     .resizable()
                     .scaledToFill()
@@ -69,7 +69,7 @@ struct ChannelListRow: View {
                     let ref = Storage.storage().reference(withPath: self.channel.id ?? "SomeId")
                     ref.downloadURL { url, err in
                         if err != nil {
-                            self.isFindUserImage = false
+                            self.isFindChannelImage = false
                             return
                         }
                         withAnimation(.easeInOut) {
