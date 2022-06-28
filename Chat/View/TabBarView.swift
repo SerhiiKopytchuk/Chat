@@ -74,7 +74,6 @@ struct TabBarView: View {
                     .environmentObject(messagingViewModel)
                 }
             }
-
         }
     }
 

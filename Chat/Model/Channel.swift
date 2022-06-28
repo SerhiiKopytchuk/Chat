@@ -13,6 +13,6 @@ struct Channel: Codable, Identifiable {
     var name: String
     var description: String
     var ownerId: String
-    var subscribersId: [String]
+    var subscribersId: [String]?
     var messages: [Message]?
 }

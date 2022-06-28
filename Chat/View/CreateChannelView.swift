@@ -27,12 +27,15 @@ struct CreateChannelView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(
-                colors: [.brown, .white, .white]),
-                           startPoint: .topLeading,
-                           endPoint: .bottomTrailing)
+//            LinearGradient(gradient: Gradient(
+//                colors: [.brown, .white, .white]),
+//                           startPoint: .topLeading,
+//                           endPoint: .bottomTrailing)
+            Color("Gray")
             .ignoresSafeArea()
 
             ZStack(alignment: .top) {
@@ -104,7 +107,7 @@ struct CreateChannelView: View {
     }
 
     var emptyImage: some View {
-        Image(systemName: "person.crop.circle")
+        Image(systemName: "photo.circle.fill")
             .resizable()
             .frame(width: 100, height: 100)
             .foregroundColor(.black.opacity(0.70))
@@ -139,7 +142,13 @@ struct CreateChannelView: View {
 
     var createChannelButton: some View {
         Button {
-            print(self.usersToAddInChannel)
+            channelViewModel.currentUser = viewModel.user
+            channelViewModel.owner = viewModel.user
+            channelViewModel.createChannel(
+                subscribersId: usersToAddInChannel,
+                name: self.name, description: self.description) { _ in
+            }
+            presentationMode.wrappedValue.dismiss()
         } label: {
             Text("Create channel")
                 .frame(maxWidth: .infinity)

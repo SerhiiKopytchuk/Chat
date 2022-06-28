@@ -41,7 +41,6 @@ struct SideMenuView: View {
                             CreateChannelView()
                                 .environmentObject(viewModel)
                                 .environmentObject(ChannelViewModel())
-                                .navigationBarTitle("Create channel", displayMode: .large)
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
@@ -78,5 +77,8 @@ struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
         SideMenuView(isShowingSideMenu: .constant(true), isShowingSearchUsers: .constant(false))
             .environmentObject(AppViewModel())
+            .environmentObject(MessagingViewModel())
+            .environmentObject(ChattingViewModel())
+
     }
 }

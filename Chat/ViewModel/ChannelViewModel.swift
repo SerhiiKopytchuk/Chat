@@ -42,6 +42,33 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
+    func getCurrentChannel( name: String, ownerId:String, competition: @escaping (Channel) -> Void, failure: @escaping (String) -> Void) {
+
+        dataBase.collection("channels")
+            .whereField("ownerId", isEqualTo: ownerId)
+            .whereField("name", isEqualTo: name)
+            .getDocuments { querySnapshot, error in
+                if error != nil {
+                    failure("Error getting documents: \(String(describing: error))")
+                    return
+            } else {
+                if querySnapshot?.documents.count == 0 {
+                    failure("No channels")
+                    return
+                }
+                for document in querySnapshot!.documents {
+                    do {
+                        self.currentChannel = try document.data(as: Channel.self)
+                        competition(self.currentChannel)
+                        return
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+
     func createChannel(subscribersId: [String],
                        name: String,
                        description: String,
@@ -57,22 +84,27 @@ class ChannelViewModel: ObservableObject {
 
             try dataBase.collection("channels").document().setData(from: newChannel)
 
-            getCurrentChannel(channelId: newChannel.id ?? "SomeId") { channel in
+            getCurrentChannel(name: name, ownerId: currentUser.id) { channel in
                 self.currentChannel = channel
-                self.addChannelsIdToUsers()
+                self.addChannelsIdToUsers(usersId: subscribersId)
                 competition(channel)
+            } failure: { _ in
+                print("failure")
             }
         } catch {
             print("error creating chat to Firestore:: \(error)")
         }
     }
 
-    fileprivate func addChannelsIdToUsers() {
+    fileprivate func addChannelsIdToUsers(usersId: [String]) {
         DispatchQueue.main.async {
-            for userId in self.currentChannel.subscribersId {
+            for userId in self.currentChannel.subscribersId ?? [] {
                 self.dataBase.collection("users").document(userId)
                     .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
             }
+
+            self.dataBase.collection("users").document(self.owner.id)
+                .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
         }
     }
 
