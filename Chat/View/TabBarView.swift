@@ -1,5 +1,5 @@
 //
-//  HomeView.swift
+//  TabBarView.swift
 //  Chat
 //
 //  Created by Serhii Kopytchuk on 21.05.2022.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import FirebaseAuth
 
-struct HomeView: View {
+struct TabBarView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
@@ -17,7 +17,6 @@ struct HomeView: View {
 
     @State var currentTab: Tab = .chats
     @State var goToConversation = false
-    @State var goToCreateChannel = false
 
     init() {
         UITabBar.appearance().isHidden = true
@@ -31,7 +30,7 @@ struct HomeView: View {
                 TabView(selection: $currentTab) {
 
                     chatsView
-                    .tag(Tab.chats)
+                        .tag(Tab.chats)
 
                     channelsView
                         .tag(Tab.channels)
@@ -42,13 +41,6 @@ struct HomeView: View {
                     ConversationView(user: viewModel.secondUser, isFindChat: .constant(true))
                         .environmentObject(viewModel)
                         .environmentObject(messagingViewModel)
-                } label: { }
-                    .hidden()
-
-                NavigationLink(isActive: $goToCreateChannel) {
-                    CreateChannelView()
-                        .environmentObject(viewModel)
-                        .environmentObject(ChannelViewModel())
                 } label: { }
                     .hidden()
             }
@@ -88,11 +80,6 @@ struct HomeView: View {
 
     @ViewBuilder var channelsView: some View {
         VStack {
-            HStack {
-                Spacer()
-                createButton
-            }
-            .padding()
             List {
                 ForEach(chattingViewModel.chats, id: \.id) { chat in
 
@@ -121,26 +108,11 @@ struct HomeView: View {
 
         }
     }
-
-    @ViewBuilder var createButton: some View {
-        Button {
-            goToCreateChannel.toggle()
-        } label: {
-            HStack {
-                Text("create channel")
-                Image(systemName: "plus")
-            }
-        }
-        .padding(10)
-        .background(.orange)
-        .foregroundColor(.white)
-        .cornerRadius(15)
-    }
 }
 
-struct HomeView_Previews: PreviewProvider {
+struct TabBarView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        TabBarView()
             .environmentObject(AppViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())

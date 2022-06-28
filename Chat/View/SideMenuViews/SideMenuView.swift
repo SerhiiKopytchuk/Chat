@@ -36,6 +36,15 @@ struct SideMenuView: View {
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
+                    } else if option == SideMenuViewModel.createChannel {
+                        NavigationLink {
+                            CreateChannelView()
+                                .environmentObject(viewModel)
+                                .environmentObject(ChannelViewModel())
+                                .navigationBarTitle("Create channel", displayMode: .large)
+                        } label: {
+                            SideMenuOptionView(viewModel: option)
+                        }
                     } else if option == SideMenuViewModel.searchUsers {
                         NavigationLink {
                             SearchUsersView()

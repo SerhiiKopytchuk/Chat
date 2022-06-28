@@ -24,7 +24,7 @@ struct MainView: View {
                     .environmentObject(viewModel)
                     .environmentObject(chattingViewModel)
             }
-            HomeView()
+            TabBarView()
                 .cornerRadius(isShowingSideMenu ? 20 : 10)
                 .offset(x: isShowingSideMenu ? 300 : 0, y: isShowingSideMenu ? 44 : 0)
                 .scaleEffect(isShowingSideMenu ? 0.8 : 1)

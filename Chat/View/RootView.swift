@@ -26,8 +26,8 @@ struct RootView: View {
                         .environmentObject(viewModel)
                         .environmentObject(messagingViewModel)
                         .environmentObject(chattingViewModel)
-                        .navigationViewStyle(.stack)
-                        .navigationBarTitle("Chats")
+                        .navigationTitle("")
+                        .navigationBarTitleDisplayMode(.inline)
 
                 } else {
                     SignUpView()
