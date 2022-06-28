@@ -19,16 +19,21 @@ struct ChatApp: App {
             let viewModel = AppViewModel()
             let messagingViewModel = MessagingViewModel()
             let chattingViewModel = ChattingViewModel()
+            let channelViewModel = ChannelViewModel()
+
             RootView()
                 .onAppear {
                         viewModel.getCurrentUser { user in
                             chattingViewModel.user = user
                             chattingViewModel.getChats()
+                            channelViewModel.currentUser = user
+                            channelViewModel.getChannels()
                         }
                 }
                 .environmentObject(viewModel)
                 .environmentObject(messagingViewModel)
                 .environmentObject(chattingViewModel)
+                .environmentObject(channelViewModel)
         }
 
     }

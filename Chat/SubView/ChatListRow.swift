@@ -10,7 +10,7 @@ import FirebaseStorage
 import FirebaseAuth
 import SDWebImageSwiftUI
 
-struct ConversationListRow: View {
+struct ChatListRow: View {
     // Inject properties into the struct
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messageViewModel: MessagingViewModel

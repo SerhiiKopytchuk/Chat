@@ -16,6 +16,8 @@ struct MainView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
+
     var body: some View {
         ZStack {
             if isShowingSideMenu {
@@ -40,6 +42,7 @@ struct MainView: View {
                 .environmentObject(messagingViewModel)
                 .environmentObject(viewModel)
                 .environmentObject(chattingViewModel)
+                .environmentObject(channelViewModel)
 
         }
         .onAppear {

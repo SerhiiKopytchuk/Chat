@@ -14,6 +14,7 @@ struct TabBarView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
 
     @State var currentTab: Tab = .chats
     @State var goToConversation = false
@@ -52,7 +53,7 @@ struct TabBarView: View {
             List {
                 ForEach(chattingViewModel.chats, id: \.id) { chat in
 
-                    ConversationListRow(chat: chat) {
+                    ChatListRow(chat: chat) {
                         _ = viewModel.getUser(
                             id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
                         ) { user in
@@ -80,28 +81,26 @@ struct TabBarView: View {
     @ViewBuilder var channelsView: some View {
         VStack {
             List {
-                ForEach(chattingViewModel.chats, id: \.id) { chat in
-
-                    ConversationListRow(chat: chat) {
-                        _ = viewModel.getUser(
-                            id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                        ) { user in
-                            messagingViewModel.secondUser = user
-                        } failure: { }
-
-                        chattingViewModel.getCurrentChat(
-                            chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
-                        ) { chat in
-                            messagingViewModel.user = self.viewModel.user
-                            messagingViewModel.currentChat = chat
-                            messagingViewModel.getMessages { _ in
-                            }
-                            DispatchQueue.main.async {
-                                goToConversation.toggle()
-                            }
-                        }
+                ForEach(channelViewModel.channels, id: \.id) { channel in
+                    ChannelListRow(channel: channel) {
+                        //                        _ = viewModel.getUser(
+                        //                            id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
+                        //                        ) { user in
+                        //                            messagingViewModel.secondUser = user
+                        //                        } failure: { }
+                        //
+                        //                        chattingViewModel.getCurrentChat(
+                        //                            chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
+                        //                        ) { chat in
+                        //                            messagingViewModel.user = self.viewModel.user
+                        //                            messagingViewModel.currentChat = chat
+                        //                            messagingViewModel.getMessages { _ in
+                        //                            }
+                        //                            DispatchQueue.main.async {
+                        //                                goToConversation.toggle()
+                        //                            }
+                        //                        }
                     }
-                    .environmentObject(messagingViewModel)
                 }
             }
 

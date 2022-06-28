@@ -67,7 +67,7 @@ class EditProfileViewModel: ObservableObject {
         }
     }
 
-    func isError(message: String, err: Error?) -> Bool {
+    fileprivate func isError(message: String, err: Error?) -> Bool {
         if let err = err {
             print(message + err.localizedDescription)
             return true

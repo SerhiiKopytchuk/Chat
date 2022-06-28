@@ -26,6 +26,7 @@ struct CreateChannelView: View {
 
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
+//    @ObservedObject var imageViewModel = 
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 

@@ -16,7 +16,7 @@ struct RootView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
-
+    @EnvironmentObject var channelViewModel: ChannelViewModel
     var body: some View {
 
         NavigationView {
@@ -26,6 +26,7 @@ struct RootView: View {
                         .environmentObject(viewModel)
                         .environmentObject(messagingViewModel)
                         .environmentObject(chattingViewModel)
+                        .environmentObject(channelViewModel)
                         .navigationTitle("")
                         .navigationBarTitleDisplayMode(.inline)
 
