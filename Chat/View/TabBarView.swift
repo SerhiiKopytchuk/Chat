@@ -15,9 +15,11 @@ struct TabBarView: View {
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
 
     @State var currentTab: Tab = .chats
     @State var goToConversation = false
+    @State var goToChannel = false
 
     init() {
         UITabBar.appearance().isHidden = true
@@ -38,10 +40,19 @@ struct TabBarView: View {
                 }
                 CustomTabBar(currentTab: $currentTab)
                     .background(.white)
+
                 NavigationLink(isActive: $goToConversation) {
-                    ConversationView(user: viewModel.secondUser, isFindChat: .constant(true))
+                    ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
                         .environmentObject(viewModel)
                         .environmentObject(messagingViewModel)
+                } label: { }
+                    .hidden()
+
+                NavigationLink(isActive: $goToChannel) {
+                    ChannelConversationView(currentUser: viewModel.user)
+                        .environmentObject(viewModel)
+                        .environmentObject(channelMessagingViewModel)
+                        .environmentObject(channelViewModel)
                 } label: { }
                     .hidden()
             }
@@ -66,8 +77,6 @@ struct TabBarView: View {
                             messagingViewModel.user = self.viewModel.user
                             messagingViewModel.currentChat = chat
                             messagingViewModel.getMessages { _ in
-                            }
-                            DispatchQueue.main.async {
                                 goToConversation.toggle()
                             }
                         }
@@ -83,23 +92,13 @@ struct TabBarView: View {
             List {
                 ForEach(channelViewModel.channels, id: \.id) { channel in
                     ChannelListRow(channel: channel) {
-                        //                        _ = viewModel.getUser(
-                        //                            id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                        //                        ) { user in
-                        //                            messagingViewModel.secondUser = user
-                        //                        } failure: { }
-                        //
-                        //                        chattingViewModel.getCurrentChat(
-                        //                            chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
-                        //                        ) { chat in
-                        //                            messagingViewModel.user = self.viewModel.user
-                        //                            messagingViewModel.currentChat = chat
-                        //                            messagingViewModel.getMessages { _ in
-                        //                            }
-                        //                            DispatchQueue.main.async {
-                        //                                goToConversation.toggle()
-                        //                            }
-                        //                        }
+                        channelViewModel.getCurrentChannel(name: channel.name, ownerId: channel.ownerId) { channel in
+                            channelMessagingViewModel.currentChannel = channel
+                            channelMessagingViewModel.currentUser = viewModel.user
+                            channelMessagingViewModel.getMessages(competition: { _ in })
+                            self.goToChannel.toggle()
+                        } failure: { _ in }
+
                     }
                 }
             }

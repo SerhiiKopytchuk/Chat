@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ConversationView: View {
 
-    @State var user: User
+    @State var secondUser: User
     @Binding var isFindChat: Bool
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel
@@ -19,7 +19,7 @@ struct ConversationView: View {
     var body: some View {
         VStack {
             VStack {
-                TitleRow(user: user)
+                TitleRow(user: secondUser)
                 if isFindChat {
                     ScrollViewReader { _ in
                         ScrollView {
@@ -60,7 +60,7 @@ struct ConversationView: View {
 
 struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
-        ConversationView(user: User(chats: [], channels: [], gmail: "", id: "", name: ""), isFindChat: .constant(true))
+        ConversationView(secondUser: User(chats: [], channels: [], gmail: "", id: "", name: ""), isFindChat: .constant(true))
             .environmentObject(MessagingViewModel())
             .environmentObject(AppViewModel())
     }

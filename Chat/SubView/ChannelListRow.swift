@@ -16,6 +16,9 @@ struct ChannelListRow: View {
     @State var channel: Channel
     @State var imageUrl = URL(string: "")
     @State var isFindChannelImage = true
+    @State var countOfMessages = 0
+
+    @ObservedObject var channelMessagingViewModel = ChannelMessagingViewModel()
 
     let formater = DateFormatter()
 
@@ -48,7 +51,7 @@ struct ChannelListRow: View {
                 HStack {
                     Text(channel.name )
                     Spacer()
-                    Text("\(channel.messages?.count ?? 0)" )
+                    Text("\(countOfMessages)" )
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -75,6 +78,12 @@ struct ChannelListRow: View {
                         withAnimation(.easeInOut) {
                             self.imageUrl = url
                         }
+                    }
+
+                    channelMessagingViewModel.currentChannel = self.channel
+
+                    channelMessagingViewModel.getMessages { messages in
+                        self.countOfMessages = messages.count
                     }
                 }
         }

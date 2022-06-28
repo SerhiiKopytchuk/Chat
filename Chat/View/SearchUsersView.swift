@@ -38,7 +38,7 @@ struct SearchUsersView: View {
         }
         .background {
             NavigationLink(isActive: $goToConversation) {
-                ConversationView(user: self.viewModel.secondUser, isFindChat: self.$isFindChat)
+                ConversationView(secondUser: self.viewModel.secondUser, isFindChat: self.$isFindChat)
                     .environmentObject(viewModel)
                     .environmentObject(messagingViewModel)
                     .environmentObject(chattingViewModel)
