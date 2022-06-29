@@ -8,7 +8,6 @@
 import Foundation
 import FirebaseFirestore
 
-
 class ChannelMessagingViewModel: ObservableObject {
     @Published var currentChannel: Channel = Channel(id: "someID",
                                                      name: "someName",

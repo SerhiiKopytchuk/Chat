@@ -42,7 +42,10 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    func getCurrentChannel( name: String, ownerId:String, competition: @escaping (Channel) -> Void, failure: @escaping (String) -> Void) {
+    func getCurrentChannel( name: String,
+                            ownerId: String,
+                            competition: @escaping (Channel) -> Void,
+                            failure: @escaping (String) -> Void) {
 
         dataBase.collection("channels")
             .whereField("ownerId", isEqualTo: ownerId)

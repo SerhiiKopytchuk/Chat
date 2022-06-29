@@ -30,7 +30,6 @@ struct RootView: View {
                         .environmentObject(chattingViewModel)
                         .environmentObject(channelViewModel)
                         .environmentObject(channelMessagingViewModel)
-                        .navigationTitle("")
                         .navigationBarTitleDisplayMode(.inline)
 
                 } else {

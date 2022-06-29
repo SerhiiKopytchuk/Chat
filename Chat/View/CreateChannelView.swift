@@ -32,11 +32,10 @@ struct CreateChannelView: View {
 
     var body: some View {
         ZStack {
-//            LinearGradient(gradient: Gradient(
-//                colors: [.brown, .white, .white]),
-//                           startPoint: .topLeading,
-//                           endPoint: .bottomTrailing)
-            Color("Gray")
+            LinearGradient(gradient: Gradient(
+                colors: [.white, .purple, .green]),
+                           startPoint: .topLeading,
+                           endPoint: .bottomTrailing)
             .ignoresSafeArea()
 
             ZStack(alignment: .top) {
@@ -46,10 +45,10 @@ struct CreateChannelView: View {
                 VStack {
                     changeChannelImageView
                     TextField("Enter name of your channel", text: $name)
-                        .underlineTextField()
+                        .underlineTextField(text: name, underlineOn: 4)
                         .padding(.horizontal, 20)
                     TextField("Describe your channel", text: $description)
-                        .underlineTextField()
+                        .underlineTextField(text: description, underlineOn: 30)
                         .padding(.horizontal, 20)
 
                     HStack {

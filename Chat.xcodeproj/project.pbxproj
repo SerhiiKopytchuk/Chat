@@ -179,9 +179,7 @@
 				409AC7632849E9A300BD00F9 /* SearchUsersView.swift */,
 				40FA6F6128576D01001AAC09 /* EditProfileView.swift */,
 				400E81AC286861EE006A606E /* CreateChannelView.swift */,
-				40153F27286B32460022DA46 /* ChannelConversationView.swift */,
-				40153F2B286B35A20022DA46 /* ChannelMessageField.swift */,
-				40153F2D286B370B0022DA46 /* ChannelTitleRow.swift */,
+				403B51D3286C78150035804E /* ChannelMessagingViews */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -234,6 +232,16 @@
 				4056D63A2833D8E8000A0872 /* SingUpView.swift */,
 			);
 			path = authetication;
+			sourceTree = "<group>";
+		};
+		403B51D3286C78150035804E /* ChannelMessagingViews */ = {
+			isa = PBXGroup;
+			children = (
+				40153F27286B32460022DA46 /* ChannelConversationView.swift */,
+				40153F2B286B35A20022DA46 /* ChannelMessageField.swift */,
+				40153F2D286B370B0022DA46 /* ChannelTitleRow.swift */,
+			);
+			path = ChannelMessagingViews;
 			sourceTree = "<group>";
 		};
 		406DC3A3284C8E1400A41964 /* MessagingViews */ = {

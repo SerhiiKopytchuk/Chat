@@ -41,6 +41,7 @@ struct ChannelListRow: View {
                 Image(systemName: "photo.circle.fill")
                     .resizable()
                     .scaledToFill()
+                    .foregroundColor(.gray)
                     .clipped()
                     .frame(width: 30, height: 30)
                     .clipShape(Circle())

@@ -60,7 +60,12 @@ struct TabBarView: View {
     }
 
     @ViewBuilder var chatsView: some View {
-        VStack {
+        VStack(alignment: .leading) {
+            Text("Chats")
+                .font(.title)
+                .bold()
+                .padding(.horizontal)
+                .padding(.top)
             List {
                 ForEach(chattingViewModel.chats, id: \.id) { chat in
 
@@ -88,7 +93,12 @@ struct TabBarView: View {
     }
 
     @ViewBuilder var channelsView: some View {
-        VStack {
+        VStack(alignment: .leading) {
+            Text("Channels")
+                .font(.title)
+                .bold()
+                .padding(.horizontal)
+                .padding(.top)
             List {
                 ForEach(channelViewModel.channels, id: \.id) { channel in
                     ChannelListRow(channel: channel) {
@@ -102,7 +112,6 @@ struct TabBarView: View {
                     }
                 }
             }
-
         }
     }
 }
