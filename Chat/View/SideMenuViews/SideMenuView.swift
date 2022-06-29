@@ -36,6 +36,14 @@ struct SideMenuView: View {
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
+                    } else if option == SideMenuViewModel.createChannel {
+                        NavigationLink {
+                            CreateChannelView()
+                                .environmentObject(viewModel)
+                                .environmentObject(ChannelViewModel())
+                        } label: {
+                            SideMenuOptionView(viewModel: option)
+                        }
                     } else if option == SideMenuViewModel.searchUsers {
                         NavigationLink {
                             SearchUsersView()
@@ -69,5 +77,8 @@ struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
         SideMenuView(isShowingSideMenu: .constant(true), isShowingSearchUsers: .constant(false))
             .environmentObject(AppViewModel())
+            .environmentObject(MessagingViewModel())
+            .environmentObject(ChattingViewModel())
+
     }
 }

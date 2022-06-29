@@ -1,32 +1,35 @@
 //
-//  MessagingViewModel.swift
+//  ChannelMessagingViewModel.swift
 //  Chat
 //
-//  Created by Serhii Kopytchuk on 18.06.2022.
+//  Created by Serhii Kopytchuk on 28.06.2022.
 //
 
 import Foundation
 import FirebaseFirestore
 
-class MessagingViewModel: ObservableObject {
+class ChannelMessagingViewModel: ObservableObject {
+    @Published var currentChannel: Channel = Channel(id: "someID",
+                                                     name: "someName",
+                                                     description: "some description",
+                                                     ownerId: "",
+                                                     subscribersId: [],
+                                                     messages: [])
 
-    @Published var currentChat: Chat = Chat(id: "someId", user1Id: "", user2Id: "", messages: [])
-    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "someId", name: "")
-    @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
-
+    @Published var currentUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published private(set) var messages: [Message] = []
 
     var dataBase = Firestore.firestore()
 
     func getMessages(competition: @escaping ([Message]) -> Void) {
         var messages: [Message] = []
-        dataBase.collection("Chats").document(self.currentChat.id ?? "someId").collection("messages")
+        dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
             .addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 print("Error fetching documets: \(String(describing: error))")
                 return
             }
-            self.currentChat.messages = documents.compactMap { document -> Message? in
+            self.currentChannel.messages = documents.compactMap { document -> Message? in
                 do {
                     messages.append(try document.data(as: Message.self))
                     return  messages.last
@@ -35,7 +38,7 @@ class MessagingViewModel: ObservableObject {
                     return nil
                 }
             }
-            self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
+            self.currentChannel.messages?.sort { $0.timestamp < $1.timestamp}
             messages.sort {$0.timestamp < $1.timestamp }
                 DispatchQueue.main.async {
                     competition(messages)
@@ -45,14 +48,13 @@ class MessagingViewModel: ObservableObject {
     }
 
     func sendMessage(text: String) {
-        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
+        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.currentUser.id, timestamp: Date())
         do {
-            try self.dataBase.collection("Chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+            try self.dataBase.collection("channels").document(currentChannel.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
         } catch {
             print("failed to send message" + error.localizedDescription)
         }
 
     }
-
 }

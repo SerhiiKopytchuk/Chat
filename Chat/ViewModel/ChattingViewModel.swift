@@ -14,8 +14,8 @@ class ChattingViewModel: ObservableObject {
 
     // MARK: - vars
 
-    @Published var user: User = User(chats: [], gmail: "", id: "", name: "")
-    @Published var secondUser = User(chats: [], gmail: "", id: "", name: "")
+    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 
     @Published var chats: [Chat] = []
     @Published var currentChat: Chat = Chat(id: "", user1Id: "", user2Id: "", messages: [])

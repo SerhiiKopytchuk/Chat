@@ -16,6 +16,8 @@ struct RootView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
 
     var body: some View {
 
@@ -26,8 +28,9 @@ struct RootView: View {
                         .environmentObject(viewModel)
                         .environmentObject(messagingViewModel)
                         .environmentObject(chattingViewModel)
-                        .navigationViewStyle(.stack)
-                        .navigationBarTitle("Chats")
+                        .environmentObject(channelViewModel)
+                        .environmentObject(channelMessagingViewModel)
+                        .navigationBarTitleDisplayMode(.inline)
 
                 } else {
                     SignUpView()

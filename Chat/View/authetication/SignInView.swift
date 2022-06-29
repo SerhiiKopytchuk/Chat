@@ -24,6 +24,7 @@ struct SignInView: View {
 
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
 
     private func updateButton() {
         let time: Double = 0.3
@@ -70,6 +71,8 @@ struct SignInView: View {
                                 viewModel.signIn(email: self.email, password: self.password) { user in
                                     chattingViewModel.user = user
                                     chattingViewModel.getChats()
+                                    channelViewModel.currentUser = user
+                                    channelViewModel.getChannels()
                                 }
                             }
                         }
@@ -216,6 +219,8 @@ struct SignInView: View {
                 viewModel.signIn(credential: credential) { user in
                     chattingViewModel.user = user
                     chattingViewModel.getChats()
+                    channelViewModel.currentUser = user
+                    channelViewModel.getChannels()
                 }
             }
         } label: {
