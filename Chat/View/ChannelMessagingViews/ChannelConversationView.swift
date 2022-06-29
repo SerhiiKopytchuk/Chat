@@ -11,7 +11,7 @@ struct ChannelConversationView: View {
     @State var currentUser: User
 
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
     var body: some View {
@@ -44,7 +44,7 @@ struct ChannelConversationView_Previews: PreviewProvider {
     static var previews: some View {
         ChannelConversationView(currentUser: User(chats: [], channels: [], gmail: "gmail", id: "someId", name: "name"))
             .environmentObject(ChannelMessagingViewModel())
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
             .environmentObject(ChannelViewModel())
     }
 }

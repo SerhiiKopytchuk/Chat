@@ -16,7 +16,7 @@ struct ChatApp: App {
 
     var body: some Scene {
         WindowGroup {
-            let viewModel = AppViewModel()
+            let viewModel = UserViewModel()
             let messagingViewModel = MessagingViewModel()
             let chattingViewModel = ChattingViewModel()
             let channelViewModel = ChannelViewModel()

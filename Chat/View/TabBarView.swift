@@ -11,7 +11,7 @@ import FirebaseAuth
 
 struct TabBarView: View {
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -49,7 +49,7 @@ struct TabBarView: View {
                     .hidden()
 
                 NavigationLink(isActive: $goToChannel) {
-                    ChannelConversationView(currentUser: viewModel.user)
+                    ChannelConversationView(currentUser: viewModel.currentUser)
                         .environmentObject(viewModel)
                         .environmentObject(channelMessagingViewModel)
                         .environmentObject(channelViewModel)
@@ -71,17 +71,19 @@ struct TabBarView: View {
 
                     ChatListRow(chat: chat) {
                         _ = viewModel.getUser(
-                            id: viewModel.user.id != chat.user1Id ? chat.user1Id : chat.user2Id
+                            id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
                         ) { user in
                             messagingViewModel.secondUser = user
                         } failure: { }
 
                         chattingViewModel.getCurrentChat(
-                            chat: chat, userNumber: viewModel.user.id != chat.user1Id ? 1 : 2
+                            chat: chat, userNumber: viewModel.currentUser.id != chat.user1Id ? 1 : 2
                         ) { chat in
-                            messagingViewModel.user = self.viewModel.user
+                            messagingViewModel.user = self.viewModel.currentUser
                             messagingViewModel.currentChat = chat
-                            messagingViewModel.getMessages { _ in
+                            messagingViewModel.getMessages { _ in }
+                            // don't remove dispatch
+                            DispatchQueue.main.async {
                                 goToConversation.toggle()
                             }
                         }
@@ -104,7 +106,7 @@ struct TabBarView: View {
                     ChannelListRow(channel: channel) {
                         channelViewModel.getCurrentChannel(name: channel.name, ownerId: channel.ownerId) { channel in
                             channelMessagingViewModel.currentChannel = channel
-                            channelMessagingViewModel.currentUser = viewModel.user
+                            channelMessagingViewModel.currentUser = viewModel.currentUser
                             channelMessagingViewModel.getMessages(competition: { _ in })
                             self.goToChannel.toggle()
                         } failure: { _ in }
@@ -119,7 +121,7 @@ struct TabBarView: View {
 struct TabBarView_Previews: PreviewProvider {
     static var previews: some View {
         TabBarView()
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
     }

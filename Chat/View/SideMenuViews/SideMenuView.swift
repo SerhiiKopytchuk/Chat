@@ -11,7 +11,7 @@ import Contacts
 
 struct SideMenuView: View {
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
@@ -60,6 +60,7 @@ struct SideMenuView: View {
                                 withAnimation {
                                     viewModel.signOut()
                                     chattingViewModel.chats = []
+                                    viewModel.currentUser.chats = []
                                 }
                             }
                         } label: {
@@ -76,7 +77,7 @@ struct SideMenuView: View {
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
         SideMenuView(isShowingSideMenu: .constant(true), isShowingSearchUsers: .constant(false))
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
 

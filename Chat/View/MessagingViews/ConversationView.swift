@@ -13,7 +13,7 @@ struct ConversationView: View {
     @Binding var isFindChat: Bool
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     var body: some View {
@@ -67,6 +67,6 @@ struct ConversationView_Previews: PreviewProvider {
                                           name: ""),
                          isFindChat: .constant(true))
             .environmentObject(MessagingViewModel())
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
     }
 }

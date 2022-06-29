@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SearchUsersView: View {
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
@@ -55,9 +55,9 @@ struct SearchUsersView: View {
                                    rowTapped: {
                         viewModel.secondUser = user
                         messagingViewModel.secondUser = user
-                        messagingViewModel.user = viewModel.user
+                        messagingViewModel.user = viewModel.currentUser
                         chattingViewModel.secondUser = user
-                        chattingViewModel.user = viewModel.user
+                        chattingViewModel.user = viewModel.currentUser
 
                         chattingViewModel.getCurrentChat(secondUser: user) { chat in
                             self.messagingViewModel.currentChat = chat
@@ -81,7 +81,7 @@ struct SearchUsersView: View {
 struct SearchUsersView_Previews: PreviewProvider {
     static var previews: some View {
         SearchUsersView()
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
     }

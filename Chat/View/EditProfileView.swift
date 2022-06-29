@@ -21,7 +21,7 @@ struct EditProfileView: View {
     @State var isFindUserImage = true
     @State var isChangedImage = false
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @ObservedObject var editProfileView = EditProfileViewModel()
 
     var body: some View {
@@ -48,7 +48,7 @@ struct EditProfileView: View {
                                 .padding(.horizontal, 20)
                         }
                     }
-                    Text(viewModel.user.gmail)
+                    Text(viewModel.currentUser.gmail)
                         .font(.callout)
                         .foregroundColor(.gray)
                         .padding()
@@ -57,7 +57,7 @@ struct EditProfileView: View {
             }
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
-            editProfileView.user = self.viewModel.user
+            editProfileView.user = self.viewModel.currentUser
             editProfileView.saveImage(image: newImage)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
@@ -134,7 +134,7 @@ struct EditProfileView: View {
         }
         .frame(width: 100, height: 100)
         .onAppear {
-            let ref = Storage.storage().reference(withPath: viewModel.user.id )
+            let ref = Storage.storage().reference(withPath: viewModel.currentUser.id )
             ref.downloadURL { url, err in
                 if err != nil {
                     self.isFindUserImage = false
@@ -155,7 +155,7 @@ struct EditProfileView: View {
         } label: {
             HStack {
                 //                Text("Serhii Kopythuk")
-                Text(viewModel.user.name)
+                Text(viewModel.currentUser.name)
                     .font(.system(.title, design: .rounded))
                 //                    .underline()
                     .foregroundColor(.black)
@@ -172,7 +172,7 @@ struct EditProfileView: View {
 
     var saveButton: some View {
         Button {
-            editProfileView.changeName(newName: newName, userId: viewModel.user.id )
+            editProfileView.changeName(newName: newName, userId: viewModel.currentUser.id )
         } label: {
             Text("save")
                 .frame(width: 60)
@@ -205,7 +205,7 @@ struct EditProfileView: View {
 struct EditProfileView_Previews: PreviewProvider {
     static var previews: some View {
         EditProfileView()
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
     }
 }
 

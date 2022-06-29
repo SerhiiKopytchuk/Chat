@@ -11,7 +11,7 @@ struct MessageBubble: View {
 
     var message: Message
     @State private var showTime = false
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
 
     var body: some View {
         VStack(alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing) {
@@ -48,6 +48,6 @@ struct MessageBubble_Previews: PreviewProvider {
                                 timestamp: Date()
                                )
         )
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
     }
 }

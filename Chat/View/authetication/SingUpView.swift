@@ -30,7 +30,7 @@ struct SignUpView: View {
     @State var isShowingImagePicker = false
     @State var image: UIImage?
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @ObservedObject var imageViewModel = EditProfileViewModel()
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -166,7 +166,7 @@ struct SignUpView: View {
 
             }
 
-            if viewModel.showLoader {
+            if viewModel.isShowLoader {
                 withAnimation {
                     GeometryReader { reader in
                         Loader()
@@ -345,7 +345,7 @@ struct SignUpView: View {
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView().environmentObject(AppViewModel())
+        SignUpView().environmentObject(UserViewModel())
 .previewInterfaceOrientation(.portrait)
     }
 }
