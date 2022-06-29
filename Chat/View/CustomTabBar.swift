@@ -69,7 +69,7 @@ struct CustomTabBar: View {
         switch currentTab {
         case .chats:
             return 0
-        case .chanels:
+        case .channels:
             return 1
         }
     }
@@ -77,6 +77,6 @@ struct CustomTabBar: View {
 
 struct CustomTabBar_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        TabBarView()
     }
 }

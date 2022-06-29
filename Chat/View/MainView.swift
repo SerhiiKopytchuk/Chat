@@ -16,6 +16,9 @@ struct MainView: View {
     @EnvironmentObject var viewModel: AppViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
+
     var body: some View {
         ZStack {
             if isShowingSideMenu {
@@ -24,7 +27,7 @@ struct MainView: View {
                     .environmentObject(viewModel)
                     .environmentObject(chattingViewModel)
             }
-            HomeView()
+            TabBarView()
                 .cornerRadius(isShowingSideMenu ? 20 : 10)
                 .offset(x: isShowingSideMenu ? 300 : 0, y: isShowingSideMenu ? 44 : 0)
                 .scaleEffect(isShowingSideMenu ? 0.8 : 1)
@@ -40,6 +43,8 @@ struct MainView: View {
                 .environmentObject(messagingViewModel)
                 .environmentObject(viewModel)
                 .environmentObject(chattingViewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(channelMessagingViewModel)
 
         }
         .onAppear {
@@ -55,6 +60,8 @@ struct MainView: View {
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
-
+            .environmentObject(AppViewModel())
+            .environmentObject(MessagingViewModel())
+            .environmentObject(ChattingViewModel())
     }
 }

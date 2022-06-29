@@ -42,7 +42,7 @@ struct EditProfileView: View {
                     if isShowingChangeName {
                         HStack {
                             TextField("Enter your new name!", text: $newName)
-                                .underlineTextField()
+                                .underlineTextField(text: newName, underlineOn: 4)
                                 .padding(.leading, 20)
                             saveButton
                                 .padding(.horizontal, 20)
@@ -210,13 +210,13 @@ struct EditProfileView_Previews: PreviewProvider {
 }
 
 extension View {
-    func underlineTextField() -> some View {
+    func underlineTextField(text: String, underlineOn: Int) -> some View {
         self
             .padding(.vertical, 10)
             .overlay(
                 Rectangle()
                     .frame(height: 2).padding(.top, 35)
-                    .foregroundColor(.black)
+                    .foregroundColor(text.count >= underlineOn ? .orange : .black)
             )
             .padding(10)
     }

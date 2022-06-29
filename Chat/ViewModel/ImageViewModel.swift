@@ -2,7 +2,7 @@
 //  ImageViewModel.swift
 //  Chat
 //
-//  Created by Serhii Kopytchuk on 11.06.2022.
+//  Created by Serhii Kopytchuk on 28.06.2022.
 //
 
 import Foundation
@@ -12,18 +12,16 @@ import FirebaseAuth
 import FirebaseFirestore
 import SDWebImageSwiftUI
 
-class EditProfileViewModel: ObservableObject {
+class ImageViewModel: ObservableObject {
 
-    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var imageURL: String?
     @Published var myImage = WebImage(url: URL(string: ""))
 
     let dataBase = Firestore.firestore()
 
-    func saveImage(image: UIImage) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+    func saveImage(image: UIImage, imageName: String) {
         guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
-        let ref = Storage.storage().reference(withPath: uid)
+        let ref = Storage.storage().reference(withPath: imageName)
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(message: "failed to save image", err: error) { return }
             ref.downloadURL { url, error in
@@ -34,8 +32,8 @@ class EditProfileViewModel: ObservableObject {
         }
     }
 
-    func getImage(id: String, competition: @escaping (UIImage) -> Void) {
-        let ref = Storage.storage().reference(withPath: id)
+    func getImage(imageName: String, competition: @escaping (UIImage) -> Void) {
+        let ref = Storage.storage().reference(withPath: imageName)
         ref.getData(maxSize: (1 * 1024 * 1024)) { data, err in
             if self.isError(message: "Failed to download image: ", err: err) { return }
 
@@ -44,26 +42,6 @@ class EditProfileViewModel: ObservableObject {
                 competition(image ?? UIImage())
             }
 
-        }
-    }
-
-    func getMyImage(competition: @escaping (WebImage) -> Void) {
-        let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
-        ref.downloadURL { url, err in
-            if self.isError(message: "Faiure to get my Image", err: err) { return }
-            competition(WebImage(url: url))
-        }
-    }
-
-    func changeName(newName: String, userId: String) {
-
-        dataBase.collection("users").document(userId).getDocument { querrySnapshot, err in
-            if err != nil {
-                print("Error to get user: " + (err?.localizedDescription ?? ""))
-                return
-            }
-
-            querrySnapshot?.reference.updateData([ "name": newName])
         }
     }
 

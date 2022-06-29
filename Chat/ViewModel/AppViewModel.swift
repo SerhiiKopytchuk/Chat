@@ -15,8 +15,8 @@ class AppViewModel: ObservableObject {
 
     @Published var signedIn = false
     @Published var showLoader = false
-    @Published var user: User = User(chats: [], gmail: "", id: "", name: "")
-    @Published var secondUser = User(chats: [], gmail: "", id: "", name: "")
+    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var users: [User] = []
     @Published var searchText = ""
 
@@ -47,7 +47,7 @@ class AppViewModel: ObservableObject {
 
     func getUser(id: String, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
         let docRef = self.dataBase.collection("users").document(id)
-        var userToReturn: User = User(chats: [], gmail: "", id: "", name: "")
+        var userToReturn: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
         docRef.getDocument(as: User.self) { result in
           switch result {
           case .success(let user):
@@ -74,8 +74,6 @@ class AppViewModel: ObservableObject {
             }
         }
     }
-
-
 
     func getAllUsers() {
         dataBase.collection("users").addSnapshotListener { querySnapshot, error in
@@ -198,7 +196,10 @@ class AppViewModel: ObservableObject {
 
     func createFbUser(name: String, gmail: String) {
         do {
-            let newUser = User(chats: [], gmail: gmail, id: Auth.auth().currentUser?.uid ?? "\(UUID())", name: name)
+            let newUser = User(chats: [],
+                               channels: [],
+                               gmail: gmail,
+                               id: Auth.auth().currentUser?.uid ?? "\(UUID())", name: name)
             try dataBase.collection("users").document("\(newUser.id)").setData(from: newUser)
         } catch {
             print("error adding message to Firestore:: \(error)")
