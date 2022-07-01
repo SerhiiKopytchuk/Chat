@@ -27,7 +27,6 @@ struct SideMenuHeaderView: View {
             } label: {
                 Image(systemName: "xmark")
                     .frame(width: 32, height: 32)
-
                     .padding()
             }
 

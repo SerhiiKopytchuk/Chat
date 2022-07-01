@@ -26,6 +26,11 @@ struct SearchUserCell: View {
                         .scaledToFill()
                         .frame(width: 40, height: 40)
                         .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(.black, lineWidth: 1)
+                                .shadow(radius: 5)
+                        )
                         .padding()
                 } else {
                     Image(systemName: "person.crop.circle")

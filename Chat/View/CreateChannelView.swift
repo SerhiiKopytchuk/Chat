@@ -32,10 +32,11 @@ struct CreateChannelView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(
-                colors: [.white, .purple, .green]),
-                           startPoint: .topLeading,
-                           endPoint: .bottomTrailing)
+//            LinearGradient(gradient: Gradient(
+//                colors: [.white, .purple, .green]),
+//                           startPoint: .topLeading,
+//                           endPoint: .bottomTrailing)
+            Color("Peach")
             .ignoresSafeArea()
 
             ZStack(alignment: .top) {
