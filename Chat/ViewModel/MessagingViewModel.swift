@@ -19,7 +19,9 @@ class MessagingViewModel: ObservableObject {
     var dataBase = Firestore.firestore()
 
     func getMessages(competition: @escaping ([Message]) -> Void) {
+
         var messages: [Message] = []
+
         dataBase.collection("Chats").document(self.currentChat.id ?? "someId").collection("messages")
             .addSnapshotListener { querySnapshot, error in
 

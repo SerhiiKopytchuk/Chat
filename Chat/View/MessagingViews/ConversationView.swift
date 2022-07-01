@@ -40,7 +40,7 @@ struct ConversationView: View {
                             chattingViewModel.createChat { chat in
                                 messagingViewModel.currentChat = chat
                                 messagingViewModel.getMessages(competition: { _ in })
-                                isFindChat.toggle()
+                                isFindChat = true
                             }
                         } label: {
                             Text("Start Chat")

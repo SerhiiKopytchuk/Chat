@@ -59,7 +59,6 @@ struct SideMenuView: View {
                             if option == SideMenuViewModel.logout {
                                 withAnimation {
                                     viewModel.signOut()
-                                    chattingViewModel.chats = []
                                     viewModel.currentUser.chats = []
                                 }
                             }
