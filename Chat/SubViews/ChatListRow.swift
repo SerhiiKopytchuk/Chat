@@ -12,8 +12,8 @@ import SDWebImageSwiftUI
 
 struct ChatListRow: View {
     // Inject properties into the struct
-    @EnvironmentObject var viewModel: AppViewModel
-    @EnvironmentObject var messageViewModel: MessagingViewModel
+    @EnvironmentObject var viewModel: UserViewModel
+    @ObservedObject var messageViewModel = MessagingViewModel()
     @State var person: User?
     @State var message = Message(id: "", text: "", senderId: "", timestamp: Date())
     @State var imageUrl = URL(string: "")

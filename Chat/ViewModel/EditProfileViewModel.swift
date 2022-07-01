@@ -1,5 +1,5 @@
 //
-//  ImageViewModel.swift
+//  EditProfileViewModel.swift
 //  Chat
 //
 //  Created by Serhii Kopytchuk on 11.06.2022.
@@ -24,20 +24,31 @@ class EditProfileViewModel: ObservableObject {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
         let ref = Storage.storage().reference(withPath: uid)
-        ref.putData(imageData, metadata: nil) { _, error in
-            if self.isError(message: "failed to save image", err: error) { return }
-            ref.downloadURL { url, error in
-                if self.isError(message: "failed to retrieve downloadURL:", err: error) { return }
-                self.imageURL = url?.absoluteString ?? ""
 
+        self.putDataTo(ref: ref, imageData: imageData)
+    }
+
+    fileprivate func putDataTo(ref: StorageReference, imageData: Data) {
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(error: error) { return }
+            ref.downloadURL { url, error in
+                if self.isError(error: error) { return }
+                self.imageURL = url?.absoluteString ?? ""
             }
+
         }
     }
 
     func getImage(id: String, competition: @escaping (UIImage) -> Void) {
         let ref = Storage.storage().reference(withPath: id)
+        getData(ref: ref) { image in
+            competition(image)
+        }
+    }
+
+    fileprivate func getData(ref: StorageReference, competition: @escaping (UIImage) -> Void) {
         ref.getData(maxSize: (1 * 1024 * 1024)) { data, err in
-            if self.isError(message: "Failed to download image: ", err: err) { return }
+            if self.isError(error: err) { return }
 
             if let imageData = data {
                 let image = UIImage(data: imageData)
@@ -49,29 +60,31 @@ class EditProfileViewModel: ObservableObject {
 
     func getMyImage(competition: @escaping (WebImage) -> Void) {
         let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
+        downloadURL(ref: ref) { webImage in
+            competition(webImage)
+        }
+    }
+
+    fileprivate func downloadURL (ref: StorageReference, competition: @escaping (WebImage) -> Void) {
         ref.downloadURL { url, err in
-            if self.isError(message: "Faiure to get my Image", err: err) { return }
+            if self.isError(error: err) { return }
             competition(WebImage(url: url))
         }
     }
 
     func changeName(newName: String, userId: String) {
-
         dataBase.collection("users").document(userId).getDocument { querrySnapshot, err in
-            if err != nil {
-                print("Error to get user: " + (err?.localizedDescription ?? ""))
-                return
-            }
-
+            if self.isError(error: err) { return }
             querrySnapshot?.reference.updateData([ "name": newName])
         }
     }
 
-    fileprivate func isError(message: String, err: Error?) -> Bool {
-        if let err = err {
-            print(message + err.localizedDescription)
+    fileprivate func isError(error: Error?) -> Bool {
+        if error != nil {
+            print(error?.localizedDescription ?? "error")
             return true
+        } else {
+            return false
         }
-        return false
     }
 }

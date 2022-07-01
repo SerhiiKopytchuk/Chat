@@ -12,7 +12,7 @@ import SDWebImageSwiftUI
 struct SideMenuHeaderView: View {
 
     @Binding var isShowingSideMenu: Bool
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @State var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @State var myImageUrl = URL(string: "")
     @State var isFindUserImage = true
@@ -69,7 +69,7 @@ struct SideMenuHeaderView: View {
                     .padding(.bottom, 24)
                 HStack {
                     HStack {
-                        Text("\(viewModel.user.chats.count)").bold()
+                        Text("\(viewModel.currentUser.chats.count)").bold()
                         Text("Chats")
                     }
                     HStack {
@@ -94,6 +94,6 @@ struct SideMenuHeaderView: View {
 struct SideMenuHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         SideMenuHeaderView(isShowingSideMenu: .constant(true))
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
     }
 }

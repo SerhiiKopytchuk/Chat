@@ -13,7 +13,7 @@ struct CustomAlert: View {
     @Binding var show: Bool
     @Binding var text: String
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
 
     var body: some View {
         VStack {
