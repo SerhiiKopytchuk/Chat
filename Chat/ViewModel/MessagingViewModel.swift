@@ -22,7 +22,7 @@ class MessagingViewModel: ObservableObject {
 
         var messages: [Message] = []
 
-        dataBase.collection("Chats").document(self.currentChat.id ?? "someId").collection("messages")
+        dataBase.collection("chats").document(self.currentChat.id ?? "someId").collection("messages")
             .addSnapshotListener { querySnapshot, error in
 
                 guard let documents = querySnapshot?.documents else {
@@ -58,7 +58,7 @@ class MessagingViewModel: ObservableObject {
     func sendMessage(text: String) {
         let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
         do {
-            try self.dataBase.collection("Chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
         } catch {
             print("failed to send message" + error.localizedDescription)
