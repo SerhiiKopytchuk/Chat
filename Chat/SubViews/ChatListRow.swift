@@ -30,9 +30,13 @@ struct ChatListRow: View {
                 WebImage(url: imageUrl)
                     .resizable()
                     .scaledToFill()
-                    .clipped()
                     .frame(width: 40, height: 40)
-                    .clipShape(Circle())
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.black, lineWidth: 1)
+                            .shadow(radius: 5)
+                    )
                     .padding(5)
                     .onAppear {
 

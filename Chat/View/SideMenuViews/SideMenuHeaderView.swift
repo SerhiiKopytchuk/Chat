@@ -27,7 +27,6 @@ struct SideMenuHeaderView: View {
             } label: {
                 Image(systemName: "xmark")
                     .frame(width: 32, height: 32)
-
                     .padding()
             }
 
@@ -36,10 +35,13 @@ struct SideMenuHeaderView: View {
                     WebImage(url: myImageUrl)
                         .resizable()
                         .scaledToFill()
-                        .clipped()
                         .frame(width: 65, height: 65)
-                        .clipShape(Circle())
-                        .padding(.bottom, 16)
+                        .cornerRadius(50)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 50)
+                                .stroke(.black, lineWidth: 3)
+                                .shadow(radius: 10)
+                        )
                         .onAppear {
                             ref.downloadURL { url, err in
                                 if err != nil {
