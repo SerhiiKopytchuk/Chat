@@ -46,6 +46,8 @@
 		40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C64B92285D29830057F7CA /* MessagingViewModel.swift */; };
 		40D5C41628428B3A0015DFBB /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41528428B3A0015DFBB /* Tab.swift */; };
 		40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41728429F580015DFBB /* CustomTabBar.swift */; };
+		40EDFC25286EF5B500FD7A2A /* DocumentReference + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */; };
+		40EDFC27286EF5E400FD7A2A /* Query + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */; };
 		40EEDDDE2864682D00B1F38C /* ChattingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EEDDDD2864682D00B1F38C /* ChattingViewModel.swift */; };
 		40EF995E284746BB0062612E /* TitleRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EF995D284746BB0062612E /* TitleRow.swift */; };
 		40EF9960284747740062612E /* ConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EF995F284747740062612E /* ConversationView.swift */; };
@@ -98,6 +100,8 @@
 		40C64B92285D29830057F7CA /* MessagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingViewModel.swift; sourceTree = "<group>"; };
 		40D5C41528428B3A0015DFBB /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		40D5C41728429F580015DFBB /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
+		40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DocumentReference + Extension.swift"; sourceTree = "<group>"; };
+		40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Query + Extension.swift"; sourceTree = "<group>"; };
 		40EEDDDD2864682D00B1F38C /* ChattingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingViewModel.swift; sourceTree = "<group>"; };
 		40EF995D284746BB0062612E /* TitleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleRow.swift; sourceTree = "<group>"; };
 		40EF995F284747740062612E /* ConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationView.swift; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 		400142E4282EBA8400E5D497 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				40EDFC23286EF58400FD7A2A /* Extensions */,
 				40C3A104283A958A00A9683A /* Info.plist */,
 				40B2DA18283A7A3900965DC5 /* Chat.entitlements */,
 				4094461428301F8D00239F7B /* GoogleService-Info.plist */,
@@ -263,6 +268,15 @@
 				4024EB0828382B190082E739 /* SideMenuOptionView.swift */,
 			);
 			path = SideMenuViews;
+			sourceTree = "<group>";
+		};
+		40EDFC23286EF58400FD7A2A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */,
+				40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -395,9 +409,11 @@
 				40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */,
 				40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */,
 				40EF9964284748250062612E /* MessageBubble.swift in Sources */,
+				40EDFC25286EF5B500FD7A2A /* DocumentReference + Extension.swift in Sources */,
 				4024EB0728382B030082E739 /* SideMenuHeaderView.swift in Sources */,
 				4056D63D2833DD17000A0872 /* UserViewModel.swift in Sources */,
 				4024EB0B28382D960082E739 /* SideMenuViewModel.swift in Sources */,
+				40EDFC27286EF5E400FD7A2A /* Query + Extension.swift in Sources */,
 				40EEDDDE2864682D00B1F38C /* ChattingViewModel.swift in Sources */,
 				400E81AD286861EE006A606E /* CreateChannelView.swift in Sources */,
 				40D5C41628428B3A0015DFBB /* Tab.swift in Sources */,
