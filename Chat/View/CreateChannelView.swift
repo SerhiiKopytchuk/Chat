@@ -24,7 +24,7 @@ struct CreateChannelView: View {
     @State var isFindChannelImage = true
     @State var isAddedToChannel = false
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @ObservedObject var imageViewModel = ImageViewModel()
 
@@ -142,8 +142,8 @@ struct CreateChannelView: View {
 
     var createChannelButton: some View {
         Button {
-            channelViewModel.currentUser = viewModel.user
-            channelViewModel.owner = viewModel.user
+            channelViewModel.currentUser = viewModel.currentUser
+            channelViewModel.owner = viewModel.currentUser
             channelViewModel.createChannel( subscribersId: usersToAddInChannel,
                                             name: self.name,
                                             description: self.description) { channel in
@@ -169,6 +169,6 @@ struct CreateChannelView_Previews: PreviewProvider {
     static var previews: some View {
         CreateChannelView()
             .environmentObject(ChannelViewModel())
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
     }
 }

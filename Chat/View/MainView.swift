@@ -13,7 +13,7 @@ struct MainView: View {
     @State private var isShowingSideMenu = false
     @State private var showSearchUsers = false
 
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -49,7 +49,7 @@ struct MainView: View {
         }
         .onAppear {
             isShowingSideMenu = false
-            chattingViewModel.user = viewModel.user
+            chattingViewModel.user = viewModel.currentUser
         }
         .navigationViewStyle(.columns)
 
@@ -60,7 +60,7 @@ struct MainView: View {
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
     }

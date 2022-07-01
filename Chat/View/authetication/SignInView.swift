@@ -23,7 +23,7 @@ struct SignInView: View {
     @ObservedObject var imageViewModel = EditProfileViewModel()
 
     @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var viewModel: AppViewModel
+    @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
     private func updateButton() {
@@ -120,7 +120,7 @@ struct SignInView: View {
 
                 }
 
-                if viewModel.showLoader {
+                if viewModel.isShowLoader {
                     withAnimation {
                         GeometryReader { reader in
                             Loader()
@@ -234,7 +234,7 @@ struct SignInView: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView().environmentObject(AppViewModel())
+        SignInView().environmentObject(UserViewModel())
     }
 
 }

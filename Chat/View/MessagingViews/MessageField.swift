@@ -39,7 +39,7 @@ struct MessageField: View {
 struct MessageField_Previews: PreviewProvider {
     static var previews: some View {
         MessageField(messagingViewModel: MessagingViewModel())
-            .environmentObject(AppViewModel())
+            .environmentObject(UserViewModel())
     }
 }
 

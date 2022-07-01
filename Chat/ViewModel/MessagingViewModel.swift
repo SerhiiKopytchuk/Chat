@@ -19,29 +19,40 @@ class MessagingViewModel: ObservableObject {
     var dataBase = Firestore.firestore()
 
     func getMessages(competition: @escaping ([Message]) -> Void) {
+
         var messages: [Message] = []
+
         dataBase.collection("Chats").document(self.currentChat.id ?? "someId").collection("messages")
             .addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documets: \(String(describing: error))")
-                return
-            }
-            self.currentChat.messages = documents.compactMap { document -> Message? in
-                do {
-                    messages.append(try document.data(as: Message.self))
-                    return  messages.last
-                } catch {
-                    print("error deconding documet into Message: \(error)")
-                    return nil
+
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documets: \(error?.localizedDescription ?? "")")
+                    return
                 }
+
+                self.currentChat.messages = self.documentsToMessages(messages: &messages, documents: documents)
+
+                self.sortMessages(messages: &messages)
+
+                competition(messages)
             }
-            self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
-            messages.sort {$0.timestamp < $1.timestamp }
-                DispatchQueue.main.async {
-                    competition(messages)
-                }
-                return
+    }
+
+    private func documentsToMessages(messages: inout [Message], documents: [QueryDocumentSnapshot]) -> [Message] {
+        return documents.compactMap { document -> Message? in
+            do {
+                messages.append(try document.data(as: Message.self))
+                return  messages.last
+            } catch {
+                print("error deconding documet into Message: \(error)")
+                return nil
             }
+        }
+    }
+
+    private func sortMessages( messages: inout [Message]) {
+        self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
+        messages.sort {$0.timestamp < $1.timestamp }
     }
 
     func sendMessage(text: String) {
