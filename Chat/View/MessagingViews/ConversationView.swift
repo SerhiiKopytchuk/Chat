@@ -20,6 +20,7 @@ struct ConversationView: View {
         VStack {
             VStack {
                 TitleRow(user: secondUser)
+                    .environmentObject(chattingViewModel)
                 if isFindChat {
                     ScrollViewReader { _ in
                         ScrollView {
@@ -34,27 +35,32 @@ struct ConversationView: View {
                         .cornerRadius(30, corners: [.topLeft, .topRight])
                     }
                 } else {
-                    VStack {
-                        Button {
-                            // sometimes get back, when creating chat
-                            chattingViewModel.createChat { chat in
-                                messagingViewModel.currentChat = chat
-                                messagingViewModel.getMessages(competition: { _ in })
-                                isFindChat = true
-                            }
-                        } label: {
-                            Text("Start Chat")
-                                .font(.title)
-                                .padding()
-                                .background(.white)
-                                .cornerRadius(20)
-                        }
-                    }.frame(maxHeight: .infinity)
+                    createChatButton
                 }
             }
         }
         .background(Color("Peach"))
         MessageField(messagingViewModel: messagingViewModel)
+    }
+
+    @ViewBuilder var createChatButton: some View {
+
+        VStack {
+            Button {
+                chattingViewModel.createChat { chat in
+                    messagingViewModel.currentChat = chat
+                    messagingViewModel.getMessages(competition: { _ in })
+                    isFindChat = true
+                }
+            } label: {
+                Text("Start Chat")
+                    .font(.title)
+                    .padding()
+                    .background(.white)
+                    .cornerRadius(20)
+            }
+        }.frame(maxHeight: .infinity)
+
     }
 }
 

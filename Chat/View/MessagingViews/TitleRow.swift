@@ -11,6 +11,8 @@ import SDWebImageSwiftUI
 
 struct TitleRow: View {
     var user: User
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
@@ -41,11 +43,16 @@ struct TitleRow: View {
 
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Image(systemName: "phone.fill")
+            Image(systemName: "xmark")
                 .foregroundColor(.gray)
                 .padding(10)
                 .background(.white)
                 .cornerRadius(40 )
+                .onTapGesture {
+                    chattingViewModel.deleteChat()
+                    chattingViewModel.getChats(fromUpdate: true)
+                    presentationMode.wrappedValue.dismiss()
+                }
         }
         .padding()
         .onAppear {
