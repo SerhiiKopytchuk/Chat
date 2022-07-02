@@ -13,8 +13,8 @@ struct AddUserCreateChannelRow: View {
     var user: String
     var userGmail: String
     var id: String
-    let addOrRemoveButtonTaped: (String) -> Void
-    @Binding var isAddedToChannel: Bool
+    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @State var isAddedToChannel = false
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
@@ -51,13 +51,23 @@ struct AddUserCreateChannelRow: View {
             addOrRemoveUserChannel
                 .padding()
                 .onTapGesture {
-                    addOrRemoveButtonTaped(self.id)
-                    withAnimation {
-                        isAddedToChannel.toggle()
+                    if channelViewModel.subscribers.contains(id) {
+
+                        withAnimation {
+                            isAddedToChannel = false
+                        }
+                        if let index = channelViewModel.subscribers.firstIndex(of: id) {
+                            channelViewModel.subscribers.remove(at: index)
+                        }
+
+                    } else {
+                        isAddedToChannel = true
+                        withAnimation {
+                            channelViewModel.subscribers.append(id)
+                        }
                     }
                 }
         }
-//        .padding()
         .onAppear {
             let ref = Storage.storage().reference(withPath: self.id )
             ref.downloadURL { url, err in
@@ -68,6 +78,12 @@ struct AddUserCreateChannelRow: View {
                 withAnimation(.easeInOut) {
                     self.imageUrl = url
                 }
+            }
+
+            if channelViewModel.subscribers.contains(id) {
+                isAddedToChannel = true
+            } else {
+                isAddedToChannel = false
             }
         }
     }
@@ -95,9 +111,6 @@ struct AddUserCreateChannelRow_Previews: PreviewProvider {
     static var previews: some View {
         AddUserCreateChannelRow(user: "Koch",
                                 userGmail: "koch@gmail.com",
-                                id: "someId",
-                                addOrRemoveButtonTaped: { _ in
-        },
-                                isAddedToChannel: .constant(false))
+                                id: "someId")
     }
 }
