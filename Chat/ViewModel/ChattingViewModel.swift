@@ -153,6 +153,23 @@ class ChattingViewModel: ObservableObject {
             }
     }
 
+    func deleteChat() {
+        deleteChatIdFromUsersChats()
+        dataBase.collection("chats").document("\(currentChat.id ?? "someId")").delete { err in
+            if self.isError(error: err) { return }
+        }
+    }
+
+    fileprivate func deleteChatIdFromUsersChats() {
+        dataBase.collection("users").document(currentChat.user1Id).updateData([
+            "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
+        ])
+
+        dataBase.collection("users").document(currentChat.user2Id).updateData([
+            "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
+        ])
+    }
+
     fileprivate func isError(error: Error?) -> Bool {
         if error != nil {
             print(error?.localizedDescription ?? "error")

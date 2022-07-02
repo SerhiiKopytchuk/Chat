@@ -11,6 +11,10 @@ import SDWebImageSwiftUI
 
 struct TitleRow: View {
     var user: User
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
+    @State var showingAlert = false
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
@@ -41,11 +45,14 @@ struct TitleRow: View {
 
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Image(systemName: "phone.fill")
+            Image(systemName: "xmark")
                 .foregroundColor(.gray)
                 .padding(10)
                 .background(.white)
                 .cornerRadius(40 )
+                .onTapGesture {
+                    showingAlert.toggle()
+                }
         }
         .padding()
         .onAppear {
@@ -59,6 +66,14 @@ struct TitleRow: View {
                     self.imageUrl = url
                 }
             }
+        }
+        .alert("Do you really want to delete this chat?", isPresented: $showingAlert) {
+            Button("Delete", role: .destructive) {
+                chattingViewModel.deleteChat()
+                chattingViewModel.getChats(fromUpdate: true)
+                presentationMode.wrappedValue.dismiss()
+            }.foregroundColor(.red)
+            Button("Cancel", role: .cancel) {}
         }
     }
 }
