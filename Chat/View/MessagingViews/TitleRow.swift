@@ -14,6 +14,8 @@ struct TitleRow: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
+    @State var showingAlert = false
+
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
 
@@ -49,9 +51,7 @@ struct TitleRow: View {
                 .background(.white)
                 .cornerRadius(40 )
                 .onTapGesture {
-                    chattingViewModel.deleteChat()
-                    chattingViewModel.getChats(fromUpdate: true)
-                    presentationMode.wrappedValue.dismiss()
+                    showingAlert.toggle()
                 }
         }
         .padding()
@@ -66,6 +66,14 @@ struct TitleRow: View {
                     self.imageUrl = url
                 }
             }
+        }
+        .alert("Do you really want to delete this chat?", isPresented: $showingAlert) {
+            Button("Delete", role: .destructive) {
+                chattingViewModel.deleteChat()
+                chattingViewModel.getChats(fromUpdate: true)
+                presentationMode.wrappedValue.dismiss()
+            }.foregroundColor(.red)
+            Button("Cancel", role: .cancel) {}
         }
     }
 }
