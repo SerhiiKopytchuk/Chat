@@ -19,6 +19,8 @@ struct CreateChannelView: View {
     @State var description: String = ""
     @State var searchText: String = ""
 
+    @State var subscribersId: [String] = []
+
     @State var imageUrl = URL(string: "")
     @State var isFindChannelImage = true
 
@@ -77,7 +79,10 @@ struct CreateChannelView: View {
             ForEach(viewModel.users, id: \.id) { user in
                 AddUserCreateChannelRow(user: user.name,
                                         userGmail: user.gmail,
-                                        id: user.id)
+                                        id: user.id,
+                                        subscribersId: $subscribersId
+                )
+                .environmentObject(channelViewModel)
             }
         }
     }
@@ -120,13 +125,12 @@ struct CreateChannelView: View {
         Button {
             channelViewModel.currentUser = viewModel.currentUser
             channelViewModel.owner = viewModel.currentUser
-            channelViewModel.createChannel( subscribersId: channelViewModel.subscribers,
+            channelViewModel.createChannel( subscribersId: self.subscribersId,
                                             name: self.name,
                                             description: self.description) { channel in
                 imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
                                          imageName: channel.id ?? "some Id")
             }
-            channelViewModel.subscribers = []
             presentationMode.wrappedValue.dismiss()
         } label: {
             Text("Create channel")

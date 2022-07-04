@@ -12,6 +12,14 @@ import SDWebImageSwiftUI
 struct ChannelTitleRow: View {
     var channel: Channel
 
+    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
+    @State var showingAlertOwner = false
+    @State var showingAlertSubscriber = false
+
+    @State var isOwner: Bool
+
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
 
@@ -46,6 +54,13 @@ struct ChannelTitleRow: View {
                 .padding(10)
                 .background(.white)
                 .cornerRadius(40 )
+                .onTapGesture {
+                    if isOwner {
+                        showingAlertOwner.toggle()
+                    } else {
+                        showingAlertSubscriber.toggle()
+                    }
+                }
         }
         .padding()
         .onAppear {
@@ -60,6 +75,22 @@ struct ChannelTitleRow: View {
                 }
             }
         }
+        .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
+            Button("Delete", role: .destructive) {
+                channelViewModel.deleteChannel()
+                channelViewModel.getChannels(fromUpdate: true)
+                presentationMode.wrappedValue.dismiss()
+            }.foregroundColor(.red)
+            Button("Cancel", role: .cancel) {}
+        }
+        .alert("Do you really want to unsubscribe from this channel?", isPresented: $showingAlertSubscriber) {
+            Button("Unsubscribe", role: .destructive) {
+                channelViewModel.removeChannelFromSubscriptions(id: self.channelViewModel.currentUser.id)
+                channelViewModel.getChannels(fromUpdate: true)
+                presentationMode.wrappedValue.dismiss()
+            }.foregroundColor(.red)
+            Button("Cancel", role: .cancel) {}
+        }
     }
 }
 
@@ -70,6 +101,6 @@ struct ChannelTitleRow_Previews: PreviewProvider {
                                          description: "description",
                                          ownerId: "owner id",
                                          subscribersId: [],
-                                         messages: []))
+                                         messages: []), isOwner: true)
     }
 }

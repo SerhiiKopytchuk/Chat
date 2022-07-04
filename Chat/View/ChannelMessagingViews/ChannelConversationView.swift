@@ -17,7 +17,8 @@ struct ChannelConversationView: View {
     var body: some View {
         VStack {
             VStack {
-                ChannelTitleRow(channel: channelViewModel.currentChannel)
+                ChannelTitleRow(channel: channelViewModel.currentChannel,
+                                isOwner: currentUser.id == channelViewModel.currentChannel.ownerId)
                     ScrollViewReader { _ in
                         ScrollView {
                             ForEach(

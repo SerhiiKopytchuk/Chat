@@ -15,7 +15,6 @@ class ChannelViewModel: ObservableObject {
 
     @Published var currentUser: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var owner: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var subscribers: [String] = []
 
     @Published var channels: [Channel] = []
     @Published var currentChannel: Channel = Channel(id: "",
@@ -140,7 +139,7 @@ class ChannelViewModel: ObservableObject {
     func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
         self.channels = []
         if channelPart.isEmpty {
-
+            self.currentUser.channels = []
             for channelId in currentUser.channels {
                 dataBase.collection("channels").document(channelId)
                     .toChannel { channel in
@@ -162,6 +161,34 @@ class ChannelViewModel: ObservableObject {
         if !fromUpdate {
             self.updateChannels()
         }
+    }
+
+    func deleteChannel() {
+        removeFromSubscribersAndOwner()
+        dataBase.collection("channels").document("\(currentChannel.id ?? "someId")").delete { err in
+            if self.isError(error: err) { return }
+        }
+    }
+
+    fileprivate func removeFromSubscribersAndOwner() {
+        for id in currentChannel.subscribersId ?? [] {
+            removeChannelFromSubscriptions(id: id)
+        }
+
+        removeChannelFromSubscriptions(id: currentUser.id)
+    }
+
+    func removeChannelFromSubscriptions(id: String) {
+        removeFromChannelSubscribers()
+        dataBase.collection("users").document(id).updateData([
+            "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
+        ])
+    }
+
+    fileprivate func removeFromChannelSubscribers() {
+        dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
+            "subscribersId": FieldValue.arrayRemove(["\(currentUser.id )"])
+        ])
     }
 
     fileprivate func isError(error: Error?) -> Bool {
