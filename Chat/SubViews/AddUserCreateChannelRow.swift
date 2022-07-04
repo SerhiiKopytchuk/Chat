@@ -13,7 +13,7 @@ struct AddUserCreateChannelRow: View {
     var user: String
     var userGmail: String
     var id: String
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @Binding var subscribersId: [String]
     @State var isAddedToChannel = false
 
     @State var imageUrl = URL(string: "")
@@ -51,19 +51,19 @@ struct AddUserCreateChannelRow: View {
             addOrRemoveUserChannel
                 .padding()
                 .onTapGesture {
-                    if channelViewModel.subscribers.contains(id) {
+                    if subscribersId.contains(id) {
 
                         withAnimation {
                             isAddedToChannel = false
                         }
-                        if let index = channelViewModel.subscribers.firstIndex(of: id) {
-                            channelViewModel.subscribers.remove(at: index)
+                        if let index = subscribersId.firstIndex(of: id) {
+                            subscribersId.remove(at: index)
                         }
 
                     } else {
                         isAddedToChannel = true
                         withAnimation {
-                            channelViewModel.subscribers.append(id)
+                            subscribersId.append(id)
                         }
                     }
                 }
@@ -80,7 +80,7 @@ struct AddUserCreateChannelRow: View {
                 }
             }
 
-            if channelViewModel.subscribers.contains(id) {
+            if subscribersId.contains(id) {
                 isAddedToChannel = true
             } else {
                 isAddedToChannel = false
@@ -111,6 +111,7 @@ struct AddUserCreateChannelRow_Previews: PreviewProvider {
     static var previews: some View {
         AddUserCreateChannelRow(user: "Koch",
                                 userGmail: "koch@gmail.com",
-                                id: "someId")
+                                id: "someId",
+                                subscribersId: .constant([]))
     }
 }
