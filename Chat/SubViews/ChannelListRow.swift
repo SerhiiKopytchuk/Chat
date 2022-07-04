@@ -13,6 +13,9 @@ import SDWebImageSwiftUI
 
 struct ChannelListRow: View {
     // Inject properties into the struct
+    @EnvironmentObject var userViewModel: UserViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
+
     @State var channel: Channel
     @State var imageUrl = URL(string: "")
     @State var isFindChannelImage = true
@@ -30,9 +33,13 @@ struct ChannelListRow: View {
                 WebImage(url: imageUrl)
                     .resizable()
                     .scaledToFill()
-                    .clipped()
                     .frame(width: 40, height: 40)
-                    .clipShape(Circle())
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.black, lineWidth: 1)
+                            .shadow(radius: 5)
+                    )
                     .padding(5)
                     .onAppear {
 
@@ -68,6 +75,26 @@ struct ChannelListRow: View {
         .onTapGesture {
             rowTapped()
         }
+        .contextMenu(menuItems: {
+            Button(role: .destructive) {
+                channelViewModel.currentChannel = self.channel
+
+                if channel.ownerId == userViewModel.currentUser.id {
+                    channelViewModel.deleteChannel()
+                    channelViewModel.getChannels(fromUpdate: true)
+                } else {
+                    channelViewModel.removeChannelFromSubscriptions(id: self.channelViewModel.currentUser.id)
+                    channelViewModel.getChannels(fromUpdate: true)
+                }
+
+            } label: {
+                if channel.ownerId == userViewModel.currentUser.id {
+                    Label("delete channel", systemImage: "delete.left")
+                } else {
+                    Label("unsubscribe", systemImage: "delete.left")
+                }
+            }
+        })
         .onAppear {
                 withAnimation {
                     let ref = Storage.storage().reference(withPath: self.channel.id ?? "SomeId")

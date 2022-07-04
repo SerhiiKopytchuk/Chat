@@ -26,10 +26,8 @@ struct EditProfileView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(
-                colors: [.purple, .white, .white]),
-                           startPoint: .topLeading,
-                           endPoint: .bottomTrailing)
+
+            Color("Peach")
             .ignoresSafeArea()
 
             ZStack(alignment: .top) {
@@ -39,6 +37,7 @@ struct EditProfileView: View {
                 VStack {
                     changeProfileImageButton
                     changeProfileNameButton
+
                     if isShowingChangeName {
                         HStack {
                             TextField("Enter your new name!", text: $newName)
@@ -48,6 +47,7 @@ struct EditProfileView: View {
                                 .padding(.horizontal, 20)
                         }
                     }
+
                     Text(viewModel.currentUser.gmail)
                         .font(.callout)
                         .foregroundColor(.gray)
@@ -92,7 +92,6 @@ struct EditProfileView: View {
                                     .stroke(.black, lineWidth: 3)
                                     .shadow(radius: 10)
                             )
-                        //                                    rightDownImage
                     }
                 } else {
                     ZStack {
@@ -106,12 +105,10 @@ struct EditProfileView: View {
                                     .stroke(.black, lineWidth: 3)
                                     .shadow(radius: 10)
                             )
-                        //                                    rightDownImage
                     }
                 }
             } else {
                 if self.profileImage != nil {
-                    ZStack {
                         Image(uiImage: self.profileImage ?? UIImage())
                             .resizable()
                             .scaledToFill()
@@ -122,13 +119,8 @@ struct EditProfileView: View {
                                     .stroke(.black, lineWidth: 3)
                                     .shadow(radius: 10)
                             )
-                        //                                    rightDownImage
-                    }
                 } else {
-                    ZStack {
                         emptyImage
-                        //                                    rightDownImage
-                    }
                 }
             }
         }
@@ -154,10 +146,8 @@ struct EditProfileView: View {
             }
         } label: {
             HStack {
-                //                Text("Serhii Kopythuk")
                 Text(viewModel.currentUser.name)
                     .font(.system(.title, design: .rounded))
-                //                    .underline()
                     .foregroundColor(.black)
                     .padding(.vertical)
                 Image(systemName: "pencil")
@@ -167,7 +157,6 @@ struct EditProfileView: View {
             }
         }
         .padding(.top)
-        //        .padding(.horizontal)
     }
 
     var saveButton: some View {
@@ -183,23 +172,7 @@ struct EditProfileView: View {
                 .shadow(color: newName.count < 4 ? .gray : .orange, radius: 3)
         }
         .disabled(newName.count > 3 ? false : true)
-
     }
-
-    //    var rightDownImage: some View {
-    //        VStack(alignment: .trailing) {
-    //            Spacer()
-    //            HStack {
-    //                Spacer()
-    //                Image(systemName: "photo.circle")
-    //                    .resizable()
-    //                    .frame(width: 30, height: 30)
-    //                    .background(.white.opacity(0))
-    //                    .foregroundColor(.black.opacity(70))
-    //                    .cornerRadius(30)
-    //            }
-    //        }
-    //    }
 }
 
 struct EditProfileView_Previews: PreviewProvider {

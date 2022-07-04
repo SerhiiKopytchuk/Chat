@@ -89,6 +89,7 @@ struct TabBarView: View {
                         }
                     }
                     .environmentObject(messagingViewModel)
+                    .environmentObject(chattingViewModel)
                 }
             }
         }
@@ -112,6 +113,8 @@ struct TabBarView: View {
                         } failure: { _ in }
 
                     }
+                    .environmentObject(viewModel)
+                    .environmentObject(channelViewModel)
                 }
             }
         }

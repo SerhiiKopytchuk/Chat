@@ -13,8 +13,8 @@ struct AddUserCreateChannelRow: View {
     var user: String
     var userGmail: String
     var id: String
-    let addOrRemoveButtonTaped: (String) -> Void
-    @Binding var isAddedToChannel: Bool
+    @Binding var subscribersId: [String]
+    @State var isAddedToChannel = false
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
@@ -27,6 +27,11 @@ struct AddUserCreateChannelRow: View {
                     .scaledToFill()
                     .frame(width: 40, height: 40)
                     .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.black, lineWidth: 1)
+                            .shadow(radius: 5)
+                    )
                     .padding()
             } else {
                 Image(systemName: "person.crop.circle")
@@ -46,13 +51,23 @@ struct AddUserCreateChannelRow: View {
             addOrRemoveUserChannel
                 .padding()
                 .onTapGesture {
-                    addOrRemoveButtonTaped(self.id)
-                    withAnimation {
-                        isAddedToChannel.toggle()
+                    if subscribersId.contains(id) {
+
+                        withAnimation {
+                            isAddedToChannel = false
+                        }
+                        if let index = subscribersId.firstIndex(of: id) {
+                            subscribersId.remove(at: index)
+                        }
+
+                    } else {
+                        isAddedToChannel = true
+                        withAnimation {
+                            subscribersId.append(id)
+                        }
                     }
                 }
         }
-//        .padding()
         .onAppear {
             let ref = Storage.storage().reference(withPath: self.id )
             ref.downloadURL { url, err in
@@ -63,6 +78,12 @@ struct AddUserCreateChannelRow: View {
                 withAnimation(.easeInOut) {
                     self.imageUrl = url
                 }
+            }
+
+            if subscribersId.contains(id) {
+                isAddedToChannel = true
+            } else {
+                isAddedToChannel = false
             }
         }
     }
@@ -91,8 +112,6 @@ struct AddUserCreateChannelRow_Previews: PreviewProvider {
         AddUserCreateChannelRow(user: "Koch",
                                 userGmail: "koch@gmail.com",
                                 id: "someId",
-                                addOrRemoveButtonTaped: { _ in
-        },
-                                isAddedToChannel: .constant(false))
+                                subscribersId: .constant([]))
     }
 }

@@ -18,11 +18,11 @@ struct CreateChannelView: View {
     @State var name: String = ""
     @State var description: String = ""
     @State var searchText: String = ""
-    @State var usersToAddInChannel: [String] = []
+
+    @State var subscribersId: [String] = []
 
     @State var imageUrl = URL(string: "")
     @State var isFindChannelImage = true
-    @State var isAddedToChannel = false
 
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -32,10 +32,7 @@ struct CreateChannelView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(
-                colors: [.white, .purple, .green]),
-                           startPoint: .topLeading,
-                           endPoint: .bottomTrailing)
+            Color("Peach")
             .ignoresSafeArea()
 
             ZStack(alignment: .top) {
@@ -83,25 +80,9 @@ struct CreateChannelView: View {
                 AddUserCreateChannelRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id,
-                                        addOrRemoveButtonTaped: { id in
-
-                    if self.isAddedToChannel {
-                        if let index = usersToAddInChannel.firstIndex(of: id) {
-                            usersToAddInChannel.remove(at: index)
-                        }
-                    } else {
-                        usersToAddInChannel.append(id)
-                    }
-
-                },
-                                        isAddedToChannel: $isAddedToChannel)
-                .onAppear {
-                    if usersToAddInChannel.contains(user.id) {
-                        isAddedToChannel = true
-                    } else {
-                        isAddedToChannel = false
-                    }
-                }
+                                        subscribersId: $subscribersId
+                )
+                .environmentObject(channelViewModel)
             }
         }
     }
@@ -144,7 +125,7 @@ struct CreateChannelView: View {
         Button {
             channelViewModel.currentUser = viewModel.currentUser
             channelViewModel.owner = viewModel.currentUser
-            channelViewModel.createChannel( subscribersId: usersToAddInChannel,
+            channelViewModel.createChannel( subscribersId: self.subscribersId,
                                             name: self.name,
                                             description: self.description) { channel in
                 imageViewModel.saveImage(image: self.channelImage ?? UIImage(),

@@ -25,7 +25,7 @@ class ChannelMessagingViewModel: ObservableObject {
         var messages: [Message] = []
         dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
             .addSnapshotListener { querySnapshot, error in
-                
+
                 guard let documents = querySnapshot?.documents else {
                     print("Error fetching documets: \(String(describing: error))")
                     return
@@ -56,7 +56,6 @@ class ChannelMessagingViewModel: ObservableObject {
         self.currentChannel.messages?.sort { $0.timestamp < $1.timestamp}
         messages.sort {$0.timestamp < $1.timestamp }
     }
-
 
     func sendMessage(text: String) {
         let newMessage = Message(id: "\(UUID())", text: text, senderId: self.currentUser.id, timestamp: Date())
