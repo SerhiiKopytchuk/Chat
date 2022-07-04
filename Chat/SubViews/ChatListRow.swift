@@ -14,6 +14,8 @@ struct ChatListRow: View {
     // Inject properties into the struct
     @EnvironmentObject var viewModel: UserViewModel
     @ObservedObject var messageViewModel = MessagingViewModel()
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
+
     @State var person: User?
     @State var message = Message(id: "", text: "", senderId: "", timestamp: Date())
     @State var imageUrl = URL(string: "")
@@ -71,6 +73,15 @@ struct ChatListRow: View {
             .onTapGesture {
                 rowTapped()
             }
+            .contextMenu(menuItems: {
+                Button(role: .destructive) {
+                    chattingViewModel.currentChat = self.chat
+                    chattingViewModel.deleteChat()
+                    chattingViewModel.getChats(fromUpdate: true)
+                } label: {
+                    Label("remove chat", systemImage: "delete.left")
+                }
+            })
             .onAppear {
                 self.viewModel.getUserByChat(chat: self.chat) { user in
                     withAnimation {
