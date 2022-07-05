@@ -77,7 +77,6 @@ struct ChatListRow: View {
                 Button(role: .destructive) {
                     chattingViewModel.currentChat = self.chat
                     chattingViewModel.deleteChat()
-                    chattingViewModel.getChats(fromUpdate: true)
                 } label: {
                     Label("remove chat", systemImage: "delete.left")
                 }

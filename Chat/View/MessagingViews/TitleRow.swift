@@ -14,19 +14,42 @@ struct TitleRow: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
+    let animationNamespace: Namespace.ID
+
     @State var showingAlert = false
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
+    @Binding var isFindChat: Bool
+
+    @Binding var isExpandedProfile: Bool
+    @Binding var profileImage: WebImage
 
     var body: some View {
         HStack(spacing: 20) {
             if isFindUserImage {
-                WebImage(url: imageUrl)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 50, height: 50)
-                        .cornerRadius(50)
+                VStack {
+                    if isExpandedProfile {
+                        WebImage(url: imageUrl)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 50, height: 50)
+                                .cornerRadius(50)
+                                .opacity(0)
+                    } else {
+                        WebImage(url: imageUrl)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 50, height: 50)
+                                .cornerRadius(50)
+                                .matchedGeometryEffect(id: "profilePhoto", in: animationNamespace)
+                    }
+                }
+                .onTapGesture {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        isExpandedProfile.toggle()
+                    }
+                }
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
@@ -45,14 +68,16 @@ struct TitleRow: View {
 
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Image(systemName: "xmark")
-                .foregroundColor(.gray)
-                .padding(10)
-                .background(.white)
-                .cornerRadius(40 )
-                .onTapGesture {
-                    showingAlert.toggle()
-                }
+            if isFindChat {
+                Image(systemName: "xmark")
+                    .foregroundColor(.gray)
+                    .padding(10)
+                    .background(.white)
+                    .cornerRadius(40 )
+                    .onTapGesture {
+                        showingAlert.toggle()
+                    }
+            }
         }
         .padding()
         .onAppear {
@@ -63,6 +88,7 @@ struct TitleRow: View {
                     return
                 }
                 withAnimation(.easeInOut) {
+                    self.profileImage = WebImage(url: url)
                     self.imageUrl = url
                 }
             }
@@ -70,17 +96,9 @@ struct TitleRow: View {
         .alert("Do you really want to delete this chat?", isPresented: $showingAlert) {
             Button("Delete", role: .destructive) {
                 chattingViewModel.deleteChat()
-                chattingViewModel.getChats(fromUpdate: true)
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}
         }
-    }
-}
-
-struct TitleRow_Previews: PreviewProvider {
-    static var previews: some View {
-        TitleRow(user: User(chats: [], channels: [], gmail: "", id: "", name: ""))
-            .background(Color("Peach"))
     }
 }
