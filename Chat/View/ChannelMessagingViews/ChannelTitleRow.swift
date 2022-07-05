@@ -12,6 +12,10 @@ import SDWebImageSwiftUI
 struct ChannelTitleRow: View {
     var channel: Channel
 
+    let animationNamespace: Namespace.ID
+    @Binding var isExpandedProfile: Bool
+    @Binding var profileImage: WebImage
+
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
@@ -26,11 +30,28 @@ struct ChannelTitleRow: View {
     var body: some View {
         HStack(spacing: 20) {
             if isFindUserImage {
-                WebImage(url: imageUrl)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 50, height: 50)
-                        .cornerRadius(50)
+                VStack {
+                    if isExpandedProfile {
+                        WebImage(url: imageUrl)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .cornerRadius(50)
+                            .opacity(0)
+                    } else {
+                        WebImage(url: imageUrl)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .cornerRadius(50)
+                            .matchedGeometryEffect(id: "channelPhoto", in: animationNamespace)
+                    }
+                }
+                .onTapGesture {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        isExpandedProfile.toggle()
+                    }
+                }
             } else {
                 Image(systemName: "photo.circle.fill")
                     .resizable()
@@ -71,6 +92,7 @@ struct ChannelTitleRow: View {
                     return
                 }
                 withAnimation(.easeInOut) {
+                    self.profileImage = WebImage(url: url)
                     self.imageUrl = url
                 }
             }
@@ -78,7 +100,6 @@ struct ChannelTitleRow: View {
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
             Button("Delete", role: .destructive) {
                 channelViewModel.deleteChannel()
-                channelViewModel.getChannels(fromUpdate: true)
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}
@@ -86,21 +107,9 @@ struct ChannelTitleRow: View {
         .alert("Do you really want to unsubscribe from this channel?", isPresented: $showingAlertSubscriber) {
             Button("Unsubscribe", role: .destructive) {
                 channelViewModel.removeChannelFromSubscriptions(id: self.channelViewModel.currentUser.id)
-                channelViewModel.getChannels(fromUpdate: true)
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}
         }
-    }
-}
-
-struct ChannelTitleRow_Previews: PreviewProvider {
-    static var previews: some View {
-        ChannelTitleRow(channel: Channel(id: "some id",
-                                         name: "name",
-                                         description: "description",
-                                         ownerId: "owner id",
-                                         subscribersId: [],
-                                         messages: []), isOwner: true)
     }
 }
