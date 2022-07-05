@@ -78,7 +78,6 @@ struct ChannelTitleRow: View {
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
             Button("Delete", role: .destructive) {
                 channelViewModel.deleteChannel()
-                channelViewModel.getChannels(fromUpdate: true)
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}
@@ -86,7 +85,6 @@ struct ChannelTitleRow: View {
         .alert("Do you really want to unsubscribe from this channel?", isPresented: $showingAlertSubscriber) {
             Button("Unsubscribe", role: .destructive) {
                 channelViewModel.removeChannelFromSubscriptions(id: self.channelViewModel.currentUser.id)
-                channelViewModel.getChannels(fromUpdate: true)
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}

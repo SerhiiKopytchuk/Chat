@@ -26,9 +26,9 @@ struct ChatApp: App {
                 .onAppear {
                         viewModel.getCurrentUser { user in
                             chattingViewModel.user = user
-                            chattingViewModel.getChats()
+                            chattingViewModel.getChats(fromUpdate: false)
                             channelViewModel.currentUser = user
-                            channelViewModel.getChannels()
+                            channelViewModel.getChannels(fromUpdate: false)
                         }
                 }
                 .environmentObject(viewModel)
