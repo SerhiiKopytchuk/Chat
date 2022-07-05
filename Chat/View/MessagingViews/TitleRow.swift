@@ -20,6 +20,7 @@ struct TitleRow: View {
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
+    @Binding var isFindChat: Bool
 
     @Binding var isExpandedProfile: Bool
     @Binding var profileImage: WebImage
@@ -67,14 +68,16 @@ struct TitleRow: View {
 
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Image(systemName: "xmark")
-                .foregroundColor(.gray)
-                .padding(10)
-                .background(.white)
-                .cornerRadius(40 )
-                .onTapGesture {
-                    showingAlert.toggle()
-                }
+            if isFindChat {
+                Image(systemName: "xmark")
+                    .foregroundColor(.gray)
+                    .padding(10)
+                    .background(.white)
+                    .cornerRadius(40 )
+                    .onTapGesture {
+                        showingAlert.toggle()
+                    }
+            }
         }
         .padding()
         .onAppear {

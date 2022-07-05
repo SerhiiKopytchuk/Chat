@@ -30,6 +30,7 @@ struct ConversationView: View {
                 VStack {
                     TitleRow(user: secondUser,
                              animationNamespace: animation,
+                             isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,
                              profileImage: $profileImage
                     )
@@ -90,17 +91,8 @@ struct ConversationView: View {
                                 let height = value.translation.height
                                 if height > 0 && height > 100 {
 
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        loadExpandedContent = false
-                                    }
+                                    turnOffImageView()
 
-                                    withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-                                        isExpandedProfile = false
-                                    }
-
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        imageOffset = .zero
-                                    }
                                 } else {
                                     withAnimation(.easeInOut(duration: 0.3)) {
                                         imageOffset = .zero
@@ -116,23 +108,13 @@ struct ConversationView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .top, content: {
             HStack(spacing: 10) {
-                Button {
 
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        loadExpandedContent = false
-                    }
-                    withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-                        isExpandedProfile = false
-                    }
+                turnOffImageButton
 
-                } label: {
-                    Image(systemName: "arrow.left")
-                        .font(.title3)
-                        .foregroundColor(.white)
-                }
                 Text(viewModel.secondUser.name)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
+
                 Spacer(minLength: 10)
             }
             .padding()
@@ -144,6 +126,36 @@ struct ConversationView: View {
             withAnimation(.easeInOut(duration: 0.3)) {
                 loadExpandedContent = true
             }
+        }
+    }
+
+     var turnOffImageButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                loadExpandedContent = false
+            }
+            withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+                isExpandedProfile = false
+            }
+
+        } label: {
+            Image(systemName: "arrow.left")
+                .font(.title3)
+                .foregroundColor(.white)
+        }
+    }
+
+    func turnOffImageView() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            loadExpandedContent = false
+        }
+
+        withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+            isExpandedProfile = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            imageOffset = .zero
         }
     }
 
