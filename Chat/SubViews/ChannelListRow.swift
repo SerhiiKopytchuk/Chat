@@ -20,6 +20,7 @@ struct ChannelListRow: View {
     @State var imageUrl = URL(string: "")
     @State var isFindChannelImage = true
     @State var countOfMessages = 0
+    @State var isShowImage = false
 
     @ObservedObject var channelMessagingViewModel = ChannelMessagingViewModel()
 
@@ -41,9 +42,7 @@ struct ChannelListRow: View {
                             .shadow(radius: 5)
                     )
                     .padding(5)
-                    .onAppear {
-
-                    }
+                    .opacity(isShowImage ? 1 : 0)
             } else {
                 Image(systemName: "photo.circle.fill")
                     .resizable()
@@ -53,6 +52,7 @@ struct ChannelListRow: View {
                     .frame(width: 30, height: 30)
                     .clipShape(Circle())
                     .padding(5)
+                    .opacity(isShowImage ? 1 : 0)
             }
 
             VStack(alignment: .leading) {
@@ -94,24 +94,28 @@ struct ChannelListRow: View {
             }
         })
         .onAppear {
-                withAnimation {
-                    let ref = Storage.storage().reference(withPath: self.channel.id ?? "SomeId")
-                    ref.downloadURL { url, err in
-                        if err != nil {
-                            self.isFindChannelImage = false
-                            return
-                        }
+            DispatchQueue.main.async {
+                let ref = Storage.storage().reference(withPath: self.channel.id ?? "SomeId")
+                ref.downloadURL { url, err in
+                    if err != nil {
+                        self.isFindChannelImage = false
                         withAnimation(.easeInOut) {
-                            self.imageUrl = url
+                            self.isShowImage = true
                         }
+                        return
                     }
-
-                    channelMessagingViewModel.currentChannel = self.channel
-
-                    channelMessagingViewModel.getMessages { messages in
-                        self.countOfMessages = messages.count
+                    withAnimation(.easeInOut) {
+                        self.imageUrl = url
+                        self.isShowImage = true
                     }
                 }
+            }
+
+            channelMessagingViewModel.currentChannel = self.channel
+
+            channelMessagingViewModel.getMessages { messages in
+                self.countOfMessages = messages.count
+            }
         }
     }
 }

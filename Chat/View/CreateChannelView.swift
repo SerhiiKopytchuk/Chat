@@ -128,10 +128,15 @@ struct CreateChannelView: View {
             channelViewModel.createChannel( subscribersId: self.subscribersId,
                                             name: self.name,
                                             description: self.description) { channel in
-                imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
-                                         imageName: channel.id ?? "some Id")
+
+                    imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
+                                             imageName: channel.id ?? "some Id")
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    channelViewModel.getChannels(fromUpdate: true)
+                }
+                    presentationMode.wrappedValue.dismiss()
             }
-            presentationMode.wrappedValue.dismiss()
         } label: {
             Text("Create channel")
                 .frame(maxWidth: .infinity)
