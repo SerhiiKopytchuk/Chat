@@ -14,7 +14,7 @@ class MessagingViewModel: ObservableObject {
                                             user1Id: "",
                                             user2Id: "",
                                             messages: [],
-                                            lastMessageTimestamp: Date())
+                                            lastActivityTimestamp: Date())
     @Published var user: User = User(chats: [], channels: [], gmail: "", id: "someId", name: "")
     @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 
@@ -72,7 +72,7 @@ class MessagingViewModel: ObservableObject {
     }
 
     private func changeLastMessageTime() {
-        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastMessageTimestamp": Date()])
+        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 
 }

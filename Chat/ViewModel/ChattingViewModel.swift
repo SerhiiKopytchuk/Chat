@@ -20,7 +20,7 @@ class ChattingViewModel: ObservableObject {
                                             user1Id: "",
                                             user2Id: "",
                                             messages: [],
-                                            lastMessageTimestamp: Date())
+                                            lastActivityTimestamp: Date())
 
     @Published private(set) var chats: [Chat] = []
 
@@ -94,7 +94,7 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
 
-        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id, lastMessageTimestamp: Date())
+        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id, lastActivityTimestamp: Date())
 
         try dataBase.collection("chats").document().setData(from: newChat)
 
@@ -115,7 +115,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     private func changeLastMessageTime() {
-        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastMessageTimestamp": Date()])
+        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
@@ -147,7 +147,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     func sortChats() {
-        self.chats.sort { $0.lastMessageTimestamp > $1.lastMessageTimestamp }
+        self.chats.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
     }
 
     fileprivate func updateChats() {
