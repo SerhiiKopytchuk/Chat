@@ -60,9 +60,7 @@ struct RollingText: View {
                 }
             } else {
                 for _ in 0..<(-extra) {
-                    withAnimation(.easeIn(duration: 0.1)) {
                         animationRange.removeLast()
-                    }
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
