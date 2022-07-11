@@ -22,7 +22,8 @@ class ChannelViewModel: ObservableObject {
                                                      description: "",
                                                      ownerId: "",
                                                      subscribersId: [],
-                                                     messages: [])
+                                                     messages: [],
+                                                     lastActivityTimestamp: Date())
 
     let dataBase = Firestore.firestore()
 
@@ -88,7 +89,8 @@ class ChannelViewModel: ObservableObject {
                                  description: description,
                                  ownerId: currentUser.id,
                                  subscribersId: subscribersId,
-                                 messages: [])
+                                 messages: [],
+                                 lastActivityTimestamp: Date())
 
         try dataBase.collection("channels").document().setData(from: newChannel)
 
@@ -137,13 +139,16 @@ class ChannelViewModel: ObservableObject {
     }
 
     func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
+
         self.channels = []
+
         if channelPart.isEmpty {
-            self.currentUser.channels = []
             for channelId in currentUser.channels {
                 dataBase.collection("channels").document(channelId)
                     .toChannel { channel in
                         self.channels.append(channel)
+                        self.sortChannels()
+
                     }
             }
 
@@ -153,6 +158,7 @@ class ChannelViewModel: ObservableObject {
                 dataBase.collection("channels").document(channelId)
                     .toChannel { channel in
                         self.channels.append(channel)
+                        self.sortChannels()
                     }
             }
 
@@ -161,6 +167,10 @@ class ChannelViewModel: ObservableObject {
         if !fromUpdate {
             self.updateChannels()
         }
+    }
+
+    func sortChannels() {
+        self.channels.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
     }
 
     func deleteChannel() {

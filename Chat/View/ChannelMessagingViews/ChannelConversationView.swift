@@ -9,6 +9,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ChannelConversationView: View {
+
+    // MARK: - vars
     @State var currentUser: User
 
     @Namespace var animation
@@ -22,6 +24,7 @@ struct ChannelConversationView: View {
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
+    // MARK: - body
     var body: some View {
         ZStack {
             VStack {
@@ -49,6 +52,7 @@ struct ChannelConversationView: View {
                 .background(Color("Peach"))
                 if currentUser.id == channelViewModel.currentChannel.ownerId {
                     ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
+                        .environmentObject(channelViewModel)
                 }
             }
             .navigationBarBackButtonHidden(loadExpandedContent)
@@ -66,6 +70,8 @@ struct ChannelConversationView: View {
             }
         }
     }
+
+    // MARK: - viewBuilders
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
         VStack {

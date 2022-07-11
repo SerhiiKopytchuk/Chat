@@ -11,6 +11,7 @@ struct ChannelMessageField: View {
     @State private var message = ""
 
     @ObservedObject var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
 
     var body: some View {
         HStack {
@@ -19,6 +20,7 @@ struct ChannelMessageField: View {
             Button {
                 channelMessagingViewModel.sendMessage(text: message)
                 message = ""
+                channelViewModel.getChannels(fromUpdate: true)
             } label: {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)

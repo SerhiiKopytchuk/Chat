@@ -119,6 +119,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
+
         self.chats = []
 
         if chatsId.isEmpty {
