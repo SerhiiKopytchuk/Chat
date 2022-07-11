@@ -16,7 +16,11 @@ class ChattingViewModel: ObservableObject {
 
     @Published var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var currentChat: Chat = Chat(id: "", user1Id: "", user2Id: "", messages: [])
+    @Published var currentChat: Chat = Chat(id: "",
+                                            user1Id: "",
+                                            user2Id: "",
+                                            messages: [],
+                                            lastActivityTimestamp: Date())
 
     @Published private(set) var chats: [Chat] = []
 
@@ -90,12 +94,13 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
 
-        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id)
+        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id, lastActivityTimestamp: Date())
 
         try dataBase.collection("chats").document().setData(from: newChat)
 
         getCurrentChat(secondUser: secondUser) { chat in
             self.addChatsIdToUsers()
+            self.changeLastMessageTime()
             competition(chat)
         } failure: { _ in }
 
@@ -109,27 +114,31 @@ class ChattingViewModel: ObservableObject {
 
     }
 
+    private func changeLastMessageTime() {
+        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
+    }
+
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
+
         self.chats = []
 
         if chatsId.isEmpty {
-
             for chatId in user.chats {
                 dataBase.collection("chats").document(chatId)
                     .toChat { chat in
                         self.chats.append(chat)
+                        self.sortChats()
                     }
             }
 
         } else {
-
             for chatId in chatsId {
                 dataBase.collection("chats").document(chatId)
                     .toChat { chat in
                         self.chats.append(chat)
+                        self.sortChats()
                     }
             }
-
         }
 
         if !fromUpdate {
@@ -138,10 +147,13 @@ class ChattingViewModel: ObservableObject {
 
     }
 
+    func sortChats() {
+        self.chats.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+    }
+
     fileprivate func updateChats() {
         dataBase.collection("users").document(user.id)
             .addSnapshotListener { document, error in
-
                 if self.isError(error: error) { return }
 
                 guard let userLocal = try? document?.data(as: User.self) else {

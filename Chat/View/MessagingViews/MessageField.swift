@@ -11,6 +11,7 @@ struct MessageField: View {
     @State private var message = ""
 
     @ObservedObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     var body: some View {
         HStack {
@@ -19,6 +20,7 @@ struct MessageField: View {
             Button {
                 messagingViewModel.sendMessage(text: message)
                 message = ""
+                chattingViewModel.getChats(fromUpdate: true)
             } label: {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)

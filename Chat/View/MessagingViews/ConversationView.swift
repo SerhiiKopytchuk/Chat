@@ -90,9 +90,7 @@ struct ConversationView: View {
                             }).onEnded({ value in
                                 let height = value.translation.height
                                 if height > 0 && height > 100 {
-
                                     turnOffImageView()
-
                                 } else {
                                     withAnimation(.easeInOut(duration: 0.3)) {
                                         imageOffset = .zero

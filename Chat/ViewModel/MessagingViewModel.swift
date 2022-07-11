@@ -10,7 +10,11 @@ import FirebaseFirestore
 
 class MessagingViewModel: ObservableObject {
 
-    @Published var currentChat: Chat = Chat(id: "someId", user1Id: "", user2Id: "", messages: [])
+    @Published var currentChat: Chat = Chat(id: "someId",
+                                            user1Id: "",
+                                            user2Id: "",
+                                            messages: [],
+                                            lastActivityTimestamp: Date())
     @Published var user: User = User(chats: [], channels: [], gmail: "", id: "someId", name: "")
     @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 
@@ -60,10 +64,15 @@ class MessagingViewModel: ObservableObject {
         do {
             try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
+            changeLastMessageTime()
         } catch {
             print("failed to send message" + error.localizedDescription)
         }
 
+    }
+
+    private func changeLastMessageTime() {
+        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 
 }

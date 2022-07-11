@@ -113,8 +113,8 @@ struct ChannelListRow: View {
 
             channelMessagingViewModel.currentChannel = self.channel
 
-            channelMessagingViewModel.getMessages { messages in
-                self.countOfMessages = messages.count
+            channelMessagingViewModel.getMessagesCount { count in
+                 self.countOfMessages = count
             }
         }
     }
@@ -127,7 +127,8 @@ struct ChannelListRow_Previews: PreviewProvider {
                                         description: "description",
                                         ownerId: "ownerId",
                                         subscribersId: ["1", "2"],
-                                        messages: [])) {
+                                        messages: [],
+                                        lastActivityTimestamp: Date())) {
         }
 
     }
