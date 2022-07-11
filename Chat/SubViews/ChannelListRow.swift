@@ -59,8 +59,9 @@ struct ChannelListRow: View {
                 HStack {
                     Text(channel.name )
                     Spacer()
-                    Text("\(countOfMessages)" )
-                        .font(.caption)
+                    RollingText(font: .caption,
+                                weight: .light,
+                                value: $countOfMessages)
                         .foregroundColor(.secondary)
                 }
 
