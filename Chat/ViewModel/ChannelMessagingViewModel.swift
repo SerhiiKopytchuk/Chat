@@ -21,6 +21,19 @@ class ChannelMessagingViewModel: ObservableObject {
 
     var dataBase = Firestore.firestore()
 
+    func getMessagesCount(competition: @escaping (Int) -> Void) {
+        dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
+            .addSnapshotListener { querySnapshot, error in
+
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documets: \(String(describing: error))")
+                    return
+                }
+
+                competition(documents.count)
+            }
+    }
+
     func getMessages(competition: @escaping ([Message]) -> Void) {
         var messages: [Message] = []
         dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
@@ -36,7 +49,6 @@ class ChannelMessagingViewModel: ObservableObject {
                 self.sortMessages(messages: &messages)
 
                 competition(messages)
-
             }
     }
 

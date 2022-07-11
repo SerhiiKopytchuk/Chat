@@ -113,8 +113,8 @@ struct ChannelListRow: View {
 
             channelMessagingViewModel.currentChannel = self.channel
 
-            channelMessagingViewModel.getMessages { messages in
-                self.countOfMessages = messages.count
+            channelMessagingViewModel.getMessagesCount { count in
+                 self.countOfMessages = count
             }
         }
     }
