@@ -74,7 +74,13 @@ class ChannelMessagingViewModel: ObservableObject {
     }
 
     func sendMessage(text: String) {
-        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.currentUser.id, timestamp: Date())
+
+        if !messageIsValidated(text: text) { return }
+
+        let trimmedText = text.trimmingCharacters(in: .whitespaces)
+
+        let newMessage = Message(id: "\(UUID())", text: trimmedText, senderId: self.currentUser.id, timestamp: Date())
+        
         do {
             try self.dataBase.collection("channels").document(currentChannel.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
@@ -83,6 +89,15 @@ class ChannelMessagingViewModel: ObservableObject {
             print("failed to send message" + error.localizedDescription)
         }
 
+    }
+
+    private func messageIsValidated(text: String) -> Bool {
+
+        if !text.trimmingCharacters(in: .whitespaces).isEmpty {
+            return true
+        }
+
+        return false
     }
 
     private func changeLastActivityTime() {

@@ -60,7 +60,13 @@ class MessagingViewModel: ObservableObject {
     }
 
     func sendMessage(text: String) {
-        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
+
+        if !messageIsValidated(text: text) { return }
+
+        let trimmedText = text.trimmingCharacters(in: .whitespaces)
+
+        let newMessage = Message(id: "\(UUID())", text: trimmedText, senderId: self.user.id, timestamp: Date())
+
         do {
             try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
@@ -69,6 +75,15 @@ class MessagingViewModel: ObservableObject {
             print("failed to send message" + error.localizedDescription)
         }
 
+    }
+
+    private func messageIsValidated(text: String) -> Bool {
+
+        if !text.trimmingCharacters(in: .whitespaces).isEmpty {
+            return true
+        }
+
+        return false
     }
 
     private func changeLastMessageTime() {
