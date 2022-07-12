@@ -36,16 +36,7 @@ struct ChannelConversationView: View {
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
                         ScrollViewReader { _ in
-                            ScrollView {
-                                ForEach(
-                                    self.channelMessagingViewModel.currentChannel.messages ?? [],
-                                    id: \.id) { message in
-                                        MessageBubble(message: message)
-                                    }
-                            }
-                            .padding(.top, 10)
-                            .background(.white)
-                            .cornerRadius(30, corners: [.topLeft, .topRight])
+                            messagesList
                         }
                         .ignoresSafeArea()
                 }
@@ -129,6 +120,19 @@ struct ChannelConversationView: View {
         }
     }
 
+    @ViewBuilder var messagesList: some View {
+        ScrollView {
+            ForEach(
+                self.channelMessagingViewModel.currentChannel.messages ?? [],
+                id: \.id) { message in
+                    MessageBubble(message: message)
+                }
+        }
+        .padding(.top, 10)
+        .background(.white)
+        .cornerRadius(30, corners: [.topLeft, .topRight])
+    }
+
     var turnOffImageButton: some View {
        Button {
            withAnimation(.easeInOut(duration: 0.3)) {
@@ -144,6 +148,8 @@ struct ChannelConversationView: View {
                .foregroundColor(.white)
        }
    }
+
+    // MARK: - functions
 
    func turnOffImageView() {
        withAnimation(.easeInOut(duration: 0.3)) {

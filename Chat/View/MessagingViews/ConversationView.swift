@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct ConversationView: View {
 
+// MARK: - vars
     @State var secondUser: User
     @Binding var isFindChat: Bool
 
@@ -24,6 +25,7 @@ struct ConversationView: View {
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
+    // MARK: - body
     var body: some View {
         ZStack {
             VStack {
@@ -38,16 +40,7 @@ struct ConversationView: View {
 
                     if isFindChat {
                         ScrollViewReader { _ in
-                            ScrollView {
-                                ForEach(
-                                    self.messagingViewModel.currentChat.messages ?? [],
-                                    id: \.id) { message in
-                                        MessageBubble(message: message)
-                                    }
-                            }
-                            .padding(.top, 10)
-                            .background(.white)
-                            .cornerRadius(30, corners: [.topLeft, .topRight])
+                            messagesList
                         }
                     } else {
                         createChatButton
@@ -72,6 +65,8 @@ struct ConversationView: View {
             }
         }
     }
+
+    // MARK: - viewBuilders
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
         VStack {
@@ -127,21 +122,58 @@ struct ConversationView: View {
         }
     }
 
-     var turnOffImageButton: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                loadExpandedContent = false
-            }
-            withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-                isExpandedProfile = false
-            }
-
-        } label: {
-            Image(systemName: "arrow.left")
-                .font(.title3)
-                .foregroundColor(.white)
+    var turnOffImageButton: some View {
+    Button {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            loadExpandedContent = false
         }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+            isExpandedProfile = false
+        }
+
+    } label: {
+        Image(systemName: "arrow.left")
+            .font(.title3)
+            .foregroundColor(.white)
     }
+}
+
+    @ViewBuilder var messagesList: some View {
+        ScrollView {
+            ForEach(
+                self.messagingViewModel.currentChat.messages ?? [],
+                id: \.id) { message in
+                    MessageBubble(message: message)
+                }
+        }
+        .padding(.top, 10)
+        .background(.white)
+        .cornerRadius(30, corners: [.topLeft, .topRight])
+    }
+
+    @ViewBuilder var createChatButton: some View {
+
+        VStack {
+            Button {
+                chattingViewModel.createChat { chat in
+                    messagingViewModel.currentChat = chat
+                    messagingViewModel.getMessages(competition: { _ in })
+                    isFindChat = true
+                }
+            } label: {
+                Text("Start Chat")
+                    .font(.title)
+                    .padding()
+                    .background(.white)
+                    .cornerRadius(20)
+            }
+        }.frame(maxHeight: .infinity)
+
+    }
+
+    // MARK: - functions
+
+
 
     func turnOffImageView() {
         withAnimation(.easeInOut(duration: 0.3)) {
@@ -166,25 +198,6 @@ struct ConversationView: View {
         }
     }
 
-    @ViewBuilder var createChatButton: some View {
-
-        VStack {
-            Button {
-                chattingViewModel.createChat { chat in
-                    messagingViewModel.currentChat = chat
-                    messagingViewModel.getMessages(competition: { _ in })
-                    isFindChat = true
-                }
-            } label: {
-                Text("Start Chat")
-                    .font(.title)
-                    .padding()
-                    .background(.white)
-                    .cornerRadius(20)
-            }
-        }.frame(maxHeight: .infinity)
-
-    }
 }
 
 struct ConversationView_Previews: PreviewProvider {
