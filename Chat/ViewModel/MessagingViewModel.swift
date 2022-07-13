@@ -39,9 +39,7 @@ class MessagingViewModel: ObservableObject {
 
                 self.sortMessages(messages: &messages)
 
-                if let id = messages.last?.id {
-                    self.lastMessageId = id
-                }
+                self.getLastMessage(messages: &messages)
 
                 competition(messages)
             }
@@ -62,6 +60,12 @@ class MessagingViewModel: ObservableObject {
     private func sortMessages( messages: inout [Message]) {
         self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
         messages.sort {$0.timestamp < $1.timestamp }
+    }
+
+    private func getLastMessage(messages: inout [Message]) {
+        if let id = messages.last?.id {
+            self.lastMessageId = id
+        }
     }
 
     func sendMessage(text: String) {

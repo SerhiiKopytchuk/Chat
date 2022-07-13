@@ -108,8 +108,9 @@ struct TabBarView: View {
                         channelViewModel.getCurrentChannel(name: channel.name, ownerId: channel.ownerId) { channel in
                             channelMessagingViewModel.currentChannel = channel
                             channelMessagingViewModel.currentUser = viewModel.currentUser
-                            channelMessagingViewModel.getMessages(competition: { _ in })
-                            self.goToChannel.toggle()
+                            channelMessagingViewModel.getMessages(competition: { _ in
+                                self.goToChannel.toggle()
+                            })
                         } failure: { _ in }
 
                     }

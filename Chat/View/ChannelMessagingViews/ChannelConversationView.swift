@@ -35,10 +35,7 @@ struct ChannelConversationView: View {
                                     profileImage: $profileImage,
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
-                        ScrollViewReader { _ in
-                            messagesList
-                        }
-                        .ignoresSafeArea()
+                    messagesScrollView
                 }
                 .background(Color("Peach"))
                 if currentUser.id == channelViewModel.currentChannel.ownerId {
@@ -81,9 +78,7 @@ struct ChannelConversationView: View {
                             }).onEnded({ value in
                                 let height = value.translation.height
                                 if height > 0 && height > 100 {
-
                                     turnOffImageView()
-
                                 } else {
                                     withAnimation(.easeInOut(duration: 0.3)) {
                                         imageOffset = .zero
@@ -120,17 +115,30 @@ struct ChannelConversationView: View {
         }
     }
 
-    @ViewBuilder var messagesList: some View {
-        ScrollView {
-            ForEach(
-                self.channelMessagingViewModel.currentChannel.messages ?? [],
-                id: \.id) { message in
-                    MessageBubble(message: message)
+    @ViewBuilder var messagesScrollView: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                ForEach(
+                    self.channelMessagingViewModel.currentChannel.messages ?? [],
+                    id: \.id) { message in
+                        MessageBubble(message: message)
+                    }
+            }
+            .padding(.top, 10)
+            .background(.white)
+            .cornerRadius(30, corners: [.topLeft, .topRight])
+            .onAppear {
+                withAnimation {
+                    proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
                 }
+            }
+            .onChange(of: self.channelMessagingViewModel.lastMessageId) { id in
+                withAnimation {
+                    proxy.scrollTo(id, anchor: .bottom)
+                }
+            }
         }
-        .padding(.top, 10)
-        .background(.white)
-        .cornerRadius(30, corners: [.topLeft, .topRight])
+        .ignoresSafeArea()
     }
 
     var turnOffImageButton: some View {
