@@ -9,31 +9,62 @@ import SwiftUI
 
 struct SearchUsersView: View {
 
+    // MARK: - vars
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
 
     @State var showSearchBar = false
-    @State var searchText = ""
+    @State var searchUserText = ""
+    @State var searchChannelText = ""
     @State var goToConversation = false
     @State var isFindChat = true
 
+    @State var isSearchingChat = true
+
+    // MARK: - body
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                TextField("Search users", text: $searchText).onChange(of: searchText, perform: { newValue in
-                    viewModel.searchText = newValue
-                    viewModel.getAllUsers()
-                })
-                .textFieldStyle(.roundedBorder)
-
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                    .frame(width: 50, height: 50)
-
+        VStack {
+            Picker("search users or channels", selection: $isSearchingChat) {
+                Text("Users").tag(true)
+                Text("Channels").tag(false)
             }
+            .pickerStyle(.segmented)
             .padding()
-            usersList
+
+            if isSearchingChat {
+                HStack {
+                    TextField("Search users", text: $searchUserText).onChange(of: searchUserText, perform: { newValue in
+                        viewModel.searchText = newValue
+                        viewModel.getAllUsers()
+                    })
+                    .textFieldStyle(.roundedBorder)
+
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                        .frame(width: 50, height: 50)
+
+                }
+                .padding()
+                usersList
+            } else {
+                HStack {
+                    TextField("Search channels", text: $searchChannelText)
+                        .onChange(of: searchChannelText, perform: { newText in
+                        channelViewModel.searchText = newText
+                        channelViewModel.getAllChannels()
+                    })
+                    .textFieldStyle(.roundedBorder)
+
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                        .frame(width: 50, height: 50)
+
+                }
+                .padding()
+                channelList
+            }
 
         }
         .background {
@@ -43,9 +74,11 @@ struct SearchUsersView: View {
                     .environmentObject(messagingViewModel)
                     .environmentObject(chattingViewModel)
             }label: { Text("conversationView") }
+                .hidden()
         }
     }
 
+    // MARK: - viewBuilders
     @ViewBuilder var usersList: some View {
             List {
                 ForEach(viewModel.users, id: \.id) { user in
@@ -74,7 +107,16 @@ struct SearchUsersView: View {
                     })
                 }
             }
+    }
 
+    @ViewBuilder var channelList: some View {
+            List {
+                ForEach(channelViewModel.channels, id: \.id) { channel in
+                    ChannelListRow(channel: channel) {
+                        // tapped
+                    }
+                }
+            }
     }
 }
 

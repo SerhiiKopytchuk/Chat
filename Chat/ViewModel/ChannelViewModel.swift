@@ -15,6 +15,7 @@ class ChannelViewModel: ObservableObject {
 
     @Published var currentUser: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var owner: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var searchText = ""
 
     @Published var channels: [Channel] = []
     @Published var currentChannel: Channel = Channel(id: "",
@@ -29,6 +30,35 @@ class ChannelViewModel: ObservableObject {
     let dataBase = Firestore.firestore()
 
     // MARK: - functions
+
+    func getAllChannels() {
+
+        dataBase.collection("channels").addSnapshotListener { querySnapshot, error in
+
+            guard let documents = querySnapshot?.documents else {
+                print("Error fetching documents: \(String(describing: error))")
+                return
+            }
+
+            self.channels = documents.compactMap {document -> Channel? in
+                do {
+                    let channel = self.filterChannel(channel: try document.data(as: Channel.self))
+                    return channel
+                } catch {
+                    print("error decoding document into Channel: \(error)")
+                    return nil
+                }
+            }
+        }
+
+    }
+
+    private func filterChannel(channel: Channel) -> Channel? {
+        if channel.name.contains(self.searchText) {
+            return channel
+        }
+        return nil
+    }
 
     func getCurrentChannel( channelId: String, competition: @escaping (Channel) -> Void) {
 
