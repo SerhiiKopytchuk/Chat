@@ -19,6 +19,7 @@ class MessagingViewModel: ObservableObject {
     @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 
     @Published private(set) var messages: [Message] = []
+    @Published private(set) var lastMessageId: String = ""
 
     var dataBase = Firestore.firestore()
 
@@ -37,6 +38,10 @@ class MessagingViewModel: ObservableObject {
                 self.currentChat.messages = self.documentsToMessages(messages: &messages, documents: documents)
 
                 self.sortMessages(messages: &messages)
+
+                if let id = messages.last?.id {
+                    self.lastMessageId = id
+                }
 
                 competition(messages)
             }

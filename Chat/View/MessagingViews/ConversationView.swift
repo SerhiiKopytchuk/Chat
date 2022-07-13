@@ -39,9 +39,7 @@ struct ConversationView: View {
                         .environmentObject(chattingViewModel)
 
                     if isFindChat {
-                        ScrollViewReader { _ in
-                            messagesList
-                        }
+                        messagesScrollView
                     } else {
                         createChatButton
                     }
@@ -138,17 +136,29 @@ struct ConversationView: View {
     }
 }
 
-    @ViewBuilder var messagesList: some View {
-        ScrollView {
-            ForEach(
-                self.messagingViewModel.currentChat.messages ?? [],
-                id: \.id) { message in
-                    MessageBubble(message: message)
+    @ViewBuilder var messagesScrollView: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                ForEach(
+                    self.messagingViewModel.currentChat.messages ?? [],
+                    id: \.id) { message in
+                        MessageBubble(message: message)
+                    }
+            }
+            .padding(.top, 10)
+            .background(.white)
+            .cornerRadius(30, corners: [.topLeft, .topRight])
+            .onAppear {
+                withAnimation {
+                    proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
                 }
+            }
+            .onChange(of: self.messagingViewModel.lastMessageId) { id in
+                withAnimation {
+                    proxy.scrollTo(id, anchor: .bottom)
+                }
+            }
         }
-        .padding(.top, 10)
-        .background(.white)
-        .cornerRadius(30, corners: [.topLeft, .topRight])
     }
 
     @ViewBuilder var createChatButton: some View {
@@ -172,8 +182,6 @@ struct ConversationView: View {
     }
 
     // MARK: - functions
-
-
 
     func turnOffImageView() {
         withAnimation(.easeInOut(duration: 0.3)) {
