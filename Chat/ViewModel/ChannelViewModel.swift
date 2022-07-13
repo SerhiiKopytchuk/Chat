@@ -23,7 +23,8 @@ class ChannelViewModel: ObservableObject {
                                                      ownerId: "",
                                                      subscribersId: [],
                                                      messages: [],
-                                                     lastActivityTimestamp: Date())
+                                                     lastActivityTimestamp: Date(),
+                                                     isPrivate: true)
 
     let dataBase = Firestore.firestore()
 
@@ -64,12 +65,14 @@ class ChannelViewModel: ObservableObject {
     func createChannel(subscribersId: [String],
                        name: String,
                        description: String,
+                       isPrivate: Bool,
                        competition: @escaping (Channel) -> Void) {
         do {
 
             try creatingChannel(subscribersId: subscribersId,
                                 name: name,
                                 description: description,
+                                isPrivate: isPrivate,
                                 competition: { channel in
                 competition(channel)
             })
@@ -82,6 +85,7 @@ class ChannelViewModel: ObservableObject {
     fileprivate func creatingChannel(subscribersId: [String],
                                      name: String,
                                      description: String,
+                                     isPrivate: Bool,
                                      competition: @escaping (Channel) -> Void) throws {
 
         let newChannel = Channel(id: "\(UUID())",
@@ -90,7 +94,8 @@ class ChannelViewModel: ObservableObject {
                                  ownerId: currentUser.id,
                                  subscribersId: subscribersId,
                                  messages: [],
-                                 lastActivityTimestamp: Date())
+                                 lastActivityTimestamp: Date(),
+                                 isPrivate: isPrivate)
 
         try dataBase.collection("channels").document().setData(from: newChannel)
 

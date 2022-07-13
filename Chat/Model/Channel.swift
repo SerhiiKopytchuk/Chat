@@ -16,4 +16,5 @@ struct Channel: Codable, Identifiable {
     var subscribersId: [String]?
     var messages: [Message]?
     var lastActivityTimestamp: Date
+    var isPrivate: Bool
 }

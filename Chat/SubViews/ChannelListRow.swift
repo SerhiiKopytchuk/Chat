@@ -129,7 +129,8 @@ struct ChannelListRow_Previews: PreviewProvider {
                                         ownerId: "ownerId",
                                         subscribersId: ["1", "2"],
                                         messages: [],
-                                        lastActivityTimestamp: Date())) {
+                                        lastActivityTimestamp: Date(),
+                                        isPrivate: true)) {
         }
 
     }
