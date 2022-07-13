@@ -19,7 +19,9 @@ class ChannelMessagingViewModel: ObservableObject {
                                                      lastActivityTimestamp: Date())
 
     @Published var currentUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
+
     @Published private(set) var messages: [Message] = []
+    @Published private(set) var lastMessageId = ""
 
     var dataBase = Firestore.firestore()
 
@@ -52,6 +54,8 @@ class ChannelMessagingViewModel: ObservableObject {
 
                 self.sortMessages(messages: &messages)
 
+                self.getLastMessage(messages: &messages)
+
                 competition(messages)
             }
     }
@@ -71,6 +75,12 @@ class ChannelMessagingViewModel: ObservableObject {
     private func sortMessages( messages: inout [Message]) {
         self.currentChannel.messages?.sort { $0.timestamp < $1.timestamp}
         messages.sort {$0.timestamp < $1.timestamp }
+    }
+
+    private func getLastMessage(messages: inout [Message]) {
+        if let id = messages.last?.id {
+            self.lastMessageId = id
+        }
     }
 
     func sendMessage(text: String) {
