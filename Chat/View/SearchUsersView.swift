@@ -14,12 +14,16 @@ struct SearchUsersView: View {
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
 
     @State var showSearchBar = false
     @State var searchUserText = ""
     @State var searchChannelText = ""
     @State var goToConversation = false
     @State var isFindChat = true
+
+    @State var goToChannelConversation = false
+    @State var isSubscribedToChannel = true
 
     @State var isSearchingChat = true
 
@@ -75,6 +79,15 @@ struct SearchUsersView: View {
                     .environmentObject(chattingViewModel)
             }label: { Text("conversationView") }
                 .hidden()
+
+            NavigationLink(isActive: $goToChannelConversation) {
+                ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
+                    .environmentObject(viewModel)
+                    .environmentObject(channelViewModel)
+                    .environmentObject(channelMessagingViewModel)
+            } label: { Text("channelConversationView") }
+                .hidden()
+
         }
     }
 
@@ -113,8 +126,20 @@ struct SearchUsersView: View {
             List {
                 ForEach(channelViewModel.channels, id: \.id) { channel in
                     ChannelListRow(channel: channel) {
-                        // tapped
+
+                        channelMessagingViewModel.currentUser = viewModel.currentUser
+                        channelMessagingViewModel.currentChannel = channel
+                        channelViewModel.currentUser = viewModel.currentUser
+                        channelViewModel.currentChannel = channel
+                        self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed()
+                        channelMessagingViewModel.getMessages { _ in
+                            DispatchQueue.main.async {
+                                self.goToChannelConversation = true
+                            }
+                        }
                     }
+                    .environmentObject(viewModel)
+                    .environmentObject(channelViewModel)
                 }
             }
     }

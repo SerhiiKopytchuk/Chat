@@ -15,6 +15,7 @@ struct SideMenuView: View {
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @ObservedObject var channelViewModel = ChannelViewModel()
+    @ObservedObject var channelMessagingViewModel = ChannelMessagingViewModel()
 
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
@@ -52,6 +53,7 @@ struct SideMenuView: View {
                                 .environmentObject(viewModel)
                                 .environmentObject(chattingViewModel)
                                 .environmentObject(channelViewModel)
+                                .environmentObject(channelMessagingViewModel)
                                 .navigationBarTitle("Search", displayMode: .automatic)
                         } label: {
                             SideMenuOptionView(viewModel: option)

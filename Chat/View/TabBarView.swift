@@ -49,7 +49,7 @@ struct TabBarView: View {
                     .hidden()
 
                 NavigationLink(isActive: $goToChannel) {
-                    ChannelConversationView(currentUser: viewModel.currentUser)
+                    ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
                         .environmentObject(viewModel)
                         .environmentObject(channelMessagingViewModel)
                         .environmentObject(channelViewModel)
@@ -108,9 +108,10 @@ struct TabBarView: View {
                         channelViewModel.getCurrentChannel(name: channel.name, ownerId: channel.ownerId) { channel in
                             channelMessagingViewModel.currentChannel = channel
                             channelMessagingViewModel.currentUser = viewModel.currentUser
-                            channelMessagingViewModel.getMessages(competition: { _ in
+                            channelMessagingViewModel.getMessages(competition: { _ in })
+                            DispatchQueue.main.async {
                                 self.goToChannel.toggle()
-                            })
+                            }
                         } failure: { _ in }
 
                     }

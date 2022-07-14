@@ -20,6 +20,8 @@ struct ChannelConversationView: View {
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
 
+    @Binding var isSubscribed: Bool
+
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -38,10 +40,24 @@ struct ChannelConversationView: View {
                     messagesScrollView
                 }
                 .background(Color("Peach"))
-                if currentUser.id == channelViewModel.currentChannel.ownerId {
-                    ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
-                        .environmentObject(channelViewModel)
+                if isSubscribed {
+                    if currentUser.id == channelViewModel.currentChannel.ownerId {
+                        ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
+                            .environmentObject(channelViewModel)
+                    }
+                } else {
+                    Button {
+                        channelViewModel.subscribeToChannel()
+                        self.isSubscribed = true
+                    } label: {
+                        Text("Subscribe")
+                            .font(.title3)
+                            .background(.white)
+                            .cornerRadius(30)
+                            .padding()
+                    }
                 }
+
             }
             .navigationBarBackButtonHidden(loadExpandedContent)
         }
@@ -181,13 +197,4 @@ struct ChannelConversationView: View {
            return 1  - (progress < 1 ? progress : 1)
        }
    }
-}
-
-struct ChannelConversationView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChannelConversationView(currentUser: User(chats: [], channels: [], gmail: "gmail", id: "someId", name: "name"))
-            .environmentObject(ChannelMessagingViewModel())
-            .environmentObject(UserViewModel())
-            .environmentObject(ChannelViewModel())
-    }
 }

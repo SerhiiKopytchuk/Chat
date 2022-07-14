@@ -31,6 +31,28 @@ class ChannelViewModel: ObservableObject {
 
     // MARK: - functions
 
+    func subscribeToChannel() {
+        DispatchQueue.main.async {
+
+            self.dataBase.collection("users").document(self.currentUser.id)
+                    .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
+
+            self.dataBase.collection("channels").document(self.owner.id)
+                .updateData(["subscribersId": FieldValue.arrayUnion([self.currentUser.id ])])
+
+        }
+    }
+
+    func doesUsesSubscribed () -> Bool {
+        for id in currentChannel.subscribersId ?? [] where id == currentUser.id {
+            return true
+        }
+        if currentChannel.ownerId == currentUser.id {
+            return true
+        }
+        return false
+    }
+
     func getAllChannels() {
 
         dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
@@ -51,7 +73,6 @@ class ChannelViewModel: ObservableObject {
                 }
             }
         }
-
     }
 
     private func filterChannel(channel: Channel) -> Channel? {
