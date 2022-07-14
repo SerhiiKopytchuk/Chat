@@ -33,7 +33,8 @@ class ChannelViewModel: ObservableObject {
 
     func getAllChannels() {
 
-        dataBase.collection("channels").addSnapshotListener { querySnapshot, error in
+        dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
+            .addSnapshotListener { querySnapshot, error in
 
             guard let documents = querySnapshot?.documents else {
                 print("Error fetching documents: \(String(describing: error))")
