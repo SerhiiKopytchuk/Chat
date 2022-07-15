@@ -14,6 +14,7 @@ struct ChannelTitleRow: View {
 
     let animationNamespace: Namespace.ID
     @Binding var isExpandedProfile: Bool
+    @Binding var isExpandedDetails: Bool
     @Binding var profileImage: WebImage
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -68,6 +69,11 @@ struct ChannelTitleRow: View {
                     .font(.caption)
                     .foregroundColor(.gray)
 
+            }
+            .onTapGesture {
+                withAnimation(.easeInOut) {
+                    isExpandedDetails.toggle()
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             Image(systemName: "xmark")

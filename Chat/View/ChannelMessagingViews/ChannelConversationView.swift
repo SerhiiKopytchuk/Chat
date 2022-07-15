@@ -19,6 +19,7 @@ struct ChannelConversationView: View {
     @State var profileImage: WebImage = WebImage(url: URL(string: ""))
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
+    @State var isExpandedDetails = false
 
     @Binding var isSubscribed: Bool
 
@@ -34,21 +35,45 @@ struct ChannelConversationView: View {
                     ChannelTitleRow(channel: channelViewModel.currentChannel,
                                     animationNamespace: animation,
                                     isExpandedProfile: $isExpandedProfile,
+                                    isExpandedDetails: $isExpandedDetails,
                                     profileImage: $profileImage,
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
+                    if isExpandedDetails {
+                        VStack(alignment: .leading) {
+                            Group {
+                                HStack {
+                                    Text("Owner: \(channelViewModel.currentChannel.ownerName)")
+                                        .font(.callout)
+                                    Spacer()
+                                }
+                                HStack {
+                                    Text("Subscribers: \(channelViewModel.currentChannel.subscribersId?.count ?? 0)")
+                                        .font(.callout)
+                                    Spacer()
+                                }
+                            }
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 15)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
                     messagesScrollView
                 }
+                .frame(maxWidth: .infinity)
                 .background(Color("Peach"))
                 if isSubscribed {
-                    if currentUser.id == channelViewModel.currentChannel.ownerId {
-                        ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
-                            .environmentObject(channelViewModel)
+                    if !isExpandedDetails {
+                        if currentUser.id == channelViewModel.currentChannel.ownerId {
+                            ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
+                                .environmentObject(channelViewModel)
+                        }
                     }
                 } else {
                     Button {
                         channelViewModel.subscribeToChannel()
                         self.isSubscribed = true
+                        channelViewModel.currentChannel.subscribersId?.append(viewModel.currentUser.id)
                     } label: {
                         Text("Subscribe")
                             .font(.title3)
@@ -57,10 +82,11 @@ struct ChannelConversationView: View {
                             .padding()
                     }
                 }
-
             }
+            .frame(maxWidth: .infinity)
             .navigationBarBackButtonHidden(loadExpandedContent)
         }
+        .frame(maxWidth: .infinity)
         .overlay(content: {
                 Rectangle()
                     .fill(.black)
