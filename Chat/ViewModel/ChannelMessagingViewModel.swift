@@ -16,7 +16,8 @@ class ChannelMessagingViewModel: ObservableObject {
                                                      ownerId: "",
                                                      subscribersId: [],
                                                      messages: [],
-                                                     lastActivityTimestamp: Date())
+                                                     lastActivityTimestamp: Date(),
+                                                     isPrivate: true)
 
     @Published var currentUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 

@@ -149,9 +149,7 @@ struct ConversationView: View {
             .background(.white)
             .cornerRadius(30, corners: [.topLeft, .topRight])
             .onAppear {
-//                withAnimation {
                     proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-//                }
             }
             .onChange(of: self.messagingViewModel.lastMessageId) { id in
                 withAnimation {

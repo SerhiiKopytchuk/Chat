@@ -15,19 +15,73 @@ class ChannelViewModel: ObservableObject {
 
     @Published var currentUser: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var owner: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var searchText = ""
 
     @Published var channels: [Channel] = []
+    @Published var searchChannels: [Channel] = []
     @Published var currentChannel: Channel = Channel(id: "",
                                                      name: "",
                                                      description: "",
                                                      ownerId: "",
                                                      subscribersId: [],
                                                      messages: [],
-                                                     lastActivityTimestamp: Date())
+                                                     lastActivityTimestamp: Date(),
+                                                     isPrivate: true)
 
     let dataBase = Firestore.firestore()
 
     // MARK: - functions
+
+    func subscribeToChannel() {
+        DispatchQueue.main.async {
+
+            self.dataBase.collection("users").document(self.currentUser.id)
+                    .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
+
+            self.dataBase.collection("channels").document(self.currentChannel.id ?? "SomeChannelId")
+                .updateData(["subscribersId": FieldValue.arrayUnion([self.currentUser.id ])])
+
+        }
+    }
+
+    func doesUsesSubscribed () -> Bool {
+        for id in currentChannel.subscribersId ?? [] where id == currentUser.id {
+            return true
+        }
+        if currentChannel.ownerId == currentUser.id {
+            return true
+        }
+        return false
+    }
+
+    func getAllChannels() {
+
+        dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
+            .addSnapshotListener { querySnapshot, error in
+
+            guard let documents = querySnapshot?.documents else {
+                print("Error fetching documents: \(String(describing: error))")
+                return
+            }
+
+            self.searchChannels = documents.compactMap {document -> Channel? in
+                do {
+                    let channel = self.filterChannel(channel: try document.data(as: Channel.self))
+                    return channel
+                } catch {
+                    print("error decoding document into Channel: \(error)")
+                    return nil
+                }
+            }
+        }
+    }
+
+    private func filterChannel(channel: Channel) -> Channel? {
+        if channel.name.contains(self.searchText) {
+            return channel
+        }
+        return nil
+    }
 
     func getCurrentChannel( channelId: String, competition: @escaping (Channel) -> Void) {
 
@@ -64,12 +118,14 @@ class ChannelViewModel: ObservableObject {
     func createChannel(subscribersId: [String],
                        name: String,
                        description: String,
+                       isPrivate: Bool,
                        competition: @escaping (Channel) -> Void) {
         do {
 
             try creatingChannel(subscribersId: subscribersId,
                                 name: name,
                                 description: description,
+                                isPrivate: isPrivate,
                                 competition: { channel in
                 competition(channel)
             })
@@ -82,6 +138,7 @@ class ChannelViewModel: ObservableObject {
     fileprivate func creatingChannel(subscribersId: [String],
                                      name: String,
                                      description: String,
+                                     isPrivate: Bool,
                                      competition: @escaping (Channel) -> Void) throws {
 
         let newChannel = Channel(id: "\(UUID())",
@@ -90,7 +147,8 @@ class ChannelViewModel: ObservableObject {
                                  ownerId: currentUser.id,
                                  subscribersId: subscribersId,
                                  messages: [],
-                                 lastActivityTimestamp: Date())
+                                 lastActivityTimestamp: Date(),
+                                 isPrivate: isPrivate)
 
         try dataBase.collection("channels").document().setData(from: newChannel)
 
