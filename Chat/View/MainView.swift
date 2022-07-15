@@ -26,6 +26,8 @@ struct MainView: View {
                     .environmentObject(messagingViewModel)
                     .environmentObject(viewModel)
                     .environmentObject(chattingViewModel)
+                    .environmentObject(channelViewModel)
+                    .environmentObject(channelMessagingViewModel)
             }
             TabBarView()
                 .cornerRadius(isShowingSideMenu ? 20 : 10)

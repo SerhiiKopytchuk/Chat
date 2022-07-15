@@ -14,8 +14,8 @@ struct SideMenuView: View {
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @ObservedObject var channelViewModel = ChannelViewModel()
-    @ObservedObject var channelMessagingViewModel = ChannelMessagingViewModel()
+    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
 
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
@@ -48,7 +48,7 @@ struct SideMenuView: View {
                         }
                     } else if option == SideMenuViewModel.searchUsers {
                         NavigationLink {
-                            SearchUsersView()
+                            SearchView()
                                 .environmentObject(messagingViewModel)
                                 .environmentObject(viewModel)
                                 .environmentObject(chattingViewModel)

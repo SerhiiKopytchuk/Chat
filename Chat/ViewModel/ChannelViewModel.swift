@@ -18,6 +18,7 @@ class ChannelViewModel: ObservableObject {
     @Published var searchText = ""
 
     @Published var channels: [Channel] = []
+    @Published var searchChannels: [Channel] = []
     @Published var currentChannel: Channel = Channel(id: "",
                                                      name: "",
                                                      description: "",
@@ -63,7 +64,7 @@ class ChannelViewModel: ObservableObject {
                 return
             }
 
-            self.channels = documents.compactMap {document -> Channel? in
+            self.searchChannels = documents.compactMap {document -> Channel? in
                 do {
                     let channel = self.filterChannel(channel: try document.data(as: Channel.self))
                     return channel

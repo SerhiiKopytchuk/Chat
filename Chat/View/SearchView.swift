@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SearchUsersView: View {
+struct SearchView: View {
 
     // MARK: - vars
     @EnvironmentObject var viewModel: UserViewModel
@@ -124,7 +124,7 @@ struct SearchUsersView: View {
 
     @ViewBuilder var channelList: some View {
             List {
-                ForEach(channelViewModel.channels, id: \.id) { channel in
+                ForEach(channelViewModel.searchChannels, id: \.id) { channel in
                     ChannelListRow(channel: channel) {
 
                         channelMessagingViewModel.currentUser = viewModel.currentUser
@@ -147,7 +147,7 @@ struct SearchUsersView: View {
 
 struct SearchUsersView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchUsersView()
+        SearchView()
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
