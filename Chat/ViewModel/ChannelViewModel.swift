@@ -38,7 +38,7 @@ class ChannelViewModel: ObservableObject {
             self.dataBase.collection("users").document(self.currentUser.id)
                     .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
 
-            self.dataBase.collection("channels").document(self.owner.id)
+            self.dataBase.collection("channels").document(self.currentChannel.id ?? "SomeChannelId")
                 .updateData(["subscribersId": FieldValue.arrayUnion([self.currentUser.id ])])
 
         }
