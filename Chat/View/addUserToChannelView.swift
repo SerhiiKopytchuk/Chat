@@ -20,7 +20,8 @@ struct AddUserToChannelView: View {
             HStack {
                 TextField("Add users", text: $searchUserText)
                     .onChange(of: searchUserText, perform: { newText in
-                    // logic of adding new
+                        userViewModel.searchText = newText
+                        userViewModel.getAllUsers()
                 })
                 .textFieldStyle(.roundedBorder)
 
@@ -38,7 +39,8 @@ struct AddUserToChannelView: View {
 
             applyButton
                 .padding()
-        }
+        }.navigationTitle("Configure users")
+            .navigationBarTitleDisplayMode(.large)
     }
 
     @ViewBuilder var usersList: some View {
@@ -53,7 +55,6 @@ struct AddUserToChannelView: View {
             }
         }
     }
-
 
     var applyButton: some View {
         Button {

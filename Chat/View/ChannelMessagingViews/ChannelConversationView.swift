@@ -20,6 +20,7 @@ struct ChannelConversationView: View {
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
     @State var isExpandedDetails = false
+    @State var isGoToEditSubscribers = false
 
     @Binding var isSubscribed: Bool
 
@@ -69,6 +70,9 @@ struct ChannelConversationView: View {
                                         .padding(10)
                                         .background(.white)
                                         .cornerRadius(40)
+                                        .onTapGesture {
+                                            isGoToEditSubscribers.toggle()
+                                        }
 
                                     Image(systemName: "pencil")
                                         .foregroundColor(.gray)
@@ -122,6 +126,15 @@ struct ChannelConversationView: View {
             .navigationBarBackButtonHidden(loadExpandedContent)
         }
         .frame(maxWidth: .infinity)
+        .background {
+            NavigationLink(isActive: $isGoToEditSubscribers, destination: {
+                AddUserToChannelView()
+                    .environmentObject(viewModel)
+                    .environmentObject(channelViewModel)
+            }, label: { })
+            .hidden()
+//            .navigationBarTitle("configure users")
+        }
         .overlay(content: {
             Rectangle()
                 .fill(.black)
