@@ -23,6 +23,10 @@ struct ChannelConversationView: View {
 
     @Binding var isSubscribed: Bool
 
+    @State var showingAlertOwner = false
+    @State var showingAlertSubscriber = false
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -41,20 +45,51 @@ struct ChannelConversationView: View {
                     )
                     if isExpandedDetails {
                         VStack(alignment: .leading) {
-                            Group {
-                                HStack {
-                                    Text("Owner: \(channelViewModel.currentChannel.ownerName)")
-                                        .font(.callout)
-                                    Spacer()
-                                }
-                                HStack {
-                                    Text("Subscribers: \(channelViewModel.currentChannel.subscribersId?.count ?? 0)")
-                                        .font(.callout)
-                                    Spacer()
-                                }
+
+                            HStack {
+                                Text("Owner: \(channelViewModel.currentChannel.ownerName)")
+                                    .font(.callout)
+                                Spacer()
                             }
                             .padding(.vertical, 5)
-                            .padding(.horizontal, 15)
+                            .padding(.horizontal)
+
+                            HStack {
+                                Text("Subscribers: \(channelViewModel.currentChannel.subscribersId?.count ?? 0)")
+                                    .font(.callout)
+                                Spacer()
+                            }
+                            .padding(.vertical, 5)
+                            .padding(.horizontal)
+
+                            HStack {
+                                if isOwner() {
+                                    Image(systemName: "plus")
+                                        .foregroundColor(.gray)
+                                        .padding(10)
+                                        .background(.white)
+                                        .cornerRadius(40)
+
+                                    Image(systemName: "pencil")
+                                        .foregroundColor(.gray)
+                                        .padding(10)
+                                        .background(.white)
+                                        .cornerRadius(40 )
+                                }
+                                Image(systemName: "xmark")
+                                    .foregroundColor(.gray)
+                                    .padding(10)
+                                    .background(.white)
+                                    .cornerRadius(40 )
+                                    .onTapGesture {
+                                        if currentUser.id == channelViewModel.currentChannel.ownerId {
+                                            showingAlertOwner.toggle()
+                                        } else {
+                                            showingAlertSubscriber.toggle()
+                                        }
+                                    }
+                            }
+                            .padding()
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -88,16 +123,30 @@ struct ChannelConversationView: View {
         }
         .frame(maxWidth: .infinity)
         .overlay(content: {
-                Rectangle()
-                    .fill(.black)
-                    .opacity(loadExpandedContent ? 1 : 0)
-                    .opacity(imageOffsetProgress())
-                    .ignoresSafeArea()
+            Rectangle()
+                .fill(.black)
+                .opacity(loadExpandedContent ? 1 : 0)
+                .opacity(imageOffsetProgress())
+                .ignoresSafeArea()
         })
         .overlay {
             if isExpandedProfile {
                 expandedPhoto(image: profileImage)
             }
+        }
+        .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
+            Button("Delete", role: .destructive) {
+                channelViewModel.deleteChannel()
+                presentationMode.wrappedValue.dismiss()
+            }.foregroundColor(.red)
+            Button("Cancel", role: .cancel) {}
+        }
+        .alert("Do you really want to unsubscribe from this channel?", isPresented: $showingAlertSubscriber) {
+            Button("Unsubscribe", role: .destructive) {
+                channelViewModel.removeChannelFromSubscriptions(id: self.channelViewModel.currentUser.id)
+                presentationMode.wrappedValue.dismiss()
+            }.foregroundColor(.red)
+            Button("Cancel", role: .cancel) {}
         }
     }
 
@@ -184,43 +233,47 @@ struct ChannelConversationView: View {
     }
 
     var turnOffImageButton: some View {
-       Button {
-           withAnimation(.easeInOut(duration: 0.3)) {
-               loadExpandedContent = false
-           }
-           withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-               isExpandedProfile = false
-           }
+        Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                loadExpandedContent = false
+            }
+            withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+                isExpandedProfile = false
+            }
 
-       } label: {
-           Image(systemName: "arrow.left")
-               .font(.title3)
-               .foregroundColor(.white)
-       }
-   }
+        } label: {
+            Image(systemName: "arrow.left")
+                .font(.title3)
+                .foregroundColor(.white)
+        }
+    }
 
     // MARK: - functions
 
-   func turnOffImageView() {
-       withAnimation(.easeInOut(duration: 0.3)) {
-           loadExpandedContent = false
-       }
+    func isOwner() -> Bool {
+        return currentUser.id == channelViewModel.currentChannel.ownerId
+    }
 
-       withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-           isExpandedProfile = false
-       }
+    func turnOffImageView() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            loadExpandedContent = false
+        }
 
-       DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-           imageOffset = .zero
-       }
-   }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+            isExpandedProfile = false
+        }
 
-   func imageOffsetProgress() -> CGFloat {
-       let progress = imageOffset.height / 100
-       if imageOffset.height < 0 {
-           return 1
-       } else {
-           return 1  - (progress < 1 ? progress : 1)
-       }
-   }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            imageOffset = .zero
+        }
+    }
+
+    func imageOffsetProgress() -> CGFloat {
+        let progress = imageOffset.height / 100
+        if imageOffset.height < 0 {
+            return 1
+        } else {
+            return 1  - (progress < 1 ? progress : 1)
+        }
+    }
 }

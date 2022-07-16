@@ -18,10 +18,6 @@ struct ChannelTitleRow: View {
     @Binding var profileImage: WebImage
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-
-    @State var showingAlertOwner = false
-    @State var showingAlertSubscriber = false
 
     @State var isOwner: Bool
 
@@ -76,46 +72,20 @@ struct ChannelTitleRow: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Image(systemName: "xmark")
-                .foregroundColor(.gray)
-                .padding(10)
-                .background(.white)
-                .cornerRadius(40 )
-                .onTapGesture {
-                    if isOwner {
-                        showingAlertOwner.toggle()
-                    } else {
-                        showingAlertSubscriber.toggle()
+            .onAppear {
+                let ref = Storage.storage().reference(withPath: channel.id ?? "someId" )
+                ref.downloadURL { url, err in
+                    if err != nil {
+                        self.isFindUserImage = false
+                        return
                     }
-                }
-        }
-        .padding()
-        .onAppear {
-            let ref = Storage.storage().reference(withPath: channel.id ?? "someId" )
-            ref.downloadURL { url, err in
-                if err != nil {
-                    self.isFindUserImage = false
-                    return
-                }
-                withAnimation(.easeInOut) {
-                    self.profileImage = WebImage(url: url)
-                    self.imageUrl = url
+                    withAnimation(.easeInOut) {
+                        self.profileImage = WebImage(url: url)
+                        self.imageUrl = url
+                    }
                 }
             }
         }
-        .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
-            Button("Delete", role: .destructive) {
-                channelViewModel.deleteChannel()
-                presentationMode.wrappedValue.dismiss()
-            }.foregroundColor(.red)
-            Button("Cancel", role: .cancel) {}
-        }
-        .alert("Do you really want to unsubscribe from this channel?", isPresented: $showingAlertSubscriber) {
-            Button("Unsubscribe", role: .destructive) {
-                channelViewModel.removeChannelFromSubscriptions(id: self.channelViewModel.currentUser.id)
-                presentationMode.wrappedValue.dismiss()
-            }.foregroundColor(.red)
-            Button("Cancel", role: .cancel) {}
-        }
+        .padding()
     }
 }

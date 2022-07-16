@@ -37,7 +37,7 @@ class ChannelViewModel: ObservableObject {
         DispatchQueue.main.async {
 
             self.dataBase.collection("users").document(self.currentUser.id)
-                    .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
+                .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
 
             self.dataBase.collection("channels").document(self.currentChannel.id ?? "SomeChannelId")
                 .updateData(["subscribersId": FieldValue.arrayUnion([self.currentUser.id ])])
@@ -60,21 +60,21 @@ class ChannelViewModel: ObservableObject {
         dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
             .addSnapshotListener { querySnapshot, error in
 
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documents: \(String(describing: error))")
-                return
-            }
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documents: \(String(describing: error))")
+                    return
+                }
 
-            self.searchChannels = documents.compactMap {document -> Channel? in
-                do {
-                    let channel = self.filterChannel(channel: try document.data(as: Channel.self))
-                    return channel
-                } catch {
-                    print("error decoding document into Channel: \(error)")
-                    return nil
+                self.searchChannels = documents.compactMap {document -> Channel? in
+                    do {
+                        let channel = self.filterChannel(channel: try document.data(as: Channel.self))
+                        return channel
+                    } catch {
+                        print("error decoding document into Channel: \(error)")
+                        return nil
+                    }
                 }
             }
-        }
     }
 
     private func filterChannel(channel: Channel) -> Channel? {
@@ -190,17 +190,23 @@ class ChannelViewModel: ObservableObject {
                         return
                     }
 
-                    if userLocal.channels.count != self.currentUser.channels.count {
-                        self.getChannels(fromUpdate: true, channelPart: userLocal.channels)
+                    if userLocal.channels.count != self.currentUser.channels.count || userLocal.channels.count == 0 {
+                        self.getChannels(fromUpdate: true,
+                                         channelPart: userLocal.channels,
+                                         doesEmptyList: userLocal.channels.count == 0)
                     }
 
                 }
         }
     }
 
-    func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
+    func getChannels(fromUpdate: Bool = false, channelPart: [String] = [], doesEmptyList: Bool = false) {
 
         self.channels = []
+
+        if doesEmptyList {
+            return
+        }
 
         if channelPart.isEmpty {
             for channelId in currentUser.channels {
