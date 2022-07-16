@@ -8,6 +8,7 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 import FirebaseFirestore
+import SwiftUI
 
 class ChannelViewModel: ObservableObject {
 
@@ -19,7 +20,7 @@ class ChannelViewModel: ObservableObject {
 
     @Published var channels: [Channel] = []
     @Published var searchChannels: [Channel] = []
-    @Published var currentChannel: Channel = Channel(id: "",
+    @Published var  currentChannel: Channel = Channel(id: "",
                                                      name: "",
                                                      description: "",
                                                      ownerId: "",
@@ -190,48 +191,45 @@ class ChannelViewModel: ObservableObject {
                         return
                     }
 
-                    if userLocal.channels.count != self.currentUser.channels.count || userLocal.channels.count == 0 {
+                    if userLocal.channels.count != self.channels.count {
                         self.getChannels(fromUpdate: true,
-                                         channelPart: userLocal.channels,
-                                         doesEmptyList: userLocal.channels.count == 0)
+                                         channelPart: userLocal.channels)
                     }
-
                 }
         }
     }
 
-    func getChannels(fromUpdate: Bool = false, channelPart: [String] = [], doesEmptyList: Bool = false) {
+    func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
 
-        self.channels = []
+        withAnimation {
 
-        if doesEmptyList {
-            return
-        }
+            self.channels = []
 
-        if channelPart.isEmpty {
-            for channelId in currentUser.channels {
-                dataBase.collection("channels").document(channelId)
-                    .toChannel { channel in
-                        self.channels.append(channel)
-                        self.sortChannels()
+            if channelPart.isEmpty {
+                for channelId in currentUser.channels {
+                    dataBase.collection("channels").document(channelId)
+                        .toChannel { channel in
+                            self.channels.append(channel)
+                            self.sortChannels()
 
-                    }
-            }
-
-        } else {
-
-            for channelId in channelPart {
-                dataBase.collection("channels").document(channelId)
-                    .toChannel { channel in
-                        self.channels.append(channel)
-                        self.sortChannels()
-                    }
+                        }
+                }
+            } else {
+                for channelId in channelPart {
+                    dataBase.collection("channels").document(channelId)
+                        .toChannel { channel in
+                            self.channels.append(channel)
+                            self.sortChannels()
+                        }
+                }
             }
 
         }
 
         if !fromUpdate {
-            self.updateChannels()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.updateChannels()
+            }
         }
     }
 
