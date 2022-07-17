@@ -20,8 +20,8 @@ struct AddUserToChannelView: View {
             HStack {
                 TextField("Add users", text: $searchUserText)
                     .onChange(of: searchUserText, perform: { newText in
-                        userViewModel.searchText = newText
-                        userViewModel.getAllUsers()
+                        channelViewModel.searchText = newText
+                        channelViewModel.getUsersToAddToChannel()
                 })
                 .textFieldStyle(.roundedBorder)
 
@@ -39,13 +39,13 @@ struct AddUserToChannelView: View {
 
             applyButton
                 .padding()
-        }.navigationTitle("Configure users")
+        }.navigationTitle("Add users to channel")
             .navigationBarTitleDisplayMode(.large)
     }
 
     @ViewBuilder var usersList: some View {
         List {
-            ForEach(userViewModel.users, id: \.id) { user in
+            ForEach(channelViewModel.usersToAddToChannel, id: \.id) { user in
                 AddUserCreateChannelRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id,
@@ -58,7 +58,7 @@ struct AddUserToChannelView: View {
 
     var applyButton: some View {
         Button {
-            // logic
+            channelViewModel.subscribeUsersToChannel(usersId: self.subscribersId)
         } label: {
             Text("apply")
                 .frame(maxWidth: .infinity)

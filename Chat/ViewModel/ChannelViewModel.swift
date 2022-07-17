@@ -20,7 +20,7 @@ class ChannelViewModel: ObservableObject {
 
     @Published var channels: [Channel] = []
     @Published var searchChannels: [Channel] = []
-    @Published var  currentChannel: Channel = Channel(id: "",
+    @Published var currentChannel: Channel = Channel(id: "",
                                                      name: "",
                                                      description: "",
                                                      ownerId: "",
@@ -30,9 +30,61 @@ class ChannelViewModel: ObservableObject {
                                                      lastActivityTimestamp: Date(),
                                                      isPrivate: true)
 
+    @Published var usersToAddToChannel: [User] = []
+
     let dataBase = Firestore.firestore()
 
     // MARK: - functions
+
+    func subscribeUsersToChannel(usersId: [String]) {
+        for userId in usersId {
+
+            self.dataBase.collection("channels").document(currentChannel.id ?? "some ChannelId")
+                .updateData(["subscribersId": FieldValue.arrayUnion([userId])])
+
+            self.dataBase.collection("users").document(userId)
+                .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
+
+        }
+    }
+
+    func getUsersToAddToChannel() {
+        dataBase.collection("users").addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                print("Error fetching documets: \(String(describing: error))")
+                return
+            }
+
+            self.usersToAddToChannel = documents.compactMap { document -> User? in
+                do {
+
+                    let user = try document.data(as: User.self)
+
+                    return self.addUserToChannelFilter(user: user)
+                } catch {
+                    print("error deconding documet into Message: \(error)")
+                    return nil
+                }
+            }
+        }
+    }
+
+    private func addUserToChannelFilter(user: User) -> User? {
+        if doesUserNameContains(user: user) != nil {
+            if self.currentChannel.subscribersId?.contains(user.id) ?? false {
+                return nil
+            }
+            return user
+        }
+        return nil
+    }
+
+    private func doesUserNameContains(user: User) -> User? {
+        if user.name.contains(self.searchText) && user.name != currentUser.name {
+            return user
+        }
+        return nil
+    }
 
     func subscribeToChannel() {
         DispatchQueue.main.async {
