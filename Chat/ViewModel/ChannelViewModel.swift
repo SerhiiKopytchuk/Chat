@@ -136,7 +136,6 @@ class ChannelViewModel: ObservableObject {
         return nil
     }
 
-
     // MARK: - channelViewModel
 
     func subscribeToChannel() {

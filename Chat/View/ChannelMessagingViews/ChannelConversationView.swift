@@ -47,61 +47,16 @@ struct ChannelConversationView: View {
                     )
                     if isExpandedDetails {
                         VStack(alignment: .leading) {
-
-                            HStack {
-                                Text("Owner: \(channelViewModel.currentChannel.ownerName)")
-                                    .font(.callout)
-                                Spacer()
-                            }
-                            .padding(.vertical, 5)
-                            .padding(.horizontal)
-
-                            HStack {
-                                Text("Subscribers: \(channelViewModel.currentChannel.subscribersId?.count ?? 0)")
-                                    .font(.callout)
-                                Spacer()
-                            }
-                            .padding(.vertical, 5)
-                            .padding(.horizontal)
+                            ownerTitle
+                            countOfSubscribersTitle
 
                             HStack {
                                 if isOwner() {
-                                    Image(systemName: "plus")
-                                        .foregroundColor(.gray)
-                                        .padding(10)
-                                        .background(.white)
-                                        .cornerRadius(40)
-                                        .onTapGesture {
-                                            isGoToAddSubscribers.toggle()
-                                        }
-                                    Image(systemName: "minus")
-                                        .frame(height: 15)
-                                        .foregroundColor(.gray)
-                                        .padding(10)
-                                        .background(.white)
-                                        .cornerRadius(40)
-                                        .onTapGesture {
-                                            channelViewModel.getChannelSubscribers()
-                                            isGoToRemoveSubscribers.toggle()
-                                        }
-                                    Image(systemName: "pencil")
-                                        .foregroundColor(.gray)
-                                        .padding(10)
-                                        .background(.white)
-                                        .cornerRadius(40 )
+                                    addUsersToChannelButton
+                                    unsubscribeUsersFromChannelButton
+                                    editChannelButton
                                 }
-                                Image(systemName: "xmark")
-                                    .foregroundColor(.gray)
-                                    .padding(10)
-                                    .background(.white)
-                                    .cornerRadius(40 )
-                                    .onTapGesture {
-                                        if currentUser.id == channelViewModel.currentChannel.ownerId {
-                                            showingAlertOwner.toggle()
-                                        } else {
-                                            showingAlertSubscriber.toggle()
-                                        }
-                                    }
+                                removeOrDeleteChannelButton
                             }
                             .padding()
                         }
@@ -111,25 +66,11 @@ struct ChannelConversationView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color("Peach"))
+
                 if isSubscribed {
-                    if !isExpandedDetails {
-                        if currentUser.id == channelViewModel.currentChannel.ownerId {
-                            ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
-                                .environmentObject(channelViewModel)
-                        }
-                    }
+                    messagingTextField
                 } else {
-                    Button {
-                        channelViewModel.subscribeToChannel()
-                        self.isSubscribed = true
-                        channelViewModel.currentChannel.subscribersId?.append(viewModel.currentUser.id)
-                    } label: {
-                        Text("Subscribe")
-                            .font(.title3)
-                            .background(.white)
-                            .cornerRadius(30)
-                            .padding()
-                    }
+                    subscribeButton
                 }
             }
             .frame(maxWidth: .infinity)
@@ -235,6 +176,73 @@ struct ChannelConversationView: View {
         }
     }
 
+    @ViewBuilder var ownerTitle: some View {
+        HStack {
+            Text("Owner: \(channelViewModel.currentChannel.ownerName)")
+                .font(.callout)
+            Spacer()
+        }
+        .padding(.vertical, 5)
+        .padding(.horizontal)
+    }
+
+    @ViewBuilder var countOfSubscribersTitle: some View {
+        HStack {
+            Text("Subscribers: \(channelViewModel.currentChannel.subscribersId?.count ?? 0)")
+                .font(.callout)
+            Spacer()
+        }
+        .padding(.vertical, 5)
+        .padding(.horizontal)
+    }
+
+    @ViewBuilder var addUsersToChannelButton: some View {
+        Image(systemName: "plus")
+            .foregroundColor(.gray)
+            .padding(10)
+            .background(.white)
+            .cornerRadius(40)
+            .onTapGesture {
+                isGoToAddSubscribers.toggle()
+            }
+    }
+
+    @ViewBuilder var unsubscribeUsersFromChannelButton: some View {
+        Image(systemName: "minus")
+            .frame(height: 15)
+            .foregroundColor(.gray)
+            .padding(10)
+            .background(.white)
+            .cornerRadius(40)
+            .onTapGesture {
+                channelViewModel.getChannelSubscribers()
+                isGoToRemoveSubscribers.toggle()
+            }
+    }
+
+    @ViewBuilder var editChannelButton: some View {
+        Image(systemName: "pencil")
+            .foregroundColor(.gray)
+            .padding(10)
+            .background(.white)
+            .cornerRadius(40 )
+    }
+
+    @ViewBuilder var removeOrDeleteChannelButton: some View {
+        Image(systemName: "xmark")
+            .foregroundColor(.gray)
+            .padding(10)
+            .background(.white)
+            .cornerRadius(40 )
+            .onTapGesture {
+                if currentUser.id == channelViewModel.currentChannel.ownerId {
+                    showingAlertOwner.toggle()
+                } else {
+                    showingAlertSubscriber.toggle()
+                }
+            }
+    }
+
     @ViewBuilder var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -259,6 +267,29 @@ struct ChannelConversationView: View {
             }
         }
         .ignoresSafeArea()
+    }
+
+    @ViewBuilder var messagingTextField: some View {
+        if !isExpandedDetails {
+            if currentUser.id == channelViewModel.currentChannel.ownerId {
+                ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
+                    .environmentObject(channelViewModel)
+            }
+        }
+    }
+
+    @ViewBuilder var subscribeButton: some View {
+        Button {
+            channelViewModel.subscribeToChannel()
+            self.isSubscribed = true
+            channelViewModel.currentChannel.subscribersId?.append(viewModel.currentUser.id)
+        } label: {
+            Text("Subscribe")
+                .font(.title3)
+                .background(.white)
+                .cornerRadius(30)
+                .padding()
+        }
     }
 
     var turnOffImageButton: some View {
