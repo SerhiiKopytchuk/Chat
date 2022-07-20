@@ -8,6 +8,7 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 import FirebaseFirestore
+import SwiftUI
 
 class ChannelViewModel: ObservableObject {
 
@@ -23,20 +24,120 @@ class ChannelViewModel: ObservableObject {
                                                      name: "",
                                                      description: "",
                                                      ownerId: "",
+                                                     ownerName: "",
                                                      subscribersId: [],
                                                      messages: [],
                                                      lastActivityTimestamp: Date(),
                                                      isPrivate: true)
 
+    @Published var usersToAddToChannel: [User] = []
+    @Published var channelSubscribers: [User] = []
+
     let dataBase = Firestore.firestore()
 
     // MARK: - functions
+
+    func removeUserFromSubscribersList(id: String) {
+
+        for index in currentChannel.subscribersId?.indices.reversed() ?? [] {
+            if id == currentChannel.subscribersId?[index] {
+                currentChannel.subscribersId?.remove(at: index)
+            }
+        }
+
+        for index in channelSubscribers.indices.reversed() {
+            if id == channelSubscribers[index].id {
+                channelSubscribers.remove(at: index)
+                return
+            }
+        }
+    }
+
+    func getChannelSubscribers() {
+        dataBase.collection("users").getDocuments { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                print("Error fetching documets: \(String(describing: error))")
+                return
+            }
+
+            self.channelSubscribers = documents.compactMap { document -> User? in
+                do {
+
+                    let user = try document.data(as: User.self)
+
+                    return self.filterRemoveUsers(user: user)
+                } catch {
+                    print("error deconding documet into User: \(error)")
+                    return nil
+                }
+            }
+        }
+    }
+
+    private func filterRemoveUsers(user: User) -> User? {
+        if self.currentChannel.subscribersId?.contains(user.id) ?? false {
+            return user
+        }
+        return nil
+    }
+
+    func subscribeUsersToChannel(usersId: [String]) {
+        for userId in usersId {
+
+            self.currentChannel.subscribersId?.append(userId)
+
+            self.dataBase.collection("channels").document(currentChannel.id ?? "some ChannelId")
+                .updateData(["subscribersId": FieldValue.arrayUnion([userId])])
+
+            self.dataBase.collection("users").document(userId)
+                .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
+
+        }
+    }
+
+    func getUsersToAddToChannel() {
+        dataBase.collection("users").addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                print("Error fetching documets: \(String(describing: error))")
+                return
+            }
+
+            self.usersToAddToChannel = documents.compactMap { document -> User? in
+                do {
+
+                    let user = try document.data(as: User.self)
+
+                    return self.addUserToChannelFilter(user: user)
+                } catch {
+                    print("error deconding documet into User: \(error)")
+                    return nil
+                }
+            }
+        }
+    }
+
+    private func addUserToChannelFilter(user: User) -> User? {
+        if doesUserNameContains(user: user) != nil {
+            if self.currentChannel.subscribersId?.contains(user.id) ?? false {
+                return nil
+            }
+            return user
+        }
+        return nil
+    }
+
+    private func doesUserNameContains(user: User) -> User? {
+        if user.name.contains(self.searchText) && user.name != currentUser.name {
+            return user
+        }
+        return nil
+    }
 
     func subscribeToChannel() {
         DispatchQueue.main.async {
 
             self.dataBase.collection("users").document(self.currentUser.id)
-                    .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
+                .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
 
             self.dataBase.collection("channels").document(self.currentChannel.id ?? "SomeChannelId")
                 .updateData(["subscribersId": FieldValue.arrayUnion([self.currentUser.id ])])
@@ -59,21 +160,21 @@ class ChannelViewModel: ObservableObject {
         dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
             .addSnapshotListener { querySnapshot, error in
 
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documents: \(String(describing: error))")
-                return
-            }
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documents: \(String(describing: error))")
+                    return
+                }
 
-            self.searchChannels = documents.compactMap {document -> Channel? in
-                do {
-                    let channel = self.filterChannel(channel: try document.data(as: Channel.self))
-                    return channel
-                } catch {
-                    print("error decoding document into Channel: \(error)")
-                    return nil
+                self.searchChannels = documents.compactMap {document -> Channel? in
+                    do {
+                        let channel = self.filterChannel(channel: try document.data(as: Channel.self))
+                        return channel
+                    } catch {
+                        print("error decoding document into Channel: \(error)")
+                        return nil
+                    }
                 }
             }
-        }
     }
 
     private func filterChannel(channel: Channel) -> Channel? {
@@ -145,6 +246,7 @@ class ChannelViewModel: ObservableObject {
                                  name: name,
                                  description: description,
                                  ownerId: currentUser.id,
+                                 ownerName: currentUser.name,
                                  subscribersId: subscribersId,
                                  messages: [],
                                  lastActivityTimestamp: Date(),
@@ -188,42 +290,45 @@ class ChannelViewModel: ObservableObject {
                         return
                     }
 
-                    if userLocal.channels.count != self.currentUser.channels.count {
-                        self.getChannels(fromUpdate: true, channelPart: userLocal.channels)
+                    if userLocal.channels.count != self.channels.count {
+                        self.getChannels(fromUpdate: true,
+                                         channelPart: userLocal.channels)
                     }
-
                 }
         }
     }
 
     func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
 
-        self.channels = []
+        withAnimation {
 
-        if channelPart.isEmpty {
-            for channelId in currentUser.channels {
-                dataBase.collection("channels").document(channelId)
-                    .toChannel { channel in
-                        self.channels.append(channel)
-                        self.sortChannels()
+            self.channels = []
 
-                    }
-            }
+            if channelPart.isEmpty {
+                for channelId in currentUser.channels {
+                    dataBase.collection("channels").document(channelId)
+                        .toChannel { channel in
+                            self.channels.append(channel)
+                            self.sortChannels()
 
-        } else {
-
-            for channelId in channelPart {
-                dataBase.collection("channels").document(channelId)
-                    .toChannel { channel in
-                        self.channels.append(channel)
-                        self.sortChannels()
-                    }
+                        }
+                }
+            } else {
+                for channelId in channelPart {
+                    dataBase.collection("channels").document(channelId)
+                        .toChannel { channel in
+                            self.channels.append(channel)
+                            self.sortChannels()
+                        }
+                }
             }
 
         }
 
         if !fromUpdate {
-            self.updateChannels()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.updateChannels()
+            }
         }
     }
 
@@ -247,15 +352,28 @@ class ChannelViewModel: ObservableObject {
     }
 
     func removeChannelFromSubscriptions(id: String) {
-        removeFromChannelSubscribers()
+        removeCurrentUserFromChannelSubscribers()
         dataBase.collection("users").document(id).updateData([
             "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
         ])
     }
 
-    fileprivate func removeFromChannelSubscribers() {
+    fileprivate func removeCurrentUserFromChannelSubscribers() {
         dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
             "subscribersId": FieldValue.arrayRemove(["\(currentUser.id )"])
+        ])
+    }
+
+    func removeChannelFromSubscriptionsWithCertainUser(id: String) {
+        removeCertainFromChannelSubscribers(id: id)
+        dataBase.collection("users").document(id).updateData([
+            "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
+        ])
+    }
+
+    fileprivate func removeCertainFromChannelSubscribers(id: String) {
+        dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
+            "subscribersId": FieldValue.arrayRemove(["\(id)"])
         ])
     }
 

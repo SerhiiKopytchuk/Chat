@@ -14,6 +14,7 @@ class ChannelMessagingViewModel: ObservableObject {
                                                      name: "someName",
                                                      description: "some description",
                                                      ownerId: "",
+                                                     ownerName: "",
                                                      subscribersId: [],
                                                      messages: [],
                                                      lastActivityTimestamp: Date(),

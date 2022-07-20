@@ -144,12 +144,3 @@ struct SearchView: View {
             }
     }
 }
-
-struct SearchUsersView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchView()
-            .environmentObject(UserViewModel())
-            .environmentObject(MessagingViewModel())
-            .environmentObject(ChattingViewModel())
-    }
-}
