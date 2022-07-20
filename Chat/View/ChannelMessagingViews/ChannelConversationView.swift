@@ -172,7 +172,7 @@ struct ChannelConversationView: View {
         }
         .alert("Do you really want to unsubscribe from this channel?", isPresented: $showingAlertSubscriber) {
             Button("Unsubscribe", role: .destructive) {
-                channelViewModel.removeChannelFromSubscriptions(id: self.channelViewModel.currentUser.id)
+                channelViewModel.removeChannelFromUserSubscriptions(id: self.channelViewModel.currentUser.id)
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}

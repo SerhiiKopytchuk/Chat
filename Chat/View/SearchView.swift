@@ -57,7 +57,7 @@ struct SearchView: View {
                     TextField("Search channels", text: $searchChannelText)
                         .onChange(of: searchChannelText, perform: { newText in
                         channelViewModel.searchText = newText
-                        channelViewModel.getAllChannels()
+                        channelViewModel.getSearchChannels()
                     })
                     .textFieldStyle(.roundedBorder)
 

@@ -37,6 +37,8 @@ class ChannelViewModel: ObservableObject {
 
     // MARK: - functions
 
+    // MARK: - to editChannelViewModel
+
     func removeUserFromSubscribersList(id: String) {
 
         for index in currentChannel.subscribersId?.indices.reversed() ?? [] {
@@ -126,12 +128,16 @@ class ChannelViewModel: ObservableObject {
         return nil
     }
 
+    // to class fucn
     private func doesUserNameContains(user: User) -> User? {
         if user.name.contains(self.searchText) && user.name != currentUser.name {
             return user
         }
         return nil
     }
+
+
+    // MARK: - channelViewModel
 
     func subscribeToChannel() {
         DispatchQueue.main.async {
@@ -155,7 +161,7 @@ class ChannelViewModel: ObservableObject {
         return false
     }
 
-    func getAllChannels() {
+    func getSearchChannels() {
 
         dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
             .addSnapshotListener { querySnapshot, error in
@@ -337,21 +343,21 @@ class ChannelViewModel: ObservableObject {
     }
 
     func deleteChannel() {
-        removeFromSubscribersAndOwner()
+        removeChannelFromSubscribersAndOwner()
         dataBase.collection("channels").document("\(currentChannel.id ?? "someId")").delete { err in
             if self.isError(error: err) { return }
         }
     }
 
-    fileprivate func removeFromSubscribersAndOwner() {
+    fileprivate func removeChannelFromSubscribersAndOwner() {
         for id in currentChannel.subscribersId ?? [] {
-            removeChannelFromSubscriptions(id: id)
+            removeChannelFromUserSubscriptions(id: id)
         }
 
-        removeChannelFromSubscriptions(id: currentUser.id)
+        removeChannelFromUserSubscriptions(id: owner.id)
     }
 
-    func removeChannelFromSubscriptions(id: String) {
+    func removeChannelFromUserSubscriptions(id: String) {
         removeCurrentUserFromChannelSubscribers()
         dataBase.collection("users").document(id).updateData([
             "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
@@ -363,6 +369,8 @@ class ChannelViewModel: ObservableObject {
             "subscribersId": FieldValue.arrayRemove(["\(currentUser.id )"])
         ])
     }
+
+    // MARK: - to editChannelViewModel
 
     func removeChannelFromSubscriptionsWithCertainUser(id: String) {
         removeCertainFromChannelSubscribers(id: id)
