@@ -13,6 +13,8 @@ struct AddUserToChannelView: View {
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject var userViewModel: UserViewModel
 
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
     @State var subscribersId: [String] = []
 
     var body: some View {
@@ -33,9 +35,6 @@ struct AddUserToChannelView: View {
             .padding()
 
             usersList
-                .onAppear {
-                    self.subscribersId = channelViewModel.currentChannel.subscribersId ?? []
-                }
 
             applyButton
                 .padding()
@@ -59,6 +58,10 @@ struct AddUserToChannelView: View {
     var applyButton: some View {
         Button {
             channelViewModel.subscribeUsersToChannel(usersId: self.subscribersId)
+            channelViewModel.usersToAddToChannel = []
+            self.subscribersId = []
+            self.searchUserText = ""
+            presentationMode.wrappedValue.dismiss()
         } label: {
             Text("apply")
                 .frame(maxWidth: .infinity)

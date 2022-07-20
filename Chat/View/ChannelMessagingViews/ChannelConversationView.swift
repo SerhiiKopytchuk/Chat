@@ -20,7 +20,8 @@ struct ChannelConversationView: View {
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
     @State var isExpandedDetails = false
-    @State var isGoToEditSubscribers = false
+    @State var isGoToAddSubscribers = false
+    @State var isGoToRemoveSubscribers = false
 
     @Binding var isSubscribed: Bool
 
@@ -71,9 +72,18 @@ struct ChannelConversationView: View {
                                         .background(.white)
                                         .cornerRadius(40)
                                         .onTapGesture {
-                                            isGoToEditSubscribers.toggle()
+                                            isGoToAddSubscribers.toggle()
                                         }
-
+                                    Image(systemName: "minus")
+                                        .frame(height: 15)
+                                        .foregroundColor(.gray)
+                                        .padding(10)
+                                        .background(.white)
+                                        .cornerRadius(40)
+                                        .onTapGesture {
+                                            channelViewModel.getChannelSubscribers()
+                                            isGoToRemoveSubscribers.toggle()
+                                        }
                                     Image(systemName: "pencil")
                                         .foregroundColor(.gray)
                                         .padding(10)
@@ -127,13 +137,19 @@ struct ChannelConversationView: View {
         }
         .frame(maxWidth: .infinity)
         .background {
-            NavigationLink(isActive: $isGoToEditSubscribers, destination: {
+            NavigationLink(isActive: $isGoToAddSubscribers, destination: {
                 AddUserToChannelView()
                     .environmentObject(viewModel)
                     .environmentObject(channelViewModel)
             }, label: { })
             .hidden()
-//            .navigationBarTitle("configure users")
+
+            NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
+                RemoveUsersFromChannelView()
+                    .environmentObject(viewModel)
+                    .environmentObject(channelViewModel)
+            }, label: { })
+            .hidden()
         }
         .overlay(content: {
             Rectangle()
