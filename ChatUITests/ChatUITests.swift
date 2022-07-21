@@ -21,7 +21,10 @@ class ChatUITests: XCTestCase {
 //        // Put teardown code here. This method is called after the invocation of each test method in the class.
 //    }
 
-    func testCreatingChannel() throws {
+    var channelName = "testChannel"
+    var channelDescription = "testChannelDescription"
+
+    func test01CreatingChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -32,9 +35,9 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.textFields["Enter name of your channel"].tap()
-        app.textFields["Enter name of your channel"].typeText("testChannel")
+        app.textFields["Enter name of your channel"].typeText(channelName)
         app.textFields["Describe your channel"].tap()
-        app.textFields["Describe your channel"].typeText("testChannelDescription")
+        app.textFields["Describe your channel"].typeText(channelDescription)
 
         app.buttons["Public"].tap()
         app.buttons["Create channel"].tap()
@@ -42,37 +45,20 @@ class ChatUITests: XCTestCase {
 
         app.buttons["fibrechannel"].tap()
 
-        XCTAssert(app.cells.staticTexts["testChannel"].exists)
+        XCTAssert(app.cells.staticTexts[channelName].exists)
     }
 
-//    func testDeletingChannel() throws {
-//        let app = XCUIApplication()
-//        app.launch()
-//
-//        app.buttons["fibrechannel"].tap()
-//
-//        app.tables.cells.staticTexts["testChannel"].tap()
-//        sleep(1)
-//
-//        app.staticTexts["testChannel"].tap()
-//        sleep(1)
-//
-//        app.images["Close"].tap()
-//
-//        app.buttons["Delete"].tap()
-//    }
-
-    func testSubscribeAnnaToChannel() throws {
+    func test02SubscribeAnnaToChannel() throws {
 
         let app = XCUIApplication()
         app.launch()
 
         app.buttons["fibrechannel"].tap()
 
-        app.tables.cells.staticTexts["NewChannel"].tap()
+        app.tables.cells.staticTexts[channelName].tap()
         sleep(1)
 
-        app.staticTexts["Description"].tap()
+        app.staticTexts[channelName].tap()
         sleep(1)
 
         app.images["Add"].tap()
@@ -91,17 +77,17 @@ class ChatUITests: XCTestCase {
         XCTAssert(app.cells.staticTexts["Anna"].exists)
     }
 
-    func testUnsubscribeAnnaFromChannel() throws {
+    func test03UnsubscribeAnnaFromChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
         app.buttons["fibrechannel"].tap()
         sleep(1)
 
-        app.tables.cells.staticTexts["NewChannel"].tap()
+        app.tables.cells.staticTexts[channelName].tap()
         sleep(1)
 
-        app.staticTexts["Description"].tap()
+        app.staticTexts[channelName].tap()
         sleep(1)
 
         let subscribersCount = app.staticTexts["Subscribers"]
@@ -119,6 +105,54 @@ class ChatUITests: XCTestCase {
         print(subscribersCount)
         let subscribersCountAfter = app.staticTexts["Subscribers"]
         XCTAssert(subscribersCount != subscribersCountAfter)
+    }
+
+    func test04DeletingChannel() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["fibrechannel"].tap()
+
+        app.tables.cells.staticTexts[channelName].tap()
+        sleep(1)
+
+        app.staticTexts[channelName].tap()
+        sleep(1)
+
+        app.images["Close"].tap()
+
+        app.buttons["Delete"].tap()
+        sleep(1)
+
+        XCTAssert(!app.cells.staticTexts[channelName].exists)
+    }
+
+    func test05CreateSeveralChannels() {
+        let app = XCUIApplication()
+        app.launch()
+
+        createChannel(app: app, name: "firstChannel", description: "firstChannelDescription")
+        createChannel(app: app, name: "secondChannel", description: "secondChannelDescription")
+        createChannel(app: app, name: "thirdChannel", description: "thirdChannelDescription")
+
+    }
+
+    func createChannel(app:XCUIApplication, name: String, description: String) {
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.staticTexts["Create channel"].tap()
+        sleep(1)
+
+        app.textFields["Enter name of your channel"].tap()
+        app.textFields["Enter name of your channel"].typeText(name)
+        app.textFields["Describe your channel"].tap()
+        app.textFields["Describe your channel"].typeText(description)
+
+        app.buttons["Public"].tap()
+        app.buttons["Create channel"].tap()
+        sleep(1)
     }
 
 //    func testLaunchPerformance() throws {
