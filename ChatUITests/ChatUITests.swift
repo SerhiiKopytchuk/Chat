@@ -228,7 +228,8 @@ class ChatUITests: XCTestCase {
     func test07DeleteChatWithAnna() throws {
         let app = XCUIApplication()
         app.launch()
-
+        sleep(1)
+        
         app.tables.staticTexts["Anna"].press(forDuration: 1)
 
         app.buttons["remove chat"].tap()
