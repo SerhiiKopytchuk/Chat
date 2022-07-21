@@ -15,6 +15,7 @@ struct RemoveUsersFromChannelListRow: View {
     var id: String
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
@@ -55,11 +56,13 @@ struct RemoveUsersFromChannelListRow: View {
                 .foregroundColor(.orange)
                 .padding()
                 .onTapGesture {
-                    channelViewModel.removeChannelFromSubscriptionsWithCertainUser(id: self.id)
+                    editChannelViewModel.removeChannelFromSubscriptionsWithCertainUser(id: self.id)
                     withAnimation {
-                        channelViewModel.removeUserFromSubscribersList(id: self.id)
+                        editChannelViewModel.removeUserFromSubscribersList(id: self.id)
                     }
-                    channelViewModel.getChannelSubscribers()
+                    editChannelViewModel.getChannelSubscribers()
+
+                    self.updateChannelViewModel()
                 }
         }
         .onAppear {
@@ -77,6 +80,10 @@ struct RemoveUsersFromChannelListRow: View {
         }
     }
 
+    private func updateChannelViewModel() {
+        channelViewModel.currentChannel = editChannelViewModel.currentChannel
+        channelViewModel.channelSubscribers = editChannelViewModel.channelSubscribers
+    }
 }
 
 struct RemoveUsersFromChannelListRow_Previews: PreviewProvider {

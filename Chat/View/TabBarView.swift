@@ -16,6 +16,7 @@ struct TabBarView: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
     @State var currentTab: Tab = .chats
     @State var goToConversation = false
@@ -53,6 +54,7 @@ struct TabBarView: View {
                         .environmentObject(viewModel)
                         .environmentObject(channelMessagingViewModel)
                         .environmentObject(channelViewModel)
+                        .environmentObject(editChannelViewModel)
                 } label: { }
                     .hidden()
             }

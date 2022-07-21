@@ -10,6 +10,7 @@ import SwiftUI
 struct RemoveUsersFromChannelView: View {
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject var userViewModel: UserViewModel
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -28,12 +29,13 @@ struct RemoveUsersFromChannelView: View {
 
     @ViewBuilder var usersList: some View {
         List {
-            ForEach(channelViewModel.channelSubscribers, id: \.id) { user in
+            ForEach(editChannelViewModel.channelSubscribers, id: \.id) { user in
                 RemoveUsersFromChannelListRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id
                 )
                 .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
             }
         }
     }

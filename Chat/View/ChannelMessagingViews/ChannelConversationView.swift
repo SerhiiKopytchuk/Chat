@@ -32,6 +32,7 @@ struct ChannelConversationView: View {
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
     // MARK: - body
     var body: some View {
@@ -82,6 +83,7 @@ struct ChannelConversationView: View {
                 AddUserToChannelView()
                     .environmentObject(viewModel)
                     .environmentObject(channelViewModel)
+                    .environmentObject(editChannelViewModel)
             }, label: { })
             .hidden()
 
@@ -89,6 +91,7 @@ struct ChannelConversationView: View {
                 RemoveUsersFromChannelView()
                     .environmentObject(viewModel)
                     .environmentObject(channelViewModel)
+                    .environmentObject(editChannelViewModel)
             }, label: { })
             .hidden()
         }
@@ -203,6 +206,7 @@ struct ChannelConversationView: View {
             .background(.white)
             .cornerRadius(40)
             .onTapGesture {
+                self.editChannelViewModelSetup()
                 isGoToAddSubscribers.toggle()
             }
     }
@@ -215,7 +219,8 @@ struct ChannelConversationView: View {
             .background(.white)
             .cornerRadius(40)
             .onTapGesture {
-                channelViewModel.getChannelSubscribers()
+                self.editChannelViewModelSetup()
+                editChannelViewModel.getChannelSubscribers()
                 isGoToRemoveSubscribers.toggle()
             }
     }
@@ -335,5 +340,10 @@ struct ChannelConversationView: View {
         } else {
             return 1  - (progress < 1 ? progress : 1)
         }
+    }
+
+    private func editChannelViewModelSetup() {
+        editChannelViewModel.currentChannel = channelViewModel.currentChannel
+        editChannelViewModel.currentUser = channelViewModel.currentUser
     }
 }
