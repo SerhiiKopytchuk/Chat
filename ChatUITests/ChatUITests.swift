@@ -21,6 +21,47 @@ class ChatUITests: XCTestCase {
 //        // Put teardown code here. This method is called after the invocation of each test method in the class.
 //    }
 
+    func testCreatingChannel() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.staticTexts["Create channel"].tap()
+        sleep(1)
+
+        app.textFields["Enter name of your channel"].tap()
+        app.textFields["Enter name of your channel"].typeText("testChannel")
+        app.textFields["Describe your channel"].tap()
+        app.textFields["Describe your channel"].typeText("testChannelDescription")
+
+        app.buttons["Public"].tap()
+        app.buttons["Create channel"].tap()
+        sleep(1)
+
+        app.buttons["fibrechannel"].tap()
+
+        XCTAssert(app.cells.staticTexts["testChannel"].exists)
+    }
+
+//    func testDeletingChannel() throws {
+//        let app = XCUIApplication()
+//        app.launch()
+//
+//        app.buttons["fibrechannel"].tap()
+//
+//        app.tables.cells.staticTexts["testChannel"].tap()
+//        sleep(1)
+//
+//        app.staticTexts["testChannel"].tap()
+//        sleep(1)
+//
+//        app.images["Close"].tap()
+//
+//        app.buttons["Delete"].tap()
+//    }
+
     func testSubscribeAnnaToChannel() throws {
 
         let app = XCUIApplication()
@@ -29,7 +70,6 @@ class ChatUITests: XCTestCase {
         app.buttons["fibrechannel"].tap()
 
         app.tables.cells.staticTexts["NewChannel"].tap()
-
         sleep(1)
 
         app.staticTexts["Description"].tap()

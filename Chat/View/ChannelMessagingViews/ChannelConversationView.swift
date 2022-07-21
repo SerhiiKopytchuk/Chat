@@ -96,6 +96,7 @@ struct ChannelConversationView: View {
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
             Button("Delete", role: .destructive) {
+//                channelViewModel.getChannelOwner()
                 channelViewModel.deleteChannel()
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
