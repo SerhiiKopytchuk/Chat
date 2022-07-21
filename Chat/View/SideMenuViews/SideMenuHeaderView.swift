@@ -69,7 +69,7 @@ struct SideMenuHeaderView: View {
                 HStack {
                     HStack {
                         Text("\(viewModel.currentUser.chats.count)").bold()
-                        Text(viewModel.currentUser.channels.count == 1 ? "Chat" : "Chats")
+                        Text(viewModel.currentUser.chats.count == 1 ? "Chat" : "Chats")
                     }
                     HStack {
                         Text("\(viewModel.currentUser.channels.count)").bold()

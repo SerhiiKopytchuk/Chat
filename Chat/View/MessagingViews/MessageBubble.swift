@@ -19,7 +19,8 @@ struct MessageBubble: View {
                 Text(message.text)
                     .padding()
                     .background(message.senderId != viewModel.getUserUID() ? Color("Gray") : Color("Peach"))
-                    .cornerRadius(30)
+                    .cornerRadius(30, corners: message.senderId != viewModel.getUserUID()
+                                  ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
             }
             .frame(maxWidth: 300, alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing)
             .onTapGesture {

@@ -9,20 +9,41 @@ import Foundation
 import FirebaseFirestore
 
 class ChannelMessagingViewModel: ObservableObject {
+
     @Published var currentChannel: Channel = Channel(id: "someID",
                                                      name: "someName",
                                                      description: "some description",
                                                      ownerId: "",
+                                                     ownerName: "",
                                                      subscribersId: [],
-                                                     messages: [])
+                                                     messages: [],
+                                                     lastActivityTimestamp: Date(),
+                                                     isPrivate: true)
 
     @Published var currentUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
+
     @Published private(set) var messages: [Message] = []
+    @Published private(set) var lastMessageId = ""
 
     var dataBase = Firestore.firestore()
 
+    func getMessagesCount(competition: @escaping (Int) -> Void) {
+        dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
+            .addSnapshotListener { querySnapshot, error in
+
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documets: \(String(describing: error))")
+                    return
+                }
+
+                competition(documents.count)
+            }
+    }
+
     func getMessages(competition: @escaping ([Message]) -> Void) {
+
         var messages: [Message] = []
+
         dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
             .addSnapshotListener { querySnapshot, error in
 
@@ -35,8 +56,9 @@ class ChannelMessagingViewModel: ObservableObject {
 
                 self.sortMessages(messages: &messages)
 
-                competition(messages)
+                self.getLastMessage(messages: &messages)
 
+                competition(messages)
             }
     }
 
@@ -57,14 +79,41 @@ class ChannelMessagingViewModel: ObservableObject {
         messages.sort {$0.timestamp < $1.timestamp }
     }
 
+    private func getLastMessage(messages: inout [Message]) {
+        if let id = messages.last?.id {
+            self.lastMessageId = id
+        }
+    }
+
     func sendMessage(text: String) {
-        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.currentUser.id, timestamp: Date())
+
+        if !messageIsValidated(text: text) { return }
+
+        let trimmedText = text.trimmingCharacters(in: .whitespaces)
+
+        let newMessage = Message(id: "\(UUID())", text: trimmedText, senderId: self.currentUser.id, timestamp: Date())
+
         do {
             try self.dataBase.collection("channels").document(currentChannel.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
+            changeLastActivityTime()
         } catch {
             print("failed to send message" + error.localizedDescription)
         }
 
+    }
+
+    private func messageIsValidated(text: String) -> Bool {
+
+        if !text.trimmingCharacters(in: .whitespaces).isEmpty {
+            return true
+        }
+
+        return false
+    }
+
+    private func changeLastActivityTime() {
+        dataBase.collection("channels").document(currentChannel.id ?? "someID")
+            .updateData(["lastActivityTimestamp": Date()])
     }
 }

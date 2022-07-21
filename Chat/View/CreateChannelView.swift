@@ -18,6 +18,7 @@ struct CreateChannelView: View {
     @State var name: String = ""
     @State var description: String = ""
     @State var searchText: String = ""
+    @State var isPrivate = true
 
     @State var subscribersId: [String] = []
 
@@ -48,6 +49,13 @@ struct CreateChannelView: View {
                         .underlineTextField(text: description, underlineOn: 30)
                         .padding(.horizontal, 20)
 
+                    Picker("type of channel", selection: $isPrivate) {
+                        Text("Private").tag(true)
+                        Text("Public").tag(false)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding()
+
                     HStack {
                         TextField("Search Users", text: $searchText)
                             .textFieldStyle(.roundedBorder)
@@ -61,7 +69,6 @@ struct CreateChannelView: View {
                             .frame(width: 50, height: 50)
                     }
                     .padding(.horizontal, 20)
-
                     usersList
                     createChannelButton
                         .frame(maxWidth: .infinity)
@@ -127,11 +134,15 @@ struct CreateChannelView: View {
             channelViewModel.owner = viewModel.currentUser
             channelViewModel.createChannel( subscribersId: self.subscribersId,
                                             name: self.name,
-                                            description: self.description) { channel in
-                imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
-                                         imageName: channel.id ?? "some Id")
+                                            description: self.description,
+                                            isPrivate: self.isPrivate) { channel in
+
+                    imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
+                                             imageName: channel.id ?? "some Id")
+
+                channelViewModel.getChannels(fromUpdate: true)
+                presentationMode.wrappedValue.dismiss()
             }
-            presentationMode.wrappedValue.dismiss()
         } label: {
             Text("Create channel")
                 .frame(maxWidth: .infinity)

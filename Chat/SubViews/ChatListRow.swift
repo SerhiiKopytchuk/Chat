@@ -20,6 +20,7 @@ struct ChatListRow: View {
     @State var message = Message(id: "", text: "", senderId: "", timestamp: Date())
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
+    @State var isShowImage = false
 
     let formater = DateFormatter()
     let chat: Chat
@@ -40,9 +41,7 @@ struct ChatListRow: View {
                             .shadow(radius: 5)
                     )
                     .padding(5)
-                    .onAppear {
-
-                    }
+                    .opacity(isShowImage ? 1 : 0)
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
@@ -51,6 +50,7 @@ struct ChatListRow: View {
                     .frame(width: 30, height: 30)
                     .clipShape(Circle())
                     .padding(5)
+                    .opacity(isShowImage ? 1 : 0)
             }
 
             VStack(alignment: .leading) {
@@ -82,23 +82,31 @@ struct ChatListRow: View {
                 }
             })
             .onAppear {
-                self.viewModel.getUserByChat(chat: self.chat) { user in
-                    withAnimation {
-                        self.person = user
+                DispatchQueue.main.async {
+                    self.viewModel.getUserByChat(chat: self.chat) { user in
+                        withAnimation {
+                            self.person = user
 
-                        let ref = Storage.storage().reference(withPath: user.id )
-                        ref.downloadURL { url, err in
-                            if err != nil {
-                                self.isFindUserImage = false
-                                return
-                            }
-                            withAnimation(.easeInOut) {
-                                self.imageUrl = url
+                            let ref = Storage.storage().reference(withPath: user.id )
+                            ref.downloadURL { url, err in
+                                if err != nil {
+                                    self.isFindUserImage = false
+                                    withAnimation(.easeInOut) {
+                                        self.isShowImage = true
+                                    }
+                                    return
+                                }
+                                withAnimation(.easeInOut) {
+                                    self.imageUrl = url
+                                    self.isShowImage = true
+                                }
                             }
                         }
                     }
                 }
+
                 self.messageViewModel.currentChat = self.chat
+
                 self.messageViewModel.getMessages { messages in
                     withAnimation {
                         self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())

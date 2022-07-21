@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 import FirebaseFirestore
+import SwiftUI
 
 class ChattingViewModel: ObservableObject {
 
@@ -16,7 +17,11 @@ class ChattingViewModel: ObservableObject {
 
     @Published var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
     @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var currentChat: Chat = Chat(id: "", user1Id: "", user2Id: "", messages: [])
+    @Published var currentChat: Chat = Chat(id: "",
+                                            user1Id: "",
+                                            user2Id: "",
+                                            messages: [],
+                                            lastActivityTimestamp: Date())
 
     @Published private(set) var chats: [Chat] = []
 
@@ -90,12 +95,13 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
 
-        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id)
+        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id, lastActivityTimestamp: Date())
 
         try dataBase.collection("chats").document().setData(from: newChat)
 
         getCurrentChat(secondUser: secondUser) { chat in
             self.addChatsIdToUsers()
+            self.changeLastMessageTime()
             competition(chat)
         } failure: { _ in }
 
@@ -109,56 +115,67 @@ class ChattingViewModel: ObservableObject {
 
     }
 
+    private func changeLastMessageTime() {
+        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
+    }
+
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
-        self.chats = []
+        withAnimation {
+            self.chats = []
 
-        if chatsId.isEmpty {
+            if chatsId.isEmpty {
+                for chatId in user.chats {
+                    dataBase.collection("chats").document(chatId)
+                        .toChat { chat in
+                            self.chats.append(chat)
+                            self.sortChats()
+                        }
+                }
 
-            for chatId in user.chats {
-                dataBase.collection("chats").document(chatId)
-                    .toChat { chat in
-                        self.chats.append(chat)
-                    }
+            } else {
+                for chatId in chatsId {
+                    dataBase.collection("chats").document(chatId)
+                        .toChat { chat in
+                            self.chats.append(chat)
+                            self.sortChats()
+                        }
+                }
             }
 
-        } else {
-
-            for chatId in chatsId {
-                dataBase.collection("chats").document(chatId)
-                    .toChat { chat in
-                        self.chats.append(chat)
-                    }
+            if !fromUpdate {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.updateChats()
+                }
             }
-
         }
+    }
 
-        if !fromUpdate {
-            self.updateChats()
-        }
-
+    func sortChats() {
+        self.chats.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
     }
 
     fileprivate func updateChats() {
-        dataBase.collection("users").document(user.id)
-            .addSnapshotListener { document, error in
+        DispatchQueue.main.async {
+            self.dataBase.collection("users").document(self.user.id)
+                .addSnapshotListener { document, error in
+                    if self.isError(error: error) { return }
 
-                if self.isError(error: error) { return }
+                    guard let userLocal = try? document?.data(as: User.self) else {
+                        return
+                    }
+                    if userLocal.chats.count != self.chats.count {
+                        self.getChats(fromUpdate: true, chatsId: userLocal.chats)
+                    }
 
-                guard let userLocal = try? document?.data(as: User.self) else {
-                    return
                 }
-                if userLocal.chats.count != self.user.chats.count {
-                    self.getChats(fromUpdate: true, chatsId: userLocal.chats)
-                }
-
-            }
+        }
     }
 
     func deleteChat() {
-        deleteChatIdFromUsersChats()
         dataBase.collection("chats").document("\(currentChat.id ?? "someId")").delete { err in
             if self.isError(error: err) { return }
         }
+        deleteChatIdFromUsersChats()
     }
 
     fileprivate func deleteChatIdFromUsersChats() {

@@ -10,11 +10,16 @@ import FirebaseFirestore
 
 class MessagingViewModel: ObservableObject {
 
-    @Published var currentChat: Chat = Chat(id: "someId", user1Id: "", user2Id: "", messages: [])
+    @Published var currentChat: Chat = Chat(id: "someId",
+                                            user1Id: "",
+                                            user2Id: "",
+                                            messages: [],
+                                            lastActivityTimestamp: Date())
     @Published var user: User = User(chats: [], channels: [], gmail: "", id: "someId", name: "")
     @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 
     @Published private(set) var messages: [Message] = []
+    @Published private(set) var lastMessageId: String = ""
 
     var dataBase = Firestore.firestore()
 
@@ -33,6 +38,8 @@ class MessagingViewModel: ObservableObject {
                 self.currentChat.messages = self.documentsToMessages(messages: &messages, documents: documents)
 
                 self.sortMessages(messages: &messages)
+
+                self.getLastMessage(messages: &messages)
 
                 competition(messages)
             }
@@ -55,15 +62,41 @@ class MessagingViewModel: ObservableObject {
         messages.sort {$0.timestamp < $1.timestamp }
     }
 
+    private func getLastMessage(messages: inout [Message]) {
+        if let id = messages.last?.id {
+            self.lastMessageId = id
+        }
+    }
+
     func sendMessage(text: String) {
-        let newMessage = Message(id: "\(UUID())", text: text, senderId: self.user.id, timestamp: Date())
+
+        if !messageIsValidated(text: text) { return }
+
+        let trimmedText = text.trimmingCharacters(in: .whitespaces)
+
+        let newMessage = Message(id: "\(UUID())", text: trimmedText, senderId: self.user.id, timestamp: Date())
+
         do {
             try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
+            changeLastMessageTime()
         } catch {
             print("failed to send message" + error.localizedDescription)
         }
 
+    }
+
+    private func messageIsValidated(text: String) -> Bool {
+
+        if !text.trimmingCharacters(in: .whitespaces).isEmpty {
+            return true
+        }
+
+        return false
+    }
+
+    private func changeLastMessageTime() {
+        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 
 }

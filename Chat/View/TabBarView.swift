@@ -16,6 +16,7 @@ struct TabBarView: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
     @State var currentTab: Tab = .chats
     @State var goToConversation = false
@@ -49,10 +50,11 @@ struct TabBarView: View {
                     .hidden()
 
                 NavigationLink(isActive: $goToChannel) {
-                    ChannelConversationView(currentUser: viewModel.currentUser)
+                    ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
                         .environmentObject(viewModel)
                         .environmentObject(channelMessagingViewModel)
                         .environmentObject(channelViewModel)
+                        .environmentObject(editChannelViewModel)
                 } label: { }
                     .hidden()
             }
@@ -109,7 +111,9 @@ struct TabBarView: View {
                             channelMessagingViewModel.currentChannel = channel
                             channelMessagingViewModel.currentUser = viewModel.currentUser
                             channelMessagingViewModel.getMessages(competition: { _ in })
-                            self.goToChannel.toggle()
+                            DispatchQueue.main.async {
+                                self.goToChannel.toggle()
+                            }
                         } failure: { _ in }
 
                     }
