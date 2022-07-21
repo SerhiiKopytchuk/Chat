@@ -131,13 +131,26 @@ class ChatUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
+        let existsPredicate = NSPredicate(format: "exists == true")
+
         createChannel(app: app, name: "firstChannel", description: "firstChannelDescription")
         createChannel(app: app, name: "secondChannel", description: "secondChannelDescription")
         createChannel(app: app, name: "thirdChannel", description: "thirdChannelDescription")
 
+        app.buttons["fibrechannel"].tap()
+
+        let firstChannelCell = app.cells.staticTexts["firstChannel"]
+        let secondChannelCell = app.cells.staticTexts["secondChannel"]
+        let thirdChannelCell = app.cells.staticTexts["thirdChannel"]
+
+        let firstChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: firstChannelCell)
+        let secondChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: secondChannelCell)
+        let thirdChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: thirdChannelCell)
+
+        wait(for: [firstChannelExpectation, secondChannelExpectation, thirdChannelExpectation], timeout: 5)
     }
 
-    func createChannel(app:XCUIApplication, name: String, description: String) {
+    private func createChannel(app: XCUIApplication, name: String, description: String) {
 
         app.buttons["List"].tap()
         sleep(1)
@@ -153,6 +166,34 @@ class ChatUITests: XCTestCase {
         app.buttons["Public"].tap()
         app.buttons["Create channel"].tap()
         sleep(1)
+    }
+
+    func test06DeleteSeveralChannels() {
+        let app = XCUIApplication()
+        app.launch()
+
+        let existsPredicate = NSPredicate(format: "exists == false")
+
+        app.buttons["fibrechannel"].tap()
+
+        deleteChannel(app: app, name: "firstChannel")
+        deleteChannel(app: app, name: "secondChannel")
+        deleteChannel(app: app, name: "thirdChannel")
+
+        let firstChannelCell = app.cells.staticTexts["firstChannel"]
+        let secondChannelCell = app.cells.staticTexts["secondChannel"]
+        let thirdChannelCell = app.cells.staticTexts["thirdChannel"]
+
+        let firstChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: firstChannelCell)
+        let secondChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: secondChannelCell)
+        let thirdChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: thirdChannelCell)
+
+        wait(for: [firstChannelExpectation, secondChannelExpectation, thirdChannelExpectation], timeout: 5)
+    }
+
+    private func deleteChannel(app: XCUIApplication, name: String) {
+        app.tables.cells.staticTexts[name].press(forDuration: 1)
+        app.buttons["delete channel"].tap()
     }
 
 //    func testLaunchPerformance() throws {
