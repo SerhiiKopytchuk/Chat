@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 import FirebaseFirestore
+import SwiftUI
 
 class ChattingViewModel: ObservableObject {
 
@@ -119,32 +120,34 @@ class ChattingViewModel: ObservableObject {
     }
 
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
+        withAnimation {
+            self.chats = []
 
-        self.chats = []
+            if chatsId.isEmpty {
+                for chatId in user.chats {
+                    dataBase.collection("chats").document(chatId)
+                        .toChat { chat in
+                            self.chats.append(chat)
+                            self.sortChats()
+                        }
+                }
 
-        if chatsId.isEmpty {
-            for chatId in user.chats {
-                dataBase.collection("chats").document(chatId)
-                    .toChat { chat in
-                        self.chats.append(chat)
-                        self.sortChats()
-                    }
+            } else {
+                for chatId in chatsId {
+                    dataBase.collection("chats").document(chatId)
+                        .toChat { chat in
+                            self.chats.append(chat)
+                            self.sortChats()
+                        }
+                }
             }
 
-        } else {
-            for chatId in chatsId {
-                dataBase.collection("chats").document(chatId)
-                    .toChat { chat in
-                        self.chats.append(chat)
-                        self.sortChats()
-                    }
+            if !fromUpdate {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.updateChats()
+                }
             }
         }
-
-        if !fromUpdate {
-            self.updateChats()
-        }
-
     }
 
     func sortChats() {
@@ -152,25 +155,27 @@ class ChattingViewModel: ObservableObject {
     }
 
     fileprivate func updateChats() {
-        dataBase.collection("users").document(user.id)
-            .addSnapshotListener { document, error in
-                if self.isError(error: error) { return }
+        DispatchQueue.main.async {
+            self.dataBase.collection("users").document(self.user.id)
+                .addSnapshotListener { document, error in
+                    if self.isError(error: error) { return }
 
-                guard let userLocal = try? document?.data(as: User.self) else {
-                    return
-                }
-                if userLocal.chats.count != self.user.chats.count {
-                    self.getChats(fromUpdate: true, chatsId: userLocal.chats)
-                }
+                    guard let userLocal = try? document?.data(as: User.self) else {
+                        return
+                    }
+                    if userLocal.chats.count != self.chats.count {
+                        self.getChats(fromUpdate: true, chatsId: userLocal.chats)
+                    }
 
-            }
+                }
+        }
     }
 
     func deleteChat() {
-        deleteChatIdFromUsersChats()
         dataBase.collection("chats").document("\(currentChat.id ?? "someId")").delete { err in
             if self.isError(error: err) { return }
         }
+        deleteChatIdFromUsersChats()
     }
 
     fileprivate func deleteChatIdFromUsersChats() {

@@ -191,26 +191,6 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    private func updateChannels() {
-        DispatchQueue.main.async {
-
-            self.dataBase.collection("users").document(self.currentUser.id)
-                .addSnapshotListener { document, error in
-
-                    if self.isError(error: error) { return }
-
-                    guard let userLocal = try? document?.data(as: User.self) else {
-                        return
-                    }
-
-                    if userLocal.channels.count != self.channels.count {
-                        self.getChannels(fromUpdate: true,
-                                         channelPart: userLocal.channels)
-                    }
-                }
-        }
-    }
-
     func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
 
         withAnimation {
@@ -247,6 +227,25 @@ class ChannelViewModel: ObservableObject {
 
     func sortChannels() {
         self.channels.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+    }
+
+    private func updateChannels() {
+        DispatchQueue.main.async {
+            self.dataBase.collection("users").document(self.currentUser.id)
+                .addSnapshotListener { document, error in
+
+                    if self.isError(error: error) { return }
+
+                    guard let userLocal = try? document?.data(as: User.self) else {
+                        return
+                    }
+
+                    if userLocal.channels.count != self.channels.count {
+                        self.getChannels(fromUpdate: true,
+                                         channelPart: userLocal.channels)
+                    }
+                }
+        }
     }
 
     func deleteChannel() {

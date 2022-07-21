@@ -21,8 +21,10 @@ class ChatUITests: XCTestCase {
 //        // Put teardown code here. This method is called after the invocation of each test method in the class.
 //    }
 
-    var channelName = "testChannel"
-    var channelDescription = "testChannelDescription"
+    let channelName = "testChannel"
+    let channelDescription = "testChannelDescription"
+    let notExistsPredicate = NSPredicate(format: "exists == false")
+    let existsPredicate = NSPredicate(format: "exists == true")
 
     func test01CreatingChannel() throws {
         let app = XCUIApplication()
@@ -127,11 +129,9 @@ class ChatUITests: XCTestCase {
         XCTAssert(!app.cells.staticTexts[channelName].exists)
     }
 
-    func test05CreateSeveralChannels() {
+    func test05CreateSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
-
-        let existsPredicate = NSPredicate(format: "exists == true")
 
         createChannel(app: app, name: "firstChannel", description: "firstChannelDescription")
         createChannel(app: app, name: "secondChannel", description: "secondChannelDescription")
@@ -168,11 +168,9 @@ class ChatUITests: XCTestCase {
         sleep(1)
     }
 
-    func test06DeleteSeveralChannels() {
+    func test06DeleteSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
-
-        let existsPredicate = NSPredicate(format: "exists == false")
 
         app.buttons["fibrechannel"].tap()
 
@@ -184,9 +182,14 @@ class ChatUITests: XCTestCase {
         let secondChannelCell = app.cells.staticTexts["secondChannel"]
         let thirdChannelCell = app.cells.staticTexts["thirdChannel"]
 
-        let firstChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: firstChannelCell)
-        let secondChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: secondChannelCell)
-        let thirdChannelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: thirdChannelCell)
+        let firstChannelExpectation = XCTNSPredicateExpectation(predicate: notExistsPredicate,
+                                                                object: firstChannelCell)
+
+        let secondChannelExpectation = XCTNSPredicateExpectation(predicate: notExistsPredicate,
+                                                                 object: secondChannelCell)
+
+        let thirdChannelExpectation = XCTNSPredicateExpectation(predicate: notExistsPredicate,
+                                                                object: thirdChannelCell)
 
         wait(for: [firstChannelExpectation, secondChannelExpectation, thirdChannelExpectation], timeout: 5)
     }
@@ -194,6 +197,48 @@ class ChatUITests: XCTestCase {
     private func deleteChannel(app: XCUIApplication, name: String) {
         app.tables.cells.staticTexts[name].press(forDuration: 1)
         app.buttons["delete channel"].tap()
+    }
+
+    func test07StartChatWithAnna() throws {
+
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.buttons["Search"].tap()
+        sleep(1)
+
+        app.textFields["Search users"].tap()
+        app.textFields["Search users"].typeText("A")
+
+        app.tables.staticTexts["Anna"].tap()
+            sleep(1)
+        app.buttons["Start Chat"].tap()
+        app.buttons["Search"].tap()
+        app.buttons["Back"].tap()
+
+        let chatCell = app.tables.staticTexts["Anna"]
+        let chatAnnaExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: chatCell)
+
+        wait(for: [chatAnnaExpectation], timeout: 5)
+    }
+
+    func test07DeleteChatWithAnna() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        app.tables.staticTexts["Anna"].press(forDuration: 1)
+
+        app.buttons["remove chat"].tap()
+        sleep(1)
+
+        let chatCell = app.tables.staticTexts["Anna"]
+
+        let chatAnnaExpectation = XCTNSPredicateExpectation(predicate: notExistsPredicate, object: chatCell)
+
+        wait(for: [chatAnnaExpectation], timeout: 5)
     }
 
 //    func testLaunchPerformance() throws {
