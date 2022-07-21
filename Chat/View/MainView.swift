@@ -18,6 +18,7 @@ struct MainView: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
     var body: some View {
         ZStack {
@@ -47,6 +48,7 @@ struct MainView: View {
                 .environmentObject(chattingViewModel)
                 .environmentObject(channelViewModel)
                 .environmentObject(channelMessagingViewModel)
+                .environmentObject(editChannelViewModel)
 
         }
         .onAppear {
