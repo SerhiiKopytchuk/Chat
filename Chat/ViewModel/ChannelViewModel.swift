@@ -36,6 +36,16 @@ class ChannelViewModel: ObservableObject {
 
     // MARK: - functions
 
+    func getChannelOwner() {
+        dataBase.collection("users").document("\(currentChannel.ownerId)").getDocument { document, error in
+            if self.isError(error: error) { return }
+
+            if let channelOwner = try? document?.data(as: User.self) {
+                self.owner = channelOwner
+            }
+        }
+    }
+
     func subscribeToChannel() {
         DispatchQueue.main.async {
 
@@ -181,26 +191,6 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    private func updateChannels() {
-        DispatchQueue.main.async {
-
-            self.dataBase.collection("users").document(self.currentUser.id)
-                .addSnapshotListener { document, error in
-
-                    if self.isError(error: error) { return }
-
-                    guard let userLocal = try? document?.data(as: User.self) else {
-                        return
-                    }
-
-                    if userLocal.channels.count != self.channels.count {
-                        self.getChannels(fromUpdate: true,
-                                         channelPart: userLocal.channels)
-                    }
-                }
-        }
-    }
-
     func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
 
         withAnimation {
@@ -239,6 +229,25 @@ class ChannelViewModel: ObservableObject {
         self.channels.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
     }
 
+    private func updateChannels() {
+        DispatchQueue.main.async {
+            self.dataBase.collection("users").document(self.currentUser.id)
+                .addSnapshotListener { document, error in
+
+                    if self.isError(error: error) { return }
+
+                    guard let userLocal = try? document?.data(as: User.self) else {
+                        return
+                    }
+
+                    if userLocal.channels.count != self.channels.count {
+                        self.getChannels(fromUpdate: true,
+                                         channelPart: userLocal.channels)
+                    }
+                }
+        }
+    }
+
     func deleteChannel() {
         removeChannelFromSubscribersAndOwner()
         dataBase.collection("channels").document("\(currentChannel.id ?? "someId")").delete { err in
@@ -247,14 +256,18 @@ class ChannelViewModel: ObservableObject {
     }
 
     fileprivate func removeChannelFromSubscribersAndOwner() {
-        for id in currentChannel.subscribersId ?? [] {
-            removeChannelFromUserSubscriptions(id: id)
+        if let subscribersId  = currentChannel.subscribersId {
+            if !subscribersId.isEmpty {
+                for id in subscribersId {
+                    removeChannelFromUserSubscriptions(id: id)
+                }
+            }
         }
 
-        removeChannelFromUserSubscriptions(id: owner.id)
+        removeChannelFromUserSubscriptions(id: currentChannel.ownerId)
     }
 
-    func removeChannelFromUserSubscriptions(id: String) {
+    func removeChannelFromUserSubscriptions(id: String = "someId") {
         removeCurrentUserFromChannelSubscribers()
         dataBase.collection("users").document(id).updateData([
             "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
