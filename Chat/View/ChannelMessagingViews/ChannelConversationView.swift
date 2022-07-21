@@ -35,6 +35,7 @@ struct ChannelConversationView: View {
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
     // MARK: - body
+
     var body: some View {
         ZStack {
             VStack {
@@ -79,21 +80,7 @@ struct ChannelConversationView: View {
         }
         .frame(maxWidth: .infinity)
         .background {
-            NavigationLink(isActive: $isGoToAddSubscribers, destination: {
-                AddUserToChannelView()
-                    .environmentObject(viewModel)
-                    .environmentObject(channelViewModel)
-                    .environmentObject(editChannelViewModel)
-            }, label: { })
-            .hidden()
-
-            NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
-                RemoveUsersFromChannelView()
-                    .environmentObject(viewModel)
-                    .environmentObject(channelViewModel)
-                    .environmentObject(editChannelViewModel)
-            }, label: { })
-            .hidden()
+            navigationLinks
         }
         .overlay(content: {
             Rectangle()
@@ -124,6 +111,24 @@ struct ChannelConversationView: View {
     }
 
     // MARK: - viewBuilders
+
+    @ViewBuilder var navigationLinks: some View {
+        NavigationLink(isActive: $isGoToAddSubscribers, destination: {
+            AddUserToChannelView()
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        }, label: { })
+        .hidden()
+
+        NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
+            RemoveUsersFromChannelView()
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        }, label: { })
+        .hidden()
+    }
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
         VStack {

@@ -39,8 +39,9 @@ struct AddUserToChannelView: View {
 
             applyButton
                 .padding()
-        }.navigationTitle("Add users to channel")
-            .navigationBarTitleDisplayMode(.large)
+        }
+        .navigationTitle("Add users to channel")
+        .navigationBarTitleDisplayMode(.large)
     }
 
     @ViewBuilder var usersList: some View {
