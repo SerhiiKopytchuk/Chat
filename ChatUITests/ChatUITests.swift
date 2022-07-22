@@ -23,6 +23,8 @@ class ChatUITests: XCTestCase {
 
     let channelName = "testChannel"
     let channelDescription = "testChannelDescription"
+    let channelNameEdited = "testChannelEdited"
+    let channelDescriptionEdited = "testChannelDescriptionEdited"
     let notExistsPredicate = NSPredicate(format: "exists == false")
     let existsPredicate = NSPredicate(format: "exists == true")
 
@@ -109,7 +111,7 @@ class ChatUITests: XCTestCase {
         XCTAssert(subscribersCount != subscribersCountAfter)
     }
 
-    func test04DeletingChannel() throws {
+    func test04EditingChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -121,15 +123,49 @@ class ChatUITests: XCTestCase {
         app.staticTexts[channelName].tap()
         sleep(1)
 
+        app.images["Edit"].tap()
+        sleep(1)
+
+        app.textFields["Enter channel name"].tap()
+        app.textFields["Enter channel name"].typeText("Edited")
+
+        app.textFields["Type channel description"].tap()
+        app.textFields["Type channel description"].typeText("Edited")
+
+        app.buttons["Selected"].tap()
+
+        let editedChannelName = app.staticTexts["\(channelName)Edited"]
+        let editedChannelDescription = app.staticTexts["\(channelDescription)Edited"]
+
+        let editedChannelNameExpectation = XCTNSPredicateExpectation(predicate: existsPredicate,
+                                                                     object: editedChannelName)
+        let editedChannelDescriptionExpectation = XCTNSPredicateExpectation(predicate: existsPredicate,
+                                                                            object: editedChannelDescription)
+
+        wait(for: [editedChannelNameExpectation, editedChannelDescriptionExpectation], timeout: 5)
+    }
+
+    func test05DeletingChannel() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["fibrechannel"].tap()
+
+        app.tables.cells.staticTexts[channelNameEdited].tap()
+        sleep(1)
+
+        app.staticTexts[channelNameEdited].tap()
+        sleep(1)
+
         app.images["Close"].tap()
 
         app.buttons["Delete"].tap()
         sleep(1)
 
-        XCTAssert(!app.cells.staticTexts[channelName].exists)
+        XCTAssert(!app.cells.staticTexts[channelNameEdited].exists)
     }
 
-    func test05CreateSeveralChannels() throws {
+    func test06CreateSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -168,7 +204,7 @@ class ChatUITests: XCTestCase {
         sleep(1)
     }
 
-    func test06DeleteSeveralChannels() throws {
+    func test07DeleteSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -199,7 +235,7 @@ class ChatUITests: XCTestCase {
         app.buttons["delete channel"].tap()
     }
 
-    func test07StartChatWithAnna() throws {
+    func test08StartChatWithAnna() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -225,11 +261,11 @@ class ChatUITests: XCTestCase {
         wait(for: [chatAnnaExpectation], timeout: 5)
     }
 
-    func test07DeleteChatWithAnna() throws {
+    func test09DeleteChatWithAnna() throws {
         let app = XCUIApplication()
         app.launch()
         sleep(1)
-        
+
         app.tables.staticTexts["Anna"].press(forDuration: 1)
 
         app.buttons["remove chat"].tap()

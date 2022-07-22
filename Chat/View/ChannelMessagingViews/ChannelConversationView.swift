@@ -22,6 +22,7 @@ struct ChannelConversationView: View {
     @State var isExpandedDetails = false
     @State var isGoToAddSubscribers = false
     @State var isGoToRemoveSubscribers = false
+    @State var isGoToEditChannel = false
 
     @Binding var isSubscribed: Bool
 
@@ -96,7 +97,6 @@ struct ChannelConversationView: View {
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
             Button("Delete", role: .destructive) {
-//                channelViewModel.getChannelOwner()
                 channelViewModel.deleteChannel()
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
@@ -125,6 +125,14 @@ struct ChannelConversationView: View {
         NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
             RemoveUsersFromChannelView()
                 .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        }, label: { })
+        .hidden()
+
+        NavigationLink(isActive: $isGoToEditChannel, destination: {
+            EditChannelView(channelName: channelViewModel.currentChannel.name,
+                            channelDescription: channelViewModel.currentChannel.description)
                 .environmentObject(channelViewModel)
                 .environmentObject(editChannelViewModel)
         }, label: { })
@@ -237,6 +245,10 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40 )
+            .onTapGesture {
+                self.editChannelViewModelSetup()
+                isGoToEditChannel.toggle()
+            }
     }
 
     @ViewBuilder var removeOrDeleteChannelButton: some View {

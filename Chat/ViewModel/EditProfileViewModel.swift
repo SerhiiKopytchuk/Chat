@@ -73,9 +73,9 @@ class EditProfileViewModel: ObservableObject {
     }
 
     func changeName(newName: String, userId: String) {
-        dataBase.collection("users").document(userId).getDocument { querrySnapshot, err in
+        dataBase.collection("users").document(userId).getDocument { querySnapshot, err in
             if self.isError(error: err) { return }
-            querrySnapshot?.reference.updateData([ "name": newName])
+            querySnapshot?.reference.updateData([ "name": newName])
         }
     }
 
