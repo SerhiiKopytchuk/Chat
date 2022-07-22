@@ -22,6 +22,8 @@
 		40153F2C286B35A20022DA46 /* ChannelMessageField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40153F2B286B35A20022DA46 /* ChannelMessageField.swift */; };
 		40153F2E286B370B0022DA46 /* ChannelTitleRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40153F2D286B370B0022DA46 /* ChannelTitleRow.swift */; };
 		401B7D2C287C5508004A467F /* RollingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401B7D2B287C5508004A467F /* RollingText.swift */; };
+		4021DD09288AA7CA0060B18E /* EditChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4021DD08288AA7CA0060B18E /* EditChannelView.swift */; };
+		4021DD0C288AAFDA0060B18E /* String + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4021DD0B288AAFDA0060B18E /* String + Extension.swift */; };
 		4024EB01283802130082E739 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB00283802130082E739 /* CustomAlert.swift */; };
 		4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0228382AE80082E739 /* SideMenuView.swift */; };
 		4024EB0728382B030082E739 /* SideMenuHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0628382B030082E739 /* SideMenuHeaderView.swift */; };
@@ -30,7 +32,7 @@
 		4024EB0F28393CF40082E739 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0E28393CF40082E739 /* TabBarView.swift */; };
 		4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6612854B4F000C74377 /* ImagePicker.swift */; };
 		4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */; };
-		4056D63B2833D8E8000A0872 /* SingUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63A2833D8E8000A0872 /* SingUpView.swift */; };
+		4056D63B2833D8E8000A0872 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63A2833D8E8000A0872 /* SignUpView.swift */; };
 		4056D63D2833DD17000A0872 /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63C2833DD17000A0872 /* UserViewModel.swift */; };
 		4056D6412834024B000A0872 /* ChatListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D6402834024B000A0872 /* ChatListRow.swift */; };
 		405FD37F282FEFD200361396 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405FD37E282FEFD200361396 /* SignInView.swift */; };
@@ -95,6 +97,8 @@
 		40153F2B286B35A20022DA46 /* ChannelMessageField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMessageField.swift; sourceTree = "<group>"; };
 		40153F2D286B370B0022DA46 /* ChannelTitleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTitleRow.swift; sourceTree = "<group>"; };
 		401B7D2B287C5508004A467F /* RollingText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollingText.swift; sourceTree = "<group>"; };
+		4021DD08288AA7CA0060B18E /* EditChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditChannelView.swift; sourceTree = "<group>"; };
+		4021DD0B288AAFDA0060B18E /* String + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extension.swift"; sourceTree = "<group>"; };
 		4024EB00283802130082E739 /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		4024EB0228382AE80082E739 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		4024EB0628382B030082E739 /* SideMenuHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuHeaderView.swift; sourceTree = "<group>"; };
@@ -103,7 +107,7 @@
 		4024EB0E28393CF40082E739 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		4039A6612854B4F000C74377 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
-		4056D63A2833D8E8000A0872 /* SingUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingUpView.swift; sourceTree = "<group>"; };
+		4056D63A2833D8E8000A0872 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		4056D63C2833DD17000A0872 /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
 		4056D6402834024B000A0872 /* ChatListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListRow.swift; sourceTree = "<group>"; };
 		405FD37E282FEFD200361396 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
@@ -221,8 +225,7 @@
 				40FA6F6128576D01001AAC09 /* EditProfileView.swift */,
 				400E81AC286861EE006A606E /* CreateChannelView.swift */,
 				403B51D3286C78150035804E /* ChannelMessagingViews */,
-				409F252E2882B574005D0E6A /* addUserToChannelView.swift */,
-				40A766B528842C19002D6FA5 /* removeUsersFromChannelView.swift */,
+				4021DD0A288AA7E30060B18E /* ChannelViews */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -271,11 +274,21 @@
 			path = SubViews;
 			sourceTree = "<group>";
 		};
+		4021DD0A288AA7E30060B18E /* ChannelViews */ = {
+			isa = PBXGroup;
+			children = (
+				409F252E2882B574005D0E6A /* addUserToChannelView.swift */,
+				40A766B528842C19002D6FA5 /* removeUsersFromChannelView.swift */,
+				4021DD08288AA7CA0060B18E /* EditChannelView.swift */,
+			);
+			path = ChannelViews;
+			sourceTree = "<group>";
+		};
 		4039A6602854A01D00C74377 /* authetication */ = {
 			isa = PBXGroup;
 			children = (
 				405FD37E282FEFD200361396 /* SignInView.swift */,
-				4056D63A2833D8E8000A0872 /* SingUpView.swift */,
+				4056D63A2833D8E8000A0872 /* SignUpView.swift */,
 			);
 			path = authetication;
 			sourceTree = "<group>";
@@ -325,6 +338,7 @@
 			children = (
 				40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */,
 				40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */,
+				4021DD0B288AAFDA0060B18E /* String + Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -469,7 +483,7 @@
 				40153F24286B18F70022DA46 /* ChannelListRow.swift in Sources */,
 				406DC3A2284C8B5E00A41964 /* SearchUserCell.swift in Sources */,
 				400E81A82868583A006A606E /* Channel.swift in Sources */,
-				4056D63B2833D8E8000A0872 /* SingUpView.swift in Sources */,
+				4056D63B2833D8E8000A0872 /* SignUpView.swift in Sources */,
 				40EF996828474B6F0062612E /* MessageField.swift in Sources */,
 				4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */,
 				40B0A48C2869BC290008374E /* AddUserCreateChannelRow.swift in Sources */,
@@ -477,11 +491,13 @@
 				409AC7642849E9A300BD00F9 /* SearchView.swift in Sources */,
 				40153F28286B32460022DA46 /* ChannelConversationView.swift in Sources */,
 				4076E0AD283FB54A00E21131 /* LoaderView.swift in Sources */,
+				4021DD0C288AAFDA0060B18E /* String + Extension.swift in Sources */,
 				40A766B628842C19002D6FA5 /* removeUsersFromChannelView.swift in Sources */,
 				405FD37F282FEFD200361396 /* SignInView.swift in Sources */,
 				40EF9960284747740062612E /* ConversationView.swift in Sources */,
 				4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */,
 				40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */,
+				4021DD09288AA7CA0060B18E /* EditChannelView.swift in Sources */,
 				4056D6412834024B000A0872 /* ChatListRow.swift in Sources */,
 				4024EB01283802130082E739 /* CustomAlert.swift in Sources */,
 				4024EB0928382B190082E739 /* SideMenuOptionView.swift in Sources */,
