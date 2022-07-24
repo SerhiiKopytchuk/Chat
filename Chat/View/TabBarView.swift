@@ -68,11 +68,14 @@ struct TabBarView: View {
 
     @ViewBuilder var chatsView: some View {
         VStack(alignment: .leading) {
-            Text("Chats")
-                .font(.title)
-                .bold()
-                .padding(.horizontal)
-                .padding(.top)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Serhii Kopytchuk")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.gray)
+                Text("Chats")
+                    .font(.title2.bold())
+            }
             ScrollView(.vertical, showsIndicators: false) {
                 ForEach(chattingViewModel.chats, id: \.id) { chat in
 
@@ -99,13 +102,13 @@ struct TabBarView: View {
                     .environmentObject(chattingViewModel)
                 }
             }
-            .padding()
         .frame(maxWidth: .infinity)
             .background {
                 Color("BG")
                     .ignoresSafeArea()
             }
         }
+        .padding()
         .background {
             Color("BG")
                 .ignoresSafeArea()
@@ -114,11 +117,14 @@ struct TabBarView: View {
 
     @ViewBuilder var channelsView: some View {
         VStack(alignment: .leading) {
-            Text("Channels")
-                .font(.title)
-                .bold()
-                .padding(.horizontal)
-                .padding(.top)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Serhii Kopytchuk")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.gray)
+                Text("Channels")
+                    .font(.title2.bold())
+            }
             ScrollView(.vertical, showsIndicators: false) {
                 ForEach(channelViewModel.channels, id: \.id) { channel in
                     ChannelListRow(channel: channel) {
@@ -136,13 +142,13 @@ struct TabBarView: View {
                     .environmentObject(channelViewModel)
                 }
             }
-            .padding()
             .frame(maxWidth: .infinity)
             .background {
                 Color("BG")
                     .ignoresSafeArea()
             }
         }
+        .padding()
         .background {
             Color("BG")
                 .ignoresSafeArea()

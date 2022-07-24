@@ -13,7 +13,7 @@ extension View {
     func toButtonLightStyle(size: CGFloat) -> some View {
         return self.foregroundColor(.gray)
             .frame(width: size, height: size)
-            .background(Color.white, in:  RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .background(Color.white, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             .shadow(color: .black.opacity(0.1), radius: 5, x: 5, y: 5 )
 
     }
