@@ -28,16 +28,18 @@ struct ChannelListRow: View {
 
     let rowTapped: () -> Void
 
+    let imageSize: CGFloat = 40
+
     var body: some View {
         HStack {
             if isFindChannelImage {
                 WebImage(url: imageUrl)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .cornerRadius(20)
+                    .frame(width: imageSize, height: imageSize)
+                    .cornerRadius(imageSize/2)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: imageSize/2)
                             .stroke(.black, lineWidth: 1)
                             .shadow(radius: 5)
                     )
@@ -49,7 +51,7 @@ struct ChannelListRow: View {
                     .scaledToFill()
                     .foregroundColor(.gray)
                     .clipped()
-                    .frame(width: 30, height: 30)
+                    .frame(width: imageSize, height: imageSize)
                     .clipShape(Circle())
                     .padding(5)
                     .opacity(isShowImage ? 1 : 0)
@@ -71,8 +73,12 @@ struct ChannelListRow: View {
                     .foregroundColor(.secondary)
             }
         }
+        .padding()
+        .background {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(.white)
+        }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 40)
         .onTapGesture {
             rowTapped()
         }

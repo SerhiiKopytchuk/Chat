@@ -25,6 +25,8 @@ struct ChatListRow: View {
     let formater = DateFormatter()
     let chat: Chat
 
+    let imageSize: CGFloat = 40
+
     let rowTapped: () -> Void
 
     var body: some View {
@@ -33,10 +35,10 @@ struct ChatListRow: View {
                 WebImage(url: imageUrl)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .cornerRadius(20)
+                    .frame(width: imageSize, height: imageSize)
+                    .cornerRadius(imageSize/2)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: imageSize/2)
                             .stroke(.black, lineWidth: 1)
                             .shadow(radius: 5)
                     )
@@ -47,7 +49,7 @@ struct ChatListRow: View {
                     .resizable()
                     .scaledToFill()
                     .clipped()
-                    .frame(width: 30, height: 30)
+                    .frame(width: imageSize, height: imageSize)
                     .clipShape(Circle())
                     .padding(5)
                     .opacity(isShowImage ? 1 : 0)
@@ -56,6 +58,9 @@ struct ChatListRow: View {
             VStack(alignment: .leading) {
                 HStack {
                     Text(person?.name ?? "")
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     Spacer()
                     Text("\(message.timestamp.formatted(.dateTime.hour().minute()))")
                         .font(.caption)
@@ -68,51 +73,55 @@ struct ChatListRow: View {
                     .foregroundColor(.secondary)
             }
         }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 40)
-            .onTapGesture {
-                rowTapped()
+        .padding()
+        .background {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(.white)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .onTapGesture {
+            rowTapped()
+        }
+        .contextMenu(menuItems: {
+            Button(role: .destructive) {
+                chattingViewModel.currentChat = self.chat
+                chattingViewModel.deleteChat()
+            } label: {
+                Label("remove chat", systemImage: "delete.left")
             }
-            .contextMenu(menuItems: {
-                Button(role: .destructive) {
-                    chattingViewModel.currentChat = self.chat
-                    chattingViewModel.deleteChat()
-                } label: {
-                    Label("remove chat", systemImage: "delete.left")
-                }
-            })
-            .onAppear {
-                DispatchQueue.main.async {
-                    self.viewModel.getUserByChat(chat: self.chat) { user in
-                        withAnimation {
-                            self.person = user
+        })
+        .onAppear {
+            DispatchQueue.main.async {
+                self.viewModel.getUserByChat(chat: self.chat) { user in
+                    withAnimation {
+                        self.person = user
 
-                            let ref = Storage.storage().reference(withPath: user.id )
-                            ref.downloadURL { url, err in
-                                if err != nil {
-                                    self.isFindUserImage = false
-                                    withAnimation(.easeInOut) {
-                                        self.isShowImage = true
-                                    }
-                                    return
-                                }
+                        let ref = Storage.storage().reference(withPath: user.id )
+                        ref.downloadURL { url, err in
+                            if err != nil {
+                                self.isFindUserImage = false
                                 withAnimation(.easeInOut) {
-                                    self.imageUrl = url
                                     self.isShowImage = true
                                 }
+                                return
+                            }
+                            withAnimation(.easeInOut) {
+                                self.imageUrl = url
+                                self.isShowImage = true
                             }
                         }
                     }
                 }
+            }
 
-                self.messageViewModel.currentChat = self.chat
+            self.messageViewModel.currentChat = self.chat
 
-                self.messageViewModel.getMessages { messages in
-                    withAnimation {
-                        self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
-                    }
+            self.messageViewModel.getMessages { messages in
+                withAnimation {
+                    self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
                 }
             }
+        }
     }
 
 }

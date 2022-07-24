@@ -29,7 +29,6 @@ struct TabBarView: View {
     }
 
     var body: some View {
-        ZStack {
             VStack(spacing: 0) {
                 TabView(selection: $currentTab) {
 
@@ -40,7 +39,10 @@ struct TabBarView: View {
                         .tag(Tab.channels)
                 }
                 CustomTabBar(currentTab: $currentTab)
-                    .background(.white)
+                    .background {
+                        Color("BG")
+                            .ignoresSafeArea()
+                    }
 
                 NavigationLink(isActive: $goToConversation) {
                     ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
@@ -58,7 +60,10 @@ struct TabBarView: View {
                 } label: { }
                     .hidden()
             }
-        }
+            .background {
+                Color("BG")
+                    .ignoresSafeArea()
+            }
     }
 
     @ViewBuilder var chatsView: some View {
@@ -68,7 +73,7 @@ struct TabBarView: View {
                 .bold()
                 .padding(.horizontal)
                 .padding(.top)
-            List {
+            ScrollView(.vertical, showsIndicators: false) {
                 ForEach(chattingViewModel.chats, id: \.id) { chat in
 
                     ChatListRow(chat: chat) {
@@ -94,6 +99,16 @@ struct TabBarView: View {
                     .environmentObject(chattingViewModel)
                 }
             }
+            .padding()
+        .frame(maxWidth: .infinity)
+            .background {
+                Color("BG")
+                    .ignoresSafeArea()
+            }
+        }
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
         }
     }
 
@@ -104,7 +119,7 @@ struct TabBarView: View {
                 .bold()
                 .padding(.horizontal)
                 .padding(.top)
-            List {
+            ScrollView(.vertical, showsIndicators: false) {
                 ForEach(channelViewModel.channels, id: \.id) { channel in
                     ChannelListRow(channel: channel) {
                         channelViewModel.getCurrentChannel(name: channel.name, ownerId: channel.ownerId) { channel in
@@ -121,6 +136,16 @@ struct TabBarView: View {
                     .environmentObject(channelViewModel)
                 }
             }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background {
+                Color("BG")
+                    .ignoresSafeArea()
+            }
+        }
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
         }
     }
 }
@@ -131,6 +156,9 @@ struct TabBarView_Previews: PreviewProvider {
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
+            .environmentObject(ChannelViewModel())
+            .environmentObject(ChannelMessagingViewModel())
+            .environmentObject(EditChannelViewModel())
     }
 }
 
