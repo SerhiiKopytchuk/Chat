@@ -25,7 +25,7 @@ struct ChatListRow: View {
     let formater = DateFormatter()
     let chat: Chat
 
-    let imageSize: CGFloat = 40
+    let imageSize: CGFloat = 50
 
     let rowTapped: () -> Void
 
@@ -37,13 +37,10 @@ struct ChatListRow: View {
                     .scaledToFill()
                     .frame(width: imageSize, height: imageSize)
                     .cornerRadius(imageSize/2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: imageSize/2)
-                            .stroke(.black, lineWidth: 1)
-                            .shadow(radius: 5)
-                    )
+                    .clipShape(Circle())
                     .padding(5)
                     .opacity(isShowImage ? 1 : 0)
+                    .addLightShadow()
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
@@ -53,6 +50,7 @@ struct ChatListRow: View {
                     .clipShape(Circle())
                     .padding(5)
                     .opacity(isShowImage ? 1 : 0)
+                    .addLightShadow()
             }
 
             VStack(alignment: .leading) {

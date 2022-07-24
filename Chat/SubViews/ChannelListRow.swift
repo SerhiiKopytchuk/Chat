@@ -28,7 +28,7 @@ struct ChannelListRow: View {
 
     let rowTapped: () -> Void
 
-    let imageSize: CGFloat = 40
+    let imageSize: CGFloat = 50
 
     var body: some View {
         HStack {
@@ -38,13 +38,10 @@ struct ChannelListRow: View {
                     .scaledToFill()
                     .frame(width: imageSize, height: imageSize)
                     .cornerRadius(imageSize/2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: imageSize/2)
-                            .stroke(.black, lineWidth: 1)
-                            .shadow(radius: 5)
-                    )
+                    .clipShape(Circle())
                     .padding(5)
                     .opacity(isShowImage ? 1 : 0)
+                    .addLightShadow()
             } else {
                 Image(systemName: "photo.circle.fill")
                     .resizable()
@@ -55,6 +52,7 @@ struct ChannelListRow: View {
                     .clipShape(Circle())
                     .padding(5)
                     .opacity(isShowImage ? 1 : 0)
+                    .addLightShadow()
             }
 
             VStack(alignment: .leading) {
