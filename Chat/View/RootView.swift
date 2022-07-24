@@ -42,7 +42,6 @@ struct RootView: View {
             .navigationBarBackButtonHidden(true)
         }
         .navigationViewStyle(.stack)
-        .accentColor(.orange)
         .onAppear {
             viewModel.signedIn = viewModel.isSignedIn
         }
