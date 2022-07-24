@@ -34,6 +34,7 @@ struct ChannelTitleRow: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 50, height: 50)
                             .cornerRadius(50)
+                            .addLightShadow()
                             .opacity(0)
                     } else {
                         WebImage(url: imageUrl)
@@ -41,6 +42,7 @@ struct ChannelTitleRow: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 50, height: 50)
                             .cornerRadius(50)
+                            .addLightShadow()
                             .matchedGeometryEffect(id: "channelPhoto", in: animationNamespace)
                     }
                 }
@@ -55,6 +57,7 @@ struct ChannelTitleRow: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 50, height: 50)
                     .cornerRadius(50)
+                    .addLightShadow()
             }
 
             VStack(alignment: .leading) {

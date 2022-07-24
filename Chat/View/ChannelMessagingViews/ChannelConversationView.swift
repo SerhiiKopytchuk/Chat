@@ -219,6 +219,7 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40)
+            .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 isGoToAddSubscribers.toggle()
@@ -232,6 +233,7 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40)
+            .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 editChannelViewModel.getChannelSubscribers()
@@ -245,6 +247,7 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40 )
+            .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 isGoToEditChannel.toggle()
@@ -257,6 +260,7 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40 )
+            .addLightShadow()
             .onTapGesture {
                 if currentUser.id == channelViewModel.currentChannel.ownerId {
                     showingAlertOwner.toggle()

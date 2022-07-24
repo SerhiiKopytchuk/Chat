@@ -58,6 +58,8 @@ struct ChannelListRow: View {
             VStack(alignment: .leading) {
                 HStack {
                     Text(channel.name )
+                        .font(.title3)
+                        .fontWeight(.semibold)
                     Spacer()
                     RollingText(font: .caption,
                                 weight: .light,

@@ -42,10 +42,14 @@ struct AddUserCreateChannelRow: View {
             }
             VStack(alignment: .leading) {
                 Text(user)
-                    .font(.title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+
                 Text(userGmail)
                     .font(.caption)
                     .foregroundColor(.gray)
+                    .lineLimit(1)
             }
             Spacer()
             addOrRemoveUserChannel

@@ -59,7 +59,6 @@ struct AddUserToChannelView: View {
 
     var applyButton: some View {
         Button {
-
             editChannelViewModel.subscribeUsersToChannel(usersId: self.subscribersId)
             channelViewModel.currentChannel = editChannelViewModel.currentChannel
             editChannelViewModel.usersToAddToChannel = []
@@ -68,12 +67,7 @@ struct AddUserToChannelView: View {
             presentationMode.wrappedValue.dismiss()
         } label: {
             Text("apply")
-                .frame(maxWidth: .infinity)
-                .padding()
-                .foregroundColor(.white)
-                .background( .orange)
-                .cornerRadius(10)
-                .shadow(color: .orange, radius: 3)
+                .toButtonGradientStyle()
         }
     }
 

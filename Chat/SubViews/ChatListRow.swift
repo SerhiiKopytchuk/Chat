@@ -56,6 +56,7 @@ struct ChatListRow: View {
             VStack(alignment: .leading) {
                 HStack {
                     Text(person?.name ?? "")
+                        .font(.title3)
                         .fontWeight(.semibold)
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)

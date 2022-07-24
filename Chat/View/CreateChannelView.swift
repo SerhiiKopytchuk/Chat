@@ -145,13 +145,9 @@ struct CreateChannelView: View {
             }
         } label: {
             Text("Create channel")
-                .frame(maxWidth: .infinity)
-                .padding()
-                .foregroundColor(.white)
-                .background(name.count < 4 ? .gray : .orange)
-                .cornerRadius(10)
-                .shadow(color: name.count < 4 ? .gray : .orange, radius: 3)
+                .toButtonGradientStyle()
         }
+        .opacity(name.count > 3 ? 1 : 0.6)
         .disabled(name.count > 3 ? false : true)
 
     }

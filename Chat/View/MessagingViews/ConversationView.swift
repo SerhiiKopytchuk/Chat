@@ -174,6 +174,7 @@ struct ConversationView: View {
                     .padding()
                     .background(.white)
                     .cornerRadius(20)
+                    .addLightShadow()
             }
         }.frame(maxHeight: .infinity)
 
