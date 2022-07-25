@@ -47,7 +47,7 @@ struct AddUserToChannelView: View {
     @ViewBuilder var usersList: some View {
         List {
             ForEach(editChannelViewModel.usersToAddToChannel, id: \.id) { user in
-                AddUserCreateChannelRow(user: user.name,
+                AddUserToChannelRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id,
                                         subscribersId: $subscribersId

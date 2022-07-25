@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseStorage
 import SDWebImageSwiftUI
 
-struct AddUserCreateChannelRow: View {
+struct AddUserToChannelRow: View {
     var user: String
     var userGmail: String
     var id: String
@@ -113,7 +113,7 @@ struct AddUserCreateChannelRow: View {
 
 struct AddUserCreateChannelRow_Previews: PreviewProvider {
     static var previews: some View {
-        AddUserCreateChannelRow(user: "Koch",
+        AddUserToChannelRow(user: "Koch",
                                 userGmail: "koch@gmail.com",
                                 id: "someId",
                                 subscribersId: .constant([]))
