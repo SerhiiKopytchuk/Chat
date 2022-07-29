@@ -70,7 +70,6 @@ struct ChannelTitleRow: View {
                     .foregroundColor(.gray)
                     .lineLimit(isExpandedDetails ? 2 : 1)
 
-
             }
             .onTapGesture {
                 withAnimation(.easeInOut) {

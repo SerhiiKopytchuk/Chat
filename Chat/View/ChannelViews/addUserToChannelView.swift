@@ -14,38 +14,68 @@ struct AddUserToChannelView: View {
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject var userViewModel: UserViewModel
 
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Environment(\.self) var presentationMode
 
     @State var subscribersId: [String] = []
 
     var body: some View {
         VStack {
-            HStack {
-                TextField("Add users", text: $searchUserText)
-                    .onChange(of: searchUserText, perform: { newText in
-                        editChannelViewModel.searchText = newText
-                        editChannelViewModel.getUsersToAddToChannel()
-                })
-                .textFieldStyle(.roundedBorder)
+            header
 
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                    .frame(width: 50, height: 50)
-
-            }
-            .padding()
+            addUsersTextField
 
             usersList
 
             applyButton
                 .padding()
         }
-        .navigationTitle("Add users to channel")
-        .navigationBarTitleDisplayMode(.large)
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
+        }
+        .navigationBarHidden(true)
+    }
+
+    @ViewBuilder var header: some View {
+        HStack(spacing: 15) {
+            Button {
+                presentationMode.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward.circle.fill")
+                    .toButtonLightStyle(size: 40)
+            }
+
+            Text("Add users")
+                .font(.title.bold())
+                .opacity(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal)
+    }
+
+    @ViewBuilder var addUsersTextField: some View {
+        Label {
+            TextField("Search users", text: $searchUserText)
+                .padding(.leading, 10)
+                .onChange(of: searchUserText, perform: { newText in
+                    editChannelViewModel.searchText = newText
+                    editChannelViewModel.getUsersToAddToChannel()
+            })
+        } icon: {
+            Image(systemName: "magnifyingglass")
+        }
+        .padding(.vertical, 20)
+        .padding(.horizontal, 15)
+        .background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.white)
+        }
+        .padding(.top, 25)
+        .padding()
     }
 
     @ViewBuilder var usersList: some View {
-        List {
+        ScrollView(.vertical, showsIndicators: false) {
             ForEach(editChannelViewModel.usersToAddToChannel, id: \.id) { user in
                 AddUserToChannelRow(user: user.name,
                                         userGmail: user.gmail,
@@ -55,6 +85,7 @@ struct AddUserToChannelView: View {
                 .environmentObject(channelViewModel)
             }
         }
+        .padding(.horizontal)
     }
 
     var applyButton: some View {
@@ -64,7 +95,7 @@ struct AddUserToChannelView: View {
             editChannelViewModel.usersToAddToChannel = []
             self.subscribersId = []
             self.searchUserText = ""
-            presentationMode.wrappedValue.dismiss()
+            presentationMode.dismiss()
         } label: {
             Text("apply")
                 .toButtonGradientStyle()

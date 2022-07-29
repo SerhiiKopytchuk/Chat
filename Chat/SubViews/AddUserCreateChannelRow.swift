@@ -27,17 +27,14 @@ struct AddUserToChannelRow: View {
                     .scaledToFill()
                     .frame(width: 40, height: 40)
                     .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.black, lineWidth: 1)
-                            .shadow(radius: 5)
-                    )
+                    .addLightShadow()
                     .padding()
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
+                    .addLightShadow()
                     .padding()
             }
             VStack(alignment: .leading) {
@@ -72,6 +69,10 @@ struct AddUserToChannelRow: View {
                     }
                 }
         }
+        .background {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(.white)
+        }
         .onAppear {
             let ref = Storage.storage().reference(withPath: self.id )
             ref.downloadURL { url, err in
@@ -99,14 +100,16 @@ struct AddUserToChannelRow: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.blue.opacity(0.7))
+                        .addLightShadow()
                 }
             } else {
                 Image(systemName: "plus")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 30)
-                    .foregroundColor(.orange)
+                    .foregroundColor(.blue.opacity(0.7))
+                    .addLightShadow()
             }
     }
 }
