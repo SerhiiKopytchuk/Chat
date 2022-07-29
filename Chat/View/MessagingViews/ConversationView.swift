@@ -49,12 +49,12 @@ struct ConversationView: View {
 
                     if isFindChat {
                         messagesScrollView
+                        MessageField(messagingViewModel: messagingViewModel)
                     } else {
                         createChatButton
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                MessageField(messagingViewModel: messagingViewModel)
             }
             .background {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -204,7 +204,9 @@ struct ConversationView: View {
                 chattingViewModel.createChat { chat in
                     messagingViewModel.currentChat = chat
                     messagingViewModel.getMessages(competition: { _ in })
-                    isFindChat = true
+                    withAnimation {
+                        isFindChat = true
+                    }
                 }
             } label: {
                 Text("Start Chat")

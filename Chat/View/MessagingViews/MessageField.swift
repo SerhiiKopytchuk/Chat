@@ -26,14 +26,14 @@ struct MessageField: View {
                     .foregroundColor(.white)
                     .padding(10)
                     .background(Color.gray)
-                    .cornerRadius(50)
+                    .cornerRadius(15)
             }
 
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color("BG"))
-        .cornerRadius(50)
+        .cornerRadius(15)
         .padding()
     }
 }
