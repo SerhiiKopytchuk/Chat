@@ -13,7 +13,7 @@ struct ChannelTitleRow: View {
     var channel: Channel
 
     let animationNamespace: Namespace.ID
-    @Binding var isExpandedProfile: Bool
+    @Binding var isExpandedProfileImage: Bool
     @Binding var isExpandedDetails: Bool
     @Binding var profileImage: WebImage
 
@@ -28,7 +28,7 @@ struct ChannelTitleRow: View {
         HStack(spacing: 20) {
             if isFindUserImage {
                 VStack {
-                    if isExpandedProfile {
+                    if isExpandedProfileImage {
                         WebImage(url: imageUrl)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -48,7 +48,7 @@ struct ChannelTitleRow: View {
                 }
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        isExpandedProfile.toggle()
+                        isExpandedProfileImage.toggle()
                     }
                 }
             } else {
@@ -63,10 +63,13 @@ struct ChannelTitleRow: View {
             VStack(alignment: .leading) {
                 Text(channel.name)
                     .font(.title).bold()
+                    .lineLimit(isExpandedDetails ? 2 : 1)
 
                 Text(channel.description)
                     .font(.caption)
                     .foregroundColor(.gray)
+                    .lineLimit(isExpandedDetails ? 2 : 1)
+
 
             }
             .onTapGesture {

@@ -46,7 +46,7 @@ struct ChannelConversationView: View {
 
                     ChannelTitleRow(channel: channelViewModel.currentChannel,
                                     animationNamespace: animation,
-                                    isExpandedProfile: $isExpandedProfile,
+                                    isExpandedProfileImage: $isExpandedProfile,
                                     isExpandedDetails: $isExpandedDetails,
                                     profileImage: $profileImage,
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
@@ -332,6 +332,7 @@ struct ChannelConversationView: View {
                 }
             }
         }
+        .padding(.bottom, isOwner() ? 0 : 15)
         .padding(.horizontal)
         .ignoresSafeArea()
     }
