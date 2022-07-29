@@ -21,6 +21,8 @@ struct ConversationView: View {
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
 
+    @Environment(\.self) var env
+
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
@@ -29,6 +31,7 @@ struct ConversationView: View {
     var body: some View {
         ZStack {
             VStack {
+                    header
                 VStack {
                     TitleRow(user: secondUser,
                              animationNamespace: animation,
@@ -36,7 +39,13 @@ struct ConversationView: View {
                              isExpandedProfile: $isExpandedProfile,
                              profileImage: $profileImage
                     )
-                        .environmentObject(chattingViewModel)
+                    .background {
+                        Color("BG")
+                    }
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.vertical, 5)
+                    .environmentObject(chattingViewModel)
 
                     if isFindChat {
                         messagesScrollView
@@ -45,8 +54,18 @@ struct ConversationView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                .background(Color("Peach"))
                 MessageField(messagingViewModel: messagingViewModel)
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        LinearGradient(colors: [
+                            Color("Gradient1"),
+                            Color("Gradient2"),
+                            Color("Gradient3")
+                        ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    )
+                .ignoresSafeArea()
             }
             .navigationBarBackButtonHidden(loadExpandedContent)
         }
@@ -62,9 +81,27 @@ struct ConversationView: View {
                 expandedPhoto(image: profileImage)
             }
         }
+        .navigationBarHidden(true)
     }
 
     // MARK: - viewBuilders
+
+    @ViewBuilder var header: some View {
+        HStack(spacing: 15) {
+            Button {
+                env.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward.circle.fill")
+                    .toButtonLightStyle(size: 40)
+            }
+
+            Text("Chat")
+                .font(.title.bold())
+                .opacity(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal)
+    }
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
         VStack {
@@ -146,8 +183,8 @@ struct ConversationView: View {
                     }
             }
             .padding(.top, 10)
-            .background(.white)
-            .cornerRadius(30, corners: [.topLeft, .topRight])
+            .background(Color("BG"))
+            .cornerRadius(30)
             .onAppear {
                     proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }
@@ -157,6 +194,7 @@ struct ConversationView: View {
                 }
             }
         }
+        .padding(.horizontal)
     }
 
     @ViewBuilder var createChatButton: some View {
