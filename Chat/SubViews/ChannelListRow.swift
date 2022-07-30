@@ -32,46 +32,24 @@ struct ChannelListRow: View {
 
     var body: some View {
         HStack {
-            if isFindChannelImage {
-                WebImage(url: imageUrl)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: imageSize, height: imageSize)
-                    .cornerRadius(imageSize/2)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
-            } else {
-                Image(systemName: "photo.circle.fill")
-                    .resizable()
-                    .scaledToFill()
-                    .foregroundColor(.gray)
-                    .clipped()
-                    .frame(width: imageSize, height: imageSize)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
-            }
+            channelImage
 
             VStack(alignment: .leading) {
-                HStack {
-                    Text(channel.name )
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                    Spacer()
-                    RollingText(font: .caption,
-                                weight: .light,
-                                value: $countOfMessages)
-                        .foregroundColor(.secondary)
-                }
+                Text(channel.name )
+                    .font(.title3)
+                    .fontWeight(.semibold)
 
                 Text(channel.description)
                     .font(.caption)
                     .italic()
                     .foregroundColor(.secondary)
             }
+            Spacer()
+
+            RollingText(font: .caption,
+                        weight: .light,
+                        value: $countOfMessages)
+            .foregroundColor(.secondary)
         }
         .padding()
         .background {
@@ -123,6 +101,31 @@ struct ChannelListRow: View {
             channelMessagingViewModel.getMessagesCount { count in
                  self.countOfMessages = count
             }
+        }
+    }
+
+    @ViewBuilder var channelImage: some View {
+        if isFindChannelImage {
+            WebImage(url: imageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
+                .clipShape(Circle())
+                .padding(5)
+                .opacity(isShowImage ? 1 : 0)
+                .addLightShadow()
+        } else {
+            Image(systemName: "photo.circle.fill")
+                .resizable()
+                .scaledToFill()
+                .foregroundColor(.gray)
+                .clipped()
+                .frame(width: imageSize, height: imageSize)
+                .clipShape(Circle())
+                .padding(5)
+                .opacity(isShowImage ? 1 : 0)
+                .addLightShadow()
         }
     }
 }
