@@ -25,10 +25,11 @@ struct EditChannelView: View {
 
     var imageSize: CGFloat = 50
 
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Environment(\.self) var presentationMode
 
     var body: some View {
         VStack {
+            header
             HStack {
                 Button {
                     isShowingImagePicker.toggle()
@@ -41,11 +42,7 @@ struct EditChannelView: View {
                                     .scaledToFill()
                                     .frame(width: imageSize, height: imageSize)
                                     .cornerRadius(imageSize/2)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: CGFloat(imageSize/2))
-                                            .stroke(.black, lineWidth: 3)
-                                            .shadow(radius: 10)
-                                    )
+                                    .addLightShadow()
                             }
                         } else {
                             ZStack {
@@ -54,11 +51,7 @@ struct EditChannelView: View {
                                     .scaledToFill()
                                     .frame(width: imageSize, height: imageSize)
                                     .cornerRadius(imageSize/2)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: imageSize/2)
-                                            .stroke(.black, lineWidth: 3)
-                                            .shadow(radius: 10)
-                                    )
+                                    .addLightShadow()
                             }
                         }
                     } else {
@@ -68,11 +61,7 @@ struct EditChannelView: View {
                                 .scaledToFill()
                                 .frame(width: imageSize, height: imageSize)
                                 .cornerRadius(imageSize/2)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: CGFloat(imageSize/2))
-                                        .stroke(.black, lineWidth: 3)
-                                        .shadow(radius: 10)
-                                )
+                                .addLightShadow()
                         } else {
                             emptyImage
                         }
@@ -91,16 +80,34 @@ struct EditChannelView: View {
                         }
                     }
                 }
+
                 TextField("Enter channel name", text: $channelName)
-                        .textFieldStyle(.roundedBorder)
-                        .padding()
-        }
+                    .padding(.vertical, 20)
+                    .padding(.horizontal, 15)
+                    .background {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(.white)
+                    }
+                    .padding()
+            }
 
             TextField("Type channel description", text: $channelDescription)
-                .textFieldStyle(.automatic)
+
+                .padding(.vertical, 20)
+                .padding(.horizontal, 15)
+                .background {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(.white)
+                }
+                .padding(.top, 15)
                 .padding()
 
             Spacer()
+        }
+        .navigationBarHidden(true)
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
         }
         .onChange(of: channelImage ?? UIImage(), perform: { newImage in
             editChannelViewModel.saveImage(image: newImage)
@@ -108,32 +115,49 @@ struct EditChannelView: View {
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $channelImage)
         }
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button {
-                    channelName = channelName.trim()
-                    channelDescription = channelDescription.trim()
-                    editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
-
-                    channelViewModel.currentChannel = editChannelViewModel.currentChannel
-                    presentationMode.wrappedValue.dismiss()
-                } label: {
-                    Image(systemName: "checkmark")
-                        .padding()
-                }
-            }
-        }
     }
-        @ViewBuilder var emptyImage: some View {
 
-                Image(systemName: "photo.circle.fill")
-                    .resizable()
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(.black.opacity(0.70))
-                    .background(.white)
-                    .cornerRadius(25)
+    @ViewBuilder var header: some View {
+        HStack(spacing: 15) {
+            Button {
+                presentationMode.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward.circle.fill")
+                    .toButtonLightStyle(size: 40)
+            }
 
+            Text("Edit channel")
+                .lineLimit(1)
+                .font(.title.bold())
+                .opacity(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button {
+                channelName = channelName.trim()
+                channelDescription = channelDescription.trim()
+                editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
+
+                channelViewModel.currentChannel = editChannelViewModel.currentChannel
+                channelViewModel.getChannels(fromUpdate: true)
+                presentationMode.dismiss()
+            } label: {
+                Image(systemName: "checkmark")
+                    .toButtonLightStyle(size: 40)
+            }
+            .frame(alignment: .trailing)
         }
+        .padding(.horizontal)
+    }
+
+    @ViewBuilder var emptyImage: some View {
+        Image(systemName: "photo.circle.fill")
+            .resizable()
+            .frame(width: 50, height: 50)
+            .foregroundColor(.black.opacity(0.70))
+            .background(.white)
+            .cornerRadius(25)
+            .addLightShadow()
+    }
 }
 
 struct EditChannelView_Previews: PreviewProvider {

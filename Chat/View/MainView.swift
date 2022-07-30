@@ -51,6 +51,10 @@ struct MainView: View {
                 .environmentObject(editChannelViewModel)
 
         }
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
+        }
         .onAppear {
             isShowingSideMenu = false
             chattingViewModel.user = viewModel.currentUser
@@ -67,5 +71,8 @@ struct MainView_Previews: PreviewProvider {
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
+            .environmentObject(ChannelViewModel())
+            .environmentObject(ChannelMessagingViewModel())
+            .environmentObject(EditChannelViewModel())
     }
 }

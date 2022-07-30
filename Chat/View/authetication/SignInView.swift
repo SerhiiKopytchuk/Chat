@@ -26,27 +26,6 @@ struct SignInView: View {
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
-    private func updateButton() {
-        let time: Double = 0.3
-        // check if enable button
-
-        withAnimation(.easeInOut(duration: time)) {
-            if email.isEmpty || password.isEmpty {
-                isButtonDisabled = true
-            } else {
-                if password.count >= 8 {
-                    if email.contains("@gmail.com") || email.contains("@email.com") {
-                        isButtonDisabled = false
-                    } else {
-                        isButtonDisabled = true
-                    }
-                } else {
-                    isButtonDisabled = true
-                }
-            }
-        }
-    }
-
     var body: some View {
             ZStack {
                 VStack(spacing: 30) {
@@ -55,35 +34,13 @@ struct SignInView: View {
                         .fontWeight(.bold)
                         .padding(.leading, 10)
                         .padding()
-                        .foregroundColor(.orange)
+                        .foregroundColor(.black.opacity(0.6))
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     inputFields
                     VStack {
-                        Button("Sign in") {
-                            // how to automaticly change prop
-                            if isButtonDisabled {
-                                withAnimation(.easeInOut) {
-                                    alertText = "Fill all fields properly!"
-                                    isShowAlert.toggle()
-                                }
-                            } else {
-                                viewModel.signIn(email: self.email, password: self.password) { user in
-                                    chattingViewModel.user = user
-                                    chattingViewModel.getChats()
-                                    channelViewModel.currentUser = user
-                                    channelViewModel.getChannels()
-                                }
-                            }
-                        }
-                        .foregroundColor(.white)
-                        .padding(.leading, 80)
-                        .padding(.trailing, 80)
-                        .padding()
-                        .background(isButtonDisabled ? Color.gray : Color.orange)
-                        .cornerRadius(30)
 
-                        .shadow(color: isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
+                        signInButton
 
                         Text("OR")
                             .padding(.top, 50)
@@ -106,6 +63,11 @@ struct SignInView: View {
                     Spacer()
 
                 }
+                .background {
+                    Color("BG")
+                        .ignoresSafeArea()
+                }
+
                 if isShowAlert || viewModel.showAlert {
                     GeometryReader { geometry in
                         if viewModel.showAlert {
@@ -185,13 +147,40 @@ struct SignInView: View {
             .padding()
             .padding(.horizontal, 20)
             .overlay(
-                RoundedRectangle(cornerRadius: 25)
+                RoundedRectangle(cornerRadius: 12)
                     .stroke(Color.gray, lineWidth: 1)
                     .padding(.leading, 10)
                     .padding(.trailing, 20)
                     .padding(5)
             )
         }
+    }
+
+    @ViewBuilder var signInButton: some View {
+        Button {
+            // how to automatically change prop
+            if isButtonDisabled {
+                withAnimation(.easeInOut) {
+                    alertText = "Fill all fields properly!"
+                    isShowAlert.toggle()
+                }
+            } else {
+                viewModel.signIn(email: self.email, password: self.password) { user in
+                    chattingViewModel.user = user
+                    chattingViewModel.getChats()
+                    channelViewModel.currentUser = user
+                    channelViewModel.getChannels()
+                }
+            }
+        } label: {
+            Text("Sign in")
+                .toButtonGradientStyle()
+                .padding(.leading, 80)
+                .padding(.trailing, 80)
+                .opacity(isButtonDisabled ? 0.6 : 1 )
+
+        }
+
     }
 
     var googleButton: some View {
@@ -230,6 +219,27 @@ struct SignInView: View {
             Image("google")
                 .resizable()
                 .frame(width: 32, height: 32)
+        }
+    }
+
+    private func updateButton() {
+        let time: Double = 0.3
+        // check if enable button
+
+        withAnimation(.easeInOut(duration: time)) {
+            if email.isEmpty || password.isEmpty {
+                isButtonDisabled = true
+            } else {
+                if password.count >= 8 {
+                    if email.contains("@gmail.com") || email.contains("@email.com") {
+                        isButtonDisabled = false
+                    } else {
+                        isButtonDisabled = true
+                    }
+                } else {
+                    isButtonDisabled = true
+                }
+            }
         }
     }
 

@@ -19,16 +19,38 @@ struct RemoveUsersFromChannelView: View {
 
     var body: some View {
         VStack {
+            header
 
             usersList
                 .padding()
 
-        }.navigationTitle("Remove users from channel")
-            .navigationBarTitleDisplayMode(.large)
+        }
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
+        }
+        .navigationBarHidden(true)
+    }
+
+    @ViewBuilder var header: some View {
+        HStack(spacing: 15) {
+            Button {
+                presentationMode.wrappedValue.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward.circle.fill")
+                    .toButtonLightStyle(size: 40)
+            }
+
+            Text("Remove users")
+                .font(.title.bold())
+                .opacity(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal)
     }
 
     @ViewBuilder var usersList: some View {
-        List {
+        ScrollView(.vertical, showsIndicators: false) {
             ForEach(editChannelViewModel.channelSubscribers, id: \.id) { user in
                 RemoveUsersFromChannelListRow(user: user.name,
                                         userGmail: user.gmail,
@@ -38,6 +60,7 @@ struct RemoveUsersFromChannelView: View {
                 .environmentObject(editChannelViewModel)
             }
         }
+        .padding(.horizontal)
     }
 }
 

@@ -31,34 +31,8 @@ struct SideMenuHeaderView: View {
             }
 
             VStack(alignment: .leading) {
-                if isFindUserImage {
-                    WebImage(url: myImageUrl)
-                        .resizable()
-                        .scaledToFill()
-                        .clipped()
-                        .frame(width: 65, height: 65)
-                        .clipShape(Circle())
-                        .padding(.bottom, 16)
-                        .onAppear {
-                            ref.downloadURL { url, err in
-                                if err != nil {
-                                    self.isFindUserImage = false
-                                    return
-                                }
-                                withAnimation(.easeInOut) {
-                                    self.myImageUrl = url
-                                }
-                            }
-                        }
-                } else {
-                    Image(systemName: "person.crop.circle")
-                        .resizable()
-                        .scaledToFill()
-                        .clipped()
-                        .frame(width: 65, height: 65)
-                        .clipShape(Circle())
-                        .padding(.bottom, 16)
-                }
+
+                userImage
 
                 Text(user.name)
                     .font(.system(size: 24, weight: .semibold))
@@ -86,6 +60,39 @@ struct SideMenuHeaderView: View {
                     self.user = user
                 }
             }
+        }
+    }
+
+    @ViewBuilder var userImage: some View {
+        if isFindUserImage {
+            WebImage(url: myImageUrl)
+                .resizable()
+                .scaledToFill()
+                .clipped()
+                .frame(width: 65, height: 65)
+                .clipShape(Circle())
+                .padding(.bottom, 16)
+                .addLightShadow()
+                .onAppear {
+                    ref.downloadURL { url, err in
+                        if err != nil {
+                            self.isFindUserImage = false
+                            return
+                        }
+                        withAnimation(.easeInOut) {
+                            self.myImageUrl = url
+                        }
+                    }
+                }
+        } else {
+            Image(systemName: "person.crop.circle")
+                .resizable()
+                .scaledToFill()
+                .clipped()
+                .frame(width: 65, height: 65)
+                .clipShape(Circle())
+                .padding(.bottom, 16)
+                .addLightShadow()
         }
     }
 }

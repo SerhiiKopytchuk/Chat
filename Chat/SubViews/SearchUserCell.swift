@@ -20,33 +20,26 @@ struct SearchUserCell: View {
 
     var body: some View {
             HStack {
-                if isFindUserImage {
-                    WebImage(url: imageUrl)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 40, height: 40)
-                        .cornerRadius(20)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(.black, lineWidth: 1)
-                                .shadow(radius: 5)
-                        )
-                        .padding()
-                } else {
-                    Image(systemName: "person.crop.circle")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 30, height: 30)
-                        .padding()
-                }
+                userImage
                 VStack(alignment: .leading) {
                     Text(user)
                         .font(.title)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
                     Text(userGmail)
                         .font(.caption)
                         .foregroundColor(.gray)
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
                 }
             }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                    .fill(.white)
+            }
+
             .onTapGesture {
                 rowTapped()
             }
@@ -62,6 +55,25 @@ struct SearchUserCell: View {
                     }
                 }
             }
+    }
+
+    @ViewBuilder var userImage: some View {
+        if isFindUserImage {
+            WebImage(url: imageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 40, height: 40)
+                .cornerRadius(20)
+                .addLightShadow()
+                .padding()
+        } else {
+            Image(systemName: "person.crop.circle")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 40, height: 40)
+                .padding()
+                .addLightShadow()
+        }
     }
 }
 

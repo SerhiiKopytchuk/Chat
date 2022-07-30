@@ -29,6 +29,7 @@ class ChannelViewModel: ObservableObject {
                                                      messages: [],
                                                      lastActivityTimestamp: Date(),
                                                      isPrivate: true)
+    @Published var channelType: ChannelType = .publicType
 
     @Published var channelSubscribers: [User] = []
 
@@ -129,17 +130,13 @@ class ChannelViewModel: ObservableObject {
 
     }
 
-    func createChannel(subscribersId: [String],
-                       name: String,
+    func createChannel(name: String,
                        description: String,
-                       isPrivate: Bool,
                        competition: @escaping (Channel) -> Void) {
         do {
 
-            try creatingChannel(subscribersId: subscribersId,
-                                name: name,
+            try creatingChannel(name: name,
                                 description: description,
-                                isPrivate: isPrivate,
                                 competition: { channel in
                 competition(channel)
             })
@@ -149,10 +146,8 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    fileprivate func creatingChannel(subscribersId: [String],
-                                     name: String,
+    fileprivate func creatingChannel(name: String,
                                      description: String,
-                                     isPrivate: Bool,
                                      competition: @escaping (Channel) -> Void) throws {
 
         let newChannel = Channel(id: "\(UUID())",
@@ -160,16 +155,16 @@ class ChannelViewModel: ObservableObject {
                                  description: description,
                                  ownerId: currentUser.id,
                                  ownerName: currentUser.name,
-                                 subscribersId: subscribersId,
+                                 subscribersId: [],
                                  messages: [],
                                  lastActivityTimestamp: Date(),
-                                 isPrivate: isPrivate)
+                                 isPrivate: channelType == ChannelType.privateType)
 
         try dataBase.collection("channels").document().setData(from: newChannel)
 
         getCurrentChannel(name: name, ownerId: currentUser.id) { channel in
             self.currentChannel = channel
-            self.addChannelsIdToUsers(usersId: subscribersId)
+            self.addChannelIdToOwner()
             competition(channel)
         } failure: { _ in
             print("failure")
@@ -177,13 +172,8 @@ class ChannelViewModel: ObservableObject {
 
     }
 
-    fileprivate func addChannelsIdToUsers(usersId: [String]) {
+    fileprivate func addChannelIdToOwner() {
         DispatchQueue.main.async {
-
-            for userId in self.currentChannel.subscribersId ?? [] {
-                self.dataBase.collection("users").document(userId)
-                    .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
-            }
 
             self.dataBase.collection("users").document(self.owner.id)
                 .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
