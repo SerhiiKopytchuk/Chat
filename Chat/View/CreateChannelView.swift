@@ -47,22 +47,11 @@ struct CreateChannelView: View {
 
             VStack {
 
-                HStack(spacing: 15) {
-                    Button {
-                        env.dismiss()
-                    } label: {
-                        Image(systemName: "arrow.backward.circle.fill")
-                            .toButtonLightStyle(size: 40)
-                    }
-
-                    Text("Create channel")
-                        .font(.title.bold())
-                        .opacity(0.7)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding()
+                HeaderWithBackButton(environment: _env, text: "Create channel")
+                    .padding()
 
                 ZStack(alignment: .top) {
+
                     Color("BG")
                         .cornerRadius(30, corners: [.topLeft, .topRight])
                         .offset(x: 0, y: 50)

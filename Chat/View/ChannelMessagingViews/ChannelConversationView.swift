@@ -42,7 +42,9 @@ struct ChannelConversationView: View {
         ZStack {
             VStack {
                 VStack {
-                    header
+
+                    HeaderWithBackButton(environment: _env, text: "Channel")
+                        .padding()
 
                     ChannelTitleRow(channel: channelViewModel.currentChannel,
                                     animationNamespace: animation,
@@ -132,23 +134,6 @@ struct ChannelConversationView: View {
     }
 
     // MARK: - viewBuilders
-
-    @ViewBuilder var header: some View {
-        HStack(spacing: 15) {
-            Button {
-                env.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward.circle.fill")
-                    .toButtonLightStyle(size: 40)
-            }
-
-            Text("Channel")
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal)
-    }
 
     @ViewBuilder var navigationLinks: some View {
         NavigationLink(isActive: $isGoToAddSubscribers, destination: {

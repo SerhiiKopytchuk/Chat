@@ -35,7 +35,8 @@ struct SearchView: View {
     var body: some View {
         VStack {
 
-            header
+            HeaderWithBackButton(environment: _env, text: "Search")
+                .padding()
 
             VStack {
 
@@ -60,23 +61,6 @@ struct SearchView: View {
     }
 
     // MARK: - viewBuilders
-
-    @ViewBuilder var header: some View {
-        HStack(spacing: 15) {
-            Button {
-                env.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward.circle.fill")
-                    .toButtonLightStyle(size: 40)
-            }
-
-            Text("Search")
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding()
-    }
 
     @ViewBuilder var searchingUsers: some View {
         Label {

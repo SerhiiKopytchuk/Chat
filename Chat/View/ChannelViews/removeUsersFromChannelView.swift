@@ -13,13 +13,15 @@ struct RemoveUsersFromChannelView: View {
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject var userViewModel: UserViewModel
 
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Environment(\.self) var env
 
     @State var subscribersId: [String] = []
 
     var body: some View {
         VStack {
-            header
+
+            HeaderWithBackButton(environment: _env, text: "Remove users")
+                .padding()
 
             usersList
                 .padding()
@@ -30,23 +32,6 @@ struct RemoveUsersFromChannelView: View {
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)
-    }
-
-    @ViewBuilder var header: some View {
-        HStack(spacing: 15) {
-            Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward.circle.fill")
-                    .toButtonLightStyle(size: 40)
-            }
-
-            Text("Remove users")
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal)
     }
 
     @ViewBuilder var usersList: some View {

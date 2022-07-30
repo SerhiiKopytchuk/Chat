@@ -31,7 +31,9 @@ struct ConversationView: View {
     var body: some View {
         ZStack {
             VStack {
-                    header
+                HeaderWithBackButton(environment: _env, text: "Chat")
+                    .padding()
+
                 VStack {
                     TitleRow(user: secondUser,
                              animationNamespace: animation,
@@ -85,23 +87,6 @@ struct ConversationView: View {
     }
 
     // MARK: - viewBuilders
-
-    @ViewBuilder var header: some View {
-        HStack(spacing: 15) {
-            Button {
-                env.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward.circle.fill")
-                    .toButtonLightStyle(size: 40)
-            }
-
-            Text("Chat")
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal)
-    }
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
         VStack {
