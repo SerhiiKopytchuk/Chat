@@ -18,15 +18,16 @@ struct CustomAlert: View {
     var body: some View {
         VStack {
             Text("Error")
-
-                .font(.system(.title, design: .rounded))
+                .font(.title)
+                .fontWeight(.semibold)
                 .padding()
                 .foregroundColor(.white)
             Text(text)
                 .font(.body)
-                .padding()
                 .foregroundColor(.white)
                 .frame(alignment: .center)
+                .padding()
+                .padding(.horizontal, 10)
             Button {
                 withAnimation {
                     show = false
@@ -34,17 +35,18 @@ struct CustomAlert: View {
                 }
             } label: {
                 Text("Close")
+                    .padding()
+                    .padding(.horizontal, 50)
+                    .background(.white)
+                    .cornerRadius(15)
             }
-            .padding()
-            .padding(.horizontal, 60)
-            .background(.white)
-            .cornerRadius(20)
+            .buttonStyle(.borderless)
 
         }
         .padding()
         .padding(.horizontal, 40)
-        .background(.brown)
-        .cornerRadius(30)
+        .background(.gray)
+        .cornerRadius(15)
 
     }
 }
