@@ -176,9 +176,9 @@ struct EditProfileView: View {
         } label: {
             Text("save")
                 .toButtonGradientStyle()
-                .opacity(newName.count > 3 && newName != userViewModel.currentUser.name ? 1 : 0.6)
+                .opacity(newName.isValidateLengthOfName() && newName != userViewModel.currentUser.name ? 1 : 0.6)
         }
-        .disabled(newName.count > 3 && newName != userViewModel.currentUser.name ? false : true)
+        .disabled(newName.isValidateLengthOfName() && newName != userViewModel.currentUser.name ? false : true)
     }
 }
 

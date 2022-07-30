@@ -40,13 +40,18 @@ struct SignUpView: View {
         // check if enable button
 
         withAnimation(.easeInOut(duration: time)) {
+
             if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty {
                 isButtonDisabled = true
             } else {
                 if password == retryPassword {
                     if password.count >= 8 {
                         if email.contains("@gmail.com") || email.contains("@email.com") {
-                            isButtonDisabled = false
+                            if fullName.isValidateLengthOfName() {
+                                isButtonDisabled = false
+                            } else {
+                                isButtonDisabled = true
+                            }
                         } else {
                             isButtonDisabled = true
                         }
@@ -294,14 +299,15 @@ struct SignUpView: View {
                     alertText = "Fill all fields properly!"
                     isShowAlert.toggle()
                 }
-
             } else {
-                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
-                    imageViewModel.saveImage(image: self.image ?? UIImage())
-                    chattingViewModel.user = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
+                if isValidatedName() {
+                    viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
+                        imageViewModel.saveImage(image: self.image ?? UIImage())
+                        chattingViewModel.user = user
+                        chattingViewModel.getChats()
+                        channelViewModel.currentUser = user
+                        channelViewModel.getChannels()
+                    }
                 }
             }
         } label: {
@@ -350,6 +356,18 @@ struct SignUpView: View {
         }
     }
 
+    func isValidatedName() -> Bool {
+        fullName = fullName.trim()
+        updateButton()
+        if isButtonDisabled {
+            withAnimation(.easeInOut) {
+                alertText = "Fill all fields properly!"
+                isShowAlert.toggle()
+            }
+            return false
+        }
+        return true
+    }
 }
 
 struct SignUpView_Previews: PreviewProvider {

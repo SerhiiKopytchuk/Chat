@@ -135,11 +135,13 @@ struct EditChannelView: View {
             Button {
                 channelName = channelName.trim()
                 channelDescription = channelDescription.trim()
-                editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
+                if channelName.isValidateLengthOfName() {
+                    editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
 
-                channelViewModel.currentChannel = editChannelViewModel.currentChannel
-                channelViewModel.getChannels(fromUpdate: true)
-                presentationMode.dismiss()
+                    channelViewModel.currentChannel = editChannelViewModel.currentChannel
+                    channelViewModel.getChannels(fromUpdate: true)
+                    presentationMode.dismiss()
+                }
             } label: {
                 Image(systemName: "checkmark")
                     .toButtonLightStyle(size: 40)

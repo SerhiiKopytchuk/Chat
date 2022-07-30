@@ -17,4 +17,11 @@ extension String {
 
         return self.trimmingCharacters(in: .whitespaces)
     }
+
+    func isValidateLengthOfName() -> Bool {
+        if self.count > 3 && self.count < 35 {
+            return true
+        }
+        return false
+    }
 }

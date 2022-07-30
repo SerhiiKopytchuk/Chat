@@ -197,6 +197,13 @@ struct CreateChannelView: View {
 
     @ViewBuilder var createChannelButton: some View {
         Button {
+            name = name.trim()
+            description = description.trim()
+            
+            if !name.isValidateLengthOfName() {
+                return
+            }
+
             channelViewModel.currentUser = viewModel.currentUser
             channelViewModel.owner = viewModel.currentUser
             channelViewModel.createChannel( name: self.name,
@@ -212,8 +219,8 @@ struct CreateChannelView: View {
             Text("Create")
                 .toButtonGradientStyle()
         }
-        .opacity(name.count > 3 ? 1 : 0.6)
-        .disabled(name.count > 3 ? false : true)
+        .opacity(name.isValidateLengthOfName() ? 1 : 0.6)
+        .disabled(name.isValidateLengthOfName() ? false : true)
 
     }
 }
