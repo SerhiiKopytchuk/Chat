@@ -20,6 +20,8 @@ struct EditChannelView: View {
     @State var isFindUserImage = true
     @State var isChangedImage = false
 
+    @State var isShowAlert = false
+
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
@@ -31,55 +33,7 @@ struct EditChannelView: View {
         VStack {
             header
             HStack {
-                Button {
-                    isShowingImagePicker.toggle()
-                } label: {
-                    if isFindUserImage {
-                        if self.channelImage != nil {
-                            ZStack {
-                                Image(uiImage: self.channelImage ?? UIImage())
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: imageSize, height: imageSize)
-                                    .cornerRadius(imageSize/2)
-                                    .addLightShadow()
-                            }
-                        } else {
-                            ZStack {
-                                WebImage(url: imageUrl)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: imageSize, height: imageSize)
-                                    .cornerRadius(imageSize/2)
-                                    .addLightShadow()
-                            }
-                        }
-                    } else {
-                        if self.channelImage != nil {
-                            Image(uiImage: self.channelImage ?? UIImage())
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: imageSize, height: imageSize)
-                                .cornerRadius(imageSize/2)
-                                .addLightShadow()
-                        } else {
-                            emptyImage
-                        }
-                    }
-                }
-                .padding()
-                .onAppear {
-                    let ref = Storage.storage().reference(withPath: channelViewModel.currentChannel.id ?? "someId" )
-                    ref.downloadURL { url, err in
-                        if err != nil {
-                            self.isFindUserImage = false
-                            return
-                        }
-                        withAnimation(.easeInOut) {
-                            self.imageUrl = url
-                        }
-                    }
-                }
+                imageButton
 
                 TextField("Enter channel name", text: $channelName)
                     .padding(.vertical, 20)
@@ -115,6 +69,9 @@ struct EditChannelView: View {
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $channelImage)
         }
+        .overlay {
+            customAlert
+        }
     }
 
     @ViewBuilder var header: some View {
@@ -141,6 +98,8 @@ struct EditChannelView: View {
                     channelViewModel.currentChannel = editChannelViewModel.currentChannel
                     channelViewModel.getChannels(fromUpdate: true)
                     presentationMode.dismiss()
+                } else {
+                    isShowAlert = true
                 }
             } label: {
                 Image(systemName: "checkmark")
@@ -151,6 +110,58 @@ struct EditChannelView: View {
         .padding(.horizontal)
     }
 
+    @ViewBuilder var imageButton: some View {
+        Button {
+            isShowingImagePicker.toggle()
+        } label: {
+            if isFindUserImage {
+                if self.channelImage != nil {
+                    ZStack {
+                        Image(uiImage: self.channelImage ?? UIImage())
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
+                            .addLightShadow()
+                    }
+                } else {
+                    ZStack {
+                        WebImage(url: imageUrl)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
+                            .addLightShadow()
+                    }
+                }
+            } else {
+                if self.channelImage != nil {
+                    Image(uiImage: self.channelImage ?? UIImage())
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: imageSize, height: imageSize)
+                        .cornerRadius(imageSize/2)
+                        .addLightShadow()
+                } else {
+                    emptyImage
+                }
+            }
+        }
+        .padding()
+        .onAppear {
+            let ref = Storage.storage().reference(withPath: channelViewModel.currentChannel.id ?? "someId" )
+            ref.downloadURL { url, err in
+                if err != nil {
+                    self.isFindUserImage = false
+                    return
+                }
+                withAnimation(.easeInOut) {
+                    self.imageUrl = url
+                }
+            }
+        }
+    }
+
     @ViewBuilder var emptyImage: some View {
         Image(systemName: "photo.circle.fill")
             .resizable()
@@ -159,6 +170,21 @@ struct EditChannelView: View {
             .background(.white)
             .cornerRadius(25)
             .addLightShadow()
+    }
+
+    @ViewBuilder var customAlert: some View {
+        if isShowAlert {
+            GeometryReader { geometry in
+                CustomAlert(show: $isShowAlert, text: channelName.count > 3 ?
+                                "Name should be shorter than 35 symbols" :
+                                "Name should be longer than 3 symbols")
+
+                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            }
+            .background(Color.white.opacity(0.65))
+            .edgesIgnoringSafeArea(.all)
+        }
     }
 }
 

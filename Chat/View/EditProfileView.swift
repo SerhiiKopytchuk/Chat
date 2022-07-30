@@ -93,18 +93,7 @@ struct EditProfileView: View {
                 }
             }
 
-            if isShowAlert {
-                GeometryReader { geometry in
-                    CustomAlert(show: $isShowAlert, text: newName.count > 3 ?
-                                    "Name should be shorter than 35 symbols" :
-                                    "Name should be longer than 3 symbols")
-
-                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
-                }
-                .background(Color.white.opacity(0.65))
-                .edgesIgnoringSafeArea(.all)
-            }
+            customAlert
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -199,6 +188,21 @@ struct EditProfileView: View {
                 .opacity(newName.isValidateLengthOfName() && newName != userViewModel.currentUser.name ? 1 : 0.6)
         }
         .disabled(newName != userViewModel.currentUser.name ? false : true)
+    }
+
+    @ViewBuilder var customAlert: some View {
+        if isShowAlert {
+            GeometryReader { geometry in
+                CustomAlert(show: $isShowAlert, text: newName.count > 3 ?
+                                "Name should be shorter than 35 symbols" :
+                                "Name should be longer than 3 symbols")
+
+                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            }
+            .background(Color.white.opacity(0.65))
+            .edgesIgnoringSafeArea(.all)
+        }
     }
 }
 

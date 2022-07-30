@@ -23,6 +23,8 @@ struct CreateChannelView: View {
     @State var imageUrl = URL(string: "")
     @State var isFindChannelImage = true
 
+    @State var isShowAlert = false
+
     var channelImageSize: CGFloat = 100
 
     @Namespace var animation
@@ -85,6 +87,7 @@ struct CreateChannelView: View {
                 }
             }
 
+            customAlert
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $channelImage)
@@ -201,6 +204,9 @@ struct CreateChannelView: View {
             description = description.trim()
 
             if !name.isValidateLengthOfName() {
+                withAnimation {
+                    isShowAlert = true
+                }
                 return
             }
 
@@ -220,8 +226,21 @@ struct CreateChannelView: View {
                 .toButtonGradientStyle()
         }
         .opacity(name.isValidateLengthOfName() ? 1 : 0.6)
-        .disabled(name.isValidateLengthOfName() ? false : true)
+    }
 
+    @ViewBuilder var customAlert: some View {
+        if isShowAlert {
+            GeometryReader { geometry in
+                CustomAlert(show: $isShowAlert, text: name.count > 3 ?
+                                "Name should be shorter than 35 symbols" :
+                                "Name should be longer than 3 symbols")
+
+                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            }
+            .background(Color.white.opacity(0.65))
+            .edgesIgnoringSafeArea(.all)
+        }
     }
 }
 
