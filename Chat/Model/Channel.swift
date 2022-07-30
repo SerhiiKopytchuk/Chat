@@ -18,4 +18,5 @@ struct Channel: Codable, Identifiable {
     var messages: [Message]?
     var lastActivityTimestamp: Date
     var isPrivate: Bool
+    var colour: String
 }

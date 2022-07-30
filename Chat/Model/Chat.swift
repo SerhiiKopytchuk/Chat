@@ -14,4 +14,5 @@ struct Chat: Codable, Identifiable {
     var user2Id: String
     var messages: [Message]?
     var lastActivityTimestamp: Date
+    var colour: String
 }

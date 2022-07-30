@@ -23,7 +23,8 @@ class EditChannelViewModel: ObservableObject {
                                                      subscribersId: [],
                                                      messages: [],
                                                      lastActivityTimestamp: Date(),
-                                                     isPrivate: true)
+                                                     isPrivate: true,
+                                                     colour: String.getRandomColorFromAssets())
     @Published var channelSubscribers: [User] = []
     @Published var usersToAddToChannel: [User] = []
 

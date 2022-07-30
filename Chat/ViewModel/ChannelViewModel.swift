@@ -28,7 +28,8 @@ class ChannelViewModel: ObservableObject {
                                                      subscribersId: [],
                                                      messages: [],
                                                      lastActivityTimestamp: Date(),
-                                                     isPrivate: true)
+                                                     isPrivate: true,
+                                                     colour: String.getRandomColorFromAssets())
     @Published var channelType: ChannelType = .publicType
 
     @Published var channelSubscribers: [User] = []
@@ -158,7 +159,8 @@ class ChannelViewModel: ObservableObject {
                                  subscribersId: [],
                                  messages: [],
                                  lastActivityTimestamp: Date(),
-                                 isPrivate: channelType == ChannelType.privateType)
+                                 isPrivate: channelType == ChannelType.privateType,
+                                 colour: String.getRandomColorFromAssets())
 
         try dataBase.collection("channels").document().setData(from: newChannel)
 

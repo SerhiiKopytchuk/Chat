@@ -14,7 +14,8 @@ class MessagingViewModel: ObservableObject {
                                             user1Id: "",
                                             user2Id: "",
                                             messages: [],
-                                            lastActivityTimestamp: Date())
+                                            lastActivityTimestamp: Date(),
+                                            colour: String.getRandomColorFromAssets())
     @Published var user: User = User(chats: [], channels: [], gmail: "", id: "someId", name: "")
     @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 

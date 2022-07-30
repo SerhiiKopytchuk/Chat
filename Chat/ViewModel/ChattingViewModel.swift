@@ -21,7 +21,8 @@ class ChattingViewModel: ObservableObject {
                                             user1Id: "",
                                             user2Id: "",
                                             messages: [],
-                                            lastActivityTimestamp: Date())
+                                            lastActivityTimestamp: Date(),
+                                            colour: String.getRandomColorFromAssets())
 
     @Published private(set) var chats: [Chat] = []
 
@@ -95,7 +96,12 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
 
-        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id, lastActivityTimestamp: Date())
+        let newChat = Chat(id: "\(UUID())",
+                           user1Id: user.id,
+                           user2Id: secondUser.id,
+                           lastActivityTimestamp: Date(),
+                           colour: String.getRandomColorFromAssets()
+        )
 
         try dataBase.collection("chats").document().setData(from: newChat)
 

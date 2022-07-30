@@ -18,7 +18,8 @@ class ChannelMessagingViewModel: ObservableObject {
                                                      subscribersId: [],
                                                      messages: [],
                                                      lastActivityTimestamp: Date(),
-                                                     isPrivate: true)
+                                                     isPrivate: true,
+                                                     colour: String.getRandomColorFromAssets())
 
     @Published var currentUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
 

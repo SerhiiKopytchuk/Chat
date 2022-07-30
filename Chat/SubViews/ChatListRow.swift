@@ -42,15 +42,17 @@ struct ChatListRow: View {
                     .opacity(isShowImage ? 1 : 0)
                     .addLightShadow()
             } else {
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .scaledToFill()
-                    .clipped()
-                    .frame(width: imageSize, height: imageSize)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
+                if let first = person?.name.first {
+                    Text(String(first.uppercased()))
+                        .font(.title.bold())
+                        .foregroundColor(.white)
+                        .frame(width: imageSize, height: imageSize)
+                        .background {
+                            Circle()
+                                .fill(Color(chat.colour))
+                        }
+                        .addLightShadow()
+                }
             }
 
             VStack(alignment: .leading) {

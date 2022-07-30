@@ -116,16 +116,19 @@ struct ChannelListRow: View {
                 .opacity(isShowImage ? 1 : 0)
                 .addLightShadow()
         } else {
-            Image(systemName: "photo.circle.fill")
-                .resizable()
-                .scaledToFill()
-                .foregroundColor(.gray)
-                .clipped()
-                .frame(width: imageSize, height: imageSize)
-                .clipShape(Circle())
-                .padding(5)
-                .opacity(isShowImage ? 1 : 0)
-                .addLightShadow()
+            if let first = channel.name.first {
+                Text(String(first.uppercased()))
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .frame(width: imageSize, height: imageSize)
+                    .background {
+                        withAnimation {
+                            Circle()
+                                .fill(Color(channel.colour))
+                        }
+                    }
+                    .addLightShadow()
+            }
         }
     }
 }
@@ -140,7 +143,8 @@ struct ChannelListRow_Previews: PreviewProvider {
                                         subscribersId: ["1", "2"],
                                         messages: [],
                                         lastActivityTimestamp: Date(),
-                                        isPrivate: true)) {
+                                        isPrivate: true,
+                                        colour: String.getRandomColorFromAssets())) {
         }
 
     }
