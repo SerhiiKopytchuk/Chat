@@ -20,6 +20,8 @@ struct EditProfileView: View {
     @State var isFindUserImage = true
     @State var isChangedImage = false
 
+    @State var isShowAlert = false
+
     @EnvironmentObject var userViewModel: UserViewModel
     @ObservedObject var editProfileView = EditProfileViewModel()
 
@@ -27,7 +29,6 @@ struct EditProfileView: View {
 
     var body: some View {
         ZStack {
-
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(
                     LinearGradient(colors: [
@@ -91,6 +92,8 @@ struct EditProfileView: View {
                     }
                 }
             }
+
+            customAlert
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -169,6 +172,12 @@ struct EditProfileView: View {
 
     var saveButton: some View {
         Button {
+
+            if !newName.isValidateLengthOfName() {
+                self.isShowAlert = true
+                return
+            }
+
             newName = newName.trim()
             if newName.count > 3 {
                 editProfileView.changeName(newName: newName, userId: userViewModel.currentUser.id )
@@ -176,9 +185,24 @@ struct EditProfileView: View {
         } label: {
             Text("save")
                 .toButtonGradientStyle()
-                .opacity(newName.count > 3 && newName != userViewModel.currentUser.name ? 1 : 0.6)
+                .opacity(newName.isValidateLengthOfName() && newName != userViewModel.currentUser.name ? 1 : 0.6)
         }
-        .disabled(newName.count > 3 && newName != userViewModel.currentUser.name ? false : true)
+        .disabled(newName != userViewModel.currentUser.name ? false : true)
+    }
+
+    @ViewBuilder var customAlert: some View {
+        if isShowAlert {
+            GeometryReader { geometry in
+                CustomAlert(show: $isShowAlert, text: newName.count > 3 ?
+                                "Name should be shorter than 35 symbols" :
+                                "Name should be longer than 3 symbols")
+
+                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            }
+            .background(Color.white.opacity(0.65))
+            .edgesIgnoringSafeArea(.all)
+        }
     }
 }
 
