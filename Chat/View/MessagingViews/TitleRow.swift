@@ -27,36 +27,8 @@ struct TitleRow: View {
 
     var body: some View {
         HStack(spacing: 20) {
-            if isFindUserImage {
-                VStack {
-                    if isExpandedProfile {
-                        WebImage(url: imageUrl)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 50, height: 50)
-                                .cornerRadius(50)
-                                .opacity(0)
-                    } else {
-                        WebImage(url: imageUrl)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 50, height: 50)
-                                .cornerRadius(50)
-                                .matchedGeometryEffect(id: "profilePhoto", in: animationNamespace)
-                    }
-                }
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        isExpandedProfile.toggle()
-                    }
-                }
-            } else {
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 50, height: 50)
-                    .cornerRadius(50)
-            }
+
+            userImage
 
             VStack(alignment: .leading) {
                 Text(user.name)
@@ -73,7 +45,8 @@ struct TitleRow: View {
                     .foregroundColor(.gray)
                     .padding(10)
                     .background(.white)
-                    .cornerRadius(40 )
+                    .cornerRadius(40)
+                    .addLightShadow()
                     .onTapGesture {
                         showingAlert.toggle()
                     }
@@ -100,5 +73,42 @@ struct TitleRow: View {
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}
         }
+    }
+
+    @ViewBuilder var userImage: some View {
+        if isFindUserImage {
+            VStack {
+                if isExpandedProfile {
+                    WebImage(url: imageUrl)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .cornerRadius(50)
+                            .addLightShadow()
+                            .opacity(0)
+                } else {
+                    WebImage(url: imageUrl)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50, height: 50)
+                            .cornerRadius(50)
+                            .addLightShadow()
+                            .matchedGeometryEffect(id: "profilePhoto", in: animationNamespace)
+                }
+            }
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isExpandedProfile.toggle()
+                }
+            }
+        } else {
+            Image(systemName: "person.crop.circle")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 50, height: 50)
+                .cornerRadius(50)
+                .addLightShadow()
+        }
+
     }
 }

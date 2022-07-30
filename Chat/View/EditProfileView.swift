@@ -14,65 +14,95 @@ struct EditProfileView: View {
 
     @State var profileImage: UIImage?
     @State var isShowingImagePicker = false
-    @State var isShowingChangeName = false
     @State var newName: String = ""
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
     @State var isChangedImage = false
 
-    @EnvironmentObject var viewModel: UserViewModel
+    @EnvironmentObject var userViewModel: UserViewModel
     @ObservedObject var editProfileView = EditProfileViewModel()
+
+    @Environment (\.self) var env
 
     var body: some View {
         ZStack {
 
-            Color("Peach")
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    LinearGradient(colors: [
+                        Color("Gradient1"),
+                        Color("Gradient2"),
+                        Color("Gradient3")
+                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
             .ignoresSafeArea()
 
-            ZStack(alignment: .top) {
-                Color.white
-                    .cornerRadius(30, corners: [.topLeft, .topRight])
-                    .offset(x: 0, y: 50)
-                VStack {
-                    changeProfileImageButton
-                    changeProfileNameButton
+            VStack {
 
-                    if isShowingChangeName {
-                        HStack {
-                            TextField("Enter your new name!", text: $newName)
-                                .underlineTextField(text: newName, underlineOn: 4)
-                                .padding(.leading, 20)
-                            saveButton
-                                .padding(.horizontal, 20)
-                        }
+                HStack(spacing: 15) {
+                    Button {
+                        env.dismiss()
+                    } label: {
+                        Image(systemName: "arrow.backward.circle.fill")
+                            .toButtonLightStyle(size: 40)
                     }
 
-                    Text(viewModel.currentUser.gmail)
-                        .font(.callout)
-                        .foregroundColor(.gray)
+                    Text("Edit profile")
+                        .font(.title.bold())
+                        .opacity(0.7)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                }
+                .padding()
+
+                ZStack(alignment: .top) {
+                    Color("BG")
+                        .cornerRadius(30, corners: [.topLeft, .topRight])
+                        .offset(x: 0, y: 50)
+                    VStack {
+                        changeProfileImageButton
+
+                        Label {
+                            TextField("Enter your new name", text: $newName)
+                                .padding(.leading, 10)
+                        } icon: {
+                            Image(systemName: "person")
+                        }
+                        .padding(.vertical, 20)
+                        .padding(.horizontal, 15)
+                        .background {
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(.white)
+                        }
+                        .padding(.top, 25)
                         .padding()
 
+                        Text(userViewModel.currentUser.gmail)
+                            .font(.callout)
+                            .foregroundColor(.gray)
+                            .padding()
+
+                        Spacer()
+
+                        saveButton
+                            .padding()
+
+                    }
                 }
             }
         }
+        .navigationBarHidden(true)
+        .onAppear {
+            newName = userViewModel.currentUser.name
+        }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
-            editProfileView.user = self.viewModel.currentUser
+            editProfileView.user = self.userViewModel.currentUser
             editProfileView.saveImage(image: newImage)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $profileImage)
         }
-    }
-
-    var emptyImage: some View {
-        Image(systemName: "person.crop.circle")
-            .resizable()
-            .frame(width: 100, height: 100)
-            .foregroundColor(.black.opacity(0.70))
-            .background(.white)
-            .cornerRadius(50)
-
     }
 
     var changeProfileImageButton: some View {
@@ -87,11 +117,7 @@ struct EditProfileView: View {
                             .scaledToFill()
                             .frame(width: 100, height: 100)
                             .cornerRadius(50)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 50)
-                                    .stroke(.black, lineWidth: 3)
-                                    .shadow(radius: 10)
-                            )
+                            .addLightShadow()
                     }
                 } else {
                     ZStack {
@@ -100,11 +126,7 @@ struct EditProfileView: View {
                             .scaledToFill()
                             .frame(width: 100, height: 100)
                             .cornerRadius(50)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 50)
-                                    .stroke(.black, lineWidth: 3)
-                                    .shadow(radius: 10)
-                            )
+                            .addLightShadow()
                     }
                 }
             } else {
@@ -114,11 +136,7 @@ struct EditProfileView: View {
                             .scaledToFill()
                             .frame(width: 100, height: 100)
                             .cornerRadius(50)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 50)
-                                    .stroke(.black, lineWidth: 3)
-                                    .shadow(radius: 10)
-                            )
+                            .addLightShadow()
                 } else {
                         emptyImage
                 }
@@ -126,7 +144,7 @@ struct EditProfileView: View {
         }
         .frame(width: 100, height: 100)
         .onAppear {
-            let ref = Storage.storage().reference(withPath: viewModel.currentUser.id )
+            let ref = Storage.storage().reference(withPath: userViewModel.currentUser.id )
             ref.downloadURL { url, err in
                 if err != nil {
                     self.isFindUserImage = false
@@ -139,39 +157,28 @@ struct EditProfileView: View {
         }
     }
 
-    var changeProfileNameButton: some View {
-        Button {
-            withAnimation(.interactiveSpring()) {
-                isShowingChangeName.toggle()
-            }
-        } label: {
-            HStack {
-                Text(viewModel.currentUser.name)
-                    .font(.system(.title, design: .rounded))
-                    .foregroundColor(.black)
-                    .padding(.vertical)
-                Image(systemName: "pencil")
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(.black)
-            }
-        }
-        .padding(.top)
+    var emptyImage: some View {
+        Image(systemName: "person.crop.circle")
+            .resizable()
+            .frame(width: 100, height: 100)
+            .foregroundColor(.black.opacity(0.70))
+            .background(.white)
+            .cornerRadius(50)
+            .addLightShadow()
     }
 
     var saveButton: some View {
         Button {
-            editProfileView.changeName(newName: newName, userId: viewModel.currentUser.id )
+            newName = newName.trim()
+            if newName.count > 3 {
+                editProfileView.changeName(newName: newName, userId: userViewModel.currentUser.id )
+            }
         } label: {
             Text("save")
-                .frame(width: 60)
-                .padding(10)
-                .foregroundColor(.white)
-                .background(newName.count < 4 ? .gray : .orange)
-                .cornerRadius(10)
-                .shadow(color: newName.count < 4 ? .gray : .orange, radius: 3)
+                .toButtonGradientStyle()
+                .opacity(newName.count > 3 && newName != userViewModel.currentUser.name ? 1 : 0.6)
         }
-        .disabled(newName.count > 3 ? false : true)
+        .disabled(newName.count > 3 && newName != userViewModel.currentUser.name ? false : true)
     }
 }
 

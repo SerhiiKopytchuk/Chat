@@ -14,6 +14,7 @@ struct ChannelConversationView: View {
     @State var currentUser: User
 
     @Namespace var animation
+    @Environment(\.self) var env
 
     @State var isExpandedProfile: Bool = false
     @State var profileImage: WebImage = WebImage(url: URL(string: ""))
@@ -22,6 +23,7 @@ struct ChannelConversationView: View {
     @State var isExpandedDetails = false
     @State var isGoToAddSubscribers = false
     @State var isGoToRemoveSubscribers = false
+    @State var isGoToEditChannel = false
 
     @Binding var isSubscribed: Bool
 
@@ -40,13 +42,22 @@ struct ChannelConversationView: View {
         ZStack {
             VStack {
                 VStack {
+                    header
+
                     ChannelTitleRow(channel: channelViewModel.currentChannel,
                                     animationNamespace: animation,
-                                    isExpandedProfile: $isExpandedProfile,
+                                    isExpandedProfileImage: $isExpandedProfile,
                                     isExpandedDetails: $isExpandedDetails,
                                     profileImage: $profileImage,
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
+                    .background {
+                        Color("BG")
+                    }
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.vertical, 5)
+
                     if isExpandedDetails {
                         VStack(alignment: .leading) {
                             ownerTitle
@@ -67,7 +78,6 @@ struct ChannelConversationView: View {
                     messagesScrollView
                 }
                 .frame(maxWidth: .infinity)
-                .background(Color("Peach"))
 
                 if isSubscribed {
                     messagingTextField
@@ -75,9 +85,20 @@ struct ChannelConversationView: View {
                     subscribeButton
                 }
             }
+            .background {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(
+                        LinearGradient(colors: [
+                            Color("Gradient1"),
+                            Color("Gradient2"),
+                            Color("Gradient3")
+                        ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    )
+                .ignoresSafeArea()
+            }
             .frame(maxWidth: .infinity)
-            .navigationBarBackButtonHidden(loadExpandedContent)
         }
+        .navigationBarHidden(true)
         .frame(maxWidth: .infinity)
         .background {
             navigationLinks
@@ -96,7 +117,6 @@ struct ChannelConversationView: View {
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
             Button("Delete", role: .destructive) {
-//                channelViewModel.getChannelOwner()
                 channelViewModel.deleteChannel()
                 presentationMode.wrappedValue.dismiss()
             }.foregroundColor(.red)
@@ -113,6 +133,23 @@ struct ChannelConversationView: View {
 
     // MARK: - viewBuilders
 
+    @ViewBuilder var header: some View {
+        HStack(spacing: 15) {
+            Button {
+                env.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward.circle.fill")
+                    .toButtonLightStyle(size: 40)
+            }
+
+            Text("Channel")
+                .font(.title.bold())
+                .opacity(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal)
+    }
+
     @ViewBuilder var navigationLinks: some View {
         NavigationLink(isActive: $isGoToAddSubscribers, destination: {
             AddUserToChannelView()
@@ -125,6 +162,14 @@ struct ChannelConversationView: View {
         NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
             RemoveUsersFromChannelView()
                 .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        }, label: { })
+        .hidden()
+
+        NavigationLink(isActive: $isGoToEditChannel, destination: {
+            EditChannelView(channelName: channelViewModel.currentChannel.name,
+                            channelDescription: channelViewModel.currentChannel.description)
                 .environmentObject(channelViewModel)
                 .environmentObject(editChannelViewModel)
         }, label: { })
@@ -211,6 +256,7 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40)
+            .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 isGoToAddSubscribers.toggle()
@@ -224,6 +270,7 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40)
+            .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 editChannelViewModel.getChannelSubscribers()
@@ -237,6 +284,11 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40 )
+            .addLightShadow()
+            .onTapGesture {
+                self.editChannelViewModelSetup()
+                isGoToEditChannel.toggle()
+            }
     }
 
     @ViewBuilder var removeOrDeleteChannelButton: some View {
@@ -245,6 +297,7 @@ struct ChannelConversationView: View {
             .padding(10)
             .background(.white)
             .cornerRadius(40 )
+            .addLightShadow()
             .onTapGesture {
                 if currentUser.id == channelViewModel.currentChannel.ownerId {
                     showingAlertOwner.toggle()
@@ -256,7 +309,7 @@ struct ChannelConversationView: View {
 
     @ViewBuilder var messagesScrollView: some View {
         ScrollViewReader { proxy in
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: false) {
                 ForEach(
                     self.channelMessagingViewModel.currentChannel.messages ?? [],
                     id: \.id) { message in
@@ -264,8 +317,10 @@ struct ChannelConversationView: View {
                     }
             }
             .padding(.top, 10)
-            .background(.white)
-            .cornerRadius(30, corners: [.topLeft, .topRight])
+            .padding(.bottom, 10)
+            .background(Color("BG"))
+            .cornerRadius(30)
+
             .onAppear {
                 withAnimation {
                     proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
@@ -277,6 +332,8 @@ struct ChannelConversationView: View {
                 }
             }
         }
+        .padding(.bottom, isOwner() ? 0 : 15)
+        .padding(.horizontal)
         .ignoresSafeArea()
     }
 
@@ -296,10 +353,11 @@ struct ChannelConversationView: View {
             channelViewModel.currentChannel.subscribersId?.append(viewModel.currentUser.id)
         } label: {
             Text("Subscribe")
-                .font(.title3)
-                .background(.white)
-                .cornerRadius(30)
+                .font(.title2)
+                .fontWeight(.semibold)
                 .padding()
+                .background(Color("BG"))
+                .cornerRadius(15)
         }
     }
 

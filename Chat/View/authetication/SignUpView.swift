@@ -71,59 +71,21 @@ struct SignUpView: View {
                         .fontWeight(.bold)
                         .padding(.leading, 10)
                         .padding()
-                        .foregroundColor(.orange)
+                        .foregroundColor(.black.opacity(0.6))
                     Spacer()
                 }
-                Button {
-                    isShowingImagePicker.toggle()
-                } label: {
-                    if let image = self.image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(50)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 50)
-                                    .stroke(.black, lineWidth: 3)
-                                    .shadow(radius: 10)
-                            )
 
-                    } else {
-                        ZStack {
-                            Image(systemName: "person.crop.circle")
-                                .resizable()
-                                .frame(width: 100, height: 100)
-                                .foregroundColor(.gray)
-                            VStack(alignment: .trailing) {
-                                Spacer()
-                                HStack {
-                                    Spacer()
-                                    Image(systemName: "photo.circle")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .background(.gray)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(30)
-                                }
-                            }
-
-                        }
-                    }
-                }.frame(width: 100, height: 100)
+                userImage
 
                 fields
-                Spacer()
+                    .padding(.top)
                 VStack {
                     createAccountButton
-                        .foregroundColor(.white)
                         .padding(.horizontal, 80)
-                        .padding()
-                        .background(isButtonDisabled ? Color.gray : Color.orange)
+                        .opacity(isButtonDisabled ? 0.6 : 1)
                         .cornerRadius(30)
-                        .shadow(color: isButtonDisabled ? .gray : .orange, radius: isButtonDisabled ? 0 : 8, x: 0, y: 0)
 
-                    Button("Log In") {
+                    Button("Sign In") {
                         self.isPresentLoginView = true
                     }
                     .foregroundColor(.brown)
@@ -149,7 +111,13 @@ struct SignUpView: View {
                 }
                 NavigationLink(destination: SignInView(), isActive: $isPresentLoginView) { }
 
-            }.navigationBarHidden(true).navigationBarBackButtonHidden(true)
+            }
+            .background {
+                Color("BG")
+                    .ignoresSafeArea()
+            }
+            .navigationBarHidden(true)
+            .navigationBarBackButtonHidden(true)
 
             if isShowAlert || viewModel.showAlert {
                 GeometryReader { geometry in
@@ -274,7 +242,7 @@ struct SignUpView: View {
             .padding()
             .padding(.horizontal, 20)
             .overlay(
-                RoundedRectangle(cornerRadius: 25)
+                RoundedRectangle(cornerRadius: 12)
                     .stroke(Color.gray, lineWidth: 1)
                     .padding(.leading, 10)
                     .padding(.trailing, 20)
@@ -283,8 +251,44 @@ struct SignUpView: View {
         }
     }
 
+    @ViewBuilder var userImage: some View {
+        Button {
+            isShowingImagePicker.toggle()
+        } label: {
+            if let image = self.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 100)
+                    .cornerRadius(50)
+                    .addLightShadow()
+            } else {
+                ZStack {
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.gray)
+                        .addLightShadow()
+                    VStack(alignment: .trailing) {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Image(systemName: "photo.circle")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .background(.gray)
+                                .foregroundColor(.white)
+                                .cornerRadius(30)
+                        }
+                    }
+
+                }
+            }
+        }.frame(width: 100, height: 100)
+    }
+
     var createAccountButton: some View {
-        Button("Create Account") {
+        Button {
             if isButtonDisabled {
                 withAnimation(.easeInOut) {
                     alertText = "Fill all fields properly!"
@@ -300,6 +304,9 @@ struct SignUpView: View {
                     channelViewModel.getChannels()
                 }
             }
+        } label: {
+            Text("Create Account")
+                .toButtonGradientStyle()
         }
     }
 

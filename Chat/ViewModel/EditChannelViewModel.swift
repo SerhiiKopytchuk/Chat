@@ -10,6 +10,7 @@ import Firebase
 import FirebaseFirestoreSwift
 import FirebaseFirestore
 import SwiftUI
+import FirebaseStorage
 
 class EditChannelViewModel: ObservableObject {
 
@@ -29,6 +30,27 @@ class EditChannelViewModel: ObservableObject {
     @Published var searchText = ""
 
     let dataBase = Firestore.firestore()
+
+    func saveImage(image: UIImage) {
+        guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
+        let ref = Storage.storage().reference(withPath: currentChannel.id ?? "someId")
+        self.putDataTo(ref: ref, imageData: imageData)
+    }
+
+    fileprivate func putDataTo(ref: StorageReference, imageData: Data) {
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(error: error) { return }
+        }
+    }
+
+    func updateChannelInfo(name: String, description: String) {
+        dataBase.collection("channels").document("\(currentChannel.id ?? "someId")")
+            .updateData(["name": name,
+                         "description": description])
+
+        self.currentChannel.name = name
+        self.currentChannel.description = description
+    }
 
     func removeUserFromSubscribersList(id: String) {
 
@@ -137,5 +159,14 @@ class EditChannelViewModel: ObservableObject {
         dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
             "subscribersId": FieldValue.arrayRemove(["\(id)"])
         ])
+    }
+
+    fileprivate func isError(error: Error?) -> Bool {
+        if error != nil {
+            print(error?.localizedDescription ?? "error")
+            return true
+        } else {
+            return false
+        }
     }
 }

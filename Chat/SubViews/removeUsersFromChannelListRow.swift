@@ -28,32 +28,33 @@ struct RemoveUsersFromChannelListRow: View {
                     .scaledToFill()
                     .frame(width: 40, height: 40)
                     .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.black, lineWidth: 1)
-                            .shadow(radius: 5)
-                    )
+                    .addLightShadow()
                     .padding()
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
+                    .addLightShadow()
                     .padding()
             }
             VStack(alignment: .leading) {
                 Text(user)
-                    .font(.title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
                 Text(userGmail)
                     .font(.caption)
                     .foregroundColor(.gray)
+                    .lineLimit(1)
             }
             Spacer()
             Image(systemName: "minus")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 30)
-                .foregroundColor(.orange)
+                .foregroundColor(.blue.opacity(0.7))
+                .addLightShadow()
                 .padding()
                 .onTapGesture {
                     editChannelViewModel.removeChannelFromSubscriptionsWithCertainUser(id: self.id)
@@ -64,6 +65,10 @@ struct RemoveUsersFromChannelListRow: View {
 
                     self.updateChannelViewModel()
                 }
+        }
+        .background {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(.white)
         }
         .onAppear {
             let ref = Storage.storage().reference(withPath: self.id )

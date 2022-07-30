@@ -25,15 +25,15 @@ struct MessageField: View {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)
                     .padding(10)
-                    .background(Color("Peach"))
-                    .cornerRadius(50)
+                    .background(Color.gray)
+                    .cornerRadius(15)
             }
 
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
-        .background(Color("Gray"))
-        .cornerRadius(50)
+        .background(Color("BG"))
+        .cornerRadius(15)
         .padding()
     }
 }

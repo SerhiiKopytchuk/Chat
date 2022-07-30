@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseStorage
 import SDWebImageSwiftUI
 
-struct AddUserCreateChannelRow: View {
+struct AddUserToChannelRow: View {
     var user: String
     var userGmail: String
     var id: String
@@ -27,25 +27,26 @@ struct AddUserCreateChannelRow: View {
                     .scaledToFill()
                     .frame(width: 40, height: 40)
                     .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.black, lineWidth: 1)
-                            .shadow(radius: 5)
-                    )
+                    .addLightShadow()
                     .padding()
             } else {
                 Image(systemName: "person.crop.circle")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
+                    .addLightShadow()
                     .padding()
             }
             VStack(alignment: .leading) {
                 Text(user)
-                    .font(.title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+
                 Text(userGmail)
                     .font(.caption)
                     .foregroundColor(.gray)
+                    .lineLimit(1)
             }
             Spacer()
             addOrRemoveUserChannel
@@ -67,6 +68,10 @@ struct AddUserCreateChannelRow: View {
                         }
                     }
                 }
+        }
+        .background {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(.white)
         }
         .onAppear {
             let ref = Storage.storage().reference(withPath: self.id )
@@ -95,21 +100,23 @@ struct AddUserCreateChannelRow: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.blue.opacity(0.7))
+                        .addLightShadow()
                 }
             } else {
                 Image(systemName: "plus")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 30)
-                    .foregroundColor(.orange)
+                    .foregroundColor(.blue.opacity(0.7))
+                    .addLightShadow()
             }
     }
 }
 
 struct AddUserCreateChannelRow_Previews: PreviewProvider {
     static var previews: some View {
-        AddUserCreateChannelRow(user: "Koch",
+        AddUserToChannelRow(user: "Koch",
                                 userGmail: "koch@gmail.com",
                                 id: "someId",
                                 subscribersId: .constant([]))
