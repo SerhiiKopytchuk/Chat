@@ -199,7 +199,7 @@ struct CreateChannelView: View {
         Button {
             name = name.trim()
             description = description.trim()
-            
+
             if !name.isValidateLengthOfName() {
                 return
             }

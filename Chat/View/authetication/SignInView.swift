@@ -71,11 +71,11 @@ struct SignInView: View {
                 if isShowAlert || viewModel.showAlert {
                     GeometryReader { geometry in
                         if viewModel.showAlert {
-                            CustomAlert(show: $isShowAlert, text: $viewModel.alertText)
+                            CustomAlert(show: $isShowAlert, text: viewModel.alertText)
                                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                                 .frame(maxWidth: geometry.frame(in: .local).width - 20)
                         } else {
-                            CustomAlert(show: $isShowAlert, text: $alertText)
+                            CustomAlert(show: $isShowAlert, text: alertText)
                                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                                 .frame(maxWidth: geometry.frame(in: .local).width - 20)
                         }

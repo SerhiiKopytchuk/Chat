@@ -11,7 +11,8 @@ import SwiftUI
 struct CustomAlert: View {
 
     @Binding var show: Bool
-    @Binding var text: String
+
+    var text: String
 
     @EnvironmentObject var viewModel: UserViewModel
 
@@ -27,7 +28,6 @@ struct CustomAlert: View {
                 .foregroundColor(.white)
                 .frame(alignment: .center)
                 .padding()
-                .padding(.horizontal, 10)
             Button {
                 withAnimation {
                     show = false
@@ -44,7 +44,7 @@ struct CustomAlert: View {
 
         }
         .padding()
-        .padding(.horizontal, 40)
+        .padding(.horizontal, 30)
         .background(.gray)
         .cornerRadius(15)
 
