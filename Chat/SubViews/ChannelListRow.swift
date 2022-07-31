@@ -135,17 +135,6 @@ struct ChannelListRow: View {
 
 struct ChannelListRow_Previews: PreviewProvider {
     static var previews: some View {
-        ChannelListRow(channel: Channel(id: "id",
-                                        name: "name",
-                                        description: "description",
-                                        ownerId: "ownerId",
-                                        ownerName: "name",
-                                        subscribersId: ["1", "2"],
-                                        messages: [],
-                                        lastActivityTimestamp: Date(),
-                                        isPrivate: true,
-                                        colour: String.getRandomColorFromAssets())) {
-        }
-
+        ChannelListRow(channel: Channel()) { }
     }
 }

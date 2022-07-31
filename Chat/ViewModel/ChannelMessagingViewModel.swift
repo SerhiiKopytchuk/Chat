@@ -10,16 +10,7 @@ import FirebaseFirestore
 
 class ChannelMessagingViewModel: ObservableObject {
 
-    @Published var currentChannel: Channel = Channel(id: "someID",
-                                                     name: "someName",
-                                                     description: "some description",
-                                                     ownerId: "",
-                                                     ownerName: "",
-                                                     subscribersId: [],
-                                                     messages: [],
-                                                     lastActivityTimestamp: Date(),
-                                                     isPrivate: true,
-                                                     colour: String.getRandomColorFromAssets())
+    @Published var currentChannel: Channel = Channel()
 
     @Published var currentUser = User()
 

@@ -20,16 +20,7 @@ class ChannelViewModel: ObservableObject {
 
     @Published var channels: [Channel] = []
     @Published var searchChannels: [Channel] = []
-    @Published var currentChannel: Channel = Channel(id: "",
-                                                     name: "",
-                                                     description: "",
-                                                     ownerId: "",
-                                                     ownerName: "",
-                                                     subscribersId: [],
-                                                     messages: [],
-                                                     lastActivityTimestamp: Date(),
-                                                     isPrivate: true,
-                                                     colour: String.getRandomColorFromAssets())
+    @Published var currentChannel: Channel = Channel()
     @Published var channelType: ChannelType = .publicType
 
     @Published var channelSubscribers: [User] = []
@@ -151,16 +142,11 @@ class ChannelViewModel: ObservableObject {
                                      description: String,
                                      competition: @escaping (Channel) -> Void) throws {
 
-        let newChannel = Channel(id: "\(UUID())",
-                                 name: name,
+        let newChannel = Channel(name: name,
                                  description: description,
                                  ownerId: currentUser.id,
                                  ownerName: currentUser.name,
-                                 subscribersId: [],
-                                 messages: [],
-                                 lastActivityTimestamp: Date(),
-                                 isPrivate: channelType == ChannelType.privateType,
-                                 colour: String.getRandomColorFromAssets())
+                                 isPrivate: channelType == ChannelType.privateType)
 
         try dataBase.collection("channels").document().setData(from: newChannel)
 

@@ -19,4 +19,29 @@ struct Channel: Codable, Identifiable {
     var lastActivityTimestamp: Date
     var isPrivate: Bool
     var colour: String
+
+    internal init(name: String, description: String, ownerId: String, ownerName: String, isPrivate: Bool) {
+        self.name = name
+        self.description = description
+        self.ownerId = ownerId
+        self.ownerName = ownerName
+        self.subscribersId = []
+        self.messages = []
+        self.lastActivityTimestamp = Date()
+        self.isPrivate = isPrivate
+        self.colour = String.getRandomColorFromAssets()
+    }
+
+    init() {
+        self.name = ""
+        self.description = ""
+        self.ownerId = ""
+        self.ownerName = ""
+        self.subscribersId = []
+        self.messages = []
+        self.lastActivityTimestamp = Date()
+        self.isPrivate = false
+        self.colour = String.getRandomColorFromAssets()
+    }
+
 }
