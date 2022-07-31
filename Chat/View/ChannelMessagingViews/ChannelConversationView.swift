@@ -154,7 +154,8 @@ struct ChannelConversationView: View {
 
         NavigationLink(isActive: $isGoToEditChannel, destination: {
             EditChannelView(channelName: channelViewModel.currentChannel.name,
-                            channelDescription: channelViewModel.currentChannel.description)
+                            channelDescription: channelViewModel.currentChannel.description,
+                            channelColor: channelViewModel.currentChannel.colour)
                 .environmentObject(channelViewModel)
                 .environmentObject(editChannelViewModel)
         }, label: { })

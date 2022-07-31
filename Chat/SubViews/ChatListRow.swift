@@ -31,29 +31,8 @@ struct ChatListRow: View {
 
     var body: some View {
         HStack {
-            if isFindUserImage {
-                WebImage(url: imageUrl)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: imageSize, height: imageSize)
-                    .cornerRadius(imageSize/2)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
-            } else {
-                if let first = person?.name.first {
-                    Text(String(first.uppercased()))
-                        .font(.title.bold())
-                        .foregroundColor(.white)
-                        .frame(width: imageSize, height: imageSize)
-                        .background {
-                            Circle()
-                                .fill(Color(person?.colour ?? String.getRandomColorFromAssets()))
-                        }
-                        .addLightShadow()
-                }
-            }
+
+            userImage
 
             VStack(alignment: .leading) {
                 HStack {
@@ -121,6 +100,33 @@ struct ChatListRow: View {
                 withAnimation {
                     self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
                 }
+            }
+        }
+    }
+
+    @ViewBuilder var userImage: some View {
+        if isFindUserImage {
+            WebImage(url: imageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
+                .clipShape(Circle())
+                .padding(5)
+                .opacity(isShowImage ? 1 : 0)
+                .addLightShadow()
+        } else {
+            if let first = person?.name.first {
+                Text(String(first.uppercased()))
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .frame(width: imageSize, height: imageSize)
+                    .background {
+                        Circle()
+                            .fill(Color(person?.colour ?? String.getRandomColorFromAssets()))
+                    }
+                    .padding(5)
+                    .addLightShadow()
             }
         }
     }

@@ -16,7 +16,10 @@ struct SideMenuHeaderView: View {
     @State var user: User = User()
     @State var myImageUrl = URL(string: "")
     @State var isFindUserImage = true
+
+    var imageSize: CGFloat = 65
     let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
+
     var body: some View {
 
         ZStack(alignment: .topTrailing) {
@@ -69,7 +72,7 @@ struct SideMenuHeaderView: View {
                 .resizable()
                 .scaledToFill()
                 .clipped()
-                .frame(width: 65, height: 65)
+                .frame(width: imageSize, height: imageSize)
                 .clipShape(Circle())
                 .padding(.bottom, 16)
                 .addLightShadow()
@@ -85,14 +88,18 @@ struct SideMenuHeaderView: View {
                     }
                 }
         } else {
-            Image(systemName: "person.crop.circle")
-                .resizable()
-                .scaledToFill()
-                .clipped()
-                .frame(width: 65, height: 65)
-                .clipShape(Circle())
-                .padding(.bottom, 16)
-                .addLightShadow()
+            if let first = user.name.first {
+                Text(String(first.uppercased()))
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .frame(width: imageSize, height: imageSize)
+                    .background {
+                        Circle()
+                            .fill(Color(user.colour))
+                    }
+                    .padding(.bottom, 16)
+                    .addLightShadow()
+            }
         }
     }
 }

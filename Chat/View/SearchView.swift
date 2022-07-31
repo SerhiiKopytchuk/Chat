@@ -148,9 +148,10 @@ struct SearchView: View {
     @ViewBuilder var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(viewModel.users, id: \.id) { user in
-                SearchUserCell(user: user.name,
+                SearchUserCell(userName: user.name,
                                userGmail: user.gmail,
                                id: user.id,
+                               userColor: user.colour,
                                rowTapped: {
                     viewModel.secondUser = user
                     messagingViewModel.secondUser = user

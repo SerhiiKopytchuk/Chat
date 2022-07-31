@@ -13,30 +13,20 @@ struct AddUserToChannelRow: View {
     var user: String
     var userGmail: String
     var id: String
+    var colour: String
     @Binding var subscribersId: [String]
     @State var isAddedToChannel = false
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
 
+    let imageSize: CGFloat = 40
+
     var body: some View {
         HStack {
-            if isFindUserImage {
-                WebImage(url: imageUrl)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .cornerRadius(20)
-                    .addLightShadow()
-                    .padding()
-            } else {
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .addLightShadow()
-                    .padding()
-            }
+
+            userImage
+
             VStack(alignment: .leading) {
                 Text(user)
                     .font(.title2)
@@ -93,6 +83,31 @@ struct AddUserToChannelRow: View {
         }
     }
 
+    @ViewBuilder var userImage: some View {
+        if isFindUserImage {
+            WebImage(url: imageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
+                .addLightShadow()
+                .padding()
+        } else {
+            if let first = user.first {
+                Text(String(first.uppercased()))
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .frame(width: imageSize, height: imageSize)
+                    .background {
+                        Circle()
+                            .fill(Color(colour))
+                    }
+                    .addLightShadow()
+                    .padding()
+            }
+        }
+    }
+
     @ViewBuilder var addOrRemoveUserChannel: some View {
             if isAddedToChannel {
                 HStack {
@@ -119,6 +134,7 @@ struct AddUserCreateChannelRow_Previews: PreviewProvider {
         AddUserToChannelRow(user: "Koch",
                                 userGmail: "koch@gmail.com",
                                 id: "someId",
+                                colour: "Red",
                                 subscribersId: .constant([]))
     }
 }

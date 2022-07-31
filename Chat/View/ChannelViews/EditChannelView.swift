@@ -13,6 +13,7 @@ struct EditChannelView: View {
 
     @State var channelName: String
     @State var channelDescription: String
+    @State var channelColor: String
 
     @State var channelImage: UIImage?
     @State var isShowingImagePicker = false
@@ -163,13 +164,17 @@ struct EditChannelView: View {
     }
 
     @ViewBuilder var emptyImage: some View {
-        Image(systemName: "photo.circle.fill")
-            .resizable()
-            .frame(width: 50, height: 50)
-            .foregroundColor(.black.opacity(0.70))
-            .background(.white)
-            .cornerRadius(25)
-            .addLightShadow()
+        if let first = channelName.first {
+            Text(String(first.uppercased()))
+                .font(.title.bold())
+                .foregroundColor(.white)
+                .frame(width: imageSize, height: imageSize)
+                .background {
+                    Circle()
+                        .fill(Color(channelColor))
+                }
+                .addLightShadow()
+        }
     }
 
     @ViewBuilder var customAlert: some View {
@@ -190,6 +195,8 @@ struct EditChannelView: View {
 
 struct EditChannelView_Previews: PreviewProvider {
     static var previews: some View {
-        EditChannelView(channelName: "Koch", channelDescription: "description")
+        EditChannelView(channelName: "Koch",
+                        channelDescription: "description",
+                        channelColor: String.getRandomColorFromAssets())
     }
 }

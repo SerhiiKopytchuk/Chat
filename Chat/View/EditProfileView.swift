@@ -22,6 +22,8 @@ struct EditProfileView: View {
 
     @State var isShowAlert = false
 
+    let imageSize: CGFloat = 100
+
     @EnvironmentObject var userViewModel: UserViewModel
     @ObservedObject var editProfileView = EditProfileViewModel()
 
@@ -95,8 +97,8 @@ struct EditProfileView: View {
                         Image(uiImage: self.profileImage ?? UIImage())
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(50)
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                     }
                 } else {
@@ -104,8 +106,8 @@ struct EditProfileView: View {
                         WebImage(url: imageUrl)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(50)
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                     }
                 }
@@ -114,7 +116,7 @@ struct EditProfileView: View {
                         Image(uiImage: self.profileImage ?? UIImage())
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
+                            .frame(width: imageSize, height: imageSize)
                             .cornerRadius(50)
                             .addLightShadow()
                 } else {
@@ -122,7 +124,7 @@ struct EditProfileView: View {
                 }
             }
         }
-        .frame(width: 100, height: 100)
+        .frame(width: imageSize, height: imageSize)
         .onAppear {
             let ref = Storage.storage().reference(withPath: userViewModel.currentUser.id )
             ref.downloadURL { url, err in
@@ -155,13 +157,17 @@ struct EditProfileView: View {
     }
 
     @ViewBuilder var emptyImage: some View {
-        Image(systemName: "person.crop.circle")
-            .resizable()
-            .frame(width: 100, height: 100)
-            .foregroundColor(.black.opacity(0.70))
-            .background(.white)
-            .cornerRadius(50)
-            .addLightShadow()
+        if let first = userViewModel.currentUser.name.first {
+            Text(String(first.uppercased()))
+                .font(.title.bold())
+                .foregroundColor(.white)
+                .frame(width: imageSize, height: imageSize)
+                .background {
+                    Circle()
+                        .fill(Color(userViewModel.currentUser.colour))
+                }
+                .addLightShadow()
+        }
     }
 
     @ViewBuilder var saveButton: some View {

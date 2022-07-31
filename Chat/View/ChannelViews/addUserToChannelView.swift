@@ -65,6 +65,7 @@ struct AddUserToChannelView: View {
                 AddUserToChannelRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id,
+                                        colour: user.colour,
                                         subscribersId: $subscribersId
                 )
                 .environmentObject(channelViewModel)

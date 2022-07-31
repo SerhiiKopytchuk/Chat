@@ -39,7 +39,8 @@ struct RemoveUsersFromChannelView: View {
             ForEach(editChannelViewModel.channelSubscribers, id: \.id) { user in
                 RemoveUsersFromChannelListRow(user: user.name,
                                         userGmail: user.gmail,
-                                        id: user.id
+                                        id: user.id,
+                                        color: user.colour
                 )
                 .environmentObject(channelViewModel)
                 .environmentObject(editChannelViewModel)

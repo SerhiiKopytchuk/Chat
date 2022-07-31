@@ -35,7 +35,7 @@ struct ConversationView: View {
                     .padding()
 
                 VStack {
-                    TitleRow(user: secondUser,
+                    ConversationTitleRow(user: secondUser,
                              animationNamespace: animation,
                              isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,

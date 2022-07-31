@@ -115,6 +115,7 @@ struct ChannelListRow: View {
                 .padding(5)
                 .opacity(isShowImage ? 1 : 0)
                 .addLightShadow()
+                .padding(.trailing)
         } else {
             if let first = channel.name.first {
                 Text(String(first.uppercased()))
@@ -128,6 +129,8 @@ struct ChannelListRow: View {
                         }
                     }
                     .addLightShadow()
+                    .padding(5)
+                    .padding(.trailing)
             }
         }
     }
