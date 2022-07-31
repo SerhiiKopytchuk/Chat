@@ -112,26 +112,16 @@ struct ChannelListRow: View {
                 .frame(width: imageSize, height: imageSize)
                 .cornerRadius(imageSize/2)
                 .clipShape(Circle())
-                .padding(5)
                 .opacity(isShowImage ? 1 : 0)
                 .addLightShadow()
+                .padding(5)
                 .padding(.trailing)
         } else {
-            if let first = channel.name.first {
-                Text(String(first.uppercased()))
-                    .font(.title.bold())
-                    .foregroundColor(.white)
-                    .frame(width: imageSize, height: imageSize)
-                    .background {
-                        withAnimation {
-                            Circle()
-                                .fill(Color(channel.colour))
-                        }
-                    }
-                    .addLightShadow()
-                    .padding(5)
-                    .padding(.trailing)
-            }
+
+            EmptyImageWithCharacterView(text: channel.name, colour: channel.colour, size: imageSize)
+                .padding(5)
+                .padding(.trailing)
+
         }
     }
 }

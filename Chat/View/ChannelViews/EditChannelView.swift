@@ -144,7 +144,7 @@ struct EditChannelView: View {
                         .cornerRadius(imageSize/2)
                         .addLightShadow()
                 } else {
-                    emptyImage
+                    EmptyImageWithCharacterView(text: channelName, colour: channelColor, size: imageSize)
                 }
             }
         }
@@ -160,20 +160,6 @@ struct EditChannelView: View {
                     self.imageUrl = url
                 }
             }
-        }
-    }
-
-    @ViewBuilder var emptyImage: some View {
-        if let first = channelName.first {
-            Text(String(first.uppercased()))
-                .font(.title.bold())
-                .foregroundColor(.white)
-                .frame(width: imageSize, height: imageSize)
-                .background {
-                    Circle()
-                        .fill(Color(channelColor))
-                }
-                .addLightShadow()
         }
     }
 

@@ -93,18 +93,8 @@ struct AddUserToChannelRow: View {
                 .addLightShadow()
                 .padding()
         } else {
-            if let first = user.first {
-                Text(String(first.uppercased()))
-                    .font(.title.bold())
-                    .foregroundColor(.white)
-                    .frame(width: imageSize, height: imageSize)
-                    .background {
-                        Circle()
-                            .fill(Color(colour))
-                    }
-                    .addLightShadow()
-                    .padding()
-            }
+            EmptyImageWithCharacterView(text: user, colour: colour, size: imageSize)
+                .padding()
         }
     }
 

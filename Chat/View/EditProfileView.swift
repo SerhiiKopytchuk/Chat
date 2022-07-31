@@ -117,10 +117,12 @@ struct EditProfileView: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: imageSize, height: imageSize)
-                            .cornerRadius(50)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                 } else {
-                        emptyImage
+                    EmptyImageWithCharacterView(text: userViewModel.currentUser.name,
+                                                colour: userViewModel.currentUser.colour,
+                                                size: imageSize)
                 }
             }
         }
@@ -154,20 +156,6 @@ struct EditProfileView: View {
         }
         .padding(.top, 25)
         .padding()
-    }
-
-    @ViewBuilder var emptyImage: some View {
-        if let first = userViewModel.currentUser.name.first {
-            Text(String(first.uppercased()))
-                .font(.title.bold())
-                .foregroundColor(.white)
-                .frame(width: imageSize, height: imageSize)
-                .background {
-                    Circle()
-                        .fill(Color(userViewModel.currentUser.colour))
-                }
-                .addLightShadow()
-        }
     }
 
     @ViewBuilder var saveButton: some View {

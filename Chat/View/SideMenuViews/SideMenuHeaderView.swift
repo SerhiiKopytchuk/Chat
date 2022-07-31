@@ -88,18 +88,8 @@ struct SideMenuHeaderView: View {
                     }
                 }
         } else {
-            if let first = user.name.first {
-                Text(String(first.uppercased()))
-                    .font(.title.bold())
-                    .foregroundColor(.white)
-                    .frame(width: imageSize, height: imageSize)
-                    .background {
-                        Circle()
-                            .fill(Color(user.colour))
-                    }
-                    .padding(.bottom, 16)
-                    .addLightShadow()
-            }
+            EmptyImageWithCharacterView(text: user.name, colour: user.colour, size: imageSize)
+                .padding(.bottom, 16)
         }
     }
 }

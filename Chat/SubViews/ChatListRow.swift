@@ -112,22 +112,14 @@ struct ChatListRow: View {
                 .frame(width: imageSize, height: imageSize)
                 .cornerRadius(imageSize/2)
                 .clipShape(Circle())
-                .padding(5)
                 .opacity(isShowImage ? 1 : 0)
                 .addLightShadow()
+                .padding(5)
         } else {
-            if let first = person?.name.first {
-                Text(String(first.uppercased()))
-                    .font(.title.bold())
-                    .foregroundColor(.white)
-                    .frame(width: imageSize, height: imageSize)
-                    .background {
-                        Circle()
-                            .fill(Color(person?.colour ?? String.getRandomColorFromAssets()))
-                    }
-                    .padding(5)
-                    .addLightShadow()
-            }
+            EmptyImageWithCharacterView(text: person?.name ?? "No Name",
+                                        colour: person?.colour ?? String.getRandomColorFromAssets(),
+                                        size: imageSize)
+                .padding(5)
         }
     }
 

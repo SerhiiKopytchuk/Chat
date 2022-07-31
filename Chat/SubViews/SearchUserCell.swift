@@ -71,18 +71,8 @@ struct SearchUserCell: View {
                 .addLightShadow()
                 .padding(.trailing)
         } else {
-            if let first = userName.first {
-                Text(String(first.uppercased()))
-                    .font(.title.bold())
-                    .foregroundColor(.white)
-                    .frame(width: imageSize, height: imageSize)
-                    .background {
-                        Circle()
-                            .fill(Color(userColor))
-                    }
-                    .addLightShadow()
-                    .padding(.trailing)
-            }
+            EmptyImageWithCharacterView(text: userName, colour: userColor, size: imageSize)
+                .padding(.trailing)
         }
     }
 }

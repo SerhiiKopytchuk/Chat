@@ -86,18 +86,8 @@ struct RemoveUsersFromChannelListRow: View {
                 .addLightShadow()
                 .padding()
         } else {
-            if let first = user.first {
-                Text(String(first.uppercased()))
-                    .font(.title.bold())
-                    .foregroundColor(.white)
-                    .frame(width: imageSize, height: imageSize)
-                    .background {
-                        Circle()
-                            .fill(Color(color))
-                    }
-                    .addLightShadow()
-                    .padding()
-            }
+            EmptyImageWithCharacterView(text: user, colour: color, size: imageSize)
+                .padding()
         }
     }
 
