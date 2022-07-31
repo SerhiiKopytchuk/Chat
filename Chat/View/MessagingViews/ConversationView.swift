@@ -43,6 +43,7 @@ struct ConversationView: View {
                     )
                     .background {
                         Color("BG")
+                            .opacity(0.7)
                     }
                     .cornerRadius(12)
                     .padding(.horizontal)
@@ -50,8 +51,18 @@ struct ConversationView: View {
                     .environmentObject(chattingViewModel)
 
                     if isFindChat {
-                        messagesScrollView
-                        MessageField(messagingViewModel: messagingViewModel)
+                        VStack(spacing: 0) {
+                            messagesScrollView
+                            MessageField(messagingViewModel: messagingViewModel)
+                                .padding()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                        .background {
+                            Color("BG")
+                                .cornerRadius(30, corners: [.topLeft, .topRight])
+                                .ignoresSafeArea()
+                        }
+
                     } else {
                         createChatButton
                     }
@@ -165,11 +176,12 @@ struct ConversationView: View {
                     self.messagingViewModel.currentChat.messages ?? [],
                     id: \.id) { message in
                         MessageBubble(message: message)
+                            .padding(.bottom, messagingViewModel.currentChat.messages?.last?.id == message.id ? 15 : 0)
                     }
             }
             .padding(.top, 10)
             .background(Color("BG"))
-            .cornerRadius(30)
+            .cornerRadius(30, corners: [.topLeft, .topRight])
             .onAppear {
                     proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }
@@ -179,7 +191,6 @@ struct ConversationView: View {
                 }
             }
         }
-        .padding(.horizontal)
     }
 
     @ViewBuilder var createChatButton: some View {
