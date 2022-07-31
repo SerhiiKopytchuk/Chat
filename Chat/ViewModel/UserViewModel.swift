@@ -18,8 +18,8 @@ class UserViewModel: ObservableObject {
 
     @Published var signedIn = false
     @Published var isShowLoader = false
-    @Published var currentUser: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var currentUser: User = User()
+    @Published var secondUser = User()
     @Published var users: [User] = []
     @Published var searchText = ""
 
@@ -50,7 +50,7 @@ class UserViewModel: ObservableObject {
 
     func getUser(id: String, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
         let docRef = self.dataBase.collection("users").document(id)
-        var userToReturn: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+        var userToReturn: User = User()
         docRef.getDocument(as: User.self) { result in
             switch result {
             case .success(let user):
@@ -212,14 +212,13 @@ class UserViewModel: ObservableObject {
 
     fileprivate func createFbUser(name: String, gmail: String) {
         do {
-            let newUser = User(chats: [],
-                               channels: [],
-                               gmail: gmail,
-                               id: Auth.auth().currentUser?.uid ?? "\(UUID())", name: name)
+            let newUser = User(gmail: gmail,
+                               id: Auth.auth().currentUser?.uid ?? "\(UUID())",
+                               name: name)
 
             try dataBase.collection("users").document("\(newUser.id)").setData(from: newUser)
         } catch {
-            print("error adding message to Firestore:: \(error)")
+            print("error adding message to FireStore:: \(error)")
         }
     }
 }

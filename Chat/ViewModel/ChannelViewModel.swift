@@ -14,8 +14,8 @@ class ChannelViewModel: ObservableObject {
 
     // MARK: - vars
 
-    @Published var currentUser: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var owner: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var currentUser: User = User()
+    @Published var owner: User = User()
     @Published var searchText = ""
 
     @Published var channels: [Channel] = []

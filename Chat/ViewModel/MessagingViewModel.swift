@@ -10,14 +10,9 @@ import FirebaseFirestore
 
 class MessagingViewModel: ObservableObject {
 
-    @Published var currentChat: Chat = Chat(id: "someId",
-                                            user1Id: "",
-                                            user2Id: "",
-                                            messages: [],
-                                            lastActivityTimestamp: Date(),
-                                            colour: String.getRandomColorFromAssets())
-    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "someId", name: "")
-    @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var currentChat: Chat = Chat()
+    @Published var user: User = User()
+    @Published var secondUser = User()
 
     @Published private(set) var messages: [Message] = []
     @Published private(set) var lastMessageId: String = ""

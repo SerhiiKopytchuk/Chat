@@ -13,7 +13,7 @@ struct SideMenuHeaderView: View {
 
     @Binding var isShowingSideMenu: Bool
     @EnvironmentObject var viewModel: UserViewModel
-    @State var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @State var user: User = User()
     @State var myImageUrl = URL(string: "")
     @State var isFindUserImage = true
     let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")

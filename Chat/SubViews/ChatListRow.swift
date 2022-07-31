@@ -49,7 +49,7 @@ struct ChatListRow: View {
                         .frame(width: imageSize, height: imageSize)
                         .background {
                             Circle()
-                                .fill(Color(chat.colour))
+                                .fill(Color(person?.colour ?? String.getRandomColorFromAssets()))
                         }
                         .addLightShadow()
                 }

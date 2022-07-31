@@ -234,11 +234,7 @@ struct ConversationView: View {
 
 struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
-        ConversationView(secondUser: User(chats: [],
-                                          channels: [],
-                                          gmail: "",
-                                          id: "",
-                                          name: ""),
+        ConversationView(secondUser: User(),
                          isFindChat: .constant(true))
             .environmentObject(MessagingViewModel())
             .environmentObject(UserViewModel())

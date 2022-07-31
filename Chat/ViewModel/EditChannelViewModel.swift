@@ -14,7 +14,7 @@ import FirebaseStorage
 
 class EditChannelViewModel: ObservableObject {
 
-    @Published var currentUser: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var currentUser: User = User()
     @Published var currentChannel: Channel = Channel(id: "",
                                                      name: "",
                                                      description: "",
