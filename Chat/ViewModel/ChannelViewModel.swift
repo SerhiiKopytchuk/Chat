@@ -267,4 +267,11 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
+    func clearPreviousDataBeforeSignIn() {
+        currentUser = User()
+        searchText = ""
+        channels = []
+        searchChannels = []
+    }
+
 }

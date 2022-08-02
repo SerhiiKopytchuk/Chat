@@ -21,7 +21,7 @@ struct SignUpView: View {
     @State var retryPassword: String = ""
 
     @State var isButtonDisabled: Bool = true
-    @State var isPresentLoginView: Bool = false
+    @State var isPresentSignInView: Bool = false
     @State var isShowingPassword: Bool = false
     @State var isShowingRetryPassword: Bool = false
     @State var isShowAlert = false
@@ -91,7 +91,7 @@ struct SignUpView: View {
                         .cornerRadius(30)
 
                     Button("Sign In") {
-                        self.isPresentLoginView = true
+                        self.isPresentSignInView = true
                     }
                     .foregroundColor(.brown)
                     .padding(.top, 20)
@@ -114,7 +114,7 @@ struct SignUpView: View {
                     Spacer()
 
                 }
-                NavigationLink(destination: SignInView(), isActive: $isPresentLoginView) { }
+                NavigationLink(destination: SignInView(), isActive: $isPresentSignInView) { }
 
             }
             .background {
@@ -341,6 +341,8 @@ struct SignUpView: View {
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                  accessToken: authentication.accessToken)
 
+                self.clearPreviousDataBeforeSignIn()
+
                 viewModel.signIn(credential: credential) { user in
                     chattingViewModel.user = user
                     chattingViewModel.getChats()
@@ -367,6 +369,12 @@ struct SignUpView: View {
             return false
         }
         return true
+    }
+
+    private func clearPreviousDataBeforeSignIn() {
+        self.viewModel.clearPreviousDataBeforeSignIn()
+        self.channelViewModel.clearPreviousDataBeforeSignIn()
+        self.chattingViewModel.clearDataBeforeSingIn()
     }
 }
 

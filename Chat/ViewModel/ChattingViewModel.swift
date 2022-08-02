@@ -195,4 +195,10 @@ class ChattingViewModel: ObservableObject {
         }
     }
 
+    func clearDataBeforeSingIn() {
+        self.user = User()
+        self.secondUser = User()
+        self.chats = []
+    }
+
 }

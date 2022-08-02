@@ -221,4 +221,11 @@ class UserViewModel: ObservableObject {
             print("error adding message to FireStore:: \(error)")
         }
     }
+
+    func clearPreviousDataBeforeSignIn() {
+        self.users = []
+        self.searchText = ""
+        self.currentUser = User()
+        self.secondUser = User()
+    }
 }
