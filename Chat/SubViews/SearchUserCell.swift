@@ -10,19 +10,23 @@ import FirebaseStorage
 import SDWebImageSwiftUI
 
 struct SearchUserCell: View {
-    var user: String
+    var userName: String
     var userGmail: String
     var id: String
+    var userColor: String
     let rowTapped: () -> Void
+    let imageSize: CGFloat = 50
 
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
 
     var body: some View {
             HStack {
+
                 userImage
+
                 VStack(alignment: .leading) {
-                    Text(user)
+                    Text(userName)
                         .font(.title)
                         .fontWeight(.semibold)
                         .lineLimit(1)
@@ -62,23 +66,13 @@ struct SearchUserCell: View {
             WebImage(url: imageUrl)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 40, height: 40)
-                .cornerRadius(20)
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
                 .addLightShadow()
-                .padding()
+                .padding(.trailing)
         } else {
-            Image(systemName: "person.crop.circle")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
-                .padding()
-                .addLightShadow()
+            EmptyImageWithCharacterView(text: userName, colour: userColor, size: imageSize)
+                .padding(.trailing)
         }
-    }
-}
-
-struct SearchUserCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchUserCell( user: "Georgy", userGmail: "georgy@gmail.com", id: "someId", rowTapped: { })
     }
 }

@@ -11,6 +11,8 @@ import GoogleSignIn
 
 struct SignInView: View {
 
+    // MARK: - vars
+
     @State var email: String = ""
     @State var password: String = ""
 
@@ -26,6 +28,7 @@ struct SignInView: View {
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
+    // MARK: - body
     var body: some View {
             ZStack {
                 VStack(spacing: 30) {
@@ -71,11 +74,11 @@ struct SignInView: View {
                 if isShowAlert || viewModel.showAlert {
                     GeometryReader { geometry in
                         if viewModel.showAlert {
-                            CustomAlert(show: $isShowAlert, text: $viewModel.alertText)
+                            CustomAlert(show: $isShowAlert, text: viewModel.alertText)
                                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                                 .frame(maxWidth: geometry.frame(in: .local).width - 20)
                         } else {
-                            CustomAlert(show: $isShowAlert, text: $alertText)
+                            CustomAlert(show: $isShowAlert, text: alertText)
                                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                                 .frame(maxWidth: geometry.frame(in: .local).width - 20)
                         }
@@ -97,6 +100,8 @@ struct SignInView: View {
             }
 
     }
+
+    // MARK: - ViewBuilders
 
     @ViewBuilder var inputFields: some View {
         VStack {
@@ -165,6 +170,9 @@ struct SignInView: View {
                     isShowAlert.toggle()
                 }
             } else {
+
+                clearPreviousDataBeforeSignIn()
+
                 viewModel.signIn(email: self.email, password: self.password) { user in
                     chattingViewModel.user = user
                     chattingViewModel.getChats()
@@ -208,6 +216,8 @@ struct SignInView: View {
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                accessToken: authentication.accessToken)
 
+                self.clearPreviousDataBeforeSignIn()
+
                 viewModel.signIn(credential: credential) { user in
                     chattingViewModel.user = user
                     chattingViewModel.getChats()
@@ -220,6 +230,14 @@ struct SignInView: View {
                 .resizable()
                 .frame(width: 32, height: 32)
         }
+    }
+
+    // MARK: - Functions
+
+    private func clearPreviousDataBeforeSignIn() {
+        self.viewModel.clearPreviousDataBeforeSignIn()
+        self.channelViewModel.clearPreviousDataBeforeSignIn()
+        self.chattingViewModel.clearDataBeforeSingIn()
     }
 
     private func updateButton() {

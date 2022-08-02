@@ -10,17 +10,9 @@ import FirebaseFirestore
 
 class ChannelMessagingViewModel: ObservableObject {
 
-    @Published var currentChannel: Channel = Channel(id: "someID",
-                                                     name: "someName",
-                                                     description: "some description",
-                                                     ownerId: "",
-                                                     ownerName: "",
-                                                     subscribersId: [],
-                                                     messages: [],
-                                                     lastActivityTimestamp: Date(),
-                                                     isPrivate: true)
+    @Published var currentChannel: Channel = Channel()
 
-    @Published var currentUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var currentUser = User()
 
     @Published private(set) var messages: [Message] = []
     @Published private(set) var lastMessageId = ""

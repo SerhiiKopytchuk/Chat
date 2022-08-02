@@ -31,27 +31,8 @@ struct ChatListRow: View {
 
     var body: some View {
         HStack {
-            if isFindUserImage {
-                WebImage(url: imageUrl)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: imageSize, height: imageSize)
-                    .cornerRadius(imageSize/2)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
-            } else {
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .scaledToFill()
-                    .clipped()
-                    .frame(width: imageSize, height: imageSize)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
-            }
+
+            userImage
 
             VStack(alignment: .leading) {
                 HStack {
@@ -120,6 +101,25 @@ struct ChatListRow: View {
                     self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
                 }
             }
+        }
+    }
+
+    @ViewBuilder var userImage: some View {
+        if isFindUserImage {
+            WebImage(url: imageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
+                .clipShape(Circle())
+                .opacity(isShowImage ? 1 : 0)
+                .addLightShadow()
+                .padding(5)
+        } else {
+            EmptyImageWithCharacterView(text: person?.name ?? "No Name",
+                                        colour: person?.colour ?? String.getRandomColorFromAssets(),
+                                        size: imageSize)
+                .padding(5)
         }
     }
 

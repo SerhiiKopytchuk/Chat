@@ -31,9 +31,11 @@ struct ConversationView: View {
     var body: some View {
         ZStack {
             VStack {
-                    header
+                HeaderWithBackButton(environment: _env, text: "Chat")
+                    .padding()
+
                 VStack {
-                    TitleRow(user: secondUser,
+                    ConversationTitleRow(user: secondUser,
                              animationNamespace: animation,
                              isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,
@@ -41,6 +43,7 @@ struct ConversationView: View {
                     )
                     .background {
                         Color("BG")
+                            .opacity(0.7)
                     }
                     .cornerRadius(12)
                     .padding(.horizontal)
@@ -48,8 +51,18 @@ struct ConversationView: View {
                     .environmentObject(chattingViewModel)
 
                     if isFindChat {
-                        messagesScrollView
-                        MessageField(messagingViewModel: messagingViewModel)
+                        VStack(spacing: 0) {
+                            messagesScrollView
+                            MessageField(messagingViewModel: messagingViewModel)
+                                .padding()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                        .background {
+                            Color("BG")
+                                .cornerRadius(30, corners: [.topLeft, .topRight])
+                                .ignoresSafeArea()
+                        }
+
                     } else {
                         createChatButton
                     }
@@ -85,23 +98,6 @@ struct ConversationView: View {
     }
 
     // MARK: - viewBuilders
-
-    @ViewBuilder var header: some View {
-        HStack(spacing: 15) {
-            Button {
-                env.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward.circle.fill")
-                    .toButtonLightStyle(size: 40)
-            }
-
-            Text("Chat")
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal)
-    }
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
         VStack {
@@ -180,11 +176,12 @@ struct ConversationView: View {
                     self.messagingViewModel.currentChat.messages ?? [],
                     id: \.id) { message in
                         MessageBubble(message: message)
+                            .padding(.bottom, messagingViewModel.currentChat.messages?.last?.id == message.id ? 15 : 0)
                     }
             }
             .padding(.top, 10)
             .background(Color("BG"))
-            .cornerRadius(30)
+            .cornerRadius(30, corners: [.topLeft, .topRight])
             .onAppear {
                     proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }
@@ -194,7 +191,6 @@ struct ConversationView: View {
                 }
             }
         }
-        .padding(.horizontal)
     }
 
     @ViewBuilder var createChatButton: some View {
@@ -249,11 +245,7 @@ struct ConversationView: View {
 
 struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
-        ConversationView(secondUser: User(chats: [],
-                                          channels: [],
-                                          gmail: "",
-                                          id: "",
-                                          name: ""),
+        ConversationView(secondUser: User(),
                          isFindChat: .constant(true))
             .environmentObject(MessagingViewModel())
             .environmentObject(UserViewModel())

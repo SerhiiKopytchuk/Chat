@@ -21,7 +21,7 @@ struct SignUpView: View {
     @State var retryPassword: String = ""
 
     @State var isButtonDisabled: Bool = true
-    @State var isPresentLoginView: Bool = false
+    @State var isPresentSignInView: Bool = false
     @State var isShowingPassword: Bool = false
     @State var isShowingRetryPassword: Bool = false
     @State var isShowAlert = false
@@ -40,13 +40,18 @@ struct SignUpView: View {
         // check if enable button
 
         withAnimation(.easeInOut(duration: time)) {
+
             if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty {
                 isButtonDisabled = true
             } else {
                 if password == retryPassword {
                     if password.count >= 8 {
                         if email.contains("@gmail.com") || email.contains("@email.com") {
-                            isButtonDisabled = false
+                            if fullName.isValidateLengthOfName() {
+                                isButtonDisabled = false
+                            } else {
+                                isButtonDisabled = true
+                            }
                         } else {
                             isButtonDisabled = true
                         }
@@ -86,7 +91,7 @@ struct SignUpView: View {
                         .cornerRadius(30)
 
                     Button("Sign In") {
-                        self.isPresentLoginView = true
+                        self.isPresentSignInView = true
                     }
                     .foregroundColor(.brown)
                     .padding(.top, 20)
@@ -109,7 +114,7 @@ struct SignUpView: View {
                     Spacer()
 
                 }
-                NavigationLink(destination: SignInView(), isActive: $isPresentLoginView) { }
+                NavigationLink(destination: SignInView(), isActive: $isPresentSignInView) { }
 
             }
             .background {
@@ -122,11 +127,11 @@ struct SignUpView: View {
             if isShowAlert || viewModel.showAlert {
                 GeometryReader { geometry in
                     if viewModel.showAlert {
-                        CustomAlert(show: $isShowAlert, text: $viewModel.alertText)
+                        CustomAlert(show: $isShowAlert, text: viewModel.alertText)
                             .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                             .frame(maxWidth: geometry.frame(in: .local).width - 20)
                     } else {
-                        CustomAlert(show: $isShowAlert, text: $alertText)
+                        CustomAlert(show: $isShowAlert, text: alertText)
                             .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                             .frame(maxWidth: geometry.frame(in: .local).width - 20)
                     }
@@ -294,14 +299,15 @@ struct SignUpView: View {
                     alertText = "Fill all fields properly!"
                     isShowAlert.toggle()
                 }
-
             } else {
-                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
-                    imageViewModel.saveImage(image: self.image ?? UIImage())
-                    chattingViewModel.user = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
+                if isValidatedName() {
+                    viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
+                        imageViewModel.saveImage(image: self.image ?? UIImage())
+                        chattingViewModel.user = user
+                        chattingViewModel.getChats()
+                        channelViewModel.currentUser = user
+                        channelViewModel.getChannels()
+                    }
                 }
             }
         } label: {
@@ -335,6 +341,8 @@ struct SignUpView: View {
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                  accessToken: authentication.accessToken)
 
+                self.clearPreviousDataBeforeSignIn()
+
                 viewModel.signIn(credential: credential) { user in
                     chattingViewModel.user = user
                     chattingViewModel.getChats()
@@ -350,6 +358,24 @@ struct SignUpView: View {
         }
     }
 
+    func isValidatedName() -> Bool {
+        fullName = fullName.trim()
+        updateButton()
+        if isButtonDisabled {
+            withAnimation(.easeInOut) {
+                alertText = "Fill all fields properly!"
+                isShowAlert.toggle()
+            }
+            return false
+        }
+        return true
+    }
+
+    private func clearPreviousDataBeforeSignIn() {
+        self.viewModel.clearPreviousDataBeforeSignIn()
+        self.channelViewModel.clearPreviousDataBeforeSignIn()
+        self.chattingViewModel.clearDataBeforeSingIn()
+    }
 }
 
 struct SignUpView_Previews: PreviewProvider {

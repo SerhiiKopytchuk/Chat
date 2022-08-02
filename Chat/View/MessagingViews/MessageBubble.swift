@@ -19,7 +19,7 @@ struct MessageBubble: View {
                 Text(message.text)
                     .padding()
                     .background(message.senderId != viewModel.getUserUID() ? .gray.opacity(0.3) : Color.white)
-                    .cornerRadius(30, corners: message.senderId != viewModel.getUserUID()
+                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
             }
             .frame(maxWidth: 300, alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing)

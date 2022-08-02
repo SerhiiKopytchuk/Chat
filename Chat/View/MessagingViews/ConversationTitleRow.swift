@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseStorage
 import SDWebImageSwiftUI
 
-struct TitleRow: View {
+struct ConversationTitleRow: View {
     var user: User
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -24,6 +24,8 @@ struct TitleRow: View {
 
     @Binding var isExpandedProfile: Bool
     @Binding var profileImage: WebImage
+
+    let imageSize: CGFloat = 50
 
     var body: some View {
         HStack(spacing: 20) {
@@ -82,16 +84,16 @@ struct TitleRow: View {
                     WebImage(url: imageUrl)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .cornerRadius(50)
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                             .opacity(0)
                 } else {
                     WebImage(url: imageUrl)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .cornerRadius(50)
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                             .matchedGeometryEffect(id: "profilePhoto", in: animationNamespace)
                 }
@@ -102,12 +104,17 @@ struct TitleRow: View {
                 }
             }
         } else {
-            Image(systemName: "person.crop.circle")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 50, height: 50)
-                .cornerRadius(50)
-                .addLightShadow()
+            if let first = user.name.first {
+                Text(String(first.uppercased()))
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .frame(width: imageSize, height: imageSize)
+                    .background {
+                        Circle()
+                            .fill(Color(user.colour))
+                    }
+                    .addLightShadow()
+            }
         }
 
     }

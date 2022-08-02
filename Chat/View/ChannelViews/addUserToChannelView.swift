@@ -14,13 +14,15 @@ struct AddUserToChannelView: View {
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject var userViewModel: UserViewModel
 
-    @Environment(\.self) var presentationMode
+    @Environment(\.self) var env
 
     @State var subscribersId: [String] = []
 
     var body: some View {
         VStack {
-            header
+            HeaderWithBackButton(environment: _env, text: "Add users")
+                .padding(.vertical)
+                .padding(.horizontal)
 
             addUsersTextField
 
@@ -34,23 +36,6 @@ struct AddUserToChannelView: View {
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)
-    }
-
-    @ViewBuilder var header: some View {
-        HStack(spacing: 15) {
-            Button {
-                presentationMode.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward.circle.fill")
-                    .toButtonLightStyle(size: 40)
-            }
-
-            Text("Add users")
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal)
     }
 
     @ViewBuilder var addUsersTextField: some View {
@@ -70,7 +55,7 @@ struct AddUserToChannelView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(.white)
         }
-        .padding(.top, 25)
+        .padding(.top, 5)
         .padding()
     }
 
@@ -80,6 +65,7 @@ struct AddUserToChannelView: View {
                 AddUserToChannelRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id,
+                                        colour: user.colour,
                                         subscribersId: $subscribersId
                 )
                 .environmentObject(channelViewModel)
@@ -95,7 +81,7 @@ struct AddUserToChannelView: View {
             editChannelViewModel.usersToAddToChannel = []
             self.subscribersId = []
             self.searchUserText = ""
-            presentationMode.dismiss()
+            env.dismiss()
         } label: {
             Text("apply")
                 .toButtonGradientStyle()

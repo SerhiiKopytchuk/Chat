@@ -15,13 +15,9 @@ class ChattingViewModel: ObservableObject {
 
     // MARK: - vars
 
-    @Published var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var secondUser = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var currentChat: Chat = Chat(id: "",
-                                            user1Id: "",
-                                            user2Id: "",
-                                            messages: [],
-                                            lastActivityTimestamp: Date())
+    @Published var user: User = User()
+    @Published var secondUser = User()
+    @Published var currentChat: Chat = Chat()
 
     @Published private(set) var chats: [Chat] = []
 
@@ -95,7 +91,9 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
 
-        let newChat = Chat(id: "\(UUID())", user1Id: user.id, user2Id: secondUser.id, lastActivityTimestamp: Date())
+        let newChat = Chat(user1Id: user.id,
+                           user2Id: secondUser.id,
+                           lastActivityTimestamp: Date())
 
         try dataBase.collection("chats").document().setData(from: newChat)
 
@@ -195,6 +193,12 @@ class ChattingViewModel: ObservableObject {
         } else {
             return false
         }
+    }
+
+    func clearDataBeforeSingIn() {
+        self.user = User()
+        self.secondUser = User()
+        self.chats = []
     }
 
 }

@@ -13,12 +13,15 @@ struct EditChannelView: View {
 
     @State var channelName: String
     @State var channelDescription: String
+    @State var channelColor: String
 
     @State var channelImage: UIImage?
     @State var isShowingImagePicker = false
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
     @State var isChangedImage = false
+
+    @State var isShowAlert = false
 
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -31,55 +34,7 @@ struct EditChannelView: View {
         VStack {
             header
             HStack {
-                Button {
-                    isShowingImagePicker.toggle()
-                } label: {
-                    if isFindUserImage {
-                        if self.channelImage != nil {
-                            ZStack {
-                                Image(uiImage: self.channelImage ?? UIImage())
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: imageSize, height: imageSize)
-                                    .cornerRadius(imageSize/2)
-                                    .addLightShadow()
-                            }
-                        } else {
-                            ZStack {
-                                WebImage(url: imageUrl)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: imageSize, height: imageSize)
-                                    .cornerRadius(imageSize/2)
-                                    .addLightShadow()
-                            }
-                        }
-                    } else {
-                        if self.channelImage != nil {
-                            Image(uiImage: self.channelImage ?? UIImage())
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: imageSize, height: imageSize)
-                                .cornerRadius(imageSize/2)
-                                .addLightShadow()
-                        } else {
-                            emptyImage
-                        }
-                    }
-                }
-                .padding()
-                .onAppear {
-                    let ref = Storage.storage().reference(withPath: channelViewModel.currentChannel.id ?? "someId" )
-                    ref.downloadURL { url, err in
-                        if err != nil {
-                            self.isFindUserImage = false
-                            return
-                        }
-                        withAnimation(.easeInOut) {
-                            self.imageUrl = url
-                        }
-                    }
-                }
+                imageButton
 
                 TextField("Enter channel name", text: $channelName)
                     .padding(.vertical, 20)
@@ -115,6 +70,9 @@ struct EditChannelView: View {
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $channelImage)
         }
+        .overlay {
+            customAlert
+        }
     }
 
     @ViewBuilder var header: some View {
@@ -135,11 +93,15 @@ struct EditChannelView: View {
             Button {
                 channelName = channelName.trim()
                 channelDescription = channelDescription.trim()
-                editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
+                if channelName.isValidateLengthOfName() {
+                    editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
 
-                channelViewModel.currentChannel = editChannelViewModel.currentChannel
-                channelViewModel.getChannels(fromUpdate: true)
-                presentationMode.dismiss()
+                    channelViewModel.currentChannel = editChannelViewModel.currentChannel
+                    channelViewModel.getChannels(fromUpdate: true)
+                    presentationMode.dismiss()
+                } else {
+                    isShowAlert = true
+                }
             } label: {
                 Image(systemName: "checkmark")
                     .toButtonLightStyle(size: 40)
@@ -149,19 +111,78 @@ struct EditChannelView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var emptyImage: some View {
-        Image(systemName: "photo.circle.fill")
-            .resizable()
-            .frame(width: 50, height: 50)
-            .foregroundColor(.black.opacity(0.70))
-            .background(.white)
-            .cornerRadius(25)
-            .addLightShadow()
+    @ViewBuilder var imageButton: some View {
+        Button {
+            isShowingImagePicker.toggle()
+        } label: {
+            if isFindUserImage {
+                if self.channelImage != nil {
+                    ZStack {
+                        Image(uiImage: self.channelImage ?? UIImage())
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
+                            .addLightShadow()
+                    }
+                } else {
+                    ZStack {
+                        WebImage(url: imageUrl)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
+                            .addLightShadow()
+                    }
+                }
+            } else {
+                if self.channelImage != nil {
+                    Image(uiImage: self.channelImage ?? UIImage())
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: imageSize, height: imageSize)
+                        .cornerRadius(imageSize/2)
+                        .addLightShadow()
+                } else {
+                    EmptyImageWithCharacterView(text: channelName, colour: channelColor, size: imageSize)
+                }
+            }
+        }
+        .padding()
+        .onAppear {
+            let ref = Storage.storage().reference(withPath: channelViewModel.currentChannel.id ?? "someId" )
+            ref.downloadURL { url, err in
+                if err != nil {
+                    self.isFindUserImage = false
+                    return
+                }
+                withAnimation(.easeInOut) {
+                    self.imageUrl = url
+                }
+            }
+        }
+    }
+
+    @ViewBuilder var customAlert: some View {
+        if isShowAlert {
+            GeometryReader { geometry in
+                CustomAlert(show: $isShowAlert, text: channelName.count > 3 ?
+                                "Name should be shorter than 35 symbols" :
+                                "Name should be longer than 3 symbols")
+
+                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            }
+            .background(Color.white.opacity(0.65))
+            .edgesIgnoringSafeArea(.all)
+        }
     }
 }
 
 struct EditChannelView_Previews: PreviewProvider {
     static var previews: some View {
-        EditChannelView(channelName: "Koch", channelDescription: "description")
+        EditChannelView(channelName: "Koch",
+                        channelDescription: "description",
+                        channelColor: String.getRandomColorFromAssets())
     }
 }

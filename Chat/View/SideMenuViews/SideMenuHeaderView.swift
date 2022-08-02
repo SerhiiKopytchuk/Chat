@@ -13,10 +13,13 @@ struct SideMenuHeaderView: View {
 
     @Binding var isShowingSideMenu: Bool
     @EnvironmentObject var viewModel: UserViewModel
-    @State var user: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @State var user: User = User()
     @State var myImageUrl = URL(string: "")
     @State var isFindUserImage = true
+
+    var imageSize: CGFloat = 65
     let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
+
     var body: some View {
 
         ZStack(alignment: .topTrailing) {
@@ -69,7 +72,7 @@ struct SideMenuHeaderView: View {
                 .resizable()
                 .scaledToFill()
                 .clipped()
-                .frame(width: 65, height: 65)
+                .frame(width: imageSize, height: imageSize)
                 .clipShape(Circle())
                 .padding(.bottom, 16)
                 .addLightShadow()
@@ -85,14 +88,8 @@ struct SideMenuHeaderView: View {
                     }
                 }
         } else {
-            Image(systemName: "person.crop.circle")
-                .resizable()
-                .scaledToFill()
-                .clipped()
-                .frame(width: 65, height: 65)
-                .clipShape(Circle())
+            EmptyImageWithCharacterView(text: user.name, colour: user.colour, size: imageSize)
                 .padding(.bottom, 16)
-                .addLightShadow()
         }
     }
 }
