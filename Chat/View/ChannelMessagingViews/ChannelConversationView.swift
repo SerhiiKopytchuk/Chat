@@ -55,6 +55,7 @@ struct ChannelConversationView: View {
                     )
                     .background {
                         Color("BG")
+                            .opacity(0.7)
                     }
                     .cornerRadius(12)
                     .padding(.horizontal)
@@ -77,15 +78,25 @@ struct ChannelConversationView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    messagesScrollView
+
+                    VStack(spacing: 0) {
+                        messagesScrollView
+                        if isSubscribed {
+                            messagingTextField
+                                .padding()
+                        } else {
+                            subscribeButton
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .background {
+                        Color("BG")
+                            .cornerRadius(30, corners: [.topLeft, .topRight])
+                            .ignoresSafeArea()
+                    }
                 }
                 .frame(maxWidth: .infinity)
 
-                if isSubscribed {
-                    messagingTextField
-                } else {
-                    subscribeButton
-                }
             }
             .background {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -319,7 +330,6 @@ struct ChannelConversationView: View {
             }
         }
         .padding(.bottom, isOwner() ? 0 : 15)
-        .padding(.horizontal)
         .ignoresSafeArea()
     }
 

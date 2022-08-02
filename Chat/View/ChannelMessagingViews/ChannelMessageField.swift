@@ -32,9 +32,8 @@ struct ChannelMessageField: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
-        .background(Color("BG"))
+        .background(Color.white)
         .cornerRadius(15)
-        .padding()
     }}
 
 struct ChannelMessageField_Previews: PreviewProvider {
