@@ -24,4 +24,18 @@ extension String {
         }
         return false
     }
+
+    static func getRandomColorFromAssets() -> String {
+        let colorsArray = [
+            "Green",
+            "Purple",
+            "Yellow",
+            "Red"
+        ]
+        let randomIndex = Int.random(in: 0...colorsArray.count - 1)
+
+        return colorsArray[randomIndex]
+
+    }
+
 }

@@ -32,46 +32,24 @@ struct ChannelListRow: View {
 
     var body: some View {
         HStack {
-            if isFindChannelImage {
-                WebImage(url: imageUrl)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: imageSize, height: imageSize)
-                    .cornerRadius(imageSize/2)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
-            } else {
-                Image(systemName: "photo.circle.fill")
-                    .resizable()
-                    .scaledToFill()
-                    .foregroundColor(.gray)
-                    .clipped()
-                    .frame(width: imageSize, height: imageSize)
-                    .clipShape(Circle())
-                    .padding(5)
-                    .opacity(isShowImage ? 1 : 0)
-                    .addLightShadow()
-            }
+            channelImage
 
             VStack(alignment: .leading) {
-                HStack {
-                    Text(channel.name )
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                    Spacer()
-                    RollingText(font: .caption,
-                                weight: .light,
-                                value: $countOfMessages)
-                        .foregroundColor(.secondary)
-                }
+                Text(channel.name )
+                    .font(.title3)
+                    .fontWeight(.semibold)
 
                 Text(channel.description)
                     .font(.caption)
                     .italic()
                     .foregroundColor(.secondary)
             }
+            Spacer()
+
+            RollingText(font: .caption,
+                        weight: .light,
+                        value: $countOfMessages)
+            .foregroundColor(.secondary)
         }
         .padding()
         .background {
@@ -125,20 +103,31 @@ struct ChannelListRow: View {
             }
         }
     }
+
+    @ViewBuilder var channelImage: some View {
+        if isFindChannelImage {
+            WebImage(url: imageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
+                .clipShape(Circle())
+                .opacity(isShowImage ? 1 : 0)
+                .addLightShadow()
+                .padding(5)
+                .padding(.trailing)
+        } else {
+
+            EmptyImageWithCharacterView(text: channel.name, colour: channel.colour, size: imageSize)
+                .padding(5)
+                .padding(.trailing)
+
+        }
+    }
 }
 
 struct ChannelListRow_Previews: PreviewProvider {
     static var previews: some View {
-        ChannelListRow(channel: Channel(id: "id",
-                                        name: "name",
-                                        description: "description",
-                                        ownerId: "ownerId",
-                                        ownerName: "name",
-                                        subscribersId: ["1", "2"],
-                                        messages: [],
-                                        lastActivityTimestamp: Date(),
-                                        isPrivate: true)) {
-        }
-
+        ChannelListRow(channel: Channel()) { }
     }
 }

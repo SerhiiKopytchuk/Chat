@@ -13,6 +13,9 @@ struct RemoveUsersFromChannelListRow: View {
     var user: String
     var userGmail: String
     var id: String
+    var color: String
+
+    var imageSize: CGFloat = 40
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
@@ -22,22 +25,9 @@ struct RemoveUsersFromChannelListRow: View {
 
     var body: some View {
         HStack {
-            if isFindUserImage {
-                WebImage(url: imageUrl)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .cornerRadius(20)
-                    .addLightShadow()
-                    .padding()
-            } else {
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .addLightShadow()
-                    .padding()
-            }
+
+            userImage
+
             VStack(alignment: .leading) {
                 Text(user)
                     .font(.title2)
@@ -48,6 +38,7 @@ struct RemoveUsersFromChannelListRow: View {
                     .foregroundColor(.gray)
                     .lineLimit(1)
             }
+
             Spacer()
             Image(systemName: "minus")
                 .resizable()
@@ -85,6 +76,21 @@ struct RemoveUsersFromChannelListRow: View {
         }
     }
 
+    @ViewBuilder var userImage: some View {
+        if isFindUserImage {
+            WebImage(url: imageUrl)
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
+                .addLightShadow()
+                .padding()
+        } else {
+            EmptyImageWithCharacterView(text: user, colour: color, size: imageSize)
+                .padding()
+        }
+    }
+
     private func updateChannelViewModel() {
         channelViewModel.currentChannel = editChannelViewModel.currentChannel
         channelViewModel.channelSubscribers = editChannelViewModel.channelSubscribers
@@ -95,7 +101,8 @@ struct RemoveUsersFromChannelListRow_Previews: PreviewProvider {
     static var previews: some View {
         RemoveUsersFromChannelListRow(user: "Koch",
                                 userGmail: "koch@gmail.com",
-                                id: "someId"
+                                id: "someId",
+                                color: String.getRandomColorFromAssets()
         )
     }
 }

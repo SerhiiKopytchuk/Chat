@@ -13,6 +13,7 @@ struct EditChannelView: View {
 
     @State var channelName: String
     @State var channelDescription: String
+    @State var channelColor: String
 
     @State var channelImage: UIImage?
     @State var isShowingImagePicker = false
@@ -143,7 +144,7 @@ struct EditChannelView: View {
                         .cornerRadius(imageSize/2)
                         .addLightShadow()
                 } else {
-                    emptyImage
+                    EmptyImageWithCharacterView(text: channelName, colour: channelColor, size: imageSize)
                 }
             }
         }
@@ -160,16 +161,6 @@ struct EditChannelView: View {
                 }
             }
         }
-    }
-
-    @ViewBuilder var emptyImage: some View {
-        Image(systemName: "photo.circle.fill")
-            .resizable()
-            .frame(width: 50, height: 50)
-            .foregroundColor(.black.opacity(0.70))
-            .background(.white)
-            .cornerRadius(25)
-            .addLightShadow()
     }
 
     @ViewBuilder var customAlert: some View {
@@ -190,6 +181,8 @@ struct EditChannelView: View {
 
 struct EditChannelView_Previews: PreviewProvider {
     static var previews: some View {
-        EditChannelView(channelName: "Koch", channelDescription: "description")
+        EditChannelView(channelName: "Koch",
+                        channelDescription: "description",
+                        channelColor: String.getRandomColorFromAssets())
     }
 }

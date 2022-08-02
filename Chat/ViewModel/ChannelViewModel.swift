@@ -14,21 +14,13 @@ class ChannelViewModel: ObservableObject {
 
     // MARK: - vars
 
-    @Published var currentUser: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
-    @Published var owner: User = User(chats: [], channels: [], gmail: "", id: "", name: "")
+    @Published var currentUser: User = User()
+    @Published var owner: User = User()
     @Published var searchText = ""
 
     @Published var channels: [Channel] = []
     @Published var searchChannels: [Channel] = []
-    @Published var currentChannel: Channel = Channel(id: "",
-                                                     name: "",
-                                                     description: "",
-                                                     ownerId: "",
-                                                     ownerName: "",
-                                                     subscribersId: [],
-                                                     messages: [],
-                                                     lastActivityTimestamp: Date(),
-                                                     isPrivate: true)
+    @Published var currentChannel: Channel = Channel()
     @Published var channelType: ChannelType = .publicType
 
     @Published var channelSubscribers: [User] = []
@@ -150,14 +142,10 @@ class ChannelViewModel: ObservableObject {
                                      description: String,
                                      competition: @escaping (Channel) -> Void) throws {
 
-        let newChannel = Channel(id: "\(UUID())",
-                                 name: name,
+        let newChannel = Channel(name: name,
                                  description: description,
                                  ownerId: currentUser.id,
                                  ownerName: currentUser.name,
-                                 subscribersId: [],
-                                 messages: [],
-                                 lastActivityTimestamp: Date(),
                                  isPrivate: channelType == ChannelType.privateType)
 
         try dataBase.collection("channels").document().setData(from: newChannel)
@@ -277,6 +265,13 @@ class ChannelViewModel: ObservableObject {
         } else {
             return false
         }
+    }
+
+    func clearPreviousDataBeforeSignIn() {
+        currentUser = User()
+        searchText = ""
+        channels = []
+        searchChannels = []
     }
 
 }

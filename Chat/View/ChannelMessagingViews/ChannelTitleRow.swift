@@ -24,41 +24,12 @@ struct ChannelTitleRow: View {
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
 
+    let imageSize: CGFloat = 50
+
     var body: some View {
         HStack(spacing: 20) {
-            if isFindUserImage {
-                VStack {
-                    if isExpandedProfileImage {
-                        WebImage(url: imageUrl)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .cornerRadius(50)
-                            .addLightShadow()
-                            .opacity(0)
-                    } else {
-                        WebImage(url: imageUrl)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50)
-                            .cornerRadius(50)
-                            .addLightShadow()
-                            .matchedGeometryEffect(id: "channelPhoto", in: animationNamespace)
-                    }
-                }
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        isExpandedProfileImage.toggle()
-                    }
-                }
-            } else {
-                Image(systemName: "photo.circle.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 50, height: 50)
-                    .cornerRadius(50)
-                    .addLightShadow()
-            }
+
+            channelImage
 
             VStack(alignment: .leading) {
                 Text(channel.name)
@@ -92,5 +63,46 @@ struct ChannelTitleRow: View {
             }
         }
         .padding()
+    }
+
+    @ViewBuilder var channelImage: some View {
+        if isFindUserImage {
+            VStack {
+                if isExpandedProfileImage {
+                    WebImage(url: imageUrl)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: imageSize, height: imageSize)
+                        .cornerRadius(imageSize/2)
+                        .addLightShadow()
+                        .opacity(0)
+                } else {
+                    WebImage(url: imageUrl)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: imageSize, height: imageSize)
+                        .cornerRadius(imageSize/2)
+                        .addLightShadow()
+                        .matchedGeometryEffect(id: "channelPhoto", in: animationNamespace)
+                }
+            }
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isExpandedProfileImage.toggle()
+                }
+            }
+        } else {
+            if let first = channel.name.first {
+                Text(String(first.uppercased()))
+                    .font(.title.bold())
+                    .foregroundColor(.white)
+                    .frame(width: imageSize, height: imageSize)
+                    .background {
+                        Circle()
+                            .fill(Color(channel.colour))
+                    }
+                    .addLightShadow()
+            }
+        }
     }
 }

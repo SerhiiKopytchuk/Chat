@@ -11,7 +11,10 @@ struct Loader: View {
             Circle()
                 .trim(from: 0, to: 0.8)
                 .stroke(
-                    AngularGradient(gradient: .init(colors: [.orange, .red]), center: .center),
+                    AngularGradient(gradient: .init(colors: [ Color("Gradient1"),
+                                                              Color("Gradient2"),
+                                                              Color("Gradient3")
+                                                            ]), center: .center),
                     style: StrokeStyle(lineWidth: 8, lineCap: .round)
                 )
                 .frame(width: 45, height: 45)

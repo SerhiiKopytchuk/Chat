@@ -42,7 +42,9 @@ struct ChannelConversationView: View {
         ZStack {
             VStack {
                 VStack {
-                    header
+
+                    HeaderWithBackButton(environment: _env, text: "Channel")
+                        .padding()
 
                     ChannelTitleRow(channel: channelViewModel.currentChannel,
                                     animationNamespace: animation,
@@ -53,6 +55,7 @@ struct ChannelConversationView: View {
                     )
                     .background {
                         Color("BG")
+                            .opacity(0.7)
                     }
                     .cornerRadius(12)
                     .padding(.horizontal)
@@ -75,15 +78,25 @@ struct ChannelConversationView: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    messagesScrollView
+
+                    VStack(spacing: 0) {
+                        messagesScrollView
+                        if isSubscribed {
+                            messagingTextField
+                                .padding()
+                        } else {
+                            subscribeButton
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .background {
+                        Color("BG")
+                            .cornerRadius(30, corners: [.topLeft, .topRight])
+                            .ignoresSafeArea()
+                    }
                 }
                 .frame(maxWidth: .infinity)
 
-                if isSubscribed {
-                    messagingTextField
-                } else {
-                    subscribeButton
-                }
             }
             .background {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -133,23 +146,6 @@ struct ChannelConversationView: View {
 
     // MARK: - viewBuilders
 
-    @ViewBuilder var header: some View {
-        HStack(spacing: 15) {
-            Button {
-                env.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward.circle.fill")
-                    .toButtonLightStyle(size: 40)
-            }
-
-            Text("Channel")
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal)
-    }
-
     @ViewBuilder var navigationLinks: some View {
         NavigationLink(isActive: $isGoToAddSubscribers, destination: {
             AddUserToChannelView()
@@ -169,7 +165,8 @@ struct ChannelConversationView: View {
 
         NavigationLink(isActive: $isGoToEditChannel, destination: {
             EditChannelView(channelName: channelViewModel.currentChannel.name,
-                            channelDescription: channelViewModel.currentChannel.description)
+                            channelDescription: channelViewModel.currentChannel.description,
+                            channelColor: channelViewModel.currentChannel.colour)
                 .environmentObject(channelViewModel)
                 .environmentObject(editChannelViewModel)
         }, label: { })
@@ -314,6 +311,8 @@ struct ChannelConversationView: View {
                     self.channelMessagingViewModel.currentChannel.messages ?? [],
                     id: \.id) { message in
                         MessageBubble(message: message)
+                            .padding(.bottom,
+                                     channelMessagingViewModel.currentChannel.messages?.last?.id == message.id ? 15 : 0)
                     }
             }
             .padding(.top, 10)
@@ -333,7 +332,6 @@ struct ChannelConversationView: View {
             }
         }
         .padding(.bottom, isOwner() ? 0 : 15)
-        .padding(.horizontal)
         .ignoresSafeArea()
     }
 

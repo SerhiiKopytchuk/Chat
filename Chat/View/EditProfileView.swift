@@ -22,6 +22,8 @@ struct EditProfileView: View {
 
     @State var isShowAlert = false
 
+    let imageSize: CGFloat = 100
+
     @EnvironmentObject var userViewModel: UserViewModel
     @ObservedObject var editProfileView = EditProfileViewModel()
 
@@ -29,6 +31,7 @@ struct EditProfileView: View {
 
     var body: some View {
         ZStack {
+
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(
                     LinearGradient(colors: [
@@ -37,47 +40,23 @@ struct EditProfileView: View {
                         Color("Gradient3")
                     ], startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
-            .ignoresSafeArea()
+                .ignoresSafeArea()
 
             VStack {
 
-                HStack(spacing: 15) {
-                    Button {
-                        env.dismiss()
-                    } label: {
-                        Image(systemName: "arrow.backward.circle.fill")
-                            .toButtonLightStyle(size: 40)
-                    }
-
-                    Text("Edit profile")
-                        .font(.title.bold())
-                        .opacity(0.7)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                }
-                .padding()
+                HeaderWithBackButton(environment: _env, text: "Edit profile")
+                    .padding()
 
                 ZStack(alignment: .top) {
+
                     Color("BG")
                         .cornerRadius(30, corners: [.topLeft, .topRight])
                         .offset(x: 0, y: 50)
+
                     VStack {
                         changeProfileImageButton
 
-                        Label {
-                            TextField("Enter your new name", text: $newName)
-                                .padding(.leading, 10)
-                        } icon: {
-                            Image(systemName: "person")
-                        }
-                        .padding(.vertical, 20)
-                        .padding(.horizontal, 15)
-                        .background {
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(.white)
-                        }
-                        .padding(.top, 25)
-                        .padding()
+                        userNameTextField
 
                         Text(userViewModel.currentUser.gmail)
                             .font(.callout)
@@ -108,7 +87,7 @@ struct EditProfileView: View {
         }
     }
 
-    var changeProfileImageButton: some View {
+    @ViewBuilder var changeProfileImageButton: some View {
         Button {
             isShowingImagePicker.toggle()
         } label: {
@@ -118,8 +97,8 @@ struct EditProfileView: View {
                         Image(uiImage: self.profileImage ?? UIImage())
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(50)
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                     }
                 } else {
@@ -127,8 +106,8 @@ struct EditProfileView: View {
                         WebImage(url: imageUrl)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(50)
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                     }
                 }
@@ -137,15 +116,17 @@ struct EditProfileView: View {
                         Image(uiImage: self.profileImage ?? UIImage())
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(50)
+                            .frame(width: imageSize, height: imageSize)
+                            .cornerRadius(imageSize/2)
                             .addLightShadow()
                 } else {
-                        emptyImage
+                    EmptyImageWithCharacterView(text: userViewModel.currentUser.name,
+                                                colour: userViewModel.currentUser.colour,
+                                                size: imageSize)
                 }
             }
         }
-        .frame(width: 100, height: 100)
+        .frame(width: imageSize, height: imageSize)
         .onAppear {
             let ref = Storage.storage().reference(withPath: userViewModel.currentUser.id )
             ref.downloadURL { url, err in
@@ -160,17 +141,24 @@ struct EditProfileView: View {
         }
     }
 
-    var emptyImage: some View {
-        Image(systemName: "person.crop.circle")
-            .resizable()
-            .frame(width: 100, height: 100)
-            .foregroundColor(.black.opacity(0.70))
-            .background(.white)
-            .cornerRadius(50)
-            .addLightShadow()
+    @ViewBuilder var userNameTextField: some View {
+        Label {
+            TextField("Enter your new name", text: $newName)
+                .padding(.leading, 10)
+        } icon: {
+            Image(systemName: "person")
+        }
+        .padding(.vertical, 20)
+        .padding(.horizontal, 15)
+        .background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(.white)
+        }
+        .padding(.top, 25)
+        .padding()
     }
 
-    var saveButton: some View {
+    @ViewBuilder var saveButton: some View {
         Button {
 
             if !newName.isValidateLengthOfName() {
