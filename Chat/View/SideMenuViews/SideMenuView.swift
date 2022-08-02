@@ -46,7 +46,7 @@ struct SideMenuView: View {
                         NavigationLink {
                             CreateChannelView()
                                 .environmentObject(viewModel)
-                                .environmentObject(ChannelViewModel())
+                                .environmentObject(channelViewModel)
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
