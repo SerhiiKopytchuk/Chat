@@ -45,6 +45,7 @@
 		4089D67B2888025B00FC987E /* ChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */; };
 		408E26122832C44800CE108E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E26112832C44800CE108E /* MainView.swift */; };
 		4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4094461428301F8D00239F7B /* GoogleService-Info.plist */; };
+		409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CB289D937C00720A1E /* AnimatedEmoji.swift */; };
 		409AC7642849E9A300BD00F9 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409AC7632849E9A300BD00F9 /* SearchView.swift */; };
 		409F252F2882B574005D0E6A /* addUserToChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409F252E2882B574005D0E6A /* addUserToChannelView.swift */; };
 		40A1A5F72855BF5700D30A7B /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 40A1A5F62855BF5700D30A7B /* SDWebImageSwiftUI */; };
@@ -125,6 +126,7 @@
 		4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		408E26112832C44800CE108E /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		4094461428301F8D00239F7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		409894CB289D937C00720A1E /* AnimatedEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEmoji.swift; sourceTree = "<group>"; };
 		409AC7632849E9A300BD00F9 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		409F252E2882B574005D0E6A /* addUserToChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addUserToChannelView.swift; sourceTree = "<group>"; };
 		40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyImageWithCharacterView.swift; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 				40A766B728843045002D6FA5 /* removeUsersFromChannelListRow.swift */,
 				40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */,
 				40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */,
+				409894CB289D937C00720A1E /* AnimatedEmoji.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				40153F2A286B32BC0022DA46 /* ChannelMessagingViewModel.swift in Sources */,
 				40153F24286B18F70022DA46 /* ChannelListRow.swift in Sources */,
 				406DC3A2284C8B5E00A41964 /* SearchUserCell.swift in Sources */,
+				409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */,
 				400E81A82868583A006A606E /* Channel.swift in Sources */,
 				4056D63B2833D8E8000A0872 /* SignUpView.swift in Sources */,
 				40442EAF289575F800E32FEF /* HeaderWithBackButton.swift in Sources */,

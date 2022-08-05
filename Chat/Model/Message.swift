@@ -12,12 +12,16 @@ struct Message: Identifiable, Codable {
     var text: String
     var senderId: String
     var timestamp: Date
+    var emojiValue: String
+    var isEmojiAdded: Bool
 
     internal init(text: String, senderId: String) {
         self.id = UUID().uuidString
         self.text = text
         self.senderId = senderId
         self.timestamp = Date()
+        self.emojiValue = ""
+        self.isEmojiAdded = false
     }
 
     init() {
@@ -25,5 +29,7 @@ struct Message: Identifiable, Codable {
         self.text = "some text"
         self.senderId = "sender id"
         self.timestamp = Date()
+        self.emojiValue = ""
+        self.isEmojiAdded = false
     }
 }
