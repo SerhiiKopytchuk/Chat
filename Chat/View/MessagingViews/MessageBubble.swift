@@ -18,7 +18,8 @@ struct MessageBubble: View {
             HStack {
                 Text(message.text)
                     .padding()
-                    .background(message.senderId != viewModel.getUserUID() ? .gray.opacity(0.3) : Color.white)
+                    .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .black)
+                    .background(message.senderId != viewModel.getUserUID() ? .blue : Color.white)
                     .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
             }
