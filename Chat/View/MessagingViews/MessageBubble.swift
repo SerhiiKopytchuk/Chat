@@ -38,7 +38,6 @@ struct MessageBubble: View {
         .frame(maxWidth: .infinity, alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing)
         .padding(message.senderId != viewModel.getUserUID() ? .leading : .trailing)
         .padding(.horizontal, 10)
-        .addLightShadow()
     }
 }
 
