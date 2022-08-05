@@ -70,7 +70,7 @@ class MessagingViewModel: ObservableObject {
 
         let trimmedText = text.trimmingCharacters(in: .whitespaces)
 
-        let newMessage = Message(id: "\(UUID())", text: trimmedText, senderId: self.user.id, timestamp: Date())
+        let newMessage = Message(text: trimmedText, senderId: self.user.id)
 
         do {
             try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")

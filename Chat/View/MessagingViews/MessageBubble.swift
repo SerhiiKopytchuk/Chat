@@ -44,11 +44,7 @@ struct MessageBubble: View {
 struct MessageBubble_Previews: PreviewProvider {
     static var previews: some View {
         MessageBubble(message:
-                        Message(id: "1243`",
-                                text: "I've been coding chat app, that so interestion",
-                                senderId: "false",
-                                timestamp: Date()
-                               )
+                        Message()
         )
             .environmentObject(UserViewModel())
     }
