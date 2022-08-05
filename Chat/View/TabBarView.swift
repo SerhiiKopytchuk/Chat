@@ -118,8 +118,8 @@ struct TabBarView: View {
     @ViewBuilder var channelsView: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Serhii Kopytchuk")
-                    .font(.caption)
+                Text("by Serhii Kopytchuk")
+                    .font(.caption2)
                     .fontWeight(.semibold)
                     .foregroundColor(.gray)
                 Text("Channels")

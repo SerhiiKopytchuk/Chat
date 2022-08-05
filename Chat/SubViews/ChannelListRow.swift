@@ -105,7 +105,7 @@ struct ChannelListRow: View {
     }
 
     @ViewBuilder var channelImage: some View {
-        if channel.id == channelViewModel.lastCreatedChannelId {
+        if channel.id == channelViewModel.lastCreatedChannelId && channelViewModel.isSavedImage {
             Image(uiImage: channelViewModel.createdChannelImage ?? UIImage())
                 .resizable()
                 .scaledToFill()
