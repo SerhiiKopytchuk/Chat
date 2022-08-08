@@ -313,7 +313,9 @@ struct ChannelConversationView: View {
                 ForEach(
                     self.channelMessagingViewModel.currentChannel.messages ?? [],
                     id: \.id) { message in
-                        MessageBubble(message: message)
+                        MessageBubble(message: message,
+                                      showHighlight: .constant(false),
+                                      highlightedMessage: .constant(Message()))
                             .padding(.bottom,
                                      channelMessagingViewModel.currentChannel.messages?.last?.id == message.id ? 15 : 0)
                     }

@@ -5,10 +5,10 @@
 //  Created by Serhii Kopytchuk on 01.06.2022.
 //
 import Foundation
+import FirebaseFirestoreSwift
 
 struct Message: Identifiable, Codable {
-
-    var id: String
+    @DocumentID var id = "\(UUID())"
     var text: String
     var senderId: String
     var timestamp: Date

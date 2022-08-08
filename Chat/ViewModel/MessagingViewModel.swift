@@ -14,10 +14,29 @@ class MessagingViewModel: ObservableObject {
     @Published var user: User = User()
     @Published var secondUser = User()
 
-    @Published private(set) var messages: [Message] = []
+    @Published var messages: [Message] = []
     @Published private(set) var lastMessageId: String = ""
 
     var dataBase = Firestore.firestore()
+
+    func addEmoji(message: Message, emoji: String) {
+        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
+            .collection("messages").document(message.id ?? "someIdd")
+            .updateData(["isEmojiAdded": true, "emojiValue": emoji])
+    }
+
+    func addSnapshotListenerToMessage(messageId: String, competition: @escaping (Message) -> Void) {
+        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
+            .collection("messages").document(messageId)
+            .addSnapshotListener { document, error in
+                if error != nil { return }
+
+                guard let message = try? document?.data(as: Message.self) else {
+                    return
+                }
+                competition(message)
+            }
+    }
 
     func getMessages(competition: @escaping ([Message]) -> Void) {
 
@@ -27,7 +46,7 @@ class MessagingViewModel: ObservableObject {
             .addSnapshotListener { querySnapshot, error in
 
                 guard let documents = querySnapshot?.documents else {
-                    print("Error fetching documets: \(error?.localizedDescription ?? "")")
+                    print("Error fetching documents: \(error?.localizedDescription ?? "")")
                     return
                 }
 
