@@ -32,4 +32,8 @@ struct Message: Identifiable, Codable {
         self.emojiValue = ""
         self.isEmojiAdded = false
     }
+
+    func isReply() -> Bool {
+        return self.senderId != UserViewModel().getUserUID()
+    }
 }

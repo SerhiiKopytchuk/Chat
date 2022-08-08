@@ -21,6 +21,9 @@ struct ConversationView: View {
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
 
+    @State var showHighlight: Bool = false
+    @State var highlightMssage: Message?
+
     @Environment(\.self) var env
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel

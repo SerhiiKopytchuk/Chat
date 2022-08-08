@@ -25,6 +25,9 @@ struct ChannelConversationView: View {
     @State var isGoToRemoveSubscribers = false
     @State var isGoToEditChannel = false
 
+    @State var showHighlight: Bool = false
+    @State var highlightMessage: Message?
+
     @Binding var isSubscribed: Bool
 
     @State var showingAlertOwner = false
