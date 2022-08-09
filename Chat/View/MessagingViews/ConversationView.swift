@@ -237,6 +237,7 @@ struct ConversationView: View {
                             }
                         }
                 }
+                .padding(.top)
                 .background(Color("BG"))
                 .cornerRadius(30, corners: [.topLeft, .topRight])
                 .onAppear {
