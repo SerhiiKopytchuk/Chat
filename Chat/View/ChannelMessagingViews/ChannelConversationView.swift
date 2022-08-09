@@ -316,12 +316,14 @@ struct ChannelConversationView: View {
                         MessageBubble(message: message,
                                       showHighlight: .constant(false),
                                       highlightedMessage: .constant(Message()))
-                            .padding(.bottom,
+                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                        .padding(.bottom,
                                      channelMessagingViewModel.currentChannel.messages?.last?.id == message.id ? 15 : 0)
                     }
             }
             .padding(.top, 10)
             .padding(.bottom, 10)
+            .padding(.horizontal, 12)
             .background(Color("BG"))
             .cornerRadius(30)
 

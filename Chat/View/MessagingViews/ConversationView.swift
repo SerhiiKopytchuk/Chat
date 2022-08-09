@@ -86,18 +86,6 @@ struct ConversationView: View {
             .navigationBarBackButtonHidden(loadExpandedContent)
         }
         .overlay(content: {
-            Rectangle()
-                .fill(.black)
-                .opacity(loadExpandedContent ? 1 : 0)
-                .opacity(imageOffsetProgress())
-                .ignoresSafeArea()
-        })
-        .overlay {
-            if isExpandedProfile {
-                expandedPhoto(image: profileImage)
-            }
-        }
-        .overlay(content: {
             if showHighlight {
                 Rectangle()
                     .fill(.ultraThinMaterial)
@@ -128,9 +116,22 @@ struct ConversationView: View {
                             .frame(width: rect.width, height: rect.height)
                             .offset(x: rect.minX, y: rect.minY)
                         }
+//                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
                         .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
                     }
                 }
+            }
+        }
+        .overlay(content: {
+            Rectangle()
+                .fill(.black)
+                .opacity(loadExpandedContent ? 1 : 0)
+                .opacity(imageOffsetProgress())
+                .ignoresSafeArea()
+        })
+        .overlay {
+            if isExpandedProfile {
+                expandedPhoto(image: profileImage)
             }
         }
         .navigationBarHidden(true)
@@ -218,8 +219,10 @@ struct ConversationView: View {
                                           showHighlight: $showHighlight,
                                           highlightedMessage: $highlightMessage)
                             .environmentObject(messagingViewModel)
+                            .id(message.id)
+                            .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
                             .padding(.bottom, messagingViewModel.currentChat.messages?.last?.id == message.id ?
-                                     15 : 0)
+                                     10 : 0)
                             .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
                                 return [(message.id  ?? "someId"): anchor]
                             })
@@ -234,7 +237,6 @@ struct ConversationView: View {
                             }
                         }
                 }
-                .padding(.top, 10)
                 .background(Color("BG"))
                 .cornerRadius(30, corners: [.topLeft, .topRight])
                 .onAppear {
@@ -246,7 +248,7 @@ struct ConversationView: View {
                     }
                 }
             }
-//            .padding(.horizontal, 12)
+            .padding(.horizontal, 12)
     }
 
     @ViewBuilder var createChatButton: some View {

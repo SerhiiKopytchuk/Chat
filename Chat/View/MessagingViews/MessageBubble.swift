@@ -10,7 +10,6 @@ import SwiftUI
 struct MessageBubble: View {
 
     @State var message: Message
-    @State private var showTime = false
     @Binding var showHighlight: Bool
     @Binding var highlightedMessage: Message?
     @State var showLike = false
@@ -37,10 +36,7 @@ struct MessageBubble: View {
                     .background(message.senderId != viewModel.getUserUID() ? .blue : Color.white)
                     .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
-                    .frame(maxWidth: 300, alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing)
-                    .onTapGesture {
-                        showTime.toggle()
-                    }
+                    .frame(alignment: message.isReply() ? .leading : .trailing)
 
                 if showLike {
                     EmojiView(hideView: $showHighlight, message: message) { emoji in
@@ -51,24 +47,17 @@ struct MessageBubble: View {
                         }
 
                         withAnimation(.easeInOut.delay(0.3)) {
-
-                            // adding logic
                             messagingViewModel.addEmoji(message: message, emoji: emoji)
                         }
 
                     }
+                    .frame(maxWidth: .infinity)
                     .offset(y: 55)
                 }
             }
+            .frame(alignment: message.isReply() ? .leading : .trailing)
 
-//            if showTime {
-//                Text("\(message.timestamp.formatted(.dateTime.hour().minute()))")
-//                    .font(.caption2)
-//                    .foregroundColor(.gray)
-//                    .padding(message.senderId != viewModel.getUserUID() ? .leading : .trailing)
-//            }
         }
-        .frame(maxWidth: .infinity, alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing)
         .padding(message.isReply() ? .trailing : .leading, 60)
         .padding(.horizontal, 10)
         .onAppear {
@@ -78,5 +67,6 @@ struct MessageBubble: View {
                 }
             }
         }
+        .onTapGesture { }
     }
 }
