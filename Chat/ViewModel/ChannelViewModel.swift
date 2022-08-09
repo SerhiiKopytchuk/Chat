@@ -25,9 +25,19 @@ class ChannelViewModel: ObservableObject {
 
     @Published var channelSubscribers: [User] = []
 
+    @Published var createdChannelImage: UIImage?
+    @Published var lastCreatedChannelId: String?
+    @Published private(set) var isSavedImage = false
+
     let dataBase = Firestore.firestore()
 
     // MARK: - functions
+
+    func saveImageLocally(image: UIImage, imageName: String) {
+        createdChannelImage = image
+        lastCreatedChannelId = imageName
+        isSavedImage = true
+    }
 
     func getChannelOwner() {
         dataBase.collection("users").document("\(currentChannel.ownerId)").getDocument { document, error in

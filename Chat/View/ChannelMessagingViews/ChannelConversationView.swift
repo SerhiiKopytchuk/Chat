@@ -25,6 +25,9 @@ struct ChannelConversationView: View {
     @State var isGoToRemoveSubscribers = false
     @State var isGoToEditChannel = false
 
+    @State var showHighlight: Bool = false
+    @State var highlightMessage: Message?
+
     @Binding var isSubscribed: Bool
 
     @State var showingAlertOwner = false
@@ -310,13 +313,17 @@ struct ChannelConversationView: View {
                 ForEach(
                     self.channelMessagingViewModel.currentChannel.messages ?? [],
                     id: \.id) { message in
-                        MessageBubble(message: message)
-                            .padding(.bottom,
+                        MessageBubble(message: message,
+                                      showHighlight: .constant(false),
+                                      highlightedMessage: .constant(Message()))
+                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                        .padding(.bottom,
                                      channelMessagingViewModel.currentChannel.messages?.last?.id == message.id ? 15 : 0)
                     }
             }
             .padding(.top, 10)
             .padding(.bottom, 10)
+            .padding(.horizontal, 12)
             .background(Color("BG"))
             .cornerRadius(30)
 

@@ -12,7 +12,7 @@ import FirebaseAuth
 import SDWebImageSwiftUI
 
 struct ChannelListRow: View {
-    // Inject properties into the struct
+
     @EnvironmentObject var userViewModel: UserViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
@@ -105,7 +105,18 @@ struct ChannelListRow: View {
     }
 
     @ViewBuilder var channelImage: some View {
-        if isFindChannelImage {
+        if channel.id == channelViewModel.lastCreatedChannelId && channelViewModel.isSavedImage {
+            Image(uiImage: channelViewModel.createdChannelImage ?? UIImage())
+                .resizable()
+                .scaledToFill()
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(imageSize/2)
+                .clipShape(Circle())
+                .opacity(isShowImage ? 1 : 0)
+                .addLightShadow()
+                .padding(5)
+                .padding(.trailing)
+        } else if isFindChannelImage {
             WebImage(url: imageUrl)
                 .resizable()
                 .scaledToFill()

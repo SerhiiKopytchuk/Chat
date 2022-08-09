@@ -9,47 +9,64 @@ import SwiftUI
 
 struct MessageBubble: View {
 
-    var message: Message
-    @State private var showTime = false
+    @State var message: Message
+    @Binding var showHighlight: Bool
+    @Binding var highlightedMessage: Message?
+    @State var showLike = false
+
     @EnvironmentObject var viewModel: UserViewModel
+    @EnvironmentObject var messagingViewModel: MessagingViewModel
 
     var body: some View {
-        VStack(alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing) {
-            HStack {
+        VStack(alignment: message.isReply() ? .trailing : .leading) {
+
+            if message.isEmojiAdded {
+                AnimatedEmoji(emoji: message.emojiValue, color: message.isReply() ? Color("Gray") : .blue)
+                    .offset(x: message.isReply() ? 15 : -15)
+                    .padding(.bottom, -25)
+                    .zIndex(1)
+                    .opacity(showHighlight ? 0 : 1)
+            }
+
+            ZStack(alignment: .bottomLeading) {
+
                 Text(message.text)
                     .padding()
-                    .background(message.senderId != viewModel.getUserUID() ? .gray.opacity(0.3) : Color.white)
+                    .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .black)
+                    .background(message.senderId != viewModel.getUserUID() ? .blue : Color.white)
                     .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
-            }
-            .frame(maxWidth: 300, alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing)
-            .onTapGesture {
-                showTime.toggle()
-            }
+                    .frame(alignment: message.isReply() ? .leading : .trailing)
 
-            if showTime {
-                Text("\(message.timestamp.formatted(.dateTime.hour().minute()))")
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-                    .padding(message.senderId != viewModel.getUserUID() ? .leading : .trailing)
+                if showLike {
+                    EmojiView(hideView: $showHighlight, message: message) { emoji in
+
+                        withAnimation(.easeInOut) {
+                            showHighlight = false
+                            highlightedMessage = nil
+                        }
+
+                        withAnimation(.easeInOut.delay(0.3)) {
+                            messagingViewModel.addEmoji(message: message, emoji: emoji)
+                        }
+
+                    }
+                    .frame(maxWidth: .infinity)
+                    .offset(y: 55)
+                }
+            }
+            .frame(alignment: message.isReply() ? .leading : .trailing)
+
+        }
+        .padding(message.isReply() ? .trailing : .leading, 60)
+        .padding(.horizontal, 10)
+        .onAppear {
+            messagingViewModel.addSnapshotListenerToMessage(messageId: message.id ?? "someId") { message in
+                withAnimation(.easeInOut) {
+                    self.message = message
+                }
             }
         }
-        .frame(maxWidth: .infinity, alignment: message.senderId != viewModel.getUserUID() ? .leading : .trailing)
-        .padding(message.senderId != viewModel.getUserUID() ? .leading : .trailing)
-        .padding(.horizontal, 10)
-        .addLightShadow()
-    }
-}
-
-struct MessageBubble_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageBubble(message:
-                        Message(id: "1243`",
-                                text: "I've been coding chat app, that so interestion",
-                                senderId: "false",
-                                timestamp: Date()
-                               )
-        )
-            .environmentObject(UserViewModel())
+        .onTapGesture { }
     }
 }

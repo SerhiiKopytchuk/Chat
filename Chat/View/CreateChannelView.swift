@@ -206,8 +206,10 @@ struct CreateChannelView: View {
 
                     imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
                                              imageName: channel.id ?? "some Id")
-
-                channelViewModel.getChannels(fromUpdate: true)
+                if channelImage != nil {
+                    channelViewModel.saveImageLocally(image: self.channelImage ?? UIImage(),
+                                                      imageName: channel.id ?? "someId")
+                }
                 env.dismiss()
             }
         } label: {

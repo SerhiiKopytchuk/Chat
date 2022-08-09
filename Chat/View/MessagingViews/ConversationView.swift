@@ -10,7 +10,7 @@ import SDWebImageSwiftUI
 
 struct ConversationView: View {
 
-// MARK: - vars
+    // MARK: - vars
     @State var secondUser: User
     @Binding var isFindChat: Bool
 
@@ -20,6 +20,9 @@ struct ConversationView: View {
     @State var profileImage: WebImage = WebImage(url: URL(string: ""))
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
+
+    @State var showHighlight: Bool = false
+    @State var highlightMessage: Message?
 
     @Environment(\.self) var env
 
@@ -36,10 +39,10 @@ struct ConversationView: View {
 
                 VStack {
                     ConversationTitleRow(user: secondUser,
-                             animationNamespace: animation,
-                             isFindChat: $isFindChat,
-                             isExpandedProfile: $isExpandedProfile,
-                             profileImage: $profileImage
+                                         animationNamespace: animation,
+                                         isFindChat: $isFindChat,
+                                         isExpandedProfile: $isExpandedProfile,
+                                         profileImage: $profileImage
                     )
                     .background {
                         Color("BG")
@@ -78,16 +81,53 @@ struct ConversationView: View {
                             Color("Gradient3")
                         ], startPoint: .topLeading, endPoint: .bottomTrailing)
                     )
-                .ignoresSafeArea()
+                    .ignoresSafeArea()
             }
             .navigationBarBackButtonHidden(loadExpandedContent)
         }
         .overlay(content: {
+            if showHighlight {
                 Rectangle()
-                    .fill(.black)
-                    .opacity(loadExpandedContent ? 1 : 0)
-                    .opacity(imageOffsetProgress())
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
                     .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation {
+                            showHighlight = false
+                            highlightMessage = nil
+                        }
+                    }
+            }
+        })
+        .overlayPreferenceValue(BoundsPreference.self) { values in
+            if let highlightMessage = highlightMessage {
+                if highlightMessage.isReply() {
+                    if let preference = values.first(where: { item in
+                        item.key == highlightMessage.id
+                    }) {
+                        GeometryReader { proxy in
+                            let rect = proxy[preference.value]
+                            MessageBubble(message: highlightMessage,
+                                          showHighlight: $showHighlight,
+                                          highlightedMessage: $highlightMessage,
+                                          showLike: true)
+                            .environmentObject(messagingViewModel)
+                            .id(highlightMessage.id)
+                            .frame(width: rect.width, height: rect.height)
+                            .offset(x: rect.minX, y: rect.minY)
+                        }
+//                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                        .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
+                    }
+                }
+            }
+        }
+        .overlay(content: {
+            Rectangle()
+                .fill(.black)
+                .opacity(loadExpandedContent ? 1 : 0)
+                .opacity(imageOffsetProgress())
+                .ignoresSafeArea()
         })
         .overlay {
             if isExpandedProfile {
@@ -154,43 +194,62 @@ struct ConversationView: View {
     }
 
     var turnOffImageButton: some View {
-    Button {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            loadExpandedContent = false
-        }
-        withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-            isExpandedProfile = false
-        }
+        Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                loadExpandedContent = false
+            }
+            withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+                isExpandedProfile = false
+            }
 
-    } label: {
-        Image(systemName: "arrow.left")
-            .font(.title3)
-            .foregroundColor(.white)
+        } label: {
+            Image(systemName: "arrow.left")
+                .font(.title3)
+                .foregroundColor(.white)
+        }
     }
-}
 
     @ViewBuilder var messagesScrollView: some View {
-        ScrollViewReader { proxy in
-            ScrollView(showsIndicators: false) {
-                ForEach(
-                    self.messagingViewModel.currentChat.messages ?? [],
-                    id: \.id) { message in
-                        MessageBubble(message: message)
-                            .padding(.bottom, messagingViewModel.currentChat.messages?.last?.id == message.id ? 15 : 0)
-                    }
-            }
-            .padding(.top, 10)
-            .background(Color("BG"))
-            .cornerRadius(30, corners: [.topLeft, .topRight])
-            .onAppear {
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    ForEach(
+                        self.messagingViewModel.currentChat.messages ?? [],
+                        id: \.id) { message in
+                            MessageBubble(message: message,
+                                          showHighlight: $showHighlight,
+                                          highlightedMessage: $highlightMessage)
+                            .environmentObject(messagingViewModel)
+                            .id(message.id)
+                            .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                            .padding(.bottom, messagingViewModel.currentChat.messages?.last?.id == message.id ?
+                                     10 : 0)
+                            .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
+                                return [(message.id  ?? "someId"): anchor]
+                            })
+                            .onLongPressGesture {
+                                if message.isReply() {
+                                    withAnimation(.easeInOut) {
+                                        showHighlight = true
+                                        highlightMessage = message
+                                    }
+
+                                }
+                            }
+                        }
+                }
+                .padding(.top)
+                .background(Color("BG"))
+                .cornerRadius(30, corners: [.topLeft, .topRight])
+                .onAppear {
                     proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-            }
-            .onChange(of: self.messagingViewModel.lastMessageId) { id in
-                withAnimation {
-                    proxy.scrollTo(id, anchor: .bottom)
+                }
+                .onChange(of: self.messagingViewModel.lastMessageId) { id in
+                    withAnimation {
+                        proxy.scrollTo(id, anchor: .bottom)
+                    }
                 }
             }
-        }
+            .padding(.horizontal, 12)
     }
 
     @ViewBuilder var createChatButton: some View {
@@ -247,7 +306,7 @@ struct ConversationView_Previews: PreviewProvider {
     static var previews: some View {
         ConversationView(secondUser: User(),
                          isFindChat: .constant(true))
-            .environmentObject(MessagingViewModel())
-            .environmentObject(UserViewModel())
+        .environmentObject(MessagingViewModel())
+        .environmentObject(UserViewModel())
     }
 }

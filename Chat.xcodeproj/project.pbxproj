@@ -45,6 +45,8 @@
 		4089D67B2888025B00FC987E /* ChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */; };
 		408E26122832C44800CE108E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E26112832C44800CE108E /* MainView.swift */; };
 		4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4094461428301F8D00239F7B /* GoogleService-Info.plist */; };
+		409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CB289D937C00720A1E /* AnimatedEmoji.swift */; };
+		409894CE289D978000720A1E /* EmojiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CD289D978000720A1E /* EmojiView.swift */; };
 		409AC7642849E9A300BD00F9 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409AC7632849E9A300BD00F9 /* SearchView.swift */; };
 		409F252F2882B574005D0E6A /* addUserToChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409F252E2882B574005D0E6A /* addUserToChannelView.swift */; };
 		40A1A5F72855BF5700D30A7B /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 40A1A5F62855BF5700D30A7B /* SDWebImageSwiftUI */; };
@@ -58,6 +60,7 @@
 		40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C6691F28894D270087A9DF /* EditChannelViewModel.swift */; };
 		40D5C41628428B3A0015DFBB /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41528428B3A0015DFBB /* Tab.swift */; };
 		40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41728429F580015DFBB /* CustomTabBar.swift */; };
+		40ECD6F328A03DF2006935B1 /* BoundsPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */; };
 		40EDFC25286EF5B500FD7A2A /* DocumentReference + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */; };
 		40EDFC27286EF5E400FD7A2A /* Query + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */; };
 		40EEDDDE2864682D00B1F38C /* ChattingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EEDDDD2864682D00B1F38C /* ChattingViewModel.swift */; };
@@ -125,6 +128,8 @@
 		4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		408E26112832C44800CE108E /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		4094461428301F8D00239F7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		409894CB289D937C00720A1E /* AnimatedEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEmoji.swift; sourceTree = "<group>"; };
+		409894CD289D978000720A1E /* EmojiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiView.swift; sourceTree = "<group>"; };
 		409AC7632849E9A300BD00F9 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		409F252E2882B574005D0E6A /* addUserToChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addUserToChannelView.swift; sourceTree = "<group>"; };
 		40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyImageWithCharacterView.swift; sourceTree = "<group>"; };
@@ -138,6 +143,7 @@
 		40C6691F28894D270087A9DF /* EditChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditChannelViewModel.swift; sourceTree = "<group>"; };
 		40D5C41528428B3A0015DFBB /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		40D5C41728429F580015DFBB /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
+		40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundsPreference.swift; sourceTree = "<group>"; };
 		40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DocumentReference + Extension.swift"; sourceTree = "<group>"; };
 		40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Query + Extension.swift"; sourceTree = "<group>"; };
 		40EEDDDD2864682D00B1F38C /* ChattingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingViewModel.swift; sourceTree = "<group>"; };
@@ -195,6 +201,7 @@
 		400142E4282EBA8400E5D497 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				40ECD6F128A03DD6006935B1 /*  Helpers */,
 				40EDFC23286EF58400FD7A2A /* Extensions */,
 				40C3A104283A958A00A9683A /* Info.plist */,
 				40B2DA18283A7A3900965DC5 /* Chat.entitlements */,
@@ -280,6 +287,8 @@
 				40A766B728843045002D6FA5 /* removeUsersFromChannelListRow.swift */,
 				40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */,
 				40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */,
+				409894CB289D937C00720A1E /* AnimatedEmoji.swift */,
+				409894CD289D978000720A1E /* EmojiView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -341,6 +350,14 @@
 				4024EB0828382B190082E739 /* SideMenuOptionView.swift */,
 			);
 			path = SideMenuViews;
+			sourceTree = "<group>";
+		};
+		40ECD6F128A03DD6006935B1 /*  Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */,
+			);
+			path = " Helpers";
 			sourceTree = "<group>";
 		};
 		40EDFC23286EF58400FD7A2A /* Extensions */ = {
@@ -494,6 +511,7 @@
 				40153F2A286B32BC0022DA46 /* ChannelMessagingViewModel.swift in Sources */,
 				40153F24286B18F70022DA46 /* ChannelListRow.swift in Sources */,
 				406DC3A2284C8B5E00A41964 /* SearchUserCell.swift in Sources */,
+				409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */,
 				400E81A82868583A006A606E /* Channel.swift in Sources */,
 				4056D63B2833D8E8000A0872 /* SignUpView.swift in Sources */,
 				40442EAF289575F800E32FEF /* HeaderWithBackButton.swift in Sources */,
@@ -507,6 +525,7 @@
 				40649D19288F2C5F00B8F500 /* ChannelType.swift in Sources */,
 				40153F28286B32460022DA46 /* ChannelConversationView.swift in Sources */,
 				4076E0AD283FB54A00E21131 /* LoaderView.swift in Sources */,
+				409894CE289D978000720A1E /* EmojiView.swift in Sources */,
 				4021DD0C288AAFDA0060B18E /* String + Extension.swift in Sources */,
 				40A766B628842C19002D6FA5 /* removeUsersFromChannelView.swift in Sources */,
 				405FD37F282FEFD200361396 /* SignInView.swift in Sources */,
@@ -522,6 +541,7 @@
 				40A766B828843045002D6FA5 /* removeUsersFromChannelListRow.swift in Sources */,
 				4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */,
 				40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */,
+				40ECD6F328A03DF2006935B1 /* BoundsPreference.swift in Sources */,
 				40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */,
 				40EF9964284748250062612E /* MessageBubble.swift in Sources */,
 				409F252F2882B574005D0E6A /* addUserToChannelView.swift in Sources */,
