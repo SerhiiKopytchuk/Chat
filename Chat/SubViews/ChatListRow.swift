@@ -17,7 +17,7 @@ struct ChatListRow: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     @State var person: User?
-    @State var message = Message(id: "", text: "", senderId: "", timestamp: Date())
+    @State var message = Message()
     @State var imageUrl = URL(string: "")
     @State var isFindUserImage = true
     @State var isShowImage = false
@@ -98,7 +98,7 @@ struct ChatListRow: View {
 
             self.messageViewModel.getMessages { messages in
                 withAnimation {
-                    self.message = messages.last ?? Message(id: "", text: "", senderId: "", timestamp: Date())
+                    self.message = messages.last ?? Message()
                 }
             }
         }

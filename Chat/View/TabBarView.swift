@@ -69,7 +69,7 @@ struct TabBarView: View {
     @ViewBuilder var chatsView: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Serhii Kopytchuk")
+                Text("by Serhii Kopytchuk")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.gray)
