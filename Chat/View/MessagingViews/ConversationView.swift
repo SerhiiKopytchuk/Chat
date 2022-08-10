@@ -221,8 +221,6 @@ struct ConversationView: View {
                             .environmentObject(messagingViewModel)
                             .id(message.id)
                             .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
-                            .padding(.bottom, messagingViewModel.currentChat.messages?.last?.id == message.id ?
-                                     10 : 0)
                             .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
                                 return [(message.id  ?? "someId"): anchor]
                             })
