@@ -26,7 +26,7 @@ struct Message: Identifiable, Codable {
 
     init() {
         self.id = UUID().uuidString
-        self.text = "some text"
+        self.text = ""
         self.senderId = "sender id"
         self.timestamp = Date()
         self.emojiValue = ""
