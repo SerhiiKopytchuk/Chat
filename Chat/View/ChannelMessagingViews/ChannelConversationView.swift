@@ -44,7 +44,7 @@ struct ChannelConversationView: View {
     var body: some View {
         ZStack {
             VStack {
-                VStack {
+                VStack(spacing: 0) {
 
                     HeaderWithBackButton(environment: _env, text: "Channel")
                         .padding()
@@ -60,33 +60,13 @@ struct ChannelConversationView: View {
                         Color("BG")
                             .opacity(0.7)
                     }
-                    .cornerRadius(12)
-                    .padding(.horizontal)
-                    .padding(.vertical, 5)
 
-                    if isExpandedDetails {
-                        VStack(alignment: .leading) {
-                            ownerTitle
-                            countOfSubscribersTitle
-
-                            HStack {
-                                if isOwner() {
-                                    addUsersToChannelButton
-                                    unsubscribeUsersFromChannelButton
-                                    editChannelButton
-                                }
-                                removeOrDeleteChannelButton
-                            }
-                            .padding()
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-
-                    VStack(spacing: 0) {
+                    VStack {
+                        expandedDetails
                         messagesScrollView
+
                         if isSubscribed {
                             messagingTextField
-                                .padding()
                         } else {
                             subscribeButton
                         }
@@ -94,24 +74,13 @@ struct ChannelConversationView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                     .background {
                         Color("BG")
-                            .cornerRadius(30, corners: [.topLeft, .topRight])
                             .ignoresSafeArea()
                     }
                 }
                 .frame(maxWidth: .infinity)
 
             }
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(
-                        LinearGradient(colors: [
-                            Color("Gradient1"),
-                            Color("Gradient2"),
-                            Color("Gradient3")
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    )
-                .ignoresSafeArea()
-            }
+            .addGradientBackground()
             .frame(maxWidth: .infinity)
         }
         .navigationBarHidden(true)
@@ -149,31 +118,28 @@ struct ChannelConversationView: View {
 
     // MARK: - viewBuilders
 
-    @ViewBuilder var navigationLinks: some View {
-        NavigationLink(isActive: $isGoToAddSubscribers, destination: {
-            AddUserToChannelView()
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
-        }, label: { })
-        .hidden()
+    @ViewBuilder var expandedDetails: some View {
+        if isExpandedDetails {
+            VStack(alignment: .leading) {
+                ownerTitle
+                countOfSubscribersTitle
 
-        NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
-            RemoveUsersFromChannelView()
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
-        }, label: { })
-        .hidden()
-
-        NavigationLink(isActive: $isGoToEditChannel, destination: {
-            EditChannelView(channelName: channelViewModel.currentChannel.name,
-                            channelDescription: channelViewModel.currentChannel.description,
-                            channelColor: channelViewModel.currentChannel.colour)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
-        }, label: { })
-        .hidden()
+                HStack {
+                    if isOwner() {
+                        addUsersToChannelButton
+                        unsubscribeUsersFromChannelButton
+                        editChannelButton
+                    }
+                    removeOrDeleteChannelButton
+                }
+                .padding()
+            }
+            .frame(maxWidth: .infinity)
+            .background {
+                Color("BG")
+                    .opacity(0.7)
+            }
+        }
     }
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
@@ -316,21 +282,15 @@ struct ChannelConversationView: View {
                         MessageBubble(message: message,
                                       showHighlight: .constant(false),
                                       highlightedMessage: .constant(Message()))
+                        .id(message.id)
                         .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
-                        .padding(.bottom,
-                                     channelMessagingViewModel.currentChannel.messages?.last?.id == message.id ? 15 : 0)
                     }
             }
-            .padding(.top, 10)
-            .padding(.bottom, 10)
             .padding(.horizontal, 12)
             .background(Color("BG"))
-            .cornerRadius(30)
 
             .onAppear {
-                withAnimation {
-                    proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
-                }
+                proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
             }
             .onChange(of: self.channelMessagingViewModel.lastMessageId) { id in
                 withAnimation {
@@ -347,6 +307,7 @@ struct ChannelConversationView: View {
             if currentUser.id == channelViewModel.currentChannel.ownerId {
                 ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
                     .environmentObject(channelViewModel)
+                    .padding(.horizontal)
             }
         }
     }
@@ -380,6 +341,33 @@ struct ChannelConversationView: View {
                 .font(.title3)
                 .foregroundColor(.white)
         }
+    }
+
+    @ViewBuilder var navigationLinks: some View {
+        NavigationLink(isActive: $isGoToAddSubscribers, destination: {
+            AddUserToChannelView()
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        }, label: { })
+        .hidden()
+
+        NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
+            RemoveUsersFromChannelView()
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        }, label: { })
+        .hidden()
+
+        NavigationLink(isActive: $isGoToEditChannel, destination: {
+            EditChannelView(channelName: channelViewModel.currentChannel.name,
+                            channelDescription: channelViewModel.currentChannel.description,
+                            channelColor: channelViewModel.currentChannel.colour)
+            .environmentObject(channelViewModel)
+            .environmentObject(editChannelViewModel)
+        }, label: { })
+        .hidden()
     }
 
     // MARK: - functions

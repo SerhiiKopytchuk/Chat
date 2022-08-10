@@ -21,7 +21,7 @@ struct ConversationView: View {
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
 
-    @State var showHighlight: Bool = false
+    @State var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
     @Environment(\.self) var env
@@ -37,21 +37,8 @@ struct ConversationView: View {
                 HeaderWithBackButton(environment: _env, text: "Chat")
                     .padding()
 
-                VStack {
-                    ConversationTitleRow(user: secondUser,
-                                         animationNamespace: animation,
-                                         isFindChat: $isFindChat,
-                                         isExpandedProfile: $isExpandedProfile,
-                                         profileImage: $profileImage
-                    )
-                    .background {
-                        Color("BG")
-                            .opacity(0.7)
-                    }
-                    .cornerRadius(12)
-                    .padding(.horizontal)
-                    .padding(.vertical, 5)
-                    .environmentObject(chattingViewModel)
+                VStack(spacing: 0) {
+                    titleRow
 
                     if isFindChat {
                         VStack(spacing: 0) {
@@ -62,7 +49,6 @@ struct ConversationView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                         .background {
                             Color("BG")
-                                .cornerRadius(30, corners: [.topLeft, .topRight])
                                 .ignoresSafeArea()
                         }
 
@@ -72,31 +58,12 @@ struct ConversationView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(
-                        LinearGradient(colors: [
-                            Color("Gradient1"),
-                            Color("Gradient2"),
-                            Color("Gradient3")
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    )
-                    .ignoresSafeArea()
-            }
+            .addGradientBackground()
             .navigationBarBackButtonHidden(loadExpandedContent)
         }
         .overlay(content: {
-            if showHighlight {
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .dark)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                            showHighlight = false
-                            highlightMessage = nil
-                        }
-                    }
+            if showMessageEmojiView {
+                lightDarkEmptyBackground
             }
         })
         .overlayPreferenceValue(BoundsPreference.self) { values in
@@ -108,15 +75,14 @@ struct ConversationView: View {
                         GeometryReader { proxy in
                             let rect = proxy[preference.value]
                             MessageBubble(message: highlightMessage,
-                                          showHighlight: $showHighlight,
+                                          showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage,
-                                          showLike: true)
+                                          showEmojiBarView: true)
                             .environmentObject(messagingViewModel)
                             .id(highlightMessage.id)
                             .frame(width: rect.width, height: rect.height)
                             .offset(x: rect.minX, y: rect.minY)
                         }
-//                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
                         .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
                     }
                 }
@@ -138,6 +104,33 @@ struct ConversationView: View {
     }
 
     // MARK: - viewBuilders
+
+    @ViewBuilder var titleRow: some View {
+        ConversationTitleRow(user: secondUser,
+                             animationNamespace: animation,
+                             isFindChat: $isFindChat,
+                             isExpandedProfile: $isExpandedProfile,
+                             profileImage: $profileImage
+        )
+        .background {
+            Color("BG")
+                .opacity(0.7)
+        }
+        .environmentObject(chattingViewModel)
+    }
+
+    @ViewBuilder var lightDarkEmptyBackground: some View {
+        Rectangle()
+            .fill(.ultraThinMaterial)
+            .environment(\.colorScheme, .dark)
+            .ignoresSafeArea()
+            .onTapGesture {
+                highlightMessage = nil
+                withAnimation(.easeInOut) {
+                    showMessageEmojiView = false
+                }
+            }
+    }
 
     @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
         VStack {
@@ -216,7 +209,7 @@ struct ConversationView: View {
                         self.messagingViewModel.currentChat.messages ?? [],
                         id: \.id) { message in
                             MessageBubble(message: message,
-                                          showHighlight: $showHighlight,
+                                          showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage)
                             .environmentObject(messagingViewModel)
                             .id(message.id)
@@ -227,7 +220,7 @@ struct ConversationView: View {
                             .onLongPressGesture {
                                 if message.isReply() {
                                     withAnimation(.easeInOut) {
-                                        showHighlight = true
+                                        showMessageEmojiView = true
                                         highlightMessage = message
                                     }
 
@@ -235,9 +228,7 @@ struct ConversationView: View {
                             }
                         }
                 }
-                .padding(.top)
                 .background(Color("BG"))
-                .cornerRadius(30, corners: [.topLeft, .topRight])
                 .onAppear {
                     proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
                 }
@@ -275,7 +266,7 @@ struct ConversationView: View {
 
     // MARK: - functions
 
-    func turnOffImageView() {
+    private func turnOffImageView() {
         withAnimation(.easeInOut(duration: 0.3)) {
             loadExpandedContent = false
         }
@@ -289,7 +280,7 @@ struct ConversationView: View {
         }
     }
 
-    func imageOffsetProgress() -> CGFloat {
+    private func imageOffsetProgress() -> CGFloat {
         let progress = imageOffset.height / 100
         if imageOffset.height < 0 {
             return 1
