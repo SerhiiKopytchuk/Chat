@@ -51,6 +51,7 @@ struct ChatListRow: View {
                     .font(.caption)
                     .italic()
                     .foregroundColor(.secondary)
+                    .lineLimit(2)
             }
         }
         .padding()

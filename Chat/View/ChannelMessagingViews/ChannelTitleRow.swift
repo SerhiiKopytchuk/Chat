@@ -34,12 +34,12 @@ struct ChannelTitleRow: View {
             VStack(alignment: .leading) {
                 Text(channel.name)
                     .font(.title).bold()
-                    .lineLimit(isExpandedDetails ? 2 : 1)
+                    .lineLimit(isExpandedDetails ? 5 : 1)
 
                 Text(channel.description)
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .lineLimit(isExpandedDetails ? 2 : 1)
+                    .lineLimit(isExpandedDetails ? 5 : 1)
 
             }
             .onTapGesture {
