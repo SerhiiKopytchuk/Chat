@@ -12,7 +12,7 @@ struct MessageBubble: View {
     @State var message: Message
     @Binding var showHighlight: Bool
     @Binding var highlightedMessage: Message?
-    @State var showLike = false
+    @State var showEmojiBarView = false
 
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
@@ -20,13 +20,7 @@ struct MessageBubble: View {
     var body: some View {
         VStack(alignment: message.isReply() ? .trailing : .leading) {
 
-            if message.isEmojiAdded {
-                AnimatedEmoji(emoji: message.emojiValue, color: message.isReply() ? Color("Gray") : .blue)
-                    .offset(x: message.isReply() ? 15 : -15)
-                    .padding(.bottom, -25)
-                    .zIndex(1)
-                    .opacity(showHighlight ? 0 : 1)
-            }
+            addedEmojiView
 
             ZStack(alignment: .bottomLeading) {
 
@@ -38,22 +32,7 @@ struct MessageBubble: View {
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
 
-                if showLike {
-                    EmojiView(hideView: $showHighlight, message: message) { emoji in
-
-                        withAnimation(.easeInOut) {
-                            showHighlight = false
-                            highlightedMessage = nil
-                        }
-
-                        withAnimation(.easeInOut.delay(0.3)) {
-                            messagingViewModel.addEmoji(message: message, emoji: emoji)
-                        }
-
-                    }
-                    .frame(maxWidth: .infinity)
-                    .offset(y: 55)
-                }
+                emojiBarView
             }
             .frame(alignment: message.isReply() ? .leading : .trailing)
 
@@ -68,5 +47,33 @@ struct MessageBubble: View {
             }
         }
         .onTapGesture { }
+    }
+
+    @ViewBuilder var addedEmojiView: some View {
+        if message.isEmojiAdded {
+            AnimatedEmoji(emoji: message.emojiValue, color: message.isReply() ? Color("Gray") : .blue)
+                .offset(x: message.isReply() ? 15 : -15)
+                .padding(.bottom, -25)
+                .zIndex(1)
+                .opacity(showHighlight ? 0 : 1)
+        }
+    }
+
+    @ViewBuilder var emojiBarView: some View {
+        if showEmojiBarView {
+            EmojiView(hideView: $showHighlight, message: message) { emoji in
+
+                messagingViewModel.addEmoji(message: message, emoji: emoji)
+
+                highlightedMessage = nil
+
+                withAnimation(.easeInOut) {
+                    showHighlight = false
+                }
+
+            }
+            .frame(maxWidth: .infinity)
+            .offset(y: 55)
+        }
     }
 }
