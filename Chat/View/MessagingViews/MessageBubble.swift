@@ -41,13 +41,13 @@ struct MessageBubble: View {
                 if showLike {
                     EmojiView(hideView: $showHighlight, message: message) { emoji in
 
+                        messagingViewModel.addEmoji(message: message, emoji: emoji)
+
+                        
+                        highlightedMessage = nil
+
                         withAnimation(.easeInOut) {
                             showHighlight = false
-                            highlightedMessage = nil
-                        }
-
-                        withAnimation(.easeInOut.delay(0.3)) {
-                            messagingViewModel.addEmoji(message: message, emoji: emoji)
                         }
 
                     }

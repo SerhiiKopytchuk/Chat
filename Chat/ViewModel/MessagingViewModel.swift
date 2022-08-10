@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import SwiftUI
 
 class MessagingViewModel: ObservableObject {
 
@@ -34,7 +35,7 @@ class MessagingViewModel: ObservableObject {
                 guard let message = try? document?.data(as: Message.self) else {
                     return
                 }
-                competition(message)
+                    competition(message)
             }
     }
 
