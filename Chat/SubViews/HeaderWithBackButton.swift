@@ -11,10 +11,12 @@ struct HeaderWithBackButton: View {
 
     @Environment(\.self) var environment
     var text: String
+    var backButtonPressed: () -> Void = {}
 
     var body: some View {
         HStack(spacing: 15) {
             Button {
+                backButtonPressed()
                 environment.dismiss()
             } label: {
                 Image(systemName: "arrow.backward.circle.fill")

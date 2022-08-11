@@ -21,8 +21,6 @@ struct MessageField: View {
                 messagingViewModel.sendMessage(text: message)
                 message = ""
 
-                    // time solution
-//                chattingViewModel.getChats(fromUpdate: true)
                 chattingViewModel.changeLastActivityAndSortChats()
             } label: {
                 Image(systemName: "paperplane.fill")

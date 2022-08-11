@@ -35,8 +35,12 @@ struct SearchView: View {
     var body: some View {
         VStack {
 
-            HeaderWithBackButton(environment: _env, text: "Search")
-                .padding()
+            HeaderWithBackButton(environment: _env, text: "Search") {
+                withAnimation {
+                    self.clearData()
+                }
+            }
+            .padding()
 
             VStack {
 
@@ -48,7 +52,7 @@ struct SearchView: View {
                     searchingChannels
                 }
             }
-                .padding()
+            .padding()
 
         }
         .background {
@@ -215,6 +219,18 @@ struct SearchView: View {
                 .environmentObject(channelMessagingViewModel)
         } label: { Text("channelConversationView") }
             .hidden()
+    }
+
+    // MARK: - func
+
+    func clearData() {
+        self.searchUserText = ""
+        viewModel.searchText = ""
+        viewModel.getAllUsers()
+
+        self.searchChannelText = ""
+        channelViewModel.searchText = ""
+        channelViewModel.getSearchChannels()
     }
 
 }
