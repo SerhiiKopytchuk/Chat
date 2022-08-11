@@ -251,6 +251,7 @@ struct ConversationView: View {
                     withAnimation {
                         isFindChat = true
                     }
+                    chattingViewModel.getChats(fromUpdate: true)
                 }
             } label: {
                 Text("Start Chat")

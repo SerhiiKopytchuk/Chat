@@ -20,7 +20,10 @@ struct MessageField: View {
             Button {
                 messagingViewModel.sendMessage(text: message)
                 message = ""
-                chattingViewModel.getChats(fromUpdate: true)
+
+                    // time solution
+//                chattingViewModel.getChats(fromUpdate: true)
+                chattingViewModel.changeLastActivityAndSortChats()
             } label: {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)

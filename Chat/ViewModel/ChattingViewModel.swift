@@ -99,7 +99,7 @@ class ChattingViewModel: ObservableObject {
 
         getCurrentChat(secondUser: secondUser) { chat in
             self.addChatsIdToUsers()
-            self.changeLastMessageTime()
+            self.changeLastActivityTimestamp()
             competition(chat)
         } failure: { _ in }
 
@@ -113,15 +113,25 @@ class ChattingViewModel: ObservableObject {
 
     }
 
-    private func changeLastMessageTime() {
+    private func changeLastActivityTimestamp() {
         dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 
+    func changeLastActivityAndSortChats() {
+        for index in self.chats.indices {
+            if chats[index].id == self.currentChat.id {
+                chats[index].lastActivityTimestamp = Date()
+                break
+            }
+        }
+        sortChats()
+    }
+
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
-        withAnimation {
-            self.chats = []
+        withAnimation(.easeInOut.delay(0.5)) {
 
             if chatsId.isEmpty {
+                self.chats = []
                 for chatId in user.chats {
                     dataBase.collection("chats").document(chatId)
                         .toChat { chat in
@@ -129,14 +139,11 @@ class ChattingViewModel: ObservableObject {
                             self.sortChats()
                         }
                 }
-
             } else {
-                for chatId in chatsId {
-                    dataBase.collection("chats").document(chatId)
-                        .toChat { chat in
-                            self.chats.append(chat)
-                            self.sortChats()
-                        }
+                if chatsId.count > chats.count {
+                    addChats(chatsId: chatsId)
+                } else {
+                    removeChats(chatsId: chatsId)
                 }
             }
 
@@ -144,6 +151,28 @@ class ChattingViewModel: ObservableObject {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.updateChats()
                 }
+            }
+        }
+    }
+
+    private func addChats(chatsId: [String]) {
+        for chatId in chatsId {
+            if !user.chats.contains(chatId) {
+                dataBase.collection("chats").document(chatId)
+                    .toChat { chat in
+                        self.chats.append(chat)
+                        self.user.chats.append(chat.id ?? "some chat id")
+                        self.sortChats()
+                    }
+            }
+        }
+    }
+
+    private func removeChats(chatsId: [String]) {
+        for chat in chats {
+            if !chatsId.contains(chat.id ?? "some id") {
+                self.chats = chats.filter({ $0.id != chat.id})
+                self.user.chats = user.chats.filter({ $0 != chat.id})
             }
         }
     }
