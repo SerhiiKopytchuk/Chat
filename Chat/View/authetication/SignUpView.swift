@@ -303,7 +303,7 @@ struct SignUpView: View {
                 if isValidatedName() {
                     viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
                         imageViewModel.saveImage(image: self.image ?? UIImage())
-                        chattingViewModel.user = user
+                        chattingViewModel.currentUser = user
                         chattingViewModel.getChats()
                         channelViewModel.currentUser = user
                         channelViewModel.getChannels()
@@ -344,7 +344,7 @@ struct SignUpView: View {
                 self.clearPreviousDataBeforeSignIn()
 
                 viewModel.signIn(credential: credential) { user in
-                    chattingViewModel.user = user
+                    chattingViewModel.currentUser = user
                     chattingViewModel.getChats()
                     channelViewModel.currentUser = user
                     channelViewModel.getChannels()

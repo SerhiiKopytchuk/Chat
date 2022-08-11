@@ -157,7 +157,7 @@ struct SearchView: View {
                     messagingViewModel.secondUser = user
                     messagingViewModel.user = viewModel.currentUser
                     chattingViewModel.secondUser = user
-                    chattingViewModel.user = viewModel.currentUser
+                    chattingViewModel.currentUser = viewModel.currentUser
 
                     chattingViewModel.getCurrentChat(secondUser: user) { chat in
                         self.messagingViewModel.currentChat = chat

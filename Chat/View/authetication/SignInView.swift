@@ -174,7 +174,7 @@ struct SignInView: View {
                 clearPreviousDataBeforeSignIn()
 
                 viewModel.signIn(email: self.email, password: self.password) { user in
-                    chattingViewModel.user = user
+                    chattingViewModel.currentUser = user
                     chattingViewModel.getChats()
                     channelViewModel.currentUser = user
                     channelViewModel.getChannels()
@@ -219,7 +219,7 @@ struct SignInView: View {
                 self.clearPreviousDataBeforeSignIn()
 
                 viewModel.signIn(credential: credential) { user in
-                    chattingViewModel.user = user
+                    chattingViewModel.currentUser = user
                     chattingViewModel.getChats()
                     channelViewModel.currentUser = user
                     channelViewModel.getChannels()

@@ -179,13 +179,24 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    func getChannels(fromUpdate: Bool = false, channelPart: [String] = []) {
+    func changeLastActivityAndSortChannels() {
+        for index in self.channels.indices {
+            if channels[index].id == self.currentChannel.id {
+                channels[index].lastActivityTimestamp = Date()
+                break
+            }
+        }
+        sortChannels()
+    }
 
-        withAnimation {
+    func getChannels(fromUpdate: Bool = false, channelsId: [String] = []) {
 
-            self.channels = []
+        withAnimation(.easeInOut.delay(0.5)) {
 
-            if channelPart.isEmpty {
+            if channelsId.isEmpty {
+
+                self.channels = []
+
                 for channelId in currentUser.channels {
                     dataBase.collection("channels").document(channelId)
                         .toChannel { channel in
@@ -194,13 +205,12 @@ class ChannelViewModel: ObservableObject {
 
                         }
                 }
+
             } else {
-                for channelId in channelPart {
-                    dataBase.collection("channels").document(channelId)
-                        .toChannel { channel in
-                            self.channels.append(channel)
-                            self.sortChannels()
-                        }
+                if channelsId.count > channels.count {
+                    addChannels(channelsId: channelsId)
+                } else {
+                    removeChannels(channelsId: channelsId)
                 }
             }
 
@@ -209,6 +219,28 @@ class ChannelViewModel: ObservableObject {
         if !fromUpdate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.updateChannels()
+            }
+        }
+    }
+
+    private func addChannels(channelsId: [String]) {
+        for channelId in channelsId {
+            if !currentUser.channels.contains(channelId) {
+                dataBase.collection("channels").document(channelId)
+                    .toChannel { channel in
+                        self.channels.append(channel)
+                        self.currentUser.chats.append(channel.id ?? "some channel id")
+                        self.sortChannels()
+                    }
+            }
+        }
+    }
+
+    private func removeChannels(channelsId: [String]) {
+        for channel in channels {
+            if !channelsId.contains(channel.id ?? "some id") {
+                self.channels = channels.filter({ $0.id != channel.id})
+                self.currentUser.channels = currentUser.channels.filter({ $0 != channel.id})
             }
         }
     }
@@ -230,7 +262,7 @@ class ChannelViewModel: ObservableObject {
 
                     if userLocal.channels.count != self.channels.count {
                         self.getChannels(fromUpdate: true,
-                                         channelPart: userLocal.channels)
+                                         channelsId: userLocal.channels)
                     }
                 }
         }

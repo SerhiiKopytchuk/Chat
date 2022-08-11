@@ -15,7 +15,7 @@ class ChattingViewModel: ObservableObject {
 
     // MARK: - vars
 
-    @Published var user: User = User()
+    @Published var currentUser: User = User()
     @Published var secondUser = User()
     @Published var currentChat: Chat = Chat()
 
@@ -29,7 +29,7 @@ class ChattingViewModel: ObservableObject {
         DispatchQueue.global(qos: .userInteractive).sync {
             self.dataBase.collection("chats")
             .whereField("user1Id", isEqualTo: secondUser.id)
-            .whereField("user2Id", isEqualTo: self.user.id)
+            .whereField("user2Id", isEqualTo: self.currentUser.id)
             .queryToChat { chat in
                 self.currentChat = chat
                 competition(chat)
@@ -38,7 +38,7 @@ class ChattingViewModel: ObservableObject {
 
             self.dataBase.collection("chats")
             .whereField("user2Id", isEqualTo: secondUser.id)
-            .whereField("user1Id", isEqualTo: self.user.id)
+            .whereField("user1Id", isEqualTo: self.currentUser.id)
             .queryToChat { chat in
                 self.currentChat = chat
                 competition(chat)
@@ -91,7 +91,7 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
 
-        let newChat = Chat(user1Id: user.id,
+        let newChat = Chat(user1Id: currentUser.id,
                            user2Id: secondUser.id,
                            lastActivityTimestamp: Date())
 
@@ -106,7 +106,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     fileprivate func addChatsIdToUsers() {
-        dataBase.collection("users").document(user.id)
+        dataBase.collection("users").document(currentUser.id)
             .updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
         dataBase.collection("users").document(secondUser.id)
             .updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
@@ -132,7 +132,7 @@ class ChattingViewModel: ObservableObject {
 
             if chatsId.isEmpty {
                 self.chats = []
-                for chatId in user.chats {
+                for chatId in currentUser.chats {
                     dataBase.collection("chats").document(chatId)
                         .toChat { chat in
                             self.chats.append(chat)
@@ -157,11 +157,11 @@ class ChattingViewModel: ObservableObject {
 
     private func addChats(chatsId: [String]) {
         for chatId in chatsId {
-            if !user.chats.contains(chatId) {
+            if !currentUser.chats.contains(chatId) {
                 dataBase.collection("chats").document(chatId)
                     .toChat { chat in
                         self.chats.append(chat)
-                        self.user.chats.append(chat.id ?? "some chat id")
+                        self.currentUser.chats.append(chat.id ?? "some chat id")
                         self.sortChats()
                     }
             }
@@ -172,7 +172,7 @@ class ChattingViewModel: ObservableObject {
         for chat in chats {
             if !chatsId.contains(chat.id ?? "some id") {
                 self.chats = chats.filter({ $0.id != chat.id})
-                self.user.chats = user.chats.filter({ $0 != chat.id})
+                self.currentUser.chats = currentUser.chats.filter({ $0 != chat.id})
             }
         }
     }
@@ -183,7 +183,7 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func updateChats() {
         DispatchQueue.main.async {
-            self.dataBase.collection("users").document(self.user.id)
+            self.dataBase.collection("users").document(self.currentUser.id)
                 .addSnapshotListener { document, error in
                     if self.isError(error: error) { return }
 
@@ -225,7 +225,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     func clearDataBeforeSingIn() {
-        self.user = User()
+        self.currentUser = User()
         self.secondUser = User()
         self.chats = []
     }

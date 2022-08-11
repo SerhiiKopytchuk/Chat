@@ -20,7 +20,8 @@ struct ChannelMessageField: View {
             Button {
                 channelMessagingViewModel.sendMessage(text: message)
                 message = ""
-                channelViewModel.getChannels(fromUpdate: true)
+                channelViewModel.changeLastActivityAndSortChannels()
+
             } label: {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.white)

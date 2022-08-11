@@ -57,7 +57,7 @@ struct MainView: View {
         }
         .onAppear {
             isShowingSideMenu = false
-            chattingViewModel.user = viewModel.currentUser
+            chattingViewModel.currentUser = viewModel.currentUser
         }
         .navigationViewStyle(.columns)
 
