@@ -17,6 +17,7 @@ class MessagingViewModel: ObservableObject {
 
     @Published var messages: [Message] = []
     @Published private(set) var lastMessageId: String = ""
+    @Published private(set) var firstMessageId: String = ""
 
     var dataBase = Firestore.firestore()
 
@@ -55,6 +56,7 @@ class MessagingViewModel: ObservableObject {
 
                 self.sortMessages(messages: &messages)
 
+                self.getFirstMessage(messages: &messages)
                 self.getLastMessage(messages: &messages)
 
                 competition(messages)
@@ -81,6 +83,12 @@ class MessagingViewModel: ObservableObject {
     private func getLastMessage(messages: inout [Message]) {
         if let id = messages.last?.id {
             self.lastMessageId = id
+        }
+    }
+
+    private func getFirstMessage(messages: inout [Message]) {
+        if let id = messages.first?.id {
+            self.firstMessageId = id
         }
     }
 

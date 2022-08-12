@@ -78,6 +78,7 @@ struct ConversationView: View {
                                           showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage,
                                           showEmojiBarView: true)
+                            .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
                             .environmentObject(messagingViewModel)
                             .id(highlightMessage.id)
                             .frame(width: rect.width, height: rect.height)
@@ -211,6 +212,7 @@ struct ConversationView: View {
                             MessageBubble(message: message,
                                           showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage)
+                            .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
                             .environmentObject(messagingViewModel)
                             .id(message.id)
                             .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)

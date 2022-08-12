@@ -282,6 +282,7 @@ struct ChannelConversationView: View {
                         MessageBubble(message: message,
                                       showHighlight: .constant(false),
                                       highlightedMessage: .constant(Message()))
+                        .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
                         .id(message.id)
                         .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
                     }
