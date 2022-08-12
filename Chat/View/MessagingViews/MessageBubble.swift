@@ -56,6 +56,13 @@ struct MessageBubble: View {
                 .padding(.bottom, -25)
                 .zIndex(1)
                 .opacity(showHighlight ? 0 : 1)
+                .onTapGesture {
+                    withAnimation(.easeInOut) {
+                        if message.isReply() {
+                            messagingViewModel.removeEmoji(message: message)
+                        }
+                    }
+                }
         }
     }
 
