@@ -24,7 +24,7 @@ class MessagingViewModel: ObservableObject {
     func addEmoji(message: Message, emoji: String) {
         dataBase.collection("chats").document(self.currentChat.id ?? "someId")
             .collection("messages").document(message.id ?? "someIdd")
-            .updateData(["isEmojiAdded": true, "emojiValue": emoji])
+            .updateData(["emojiValue": emoji])
     }
 
     func addSnapshotListenerToMessage(messageId: String, competition: @escaping (Message) -> Void) {

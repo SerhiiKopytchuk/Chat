@@ -50,7 +50,7 @@ struct MessageBubble: View {
     }
 
     @ViewBuilder var addedEmojiView: some View {
-        if message.isEmojiAdded {
+        if message.isEmojiAdded() {
             AnimatedEmoji(emoji: message.emojiValue, color: message.isReply() ? Color("Gray") : .blue)
                 .offset(x: message.isReply() ? 15 : -15)
                 .padding(.bottom, -25)
