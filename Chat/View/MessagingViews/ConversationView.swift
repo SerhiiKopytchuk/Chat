@@ -24,6 +24,8 @@ struct ConversationView: View {
     @State var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
+    @State var messageText = ""
+
     @Environment(\.self) var env
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel
@@ -43,7 +45,8 @@ struct ConversationView: View {
                     if isFindChat {
                         VStack(spacing: 0) {
                             messagesScrollView
-                            MessageField(messagingViewModel: messagingViewModel)
+                            MessageField(messageText: $messageText,
+                                messagingViewModel: messagingViewModel)
                                 .padding()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
@@ -237,6 +240,11 @@ struct ConversationView: View {
                 .onChange(of: self.messagingViewModel.lastMessageId) { id in
                     withAnimation {
                         proxy.scrollTo(id, anchor: .bottom)
+                    }
+                }
+                .onChange(of: self.messageText) { _ in
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
                     }
                 }
             }

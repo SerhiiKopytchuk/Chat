@@ -8,18 +8,36 @@
 import SwiftUI
 
 struct MessageField: View {
-    @State private var message = ""
+    @Binding var messageText: String
+
+    @State var height: CGFloat = 40
+    let heightOfOneRow: CGFloat = 25
 
     @ObservedObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     var body: some View {
         HStack {
-            CustomTextField(placeholder: Text("Enter your message here"), text: $message)
+
+            ZStack {
+                TextEditor(text: $messageText)
+                    .frame(height: height)
+                Text(messageText).opacity(0).padding(.all, 8)
+                    .frame(height: height)
+                    .onChange(of: self.messageText) { _ in
+                        getHeightOfTextEditor()
+                    }
+                    .onAppear {
+
+                    }
+
+            }
+
+//            CustomTextField(placeholder: Text("Enter your message here"), text: $message)
 
             Button {
-                messagingViewModel.sendMessage(text: message)
-                message = ""
+                messagingViewModel.sendMessage(text: messageText)
+                messageText = ""
 
                 chattingViewModel.changeLastActivityAndSortChats()
             } label: {
@@ -30,18 +48,37 @@ struct MessageField: View {
                     .cornerRadius(15)
             }
 
+            .frame(maxHeight: .infinity, alignment: .bottom)
+
         }
+        .frame(height: height)
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.white)
         .cornerRadius(15)
     }
-}
 
-struct MessageField_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageField(messagingViewModel: MessagingViewModel())
-            .environmentObject(UserViewModel())
+    private func getHeightOfTextEditor() {
+        let linesCount = messageText.reduce(into: 0) { count, letter in
+            if letter == "\n" {
+                count += 1
+            }
+        }
+
+        if linesCount == 0 {
+            withAnimation {
+                self.height = CGFloat(40)
+            }
+        } else if linesCount <= 5 {
+            withAnimation {
+                self.height = CGFloat( CGFloat(linesCount) * heightOfOneRow + heightOfOneRow)
+            }
+        } else {
+            withAnimation {
+                self.height = CGFloat( CGFloat(5) * heightOfOneRow + heightOfOneRow)
+            }
+        }
+
     }
 }
 
