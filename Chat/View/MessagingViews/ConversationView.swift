@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import Foundation
+import Combine
 
 struct ConversationView: View {
 
@@ -37,6 +39,7 @@ struct ConversationView: View {
         ZStack {
             VStack {
                 HeaderWithBackButton(environment: _env, text: "Chat")
+                    .frame(height: 15)
                     .padding()
 
                 VStack(spacing: 0) {
@@ -46,8 +49,8 @@ struct ConversationView: View {
                         VStack(spacing: 0) {
                             messagesScrollView
                             MessageField(messageText: $messageText,
-                                messagingViewModel: messagingViewModel)
-                                .padding()
+                                         messagingViewModel: messagingViewModel)
+                            .padding()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                         .background {
@@ -207,48 +210,65 @@ struct ConversationView: View {
     }
 
     @ViewBuilder var messagesScrollView: some View {
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    ForEach(
-                        self.messagingViewModel.currentChat.messages ?? [],
-                        id: \.id) { message in
-                            MessageBubble(message: message,
-                                          showHighlight: $showMessageEmojiView,
-                                          highlightedMessage: $highlightMessage)
-                            .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
-                            .environmentObject(messagingViewModel)
-                            .id(message.id)
-                            .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
-                            .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
-                                return [(message.id  ?? "someId"): anchor]
-                            })
-                            .onLongPressGesture {
-                                if message.isReply() {
-                                    withAnimation(.easeInOut) {
-                                        showMessageEmojiView = true
-                                        highlightMessage = message
-                                    }
-
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                ForEach(
+                    self.messagingViewModel.currentChat.messages ?? [],
+                    id: \.id) { message in
+                        MessageBubble(message: message,
+                                      showHighlight: $showMessageEmojiView,
+                                      highlightedMessage: $highlightMessage)
+                        .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+                        .environmentObject(messagingViewModel)
+                        .id(message.id)
+                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                        .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
+                            return [(message.id  ?? "someId"): anchor]
+                        })
+                        .onLongPressGesture {
+                            if message.isReply() {
+                                withAnimation(.easeInOut) {
+                                    showMessageEmojiView = true
+                                    highlightMessage = message
                                 }
+
                             }
                         }
-                }
-                .background(Color("BG"))
-                .onAppear {
-                    proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-                }
-                .onChange(of: self.messagingViewModel.lastMessageId) { id in
-                    withAnimation {
-                        proxy.scrollTo(id, anchor: .bottom)
                     }
-                }
-                .onChange(of: self.messageText) { _ in
-                    withAnimation(.easeInOut(duration: 0.1)) {
-                        proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-                    }
+            }
+            .background(Color("BG"))
+            .onAppear {
+                proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
+            }
+            .onChange(of: self.messagingViewModel.lastMessageId) { id in
+                withAnimation {
+                    proxy.scrollTo(id, anchor: .bottom)
                 }
             }
+            .onChange(of: self.messageText) { _ in
+                withAnimation {
+                    proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
+                }
+            }
+            .onAppear {
+                // does this good solution to scroll down?
+                NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
+
+                                                       object: nil, queue: .main) { _ in
+                    var time = 0.0
+
+                    while time <= 0.5 {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + time) {
+                            proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
+                        }
+                        time += 0.0005
+                    }
+
+                }
+            }
+            .frame(alignment: .bottom)
             .padding(.horizontal, 12)
+        }
     }
 
     @ViewBuilder var createChatButton: some View {
@@ -300,13 +320,4 @@ struct ConversationView: View {
         }
     }
 
-}
-
-struct ConversationView_Previews: PreviewProvider {
-    static var previews: some View {
-        ConversationView(secondUser: User(),
-                         isFindChat: .constant(true))
-        .environmentObject(MessagingViewModel())
-        .environmentObject(UserViewModel())
-    }
 }

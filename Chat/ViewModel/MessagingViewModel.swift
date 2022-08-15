@@ -100,9 +100,9 @@ class MessagingViewModel: ObservableObject {
 
     func sendMessage(text: String) {
 
-        if !messageIsValidated(text: text) { return }
+        let trimmedText = text.trimToMessage()
 
-        let trimmedText = text.trimmingCharacters(in: .whitespaces)
+        if !messageIsValidated(text: trimmedText) { return }
 
         let newMessage = Message(text: trimmedText, senderId: self.user.id)
 
@@ -121,7 +121,6 @@ class MessagingViewModel: ObservableObject {
         if !text.trimmingCharacters(in: .whitespaces).isEmpty {
             return true
         }
-
         return false
     }
 

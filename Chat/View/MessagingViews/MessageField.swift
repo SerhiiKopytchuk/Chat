@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct MessageField: View {
+
     @Binding var messageText: String
 
     @State var height: CGFloat = 40
-    let heightOfOneRow: CGFloat = 25
+
+    @FocusState private var autoSizingTextFieldIsFocused: Bool
 
     @ObservedObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
@@ -19,26 +22,14 @@ struct MessageField: View {
     var body: some View {
         HStack {
 
-            ZStack {
-                TextEditor(text: $messageText)
-                    .frame(height: height)
-                Text(messageText).opacity(0).padding(.all, 8)
-                    .frame(height: height)
-                    .onChange(of: self.messageText) { _ in
-                        getHeightOfTextEditor()
-                    }
-                    .onAppear {
-
-                    }
-
-            }
-
-//            CustomTextField(placeholder: Text("Enter your message here"), text: $message)
+            ResizeableTextView(text: $messageText, height: $height, placeholderText: "Enter message")
 
             Button {
+                messageText = messageText.trimmingCharacters(in: .newlines)
                 messagingViewModel.sendMessage(text: messageText)
                 messageText = ""
-
+                UIApplication.shared.endEditing()
+                autoSizingTextFieldIsFocused = false
                 chattingViewModel.changeLastActivityAndSortChats()
             } label: {
                 Image(systemName: "paperplane.fill")
@@ -51,35 +42,13 @@ struct MessageField: View {
             .frame(maxHeight: .infinity, alignment: .bottom)
 
         }
-        .frame(height: height)
+        .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.white)
         .cornerRadius(15)
     }
 
-    private func getHeightOfTextEditor() {
-        let linesCount = messageText.reduce(into: 0) { count, letter in
-            if letter == "\n" {
-                count += 1
-            }
-        }
-
-        if linesCount == 0 {
-            withAnimation {
-                self.height = CGFloat(40)
-            }
-        } else if linesCount <= 5 {
-            withAnimation {
-                self.height = CGFloat( CGFloat(linesCount) * heightOfOneRow + heightOfOneRow)
-            }
-        } else {
-            withAnimation {
-                self.height = CGFloat( CGFloat(5) * heightOfOneRow + heightOfOneRow)
-            }
-        }
-
-    }
 }
 
 struct CustomTextField: View {
@@ -96,5 +65,11 @@ struct CustomTextField: View {
             }
             TextField("", text: $text, onEditingChanged: editingChanged, onCommit: commit)
         }
+    }
+}
+
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
