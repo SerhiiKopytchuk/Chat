@@ -271,8 +271,8 @@ class ChatUITests: XCTestCase {
         app.scrollViews.staticTexts["Anna"].tap()
         sleep(1)
 
-        app.textFields.firstMatch.tap()
-        app.textFields.firstMatch.typeText(message)
+        app.textViews.firstMatch.tap()
+        app.textViews.firstMatch.typeText(message)
 
         app.buttons["Send"].tap()
 
@@ -357,7 +357,7 @@ class ChatUITests: XCTestCase {
         wait(for: [emojiReactionExpectation], timeout: 5)
     }
 
-    func test013SignInToSerhiiAccount() throws {
+    func test013SignInToBennAccount() throws {
 
         let app = XCUIApplication()
         app.launch()

@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import Foundation
+import Combine
 
 struct ConversationView: View {
 
@@ -35,6 +37,7 @@ struct ConversationView: View {
         ZStack {
             VStack {
                 HeaderWithBackButton(environment: _env, text: "Chat")
+                    .frame(height: 15)
                     .padding()
 
                 VStack(spacing: 0) {
@@ -44,9 +47,10 @@ struct ConversationView: View {
                         VStack(spacing: 0) {
                             messagesScrollView
                             MessageField(messagingViewModel: messagingViewModel)
-                                .padding()
+                                .padding(.horizontal)
+                                .padding(.bottom)
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                        .frame(maxWidth: .infinity, alignment: .bottom)
                         .background {
                             Color("BG")
                                 .ignoresSafeArea()
@@ -56,7 +60,7 @@ struct ConversationView: View {
                         createChatButton
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
             .addGradientBackground()
             .navigationBarBackButtonHidden(loadExpandedContent)
@@ -79,6 +83,8 @@ struct ConversationView: View {
                                           highlightedMessage: $highlightMessage,
                                           showEmojiBarView: true)
                             .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
+                            .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
+
                             .environmentObject(messagingViewModel)
                             .id(highlightMessage.id)
                             .frame(width: rect.width, height: rect.height)
@@ -204,8 +210,9 @@ struct ConversationView: View {
     }
 
     @ViewBuilder var messagesScrollView: some View {
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack {
                     ForEach(
                         self.messagingViewModel.currentChat.messages ?? [],
                         id: \.id) { message in
@@ -213,6 +220,7 @@ struct ConversationView: View {
                                           showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage)
                             .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+                            .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
                             .environmentObject(messagingViewModel)
                             .id(message.id)
                             .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
@@ -230,17 +238,20 @@ struct ConversationView: View {
                             }
                         }
                 }
-                .background(Color("BG"))
-                .onAppear {
-                    proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-                }
-                .onChange(of: self.messagingViewModel.lastMessageId) { id in
-                    withAnimation {
-                        proxy.scrollTo(id, anchor: .bottom)
-                    }
+                .rotationEffect(Angle(degrees: 180))
+            }
+            .rotationEffect(Angle(degrees: 180))
+            .background(Color("BG"))
+            .onAppear {
+                proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
+            }
+            .onChange(of: self.messagingViewModel.lastMessageId) { id in
+                withAnimation {
+                    proxy.scrollTo(id, anchor: .bottom)
                 }
             }
             .padding(.horizontal, 12)
+        }
     }
 
     @ViewBuilder var createChatButton: some View {
@@ -292,13 +303,4 @@ struct ConversationView: View {
         }
     }
 
-}
-
-struct ConversationView_Previews: PreviewProvider {
-    static var previews: some View {
-        ConversationView(secondUser: User(),
-                         isFindChat: .constant(true))
-        .environmentObject(MessagingViewModel())
-        .environmentObject(UserViewModel())
-    }
 }

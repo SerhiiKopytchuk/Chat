@@ -6,21 +6,30 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct MessageField: View {
-    @State private var message = ""
+
+    @State var messageText: String = ""
+
+    @State var height: CGFloat = 40
+
+    @FocusState private var autoSizingTextFieldIsFocused: Bool
 
     @ObservedObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     var body: some View {
         HStack {
-            CustomTextField(placeholder: Text("Enter your message here"), text: $message)
+
+            ResizeableTextView(text: $messageText, height: $height, placeholderText: "Enter message")
 
             Button {
-                messagingViewModel.sendMessage(text: message)
-                message = ""
-
+                messageText = messageText.trimmingCharacters(in: .newlines)
+                messagingViewModel.sendMessage(text: messageText)
+                messageText = ""
+                UIApplication.shared.endEditing()
+                autoSizingTextFieldIsFocused = false
                 chattingViewModel.changeLastActivityAndSortChats()
             } label: {
                 Image(systemName: "paperplane.fill")
@@ -30,34 +39,14 @@ struct MessageField: View {
                     .cornerRadius(15)
             }
 
+            .frame(maxHeight: .infinity, alignment: .bottom)
+
         }
+        .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.white)
         .cornerRadius(15)
     }
-}
 
-struct MessageField_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageField(messagingViewModel: MessagingViewModel())
-            .environmentObject(UserViewModel())
-    }
-}
-
-struct CustomTextField: View {
-    var placeholder: Text
-    @Binding var text: String
-    var editingChanged: (Bool) -> Void = {_ in }
-    var commit: () -> Void = {}
-
-    var body: some View {
-        ZStack(alignment: .leading) {
-            if text.isEmpty {
-                placeholder
-                    .opacity(0.5)
-            }
-            TextField("", text: $text, onEditingChanged: editingChanged, onCommit: commit)
-        }
-    }
 }
