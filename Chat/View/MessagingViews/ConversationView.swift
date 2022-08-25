@@ -26,8 +26,6 @@ struct ConversationView: View {
     @State var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
-    @State var messageText = ""
-
     @Environment(\.self) var env
 
     @EnvironmentObject var messagingViewModel: MessagingViewModel
@@ -48,11 +46,10 @@ struct ConversationView: View {
                     if isFindChat {
                         VStack(spacing: 0) {
                             messagesScrollView
-                            MessageField(messageText: $messageText,
-                                         messagingViewModel: messagingViewModel)
+                            MessageField(messagingViewModel: messagingViewModel)
                             .padding()
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                        .frame(maxWidth: .infinity, alignment: .bottom)
                         .background {
                             Color("BG")
                                 .ignoresSafeArea()
@@ -62,7 +59,7 @@ struct ConversationView: View {
                         createChatButton
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
             .addGradientBackground()
             .navigationBarBackButtonHidden(loadExpandedContent)
@@ -212,30 +209,34 @@ struct ConversationView: View {
     @ViewBuilder var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
-                ForEach(
-                    self.messagingViewModel.currentChat.messages ?? [],
-                    id: \.id) { message in
-                        MessageBubble(message: message,
-                                      showHighlight: $showMessageEmojiView,
-                                      highlightedMessage: $highlightMessage)
-                        .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
-                        .environmentObject(messagingViewModel)
-                        .id(message.id)
-                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
-                        .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
-                            return [(message.id  ?? "someId"): anchor]
-                        })
-                        .onLongPressGesture {
-                            if message.isReply() {
-                                withAnimation(.easeInOut) {
-                                    showMessageEmojiView = true
-                                    highlightMessage = message
-                                }
+                VStack {
+                    ForEach(
+                        self.messagingViewModel.currentChat.messages ?? [],
+                        id: \.id) { message in
+                            MessageBubble(message: message,
+                                          showHighlight: $showMessageEmojiView,
+                                          highlightedMessage: $highlightMessage)
+                            .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+                            .environmentObject(messagingViewModel)
+                            .id(message.id)
+                            .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                            .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
+                                return [(message.id  ?? "someId"): anchor]
+                            })
+                            .onLongPressGesture {
+                                if message.isReply() {
+                                    withAnimation(.easeInOut) {
+                                        showMessageEmojiView = true
+                                        highlightMessage = message
+                                    }
 
+                                }
                             }
                         }
-                    }
+                }
+                .rotationEffect(Angle(degrees: 180))
             }
+            .rotationEffect(Angle(degrees: 180))
             .background(Color("BG"))
             .onAppear {
                 proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
@@ -245,28 +246,6 @@ struct ConversationView: View {
                     proxy.scrollTo(id, anchor: .bottom)
                 }
             }
-            .onChange(of: self.messageText) { _ in
-                withAnimation {
-                    proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-                }
-            }
-            .onAppear {
-                // does this good solution to scroll down?
-                NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
-
-                                                       object: nil, queue: .main) { _ in
-                    var time = 0.0
-
-                    while time <= 0.5 {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + time) {
-                            proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-                        }
-                        time += 0.0005
-                    }
-
-                }
-            }
-            .frame(alignment: .bottom)
             .padding(.horizontal, 12)
         }
     }

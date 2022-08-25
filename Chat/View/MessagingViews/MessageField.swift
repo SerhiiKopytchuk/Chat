@@ -10,7 +10,7 @@ import Foundation
 
 struct MessageField: View {
 
-    @Binding var messageText: String
+    @State var messageText: String = ""
 
     @State var height: CGFloat = 40
 
