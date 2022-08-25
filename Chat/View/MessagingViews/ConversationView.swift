@@ -47,7 +47,8 @@ struct ConversationView: View {
                         VStack(spacing: 0) {
                             messagesScrollView
                             MessageField(messagingViewModel: messagingViewModel)
-                            .padding()
+                                .padding(.horizontal)
+                                .padding(.bottom)
                         }
                         .frame(maxWidth: .infinity, alignment: .bottom)
                         .background {
@@ -82,6 +83,8 @@ struct ConversationView: View {
                                           highlightedMessage: $highlightMessage,
                                           showEmojiBarView: true)
                             .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
+                            .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
+
                             .environmentObject(messagingViewModel)
                             .id(highlightMessage.id)
                             .frame(width: rect.width, height: rect.height)
@@ -217,6 +220,7 @@ struct ConversationView: View {
                                           showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage)
                             .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+                            .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
                             .environmentObject(messagingViewModel)
                             .id(message.id)
                             .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)

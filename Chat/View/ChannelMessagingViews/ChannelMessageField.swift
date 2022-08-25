@@ -8,18 +8,25 @@
 import SwiftUI
 
 struct ChannelMessageField: View {
-    @State private var message = ""
+    @State private var messageText = ""
+
+    @State var height: CGFloat = 40
+
+    @FocusState private var autoSizingTextFieldIsFocused: Bool
 
     @ObservedObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
     var body: some View {
         HStack {
-            CustomTextField(placeholder: Text("Enter your message here"), text: $message)
+            ResizeableTextView(text: $messageText, height: $height, placeholderText: "Enter message")
 
             Button {
-                channelMessagingViewModel.sendMessage(text: message)
-                message = ""
+                messageText = messageText.trimmingCharacters(in: .newlines)
+                channelMessagingViewModel.sendMessage(text: messageText)
+                messageText = ""
+                UIApplication.shared.endEditing()
+                autoSizingTextFieldIsFocused = false
                 channelViewModel.changeLastActivityAndSortChannels()
 
             } label: {
@@ -31,6 +38,7 @@ struct ChannelMessageField: View {
             }
 
         }
+        .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.white)

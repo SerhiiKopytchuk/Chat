@@ -61,12 +61,14 @@ struct ChannelConversationView: View {
                             .opacity(0.7)
                     }
 
-                    VStack {
+                    VStack(spacing: 0) {
                         expandedDetails
                         messagesScrollView
 
                         if isSubscribed {
                             messagingTextField
+                                .padding(.horizontal)
+                                .padding(.bottom)
                         } else {
                             subscribeButton
                         }
@@ -276,17 +278,22 @@ struct ChannelConversationView: View {
     @ViewBuilder var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
-                ForEach(
-                    self.channelMessagingViewModel.currentChannel.messages ?? [],
-                    id: \.id) { message in
-                        MessageBubble(message: message,
-                                      showHighlight: .constant(false),
-                                      highlightedMessage: .constant(Message()))
-                        .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
-                        .id(message.id)
-                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
-                    }
+                VStack {
+                    ForEach(
+                        self.channelMessagingViewModel.currentChannel.messages ?? [],
+                        id: \.id) { message in
+                            MessageBubble(message: message,
+                                          showHighlight: .constant(false),
+                                          highlightedMessage: .constant(Message()))
+                            .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
+                            .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
+                            .id(message.id)
+                            .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                        }
+                }
+                .rotationEffect(Angle(degrees: 180))
             }
+            .rotationEffect(Angle(degrees: 180))
             .padding(.horizontal, 12)
             .background(Color("BG"))
 
@@ -308,7 +315,6 @@ struct ChannelConversationView: View {
             if currentUser.id == channelViewModel.currentChannel.ownerId {
                 ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
                     .environmentObject(channelViewModel)
-                    .padding(.horizontal)
             }
         }
     }
