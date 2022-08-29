@@ -40,7 +40,6 @@ struct MessageField: View {
                     .background(Color.gray)
                     .cornerRadius(10)
             }
-            .frame(maxHeight: .infinity, alignment: .bottom)
 
             Button {
                 messageText = messageText.trimmingCharacters(in: .newlines)
@@ -58,14 +57,12 @@ struct MessageField: View {
                     .cornerRadius(10)
             }
 
-            .frame(maxHeight: .infinity, alignment: .bottom)
-
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $image)
         }
         .onChange(of: image ?? UIImage(), perform: { newImage in
-            imageViewModel.saveImage(image: newImage,
+            imageViewModel.saveChatImage(image: newImage,
                                      chatId: chattingViewModel.currentChat.id ?? "some chat id") { imageId in
                 messagingViewModel.sendImage(imageId: imageId)
             }

@@ -21,8 +21,11 @@ struct MessageBubble: View {
     @State var imageHeight: CGFloat = 0
     @State var imageWight: CGFloat = 0
 
+    var isChat: Bool = true
+
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
 
     var body: some View {
         VStack(alignment: message.isReply() ? .trailing : .leading) {
@@ -76,9 +79,20 @@ struct MessageBubble: View {
 
         }
         .onAppear {
-            let chatId: String = messagingViewModel.currentChat.id ?? "chatID"
+
             let imageId: String = message.imageId ?? "imageId"
-            let ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
+            var chatId: String = ""
+            var channelId: String = ""
+            var ref: StorageReference
+
+            if isChat {
+                chatId = messagingViewModel.currentChat.id ?? "chatID"
+                ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
+            } else {
+                channelId = channelViewModel.currentChannel.id ?? "channelID"
+                ref = Storage.storage().reference(withPath: "channel images/\(channelId)/\(imageId)")
+            }
+
             ref.downloadURL { url, err in
                 if err != nil {
                     return

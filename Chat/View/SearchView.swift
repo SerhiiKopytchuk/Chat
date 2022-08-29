@@ -159,7 +159,7 @@ struct SearchView: View {
                                rowTapped: {
                     viewModel.secondUser = user
                     messagingViewModel.secondUser = user
-                    messagingViewModel.user = viewModel.currentUser
+                    messagingViewModel.currentUser = viewModel.currentUser
                     chattingViewModel.secondUser = user
                     chattingViewModel.currentUser = viewModel.currentUser
 

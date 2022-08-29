@@ -284,7 +284,9 @@ struct ChannelConversationView: View {
                         id: \.id) { message in
                             MessageBubble(message: message,
                                           showHighlight: .constant(false),
-                                          highlightedMessage: .constant(Message()))
+                                          highlightedMessage: .constant(Message()),
+                                          isChat: false)
+                            .environmentObject(channelViewModel)
                             .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
                             .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
                             .id(message.id)

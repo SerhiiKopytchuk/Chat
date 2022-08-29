@@ -85,6 +85,22 @@ class ChannelMessagingViewModel: ObservableObject {
         }
     }
 
+    func sendImage(imageId: String) {
+
+        let imageMessage = Message(imageId: imageId, senderId: self.currentUser.id)
+
+        do {
+            try self.dataBase.collection("channels")
+                .document(currentChannel.id ?? "SomeChannelId")
+                .collection("messages")
+                .document().setData(from: imageMessage)
+            changeLastActivityTime()
+        } catch {
+            print("failed to send message" + error.localizedDescription)
+        }
+
+    }
+
     func sendMessage(text: String) {
 
         if !messageIsValidated(text: text) { return }

@@ -89,7 +89,7 @@ struct TabBarView: View {
                         chattingViewModel.getCurrentChat(
                             chat: chat, userNumber: viewModel.currentUser.id != chat.user1Id ? 1 : 2
                         ) { chat in
-                            messagingViewModel.user = self.viewModel.currentUser
+                            messagingViewModel.currentUser = self.viewModel.currentUser
                             messagingViewModel.currentChat = chat
                             messagingViewModel.getMessages { _ in }
                             // don't remove dispatch
