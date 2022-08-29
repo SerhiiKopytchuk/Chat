@@ -98,6 +98,20 @@ class MessagingViewModel: ObservableObject {
         }
     }
 
+    func sendImage(imageId: String) {
+
+        let imageMessage = Message(imageId: imageId, senderId: self.user.id)
+
+        do {
+            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+                .document().setData(from: imageMessage)
+            changeLastMessageTime()
+        } catch {
+            print("failed to send message" + error.localizedDescription)
+        }
+
+    }
+
     func sendMessage(text: String) {
 
         let trimmedText = text.trimToMessage()

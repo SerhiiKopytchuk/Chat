@@ -35,7 +35,9 @@ struct ResizeableTextView: UIViewRepresentable {
         }
 
         DispatchQueue.main.async {
+            withAnimation(.easeInOut(duration: 0.1)) {
                 self.height = textView.contentSize.height
+            }
         }
     }
 
@@ -67,16 +69,18 @@ struct ResizeableTextView: UIViewRepresentable {
             DispatchQueue.main.async {
                 let oldText = self.parent.text
 
-                if textView.text.count < self.textSizeLimit {
-                    self.parent.height = textView.contentSize.height
-                    self.parent.text = textView.text
-                } else if self.parent.text.dropLast() == textView.text {
-                    self.parent.height = textView.contentSize.height
-                    self.parent.text = textView.text
-                } else {
-                    self.parent.height = textView.contentSize.height
-                    self.parent.text = oldText
-                    textView.text = oldText
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    if textView.text.count < self.textSizeLimit {
+                        self.parent.height = textView.contentSize.height
+                        self.parent.text = textView.text
+                    } else if self.parent.text.dropLast() == textView.text {
+                        self.parent.height = textView.contentSize.height
+                        self.parent.text = textView.text
+                    } else {
+                        self.parent.height = textView.contentSize.height
+                        self.parent.text = oldText
+                        textView.text = oldText
+                    }
                 }
             }
         }

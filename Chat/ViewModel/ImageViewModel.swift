@@ -32,6 +32,16 @@ class ImageViewModel: ObservableObject {
         }
     }
 
+    func saveImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        let imageId = UUID().uuidString
+        let ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(message: "failed to save image", err: error) { return }
+            id(imageId)
+        }
+    }
+
     func getImage(imageName: String, competition: @escaping (UIImage) -> Void) {
         let ref = Storage.storage().reference(withPath: imageName)
         ref.getData(maxSize: (1 * 1024 * 1024)) { data, err in
