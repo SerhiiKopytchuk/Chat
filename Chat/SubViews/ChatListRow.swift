@@ -64,7 +64,7 @@ struct ChatListRow: View {
                         .onAppear {
                             let imageId: String = message.imageId ?? "imageId"
 
-                            let chatId: String = messageViewModel.currentChat.id ?? "someId"
+                            let chatId: String = chat.id ?? "someID"
                             let ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
 
                             ref.downloadURL { url, err in
