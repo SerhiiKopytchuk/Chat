@@ -22,6 +22,8 @@ struct ChatListRow: View {
     @State var isFindUserImage = true
     @State var isShowImage = false
 
+    @State var lastMessageImageUrl = URL(string: "")
+
     let formater = DateFormatter()
     let chat: Chat
 
@@ -47,11 +49,33 @@ struct ChatListRow: View {
                         .foregroundColor(.secondary)
                 }
 
-                Text(message.text )
-                    .font(.caption)
-                    .italic()
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
+                if message.imageId == "" {
+                    Text(message.text )
+                        .font(.caption)
+                        .italic()
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                } else {
+                    WebImage(url: lastMessageImageUrl)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 20, height: 20)
+                        .cornerRadius(3)
+                        .onAppear {
+                            let imageId: String = message.imageId ?? "imageId"
+
+                            let chatId: String = messageViewModel.currentChat.id ?? "someId"
+                            let ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
+
+                            ref.downloadURL { url, err in
+                                if err != nil {
+                                    return
+                                }
+                                self.lastMessageImageUrl = url
+                            }
+                        }
+                }
+
             }
         }
         .padding()
