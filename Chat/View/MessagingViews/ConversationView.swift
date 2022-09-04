@@ -219,6 +219,7 @@ struct ConversationView: View {
                             MessageBubble(message: message,
                                           showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage)
+                            .accessibilityValue(message.imageId != "" ? "image" : "message")
                             .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
                             .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
                             .environmentObject(messagingViewModel)

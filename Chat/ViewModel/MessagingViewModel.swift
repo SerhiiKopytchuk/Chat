@@ -12,7 +12,7 @@ import SwiftUI
 class MessagingViewModel: ObservableObject {
 
     @Published var currentChat: Chat = Chat()
-    @Published var user: User = User()
+    @Published var currentUser: User = User()
     @Published var secondUser = User()
 
     @Published var messages: [Message] = []
@@ -98,18 +98,32 @@ class MessagingViewModel: ObservableObject {
         }
     }
 
+    func sendImage(imageId: String) {
+
+        let imageMessage = Message(imageId: imageId, senderId: self.currentUser.id)
+
+        do {
+            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+                .document().setData(from: imageMessage)
+            changeLastActivityTime()
+        } catch {
+            print("failed to send message" + error.localizedDescription)
+        }
+
+    }
+
     func sendMessage(text: String) {
 
         let trimmedText = text.trimToMessage()
 
         if !messageIsValidated(text: trimmedText) { return }
 
-        let newMessage = Message(text: trimmedText, senderId: self.user.id)
+        let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
 
         do {
             try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
-            changeLastMessageTime()
+            changeLastActivityTime()
         } catch {
             print("failed to send message" + error.localizedDescription)
         }
@@ -124,7 +138,7 @@ class MessagingViewModel: ObservableObject {
         return false
     }
 
-    private func changeLastMessageTime() {
+    private func changeLastActivityTime() {
         dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 

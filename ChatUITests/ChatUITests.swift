@@ -6,6 +6,8 @@
 //
 
 import XCTest
+import Foundation
+import SwiftUI
 
 class ChatUITests: XCTestCase {
 
@@ -282,7 +284,24 @@ class ChatUITests: XCTestCase {
         wait(for: [sendMessageExpectation], timeout: 5)
     }
 
-    func test010LogoutTest() throws {
+    func test010SendAnnaImage() throws {
+
+        let app = XCUIApplication()
+        app.launch()
+
+        app.scrollViews.staticTexts["Anna"].tap()
+        sleep(1)
+
+        app.buttons["Photo"].tap()
+        app.images["Фото, 09 серпня, 5:08 пп"].tap()
+
+        let sendImage = app.scrollViews.firstMatch.otherElements["image"]
+        let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
+
+        wait(for: [imageExpectation], timeout: 5)
+    }
+
+    func test011LogoutTest() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -299,7 +318,7 @@ class ChatUITests: XCTestCase {
         wait(for: [signUpTextExpectation], timeout: 5)
     }
 
-    func test010SignInToAnnaAccount() throws {
+    func test012SignInToAnnaAccount() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -323,7 +342,7 @@ class ChatUITests: XCTestCase {
         wait(for: [bySerhiiKopytchukTextExpectation], timeout: 5)
     }
 
-    func test011CheckIfReceiveMessage() throws {
+    func test013CheckIfReceiveMessage() throws {
 
         let app = XCUIApplication()
         let message = "Hello Anna!"
@@ -335,10 +354,13 @@ class ChatUITests: XCTestCase {
         let sendMessage = app.scrollViews.staticTexts[message]
         let sendMessageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendMessage)
 
-        wait(for: [sendMessageExpectation], timeout: 5)
+        let sendImage = app.scrollViews.firstMatch.otherElements.otherElements.firstMatch
+        let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
+
+        wait(for: [sendMessageExpectation, imageExpectation], timeout: 5)
     }
 
-    func test012AddEmojiReactionTest() throws {
+    func test014AddEmojiReactionTest() throws {
 
         let app = XCUIApplication()
         let message = "Hello Anna!"
@@ -357,7 +379,7 @@ class ChatUITests: XCTestCase {
         wait(for: [emojiReactionExpectation], timeout: 5)
     }
 
-    func test013SignInToBennAccount() throws {
+    func test015SignInToBennAccount() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -394,7 +416,7 @@ class ChatUITests: XCTestCase {
         sleep(1)
     }
 
-    func test014DeleteChatWithAnna() throws {
+    func test016DeleteChatWithAnna() throws {
         let app = XCUIApplication()
         app.launch()
         sleep(1)

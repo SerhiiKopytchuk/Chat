@@ -12,14 +12,31 @@ struct ChannelMessageField: View {
 
     @State var height: CGFloat = 40
 
+    var sizeOfButtons: CGFloat = 20
+
     @FocusState private var autoSizingTextFieldIsFocused: Bool
 
     @ObservedObject var channelMessagingViewModel: ChannelMessagingViewModel
+    @ObservedObject var imageViewModel = ImageViewModel()
     @EnvironmentObject var channelViewModel: ChannelViewModel
+
+    @State var isShowingImagePicker = false
+    @State var image: UIImage?
 
     var body: some View {
         HStack {
             ResizeableTextView(text: $messageText, height: $height, placeholderText: "Enter message")
+
+            Button {
+                isShowingImagePicker.toggle()
+            } label: {
+                Image(systemName: "photo")
+                    .frame(width: sizeOfButtons, height: sizeOfButtons)
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .background(Color.gray)
+                    .cornerRadius(10)
+            }
 
             Button {
                 messageText = messageText.trimmingCharacters(in: .newlines)
@@ -38,6 +55,15 @@ struct ChannelMessageField: View {
             }
 
         }
+        .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
+            ImagePicker(image: $image)
+        }
+        .onChange(of: image ?? UIImage(), perform: { newImage in
+            imageViewModel.saveChannelImage(image: newImage,
+                                            channelId: channelViewModel.currentChannel.id ?? "channelId") { imageId in
+                channelMessagingViewModel.sendImage(imageId: imageId)
+            }
+        })
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)

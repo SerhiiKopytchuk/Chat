@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import FirebaseStorage
+import SDWebImageSwiftUI
 
 struct MessageBubble: View {
 
@@ -13,9 +15,17 @@ struct MessageBubble: View {
     @Binding var showHighlight: Bool
     @Binding var highlightedMessage: Message?
     @State var showEmojiBarView = false
+    @State var imageUrl = URL(string: "")
+
+    @State var isFindImage = false
+    @State var imageHeight: CGFloat = 0
+    @State var imageWight: CGFloat = 0
+
+    var isChat: Bool = true
 
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
 
     var body: some View {
         VStack(alignment: message.isReply() ? .trailing : .leading) {
@@ -23,14 +33,17 @@ struct MessageBubble: View {
             addedEmojiView
 
             ZStack(alignment: .bottomLeading) {
-
-                Text(message.text)
-                    .padding()
-                    .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .black)
-                    .background(message.senderId != viewModel.getUserUID() ? .blue : Color.white)
-                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
-                                  ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
-                    .frame(alignment: message.isReply() ? .leading : .trailing)
+                if message.imageId == "" {
+                    Text(message.text)
+                        .padding()
+                        .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .black)
+                        .background(message.senderId != viewModel.getUserUID() ? .blue : Color.white)
+                        .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
+                                      ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
+                        .frame(alignment: message.isReply() ? .leading : .trailing)
+                } else {
+                    imageView
+                }
 
                 emojiBarView
             }
@@ -47,6 +60,49 @@ struct MessageBubble: View {
             }
         }
         .onTapGesture { }
+    }
+
+    @ViewBuilder var imageView: some View {
+        VStack {
+            if isFindImage {
+                WebImage(url: imageUrl, isAnimating: .constant(true))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
+                                  ? [.topLeft, .topRight, .bottomRight] :
+                                    [.topLeft, .topRight, .bottomLeft])
+            } else {
+                ProgressView()
+                    .frame(width: 300, height: 200)
+                    .aspectRatio(contentMode: .fit)
+            }
+
+        }
+        .onAppear {
+
+            let imageId: String = message.imageId ?? "imageId"
+            var chatId: String = ""
+            var channelId: String = ""
+            var ref: StorageReference
+
+            if isChat {
+                chatId = messagingViewModel.currentChat.id ?? "chatID"
+                ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
+            } else {
+                channelId = channelViewModel.currentChannel.id ?? "channelID"
+                ref = Storage.storage().reference(withPath: "channel images/\(channelId)/\(imageId)")
+            }
+
+            ref.downloadURL { url, err in
+                if err != nil {
+                    return
+                }
+                    self.imageUrl = url
+                withAnimation {
+                    self.isFindImage = true
+                }
+            }
+        }
     }
 
     @ViewBuilder var addedEmojiView: some View {

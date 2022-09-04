@@ -43,7 +43,7 @@ struct ChannelListRow: View {
                     .font(.caption)
                     .italic()
                     .foregroundColor(.secondary)
-                    .lineLimit(2 )
+                    .lineLimit(2)
             }
             Spacer()
 
