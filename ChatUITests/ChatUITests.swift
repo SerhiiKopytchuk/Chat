@@ -295,7 +295,7 @@ class ChatUITests: XCTestCase {
         app.buttons["Photo"].tap()
         app.images["Фото, 09 серпня, 5:08 пп"].tap()
 
-        let sendImage = app.scrollViews.firstMatch.otherElements.otherElements.firstMatch
+        let sendImage = app.scrollViews.firstMatch.otherElements["image"]
         let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
 
         wait(for: [imageExpectation], timeout: 5)
