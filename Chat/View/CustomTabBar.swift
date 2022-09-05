@@ -9,16 +9,18 @@ import SwiftUI
 
 struct CustomTabBar: View {
 
-    @Binding var currentTab: Tab
+    @Binding var selected: Int
 
     @State var yOfset: CGFloat = 0
+
     var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width
             HStack(spacing: 0) {
-                ForEach(Tab.allCases, id: \.rawValue) { tab in
-                    barButton(tab: tab)
-                }
+
+                barButton(selection: 0)
+                barButton(selection: 1)
+
             }
             .frame(maxWidth: .infinity)
             .background(alignment: .leading) {
@@ -34,49 +36,34 @@ struct CustomTabBar: View {
         .padding([.horizontal, .top])
     }
 
-    func barButton(tab: Tab)-> some View {
+    func barButton(selection: Int)-> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                currentTab = tab
-                yOfset = 60
+                self.selected = selection
+                yOfset = 30
             }
             withAnimation(.easeInOut(duration: 0.1).delay(0.1)) {
                 yOfset = 0
             }
 
         } label: {
-            Image(systemName: tab.rawValue)
+            Image(systemName: "character.bubble")
                 .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 20, height: 30)
                 .frame(maxWidth: .infinity )
-                .foregroundColor(currentTab == tab ? Color.purple : .gray)
-                .scaleEffect(currentTab == tab && yOfset != 0 ? 1.5 : 1)
+                .foregroundColor(selection == selected ? Color.purple : .gray)
+                .scaleEffect(selection == selected && yOfset != 0 ? 1.5 : 1)
         }
     }
 
     func indicatorOffset(width: CGFloat) -> CGFloat {
-        let index = CGFloat(getIndex())
+        let index = CGFloat(selected)
         if index == 0 {return 0}
 
         let buttonWidth = width / CGFloat(Tab.allCases.count)
 
         return index * buttonWidth
-    }
-
-    func getIndex() -> Int {
-        switch currentTab {
-        case .chats:
-            return 0
-        case .channels:
-            return 1
-        }
-    }
-}
-
-struct CustomTabBar_Previews: PreviewProvider {
-    static var previews: some View {
-        TabBarView()
     }
 }
