@@ -17,7 +17,7 @@ struct ChannelConversationView: View {
     @Environment(\.self) var env
 
     @State var isExpandedProfile: Bool = false
-    @State var profileImage: WebImage = WebImage(url: URL(string: ""))
+    @State var channelImage: WebImage = WebImage(url: URL(string: ""))
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
     @State var isExpandedDetails = false
@@ -53,7 +53,7 @@ struct ChannelConversationView: View {
                                     animationNamespace: animation,
                                     isExpandedProfileImage: $isExpandedProfile,
                                     isExpandedDetails: $isExpandedDetails,
-                                    profileImage: $profileImage,
+                                    channelWebImage: $channelImage,
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
                     .background {
@@ -99,7 +99,7 @@ struct ChannelConversationView: View {
         })
         .overlay {
             if isExpandedProfile {
-                expandedPhoto(image: profileImage)
+                expandedPhoto(image: channelImage)
             }
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
@@ -148,7 +148,7 @@ struct ChannelConversationView: View {
         VStack {
             GeometryReader { proxy in
                 let size = proxy.size
-                profileImage
+                channelImage
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: size.width, height: size.height)

@@ -13,7 +13,7 @@ extension Color {
                                                 .black,
                                                 .black.opacity(0)]),
                                           startPoint: .leading, endPoint: .trailing)
-    
+
     static let segmentControlBackground = LinearGradient(gradient:
                                                     Gradient(colors: [Color("Background 1").opacity(0.1),
                                                                       Color("Background 2").opacity(0.1)]),

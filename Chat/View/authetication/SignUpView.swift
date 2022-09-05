@@ -15,6 +15,7 @@ import FirebaseStorage
 // SF Symbols
 struct SignUpView: View {
 
+    // MARK: - vars
     @State var fullName: String = ""
     @State var email: String = ""
     @State var password: String = ""
@@ -37,7 +38,6 @@ struct SignUpView: View {
 
     private func updateButton() {
         let time: Double = 0.3
-        // check if enable button
 
         withAnimation(.easeInOut(duration: time)) {
 
@@ -65,6 +65,7 @@ struct SignUpView: View {
         }
     }
 
+    // MARK: - Body
     var body: some View {
 
         ZStack {

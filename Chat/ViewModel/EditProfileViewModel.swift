@@ -23,7 +23,7 @@ class EditProfileViewModel: ObservableObject {
     func saveImage(image: UIImage) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
-        let ref = Storage.storage().reference(withPath: uid)
+        let ref = Storage.storage().reference(withPath: "profile images/\(uid)")
 
         self.putDataTo(ref: ref, imageData: imageData)
     }

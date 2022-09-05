@@ -80,22 +80,7 @@ struct ChannelListRow: View {
             }
         })
         .onAppear {
-            DispatchQueue.main.async {
-                let ref = Storage.storage().reference(withPath: self.channel.id ?? "SomeId")
-                ref.downloadURL { url, err in
-                    if err != nil {
-                        self.isFindChannelImage = false
-                        withAnimation(.easeInOut) {
-                            self.isShowImage = true
-                        }
-                        return
-                    }
-                    withAnimation(.easeInOut) {
-                        self.imageUrl = url
-                        self.isShowImage = true
-                    }
-                }
-            }
+            imageSetup()
 
             channelMessagingViewModel.currentChannel = self.channel
 
@@ -134,6 +119,26 @@ struct ChannelListRow: View {
                 .padding(5)
                 .padding(.trailing)
 
+        }
+    }
+
+    func imageSetup() {
+        DispatchQueue.main.async {
+            let ref = Storage.storage().reference(withPath: "channel images/\(channel.id ?? "some id")")
+
+            ref.downloadURL { url, err in
+                if err != nil {
+                    self.isFindChannelImage = false
+                    withAnimation(.easeInOut) {
+                        self.isShowImage = true
+                    }
+                    return
+                }
+                withAnimation(.easeInOut) {
+                    self.imageUrl = url
+                    self.isShowImage = true
+                }
+            }
         }
     }
 }

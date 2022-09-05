@@ -19,19 +19,6 @@ class ImageViewModel: ObservableObject {
 
     let dataBase = Firestore.firestore()
 
-    func saveImage(image: UIImage, imageName: String) {
-        guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
-        let ref = Storage.storage().reference(withPath: imageName)
-        ref.putData(imageData, metadata: nil) { _, error in
-            if self.isError(message: "failed to save image", err: error) { return }
-            ref.downloadURL { url, error in
-                if self.isError(message: "failed to retrieve downloadURL:", err: error) { return }
-                self.imageURL = url?.absoluteString ?? ""
-
-            }
-        }
-    }
-
     func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
         let imageId = UUID().uuidString
@@ -45,23 +32,10 @@ class ImageViewModel: ObservableObject {
     func saveChannelImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
         let imageId = UUID().uuidString
-        let ref = Storage.storage().reference(withPath: "channel images/\(channelId)/\(imageId)")
+        let ref = Storage.storage().reference(withPath: "channel images/\(channelId)")
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(message: "failed to save image", err: error) { return }
             id(imageId)
-        }
-    }
-
-    func getImage(imageName: String, competition: @escaping (UIImage) -> Void) {
-        let ref = Storage.storage().reference(withPath: imageName)
-        ref.getData(maxSize: (1 * 1024 * 1024)) { data, err in
-            if self.isError(message: "Failed to download image: ", err: err) { return }
-
-            if let imageData = data {
-                let image = UIImage(data: imageData)
-                competition(image ?? UIImage())
-            }
-
         }
     }
 

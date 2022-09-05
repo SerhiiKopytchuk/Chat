@@ -25,6 +25,7 @@ struct EditChannelView: View {
 
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
+    @ObservedObject var imageViewModel = ImageViewModel()
 
     var imageSize: CGFloat = 50
 
@@ -65,7 +66,8 @@ struct EditChannelView: View {
                 .ignoresSafeArea()
         }
         .onChange(of: channelImage ?? UIImage(), perform: { newImage in
-            editChannelViewModel.saveImage(image: newImage)
+            imageViewModel.saveChannelImage(image: newImage,
+                                            channelId: channelViewModel.currentChannel.id ?? "some id") { _ in }
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $channelImage)
@@ -150,16 +152,7 @@ struct EditChannelView: View {
         }
         .padding()
         .onAppear {
-            let ref = Storage.storage().reference(withPath: channelViewModel.currentChannel.id ?? "someId" )
-            ref.downloadURL { url, err in
-                if err != nil {
-                    self.isFindUserImage = false
-                    return
-                }
-                withAnimation(.easeInOut) {
-                    self.imageUrl = url
-                }
-            }
+            imageSetup()
         }
     }
 
@@ -177,12 +170,27 @@ struct EditChannelView: View {
             .edgesIgnoringSafeArea(.all)
         }
     }
+
+    func imageSetup() {
+        let ref = Storage.storage()
+            .reference(withPath: "channel images/\(channelViewModel.currentChannel.id ?? "some id")" )
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.imageUrl = url
+            }
+        }
+    }
 }
 
 struct EditChannelView_Previews: PreviewProvider {
     static var previews: some View {
         EditChannelView(channelName: "Koch",
                         channelDescription: "description",
-                        channelColor: String.getRandomColorFromAssets())
+                        channelColor: String.getRandomColorFromAssets(),
+                        imageViewModel: ImageViewModel())
     }
 }
