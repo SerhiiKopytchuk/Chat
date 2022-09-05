@@ -60,3 +60,12 @@ struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+
+extension View {
+    func backgroundBlur(radius: CGFloat = 3, opaque: Bool = false) -> some View {
+        self
+            .background(
+                Blur(radius: radius, opaque: opaque)
+            )
+    }
+}

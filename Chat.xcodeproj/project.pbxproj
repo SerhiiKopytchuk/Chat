@@ -58,9 +58,9 @@
 		40A78B3C288D9E9B0026C465 /* Text + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A78B3B288D9E9B0026C465 /* Text + Extension.swift */; };
 		40B0A48C2869BC290008374E /* AddUserCreateChannelRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0A48B2869BC290008374E /* AddUserCreateChannelRow.swift */; };
 		40C3A103283A94E500A9683A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 40C3A102283A94E500A9683A /* GoogleSignIn */; };
+		40C4F29428C5DCE9008D03C8 /* Blur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C4F29328C5DCE9008D03C8 /* Blur.swift */; };
 		40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C64B92285D29830057F7CA /* MessagingViewModel.swift */; };
 		40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C6691F28894D270087A9DF /* EditChannelViewModel.swift */; };
-		40CFF1DE28C4E544001544CD /* CustomSegmentControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF1DD28C4E544001544CD /* CustomSegmentControl.swift */; };
 		40CFF1E028C4EDC7001544CD /* Color + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */; };
 		40D5C41628428B3A0015DFBB /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41528428B3A0015DFBB /* Tab.swift */; };
 		40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41728429F580015DFBB /* CustomTabBar.swift */; };
@@ -145,9 +145,9 @@
 		40B0A48B2869BC290008374E /* AddUserCreateChannelRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserCreateChannelRow.swift; sourceTree = "<group>"; };
 		40B2DA18283A7A3900965DC5 /* Chat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Chat.entitlements; sourceTree = "<group>"; };
 		40C3A104283A958A00A9683A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		40C4F29328C5DCE9008D03C8 /* Blur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blur.swift; sourceTree = "<group>"; };
 		40C64B92285D29830057F7CA /* MessagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingViewModel.swift; sourceTree = "<group>"; };
 		40C6691F28894D270087A9DF /* EditChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditChannelViewModel.swift; sourceTree = "<group>"; };
-		40CFF1DD28C4E544001544CD /* CustomSegmentControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentControl.swift; sourceTree = "<group>"; };
 		40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color + Extension.swift"; sourceTree = "<group>"; };
 		40D5C41528428B3A0015DFBB /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		40D5C41728429F580015DFBB /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
@@ -248,7 +248,6 @@
 				400E81AC286861EE006A606E /* CreateChannelView.swift */,
 				403B51D3286C78150035804E /* ChannelMessagingViews */,
 				4021DD0A288AA7E30060B18E /* ChannelViews */,
-				40CFF1DD28C4E544001544CD /* CustomSegmentControl.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -299,6 +298,7 @@
 				409894CB289D937C00720A1E /* AnimatedEmoji.swift */,
 				409894CD289D978000720A1E /* EmojiView.swift */,
 				4056DA2A28A7ECD100246AC4 /* ResizeableTextView.swift */,
+				40C4F29328C5DCE9008D03C8 /* Blur.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -545,7 +545,6 @@
 				405FD37F282FEFD200361396 /* SignInView.swift in Sources */,
 				40EF9960284747740062612E /* ConversationView.swift in Sources */,
 				4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */,
-				40CFF1DE28C4E544001544CD /* CustomSegmentControl.swift in Sources */,
 				40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */,
 				4021DD09288AA7CA0060B18E /* EditChannelView.swift in Sources */,
 				4056D6412834024B000A0872 /* ChatListRow.swift in Sources */,
@@ -554,6 +553,7 @@
 				40FA6F6228576D01001AAC09 /* EditProfileView.swift in Sources */,
 				40EF996628474AA60062612E /* View + Extenston.swift in Sources */,
 				4056DA2B28A7ECD100246AC4 /* ResizeableTextView.swift in Sources */,
+				40C4F29428C5DCE9008D03C8 /* Blur.swift in Sources */,
 				40A766B828843045002D6FA5 /* removeUsersFromChannelListRow.swift in Sources */,
 				4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */,
 				40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */,

@@ -43,9 +43,13 @@ struct TabBarView: View {
             .frame(maxHeight: .infinity)
             .ignoresSafeArea(.all, edges: .bottom)
 
-            CustomSegmentControl(selection: $selection)
-                .padding(.bottom, 35)
-
+        }
+        .overlay {
+            CustomTabBar(selected: $selection)
+                .padding(.bottom)
+                .backgroundBlur(radius: 10, opaque: true)
+                .clipShape(RoundedRectangle(cornerRadius: 0))
+                .frame(maxHeight: .infinity, alignment: .bottom)
         }
         .background {
             // MARK: navigationLinks

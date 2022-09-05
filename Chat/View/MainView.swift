@@ -30,6 +30,7 @@ struct MainView: View {
                     .environmentObject(channelViewModel)
                     .environmentObject(channelMessagingViewModel)
             }
+
             TabBarView(isShowingSideMenu: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
                 .cornerRadius(isShowingSideMenu ? 20 : 10)
