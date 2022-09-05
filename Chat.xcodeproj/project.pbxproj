@@ -60,6 +60,8 @@
 		40C3A103283A94E500A9683A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 40C3A102283A94E500A9683A /* GoogleSignIn */; };
 		40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C64B92285D29830057F7CA /* MessagingViewModel.swift */; };
 		40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C6691F28894D270087A9DF /* EditChannelViewModel.swift */; };
+		40CFF1DE28C4E544001544CD /* CustomSegmentControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF1DD28C4E544001544CD /* CustomSegmentControl.swift */; };
+		40CFF1E028C4EDC7001544CD /* Color + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */; };
 		40D5C41628428B3A0015DFBB /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41528428B3A0015DFBB /* Tab.swift */; };
 		40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41728429F580015DFBB /* CustomTabBar.swift */; };
 		40ECD6F328A03DF2006935B1 /* BoundsPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */; };
@@ -145,6 +147,8 @@
 		40C3A104283A958A00A9683A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		40C64B92285D29830057F7CA /* MessagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingViewModel.swift; sourceTree = "<group>"; };
 		40C6691F28894D270087A9DF /* EditChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditChannelViewModel.swift; sourceTree = "<group>"; };
+		40CFF1DD28C4E544001544CD /* CustomSegmentControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentControl.swift; sourceTree = "<group>"; };
+		40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color + Extension.swift"; sourceTree = "<group>"; };
 		40D5C41528428B3A0015DFBB /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		40D5C41728429F580015DFBB /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundsPreference.swift; sourceTree = "<group>"; };
@@ -244,6 +248,7 @@
 				400E81AC286861EE006A606E /* CreateChannelView.swift */,
 				403B51D3286C78150035804E /* ChannelMessagingViews */,
 				4021DD0A288AA7E30060B18E /* ChannelViews */,
+				40CFF1DD28C4E544001544CD /* CustomSegmentControl.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -374,6 +379,7 @@
 				4021DD0B288AAFDA0060B18E /* String + Extension.swift */,
 				40A78B3B288D9E9B0026C465 /* Text + Extension.swift */,
 				4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */,
+				40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -524,6 +530,7 @@
 				40EF996828474B6F0062612E /* MessageField.swift in Sources */,
 				4099D9AD28B7C70500DCE75F /* UIAplication + Extension.swift in Sources */,
 				4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */,
+				40CFF1E028C4EDC7001544CD /* Color + Extension.swift in Sources */,
 				40A701622896CF74002ECB1C /* EmptyImageWithCharacterView.swift in Sources */,
 				40B0A48C2869BC290008374E /* AddUserCreateChannelRow.swift in Sources */,
 				4024EB0F28393CF40082E739 /* TabBarView.swift in Sources */,
@@ -538,6 +545,7 @@
 				405FD37F282FEFD200361396 /* SignInView.swift in Sources */,
 				40EF9960284747740062612E /* ConversationView.swift in Sources */,
 				4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */,
+				40CFF1DE28C4E544001544CD /* CustomSegmentControl.swift in Sources */,
 				40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */,
 				4021DD09288AA7CA0060B18E /* EditChannelView.swift in Sources */,
 				4056D6412834024B000A0872 /* ChatListRow.swift in Sources */,

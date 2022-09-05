@@ -39,6 +39,7 @@ struct RootView: View {
                         .environmentObject(chattingViewModel)
                 }
             }
+            .ignoresSafeArea(.all, edges: .bottom)
             .navigationBarBackButtonHidden(true)
         }
         .navigationViewStyle(.stack)

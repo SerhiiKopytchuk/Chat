@@ -30,18 +30,11 @@ struct MainView: View {
                     .environmentObject(channelViewModel)
                     .environmentObject(channelMessagingViewModel)
             }
-            TabBarView()
+            TabBarView(isShowingSideMenu: $isShowingSideMenu)
+                .ignoresSafeArea(.all, edges: .bottom)
                 .cornerRadius(isShowingSideMenu ? 20 : 10)
                 .offset(x: isShowingSideMenu ? 300 : 0, y: isShowingSideMenu ? 44 : 0)
                 .scaleEffect(isShowingSideMenu ? 0.8 : 1)
-                .navigationBarItems(leading: Button(action: {
-                    withAnimation(.spring()) {
-                        isShowingSideMenu.toggle()
-                    }
-                }, label: {
-                    Image(systemName: "list.bullet")
-                        .foregroundColor(.black)
-                }) )
                 .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
                 .environmentObject(messagingViewModel)
                 .environmentObject(viewModel)
