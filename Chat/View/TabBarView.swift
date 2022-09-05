@@ -28,30 +28,45 @@ struct TabBarView: View {
 
     // MARK: - Body
     var body: some View {
-        ZStack(alignment: .bottom) {
+        VStack(alignment: .leading, spacing: 0) {
+            // MARK: menuButton with lists
+
+            menuButton
+                .padding(.top)
+                .padding(.leading)
+
+            // MARK: chats and channels labels
+            VStack(alignment: .leading, spacing: 4) {
+                Text( selection == 0 ? "Chats" : "Channels")
+                    .font(.title2.bold())
+            }
+            .padding(.horizontal)
+            .padding(.top)
+
+            ZStack(alignment: .top) {
+                // MARK: chats and channels lists
+                chatsAndChannelsView
+                    .safeAreaInset(edge: .top) {
+                        EmptyView()
+                            .frame(height: 65)
+                    }
+
+                // MARK: CustomTabBar
+                CustomTabBar(selected: $selection)
+                    .padding(.bottom)
+                    .backgroundBlur(radius: 10, opaque: true)
+                    .clipShape(RoundedRectangle(cornerRadius: 0))
+                    .frame(maxHeight: .infinity, alignment: .top)
+            }
+            .ignoresSafeArea(.all, edges: .bottom)
+
+        }
+        .frame(maxHeight: .infinity)
+        .background {
 
             Color("BG")
                 .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                menuButton
-                    .padding(.top)
-                    .padding(.leading)
-
-                chatsAndChannelsView
-            }
-            .frame(maxHeight: .infinity)
-            .ignoresSafeArea(.all, edges: .bottom)
-
-        }
-        .overlay {
-            CustomTabBar(selected: $selection)
-                .padding(.bottom)
-                .backgroundBlur(radius: 10, opaque: true)
-                .clipShape(RoundedRectangle(cornerRadius: 0))
-                .frame(maxHeight: .infinity, alignment: .bottom)
-        }
-        .background {
             // MARK: navigationLinks
             NavigationLink(isActive: $goToConversation) {
                 ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
@@ -88,82 +103,69 @@ struct TabBarView: View {
     }
 
     @ViewBuilder var chatsScrollView: some View {
-            ScrollView(.vertical, showsIndicators: false) {
-                ForEach(chattingViewModel.chats, id: \.id) { chat in
+        ScrollView(.vertical, showsIndicators: false) {
+            ForEach(chattingViewModel.chats, id: \.id) { chat in
 
-                    ChatListRow(chat: chat) {
-                        _ = viewModel.getUser(
-                            id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                        ) { user in
-                            messagingViewModel.secondUser = user
-                        } failure: { }
+                ChatListRow(chat: chat) {
+                    _ = viewModel.getUser(
+                        id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
+                    ) { user in
+                        messagingViewModel.secondUser = user
+                    } failure: { }
 
-                        chattingViewModel.getCurrentChat(
-                            chat: chat, userNumber: viewModel.currentUser.id != chat.user1Id ? 1 : 2
-                        ) { chat in
-                            messagingViewModel.currentUser = self.viewModel.currentUser
-                            messagingViewModel.currentChat = chat
-                            messagingViewModel.getMessages { _ in }
-                            // don't remove dispatch
-                            DispatchQueue.main.async {
-                                goToConversation.toggle()
-                            }
+                    chattingViewModel.getCurrentChat(
+                        chat: chat, userNumber: viewModel.currentUser.id != chat.user1Id ? 1 : 2
+                    ) { chat in
+                        messagingViewModel.currentUser = self.viewModel.currentUser
+                        messagingViewModel.currentChat = chat
+                        messagingViewModel.getMessages { _ in }
+                        // don't remove dispatch
+                        DispatchQueue.main.async {
+                            goToConversation.toggle()
                         }
                     }
-                    .environmentObject(messagingViewModel)
-                    .environmentObject(chattingViewModel)
                 }
+                .environmentObject(messagingViewModel)
+                .environmentObject(chattingViewModel)
             }
-            .padding(.horizontal)
+        }
+        .padding(.horizontal)
     }
 
     @ViewBuilder var channelsScrollView: some View {
-            ScrollView(.vertical, showsIndicators: false) {
-                ForEach(channelViewModel.channels, id: \.id) { channel in
-                    ChannelListRow(channel: channel) {
-                        channelViewModel.getCurrentChannel(name: channel.name,
-                                                           ownerId: channel.ownerId) { channel in
-                            channelMessagingViewModel.currentChannel = channel
-                            channelMessagingViewModel.currentUser = viewModel.currentUser
-                            channelMessagingViewModel.getMessages(competition: { _ in })
-                            DispatchQueue.main.async {
-                                self.goToChannel.toggle()
-                            }
-                        } failure: { _ in }
+        ScrollView(.vertical, showsIndicators: false) {
+            ForEach(channelViewModel.channels, id: \.id) { channel in
+                ChannelListRow(channel: channel) {
+                    channelViewModel.getCurrentChannel(name: channel.name,
+                                                       ownerId: channel.ownerId) { channel in
+                        channelMessagingViewModel.currentChannel = channel
+                        channelMessagingViewModel.currentUser = viewModel.currentUser
+                        channelMessagingViewModel.getMessages(competition: { _ in })
+                        DispatchQueue.main.async {
+                            self.goToChannel.toggle()
+                        }
+                    } failure: { _ in }
 
-                    }
-                    .environmentObject(viewModel)
-                    .environmentObject(channelViewModel)
                 }
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
             }
-            .padding(.horizontal)
+        }
+        .padding(.horizontal)
     }
 
     @ViewBuilder var chatsAndChannelsView: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("by Serhii Kopytchuk")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.gray)
-                Text( selection == 0 ? "Chats" : "Channels")
-                    .font(.title2.bold())
+        VStack {
+            if selection == 0 {
+                chatsScrollView
+                    .transition(.offset(x: -UIScreen.main.bounds.width))
+            } else {
+                channelsScrollView
+                    .transition(.offset(x: UIScreen.main.bounds.width))
             }
-            .padding(.horizontal)
-            .padding(.top)
-
-            VStack {
-                if selection == 0 {
-                    chatsScrollView
-                        .transition(.offset(x: -UIScreen.main.bounds.width))
-                } else {
-                    channelsScrollView
-                        .transition(.offset(x: UIScreen.main.bounds.width))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .ignoresSafeArea(.all, edges: .bottom)
         }
+        .frame(maxWidth: .infinity)
+        .ignoresSafeArea(.all, edges: .bottom)
     }
 
 }

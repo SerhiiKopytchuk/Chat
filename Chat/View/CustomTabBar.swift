@@ -12,6 +12,7 @@ struct CustomTabBar: View {
     @Binding var selected: Int
 
     @State var yOfset: CGFloat = 0
+
     var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width
@@ -39,7 +40,7 @@ struct CustomTabBar: View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
                 self.selected = selection
-                yOfset = 60
+                yOfset = 30
             }
             withAnimation(.easeInOut(duration: 0.1).delay(0.1)) {
                 yOfset = 0
