@@ -52,7 +52,7 @@ struct ConversationView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .bottom)
                         .background {
-                            Color("BG")
+                            Color.background
                                 .ignoresSafeArea()
                         }
 
@@ -120,7 +120,7 @@ struct ConversationView: View {
                              profileImage: $profileImage
         )
         .background {
-            Color("BG")
+            Color.background
                 .opacity(0.7)
         }
         .environmentObject(chattingViewModel)
@@ -242,7 +242,7 @@ struct ConversationView: View {
                 .rotationEffect(Angle(degrees: 180))
             }
             .rotationEffect(Angle(degrees: 180))
-            .background(Color("BG"))
+            .background(Color.background)
             .onAppear {
                 proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }

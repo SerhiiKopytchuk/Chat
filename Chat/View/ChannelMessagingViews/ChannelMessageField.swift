@@ -59,7 +59,7 @@ struct ChannelMessageField: View {
             ImagePicker(image: $image)
         }
         .onChange(of: image ?? UIImage(), perform: { newImage in
-            imageViewModel.saveChannelImage(image: newImage,
+            imageViewModel.saveChannelMessageImage(image: newImage,
                                             channelId: channelViewModel.currentChannel.id ?? "channelId") { imageId in
                 channelMessagingViewModel.sendImage(imageId: imageId)
             }

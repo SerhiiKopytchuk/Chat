@@ -56,7 +56,7 @@ struct ConversationTitleRow: View {
         }
         .padding()
         .onAppear {
-            let ref = Storage.storage().reference(withPath: user.id )
+            let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
             ref.downloadURL { url, err in
                 if err != nil {
                     self.isFindUserImage = false

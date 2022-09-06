@@ -65,7 +65,8 @@ struct ChatListRow: View {
                             let imageId: String = message.imageId ?? "imageId"
 
                             let chatId: String = chat.id ?? "someID"
-                            let ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
+                            let ref = StorageReferencesManager.shared
+                                .getChatMessageImageReference(chatId: chatId, imageId: imageId)
 
                             ref.downloadURL { url, err in
                                 if err != nil {
@@ -96,34 +97,38 @@ struct ChatListRow: View {
             }
         })
         .onAppear {
-            DispatchQueue.main.async {
-                self.viewModel.getUserByChat(chat: self.chat) { user in
-                    withAnimation {
-                        self.person = user
-
-                        let ref = Storage.storage().reference(withPath: user.id )
-                        ref.downloadURL { url, err in
-                            if err != nil {
-                                self.isFindUserImage = false
-                                withAnimation(.easeInOut) {
-                                    self.isShowImage = true
-                                }
-                                return
-                            }
-                            withAnimation(.easeInOut) {
-                                self.imageUrl = url
-                                self.isShowImage = true
-                            }
-                        }
-                    }
-                }
-            }
+            imageSetup()
 
             self.messageViewModel.currentChat = self.chat
 
             self.messageViewModel.getMessages { messages in
                 withAnimation {
                     self.message = messages.last ?? Message()
+                }
+            }
+        }
+    }
+
+    private func imageSetup() {
+        DispatchQueue.main.async {
+            self.viewModel.getUserByChat(chat: self.chat) { user in
+                withAnimation {
+                    self.person = user
+
+                    let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
+                    ref.downloadURL { url, err in
+                        if err != nil {
+                            self.isFindUserImage = false
+                            withAnimation(.easeInOut) {
+                                self.isShowImage = true
+                            }
+                            return
+                        }
+                        withAnimation(.easeInOut) {
+                            self.imageUrl = url
+                            self.isShowImage = true
+                        }
+                    }
                 }
             }
         }

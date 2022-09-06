@@ -17,7 +17,7 @@ struct ChannelConversationView: View {
     @Environment(\.self) var env
 
     @State var isExpandedProfile: Bool = false
-    @State var profileImage: WebImage = WebImage(url: URL(string: ""))
+    @State var channelImage: WebImage = WebImage(url: URL(string: ""))
     @State var loadExpandedContent = false
     @State var imageOffset: CGSize = .zero
     @State var isExpandedDetails = false
@@ -53,11 +53,11 @@ struct ChannelConversationView: View {
                                     animationNamespace: animation,
                                     isExpandedProfileImage: $isExpandedProfile,
                                     isExpandedDetails: $isExpandedDetails,
-                                    profileImage: $profileImage,
+                                    channelWebImage: $channelImage,
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
                     .background {
-                        Color("BG")
+                        Color.background
                             .opacity(0.7)
                     }
 
@@ -75,7 +75,7 @@ struct ChannelConversationView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                     .background {
-                        Color("BG")
+                        Color.background
                             .ignoresSafeArea()
                     }
                 }
@@ -99,7 +99,7 @@ struct ChannelConversationView: View {
         })
         .overlay {
             if isExpandedProfile {
-                expandedPhoto(image: profileImage)
+                expandedPhoto(image: channelImage)
             }
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
@@ -138,7 +138,7 @@ struct ChannelConversationView: View {
             }
             .frame(maxWidth: .infinity)
             .background {
-                Color("BG")
+                Color.background
                     .opacity(0.7)
             }
         }
@@ -148,7 +148,7 @@ struct ChannelConversationView: View {
         VStack {
             GeometryReader { proxy in
                 let size = proxy.size
-                profileImage
+                channelImage
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: size.width, height: size.height)
@@ -297,7 +297,7 @@ struct ChannelConversationView: View {
             }
             .rotationEffect(Angle(degrees: 180))
             .padding(.horizontal, 12)
-            .background(Color("BG"))
+            .background(Color.background)
 
             .onAppear {
                 proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
@@ -331,7 +331,7 @@ struct ChannelConversationView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .padding()
-                .background(Color("BG"))
+                .background(Color.background)
                 .cornerRadius(15)
         }
     }

@@ -46,7 +46,7 @@ struct MainView: View {
 
         }
         .background {
-            Color("BG")
+            Color.background
                 .ignoresSafeArea()
         }
         .onAppear {

@@ -15,7 +15,7 @@ struct ChannelTitleRow: View {
     let animationNamespace: Namespace.ID
     @Binding var isExpandedProfileImage: Bool
     @Binding var isExpandedDetails: Bool
-    @Binding var profileImage: WebImage
+    @Binding var channelWebImage: WebImage
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
@@ -49,17 +49,7 @@ struct ChannelTitleRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .onAppear {
-                let ref = Storage.storage().reference(withPath: channel.id ?? "someId" )
-                ref.downloadURL { url, err in
-                    if err != nil {
-                        self.isFindUserImage = false
-                        return
-                    }
-                    withAnimation(.easeInOut) {
-                        self.profileImage = WebImage(url: url)
-                        self.imageUrl = url
-                    }
-                }
+                imageSetup()
             }
         }
         .padding()
@@ -102,6 +92,21 @@ struct ChannelTitleRow: View {
                             .fill(Color(channel.colour))
                     }
                     .addLightShadow()
+            }
+        }
+    }
+
+    func imageSetup() {
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "someId")
+
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.channelWebImage = WebImage(url: url)
+                self.imageUrl = url
             }
         }
     }

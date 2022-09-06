@@ -38,11 +38,7 @@ struct CreateChannelView: View {
     var body: some View {
         ZStack {
 
-            LinearGradient(colors: [
-                Color("Gradient1"),
-                Color("Gradient2"),
-                Color("Gradient3")
-            ], startPoint: .topLeading, endPoint: .bottomTrailing)
+            Color.mainGradient
             .ignoresSafeArea()
 
             VStack {
@@ -52,7 +48,7 @@ struct CreateChannelView: View {
 
                 ZStack(alignment: .top) {
 
-                    Color("BG")
+                    Color.background
                         .cornerRadius(30, corners: [.topLeft, .topRight])
                         .offset(x: 0, y: 50)
 
@@ -163,11 +159,7 @@ struct CreateChannelView: View {
                         if channelViewModel.channelType == type {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(
-                                    LinearGradient(colors: [
-                                        Color("Gradient1"),
-                                        Color("Gradient2"),
-                                        Color("Gradient3")
-                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                    Color.mainGradient
                                 )
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }
@@ -204,8 +196,10 @@ struct CreateChannelView: View {
             channelViewModel.createChannel( name: self.name,
                                             description: self.description) { channel in
 
-                    imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
-                                             imageName: channel.id ?? "some Id")
+                imageViewModel.saveChannelImage(image: self.channelImage ?? UIImage(),
+                                                channelId: channel.id ?? "some Id") { _ in
+
+                }
                 if channelImage != nil {
                     channelViewModel.saveImageLocally(image: self.channelImage ?? UIImage(),
                                                       imageName: channel.id ?? "someId")

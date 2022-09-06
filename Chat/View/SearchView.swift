@@ -125,11 +125,7 @@ struct SearchView: View {
                         if isSearchingChat == text {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(
-                                    LinearGradient(colors: [
-                                        Color("Gradient1"),
-                                        Color("Gradient2"),
-                                        Color("Gradient3")
-                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                    Color.mainGradient
                                 )
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }
@@ -152,7 +148,7 @@ struct SearchView: View {
     @ViewBuilder var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(viewModel.users, id: \.id) { user in
-                SearchUserCell(userName: user.name,
+                SearchUserListRow(userName: user.name,
                                userGmail: user.gmail,
                                id: user.id,
                                userColor: user.colour,

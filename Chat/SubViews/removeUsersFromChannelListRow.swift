@@ -62,7 +62,7 @@ struct RemoveUsersFromChannelListRow: View {
                 .fill(.white)
         }
         .onAppear {
-            let ref = Storage.storage().reference(withPath: self.id )
+            let ref = StorageReferencesManager.shared.getProfileImageReference(userId: id)
             ref.downloadURL { url, err in
                 if err != nil {
                     self.isFindUserImage = false
@@ -72,7 +72,6 @@ struct RemoveUsersFromChannelListRow: View {
                     self.imageUrl = url
                 }
             }
-
         }
     }
 
