@@ -25,7 +25,8 @@ struct EditProfileView: View {
     let imageSize: CGFloat = 100
 
     @EnvironmentObject var userViewModel: UserViewModel
-    @ObservedObject var editProfileView = EditProfileViewModel()
+    @ObservedObject var editProfileViewModel = EditProfileViewModel()
+    @ObservedObject var imageViewModel = ImageViewModel()
 
     @Environment (\.self) var env
 
@@ -79,8 +80,8 @@ struct EditProfileView: View {
             newName = userViewModel.currentUser.name
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
-            editProfileView.user = self.userViewModel.currentUser
-            editProfileView.saveImage(image: newImage)
+            editProfileViewModel.user = self.userViewModel.currentUser
+            imageViewModel.saveProfileImage(image: newImage, userId: editProfileViewModel.user.id)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $profileImage)
@@ -128,15 +129,19 @@ struct EditProfileView: View {
         }
         .frame(width: imageSize, height: imageSize)
         .onAppear {
-            let ref = Storage.storage().reference(withPath: userViewModel.currentUser.id )
-            ref.downloadURL { url, err in
-                if err != nil {
-                    self.isFindUserImage = false
-                    return
-                }
-                withAnimation(.easeInOut) {
-                    self.imageUrl = url
-                }
+            imageSetup()
+        }
+    }
+
+    private func imageSetup() {
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUser.id)
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.imageUrl = url
             }
         }
     }
@@ -168,7 +173,7 @@ struct EditProfileView: View {
 
             newName = newName.trim()
             if newName.count > 3 {
-                editProfileView.changeName(newName: newName, userId: userViewModel.currentUser.id )
+                editProfileViewModel.changeName(newName: newName, userId: userViewModel.currentUser.id )
             }
         } label: {
             Text("save")

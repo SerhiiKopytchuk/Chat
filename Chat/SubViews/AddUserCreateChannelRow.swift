@@ -64,7 +64,7 @@ struct AddUserToChannelRow: View {
                 .fill(.white)
         }
         .onAppear {
-            let ref = Storage.storage().reference(withPath: self.id )
+            let ref = StorageReferencesManager.shared.getProfileImageReference(userId: self.id)
             ref.downloadURL { url, err in
                 if err != nil {
                     self.isFindUserImage = false

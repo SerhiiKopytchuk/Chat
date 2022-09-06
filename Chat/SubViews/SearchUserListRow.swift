@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseStorage
 import SDWebImageSwiftUI
 
-struct SearchUserCell: View {
+struct SearchUserListRow: View {
     var userName: String
     var userGmail: String
     var id: String
@@ -48,7 +48,7 @@ struct SearchUserCell: View {
                 rowTapped()
             }
             .onAppear {
-                let ref = Storage.storage().reference(withPath: self.id )
+                let ref = StorageReferencesManager.shared.getProfileImageReference(userId: self.id)
                 ref.downloadURL { url, err in
                     if err != nil {
                         self.isFindUserImage = false

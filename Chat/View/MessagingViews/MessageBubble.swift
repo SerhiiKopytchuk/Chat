@@ -79,29 +79,7 @@ struct MessageBubble: View {
 
         }
         .onAppear {
-
-            let imageId: String = message.imageId ?? "imageId"
-            var chatId: String = ""
-            var channelId: String = ""
-            var ref: StorageReference
-
-            if isChat {
-                chatId = messagingViewModel.currentChat.id ?? "chatID"
-                ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
-            } else {
-                channelId = channelViewModel.currentChannel.id ?? "channelID"
-                ref = Storage.storage().reference(withPath: "channel images/\(channelId)/\(imageId)")
-            }
-
-            ref.downloadURL { url, err in
-                if err != nil {
-                    return
-                }
-                    self.imageUrl = url
-                withAnimation {
-                    self.isFindImage = true
-                }
-            }
+            imageSetup()
         }
     }
 
@@ -137,6 +115,33 @@ struct MessageBubble: View {
             }
             .frame(maxWidth: .infinity)
             .offset(y: 55)
+        }
+    }
+
+    func imageSetup() {
+
+        let imageId: String = message.imageId ?? "imageId"
+        var chatId: String = ""
+        var channelId: String = ""
+        var ref: StorageReference
+
+        if isChat {
+            chatId = messagingViewModel.currentChat.id ?? "chatID"
+            ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chatId, imageId: imageId)
+        } else {
+            channelId = channelViewModel.currentChannel.id ?? "channelID"
+            ref = StorageReferencesManager.shared
+                .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
+        }
+
+        ref.downloadURL { url, err in
+            if err != nil {
+                return
+            }
+                self.imageUrl = url
+            withAnimation {
+                self.isFindImage = true
+            }
         }
     }
 }

@@ -33,7 +33,9 @@ struct SignUpView: View {
 
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @ObservedObject var imageViewModel = EditProfileViewModel()
+    @ObservedObject var editProfileViewModel = EditProfileViewModel()
+    @ObservedObject var imageViewModel = ImageViewModel()
+
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
     private func updateButton() {
@@ -303,7 +305,7 @@ struct SignUpView: View {
             } else {
                 if isValidatedName() {
                     viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
-                        imageViewModel.saveImage(image: self.image ?? UIImage())
+                        imageViewModel.saveProfileImage(image: self.image ?? UIImage(), userId: user.id)
                         chattingViewModel.currentUser = user
                         chattingViewModel.getChats()
                         channelViewModel.currentUser = user
@@ -319,11 +321,9 @@ struct SignUpView: View {
 
     var googleButton: some View {
         Button {
-            // handle singin
 
             guard let clientID = FirebaseApp.app()?.options.clientID else { return }
 
-            // Create Google Sign In configuration object.
             let config = GIDConfiguration(clientID: clientID)
 
             GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in

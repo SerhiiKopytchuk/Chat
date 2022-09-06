@@ -18,7 +18,6 @@ struct SideMenuHeaderView: View {
     @State var isFindUserImage = true
 
     var imageSize: CGFloat = 65
-    let ref = Storage.storage().reference(withPath: Auth.auth().currentUser?.uid ?? "someId")
 
     var body: some View {
 
@@ -77,6 +76,7 @@ struct SideMenuHeaderView: View {
                 .padding(.bottom, 16)
                 .addLightShadow()
                 .onAppear {
+                    let ref = StorageReferencesManager.shared.getProfileImageReference(userId: viewModel.currentUser.id)
                     ref.downloadURL { url, err in
                         if err != nil {
                             self.isFindUserImage = false

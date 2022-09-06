@@ -20,14 +20,6 @@ class EditProfileViewModel: ObservableObject {
 
     let dataBase = Firestore.firestore()
 
-    func saveImage(image: UIImage) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
-        let ref = Storage.storage().reference(withPath: "profile images/\(uid)")
-
-        self.putDataTo(ref: ref, imageData: imageData)
-    }
-
     fileprivate func putDataTo(ref: StorageReference, imageData: Data) {
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(error: error) { return }

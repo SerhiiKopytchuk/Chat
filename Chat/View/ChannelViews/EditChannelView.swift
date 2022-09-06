@@ -172,8 +172,8 @@ struct EditChannelView: View {
     }
 
     func imageSetup() {
-        let ref = Storage.storage()
-            .reference(withPath: "channel images/\(channelViewModel.currentChannel.id ?? "some id")" )
+        let ref = StorageReferencesManager.shared
+            .getChannelImageReference(channelId: channelViewModel.currentChannel.id ?? "some id")
         ref.downloadURL { url, err in
             if err != nil {
                 self.isFindUserImage = false

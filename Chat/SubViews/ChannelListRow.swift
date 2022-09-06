@@ -124,8 +124,7 @@ struct ChannelListRow: View {
 
     func imageSetup() {
         DispatchQueue.main.async {
-            let ref = Storage.storage().reference(withPath: "channel images/\(channel.id ?? "some id")")
-
+            let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "some id")
             ref.downloadURL { url, err in
                 if err != nil {
                     self.isFindChannelImage = false

@@ -11,6 +11,7 @@ import FirebaseStorage
 import FirebaseAuth
 import FirebaseFirestore
 import SDWebImageSwiftUI
+import SwiftUI
 
 class ImageViewModel: ObservableObject {
 
@@ -22,7 +23,26 @@ class ImageViewModel: ObservableObject {
     func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
         let imageId = UUID().uuidString
-        let ref = Storage.storage().reference(withPath: "chat images/\(chatId)/\(imageId)")
+        let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chatId, imageId: imageId)
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(message: "failed to save image", err: error) { return }
+            id(imageId)
+        }
+    }
+
+    func saveProfileImage(image: UIImage, userId: String) {
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userId)
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(message: "failed to save image", err: error) { return }
+        }
+    }
+
+    func saveChannelMessageImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        let imageId = UUID().uuidString
+        let ref = StorageReferencesManager.shared
+            .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(message: "failed to save image", err: error) { return }
             id(imageId)
@@ -32,7 +52,7 @@ class ImageViewModel: ObservableObject {
     func saveChannelImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
         let imageId = UUID().uuidString
-        let ref = Storage.storage().reference(withPath: "channel images/\(channelId)")
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channelId)
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(message: "failed to save image", err: error) { return }
             id(imageId)

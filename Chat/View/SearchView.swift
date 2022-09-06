@@ -152,7 +152,7 @@ struct SearchView: View {
     @ViewBuilder var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(viewModel.users, id: \.id) { user in
-                SearchUserCell(userName: user.name,
+                SearchUserListRow(userName: user.name,
                                userGmail: user.gmail,
                                id: user.id,
                                userColor: user.colour,

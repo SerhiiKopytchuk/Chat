@@ -97,7 +97,7 @@ struct ChannelTitleRow: View {
     }
 
     func imageSetup() {
-        let ref = Storage.storage().reference(withPath: "channel images/\(channel.id ?? "some id")")
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "someId")
 
         ref.downloadURL { url, err in
             if err != nil {
