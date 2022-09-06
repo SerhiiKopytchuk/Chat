@@ -28,7 +28,7 @@ struct RemoveUsersFromChannelView: View {
 
         }
         .background {
-            Color("BG")
+            Color.background
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)

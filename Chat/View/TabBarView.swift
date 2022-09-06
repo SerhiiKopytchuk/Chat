@@ -64,7 +64,7 @@ struct TabBarView: View {
         .frame(maxHeight: .infinity)
         .background {
 
-            Color("BG")
+            Color.background
                 .ignoresSafeArea()
 
             // MARK: navigationLinks

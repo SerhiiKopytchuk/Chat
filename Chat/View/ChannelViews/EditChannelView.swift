@@ -62,7 +62,7 @@ struct EditChannelView: View {
         }
         .navigationBarHidden(true)
         .background {
-            Color("BG")
+            Color.background
                 .ignoresSafeArea()
         }
         .onChange(of: channelImage ?? UIImage(), perform: { newImage in

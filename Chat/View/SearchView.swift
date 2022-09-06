@@ -125,11 +125,7 @@ struct SearchView: View {
                         if isSearchingChat == text {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(
-                                    LinearGradient(colors: [
-                                        Color("Gradient1"),
-                                        Color("Gradient2"),
-                                        Color("Gradient3")
-                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                    Color.mainGradient
                                 )
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }

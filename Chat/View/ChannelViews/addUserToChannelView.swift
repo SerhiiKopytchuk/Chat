@@ -32,7 +32,7 @@ struct AddUserToChannelView: View {
                 .padding()
         }
         .background {
-            Color("BG")
+            Color.background
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)

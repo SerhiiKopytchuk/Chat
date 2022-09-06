@@ -57,7 +57,7 @@ struct ChannelConversationView: View {
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
                     .background {
-                        Color("BG")
+                        Color.background
                             .opacity(0.7)
                     }
 
@@ -75,7 +75,7 @@ struct ChannelConversationView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                     .background {
-                        Color("BG")
+                        Color.background
                             .ignoresSafeArea()
                     }
                 }
@@ -138,7 +138,7 @@ struct ChannelConversationView: View {
             }
             .frame(maxWidth: .infinity)
             .background {
-                Color("BG")
+                Color.background
                     .opacity(0.7)
             }
         }
@@ -297,7 +297,7 @@ struct ChannelConversationView: View {
             }
             .rotationEffect(Angle(degrees: 180))
             .padding(.horizontal, 12)
-            .background(Color("BG"))
+            .background(Color.background)
 
             .onAppear {
                 proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
@@ -331,7 +331,7 @@ struct ChannelConversationView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .padding()
-                .background(Color("BG"))
+                .background(Color.background)
                 .cornerRadius(15)
         }
     }

@@ -35,11 +35,7 @@ struct EditProfileView: View {
 
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .fill(
-                    LinearGradient(colors: [
-                        Color("Gradient1"),
-                        Color("Gradient2"),
-                        Color("Gradient3")
-                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    Color.mainGradient
                 )
                 .ignoresSafeArea()
 
@@ -50,7 +46,7 @@ struct EditProfileView: View {
 
                 ZStack(alignment: .top) {
 
-                    Color("BG")
+                    Color.background
                         .cornerRadius(30, corners: [.topLeft, .topRight])
                         .offset(x: 0, y: 50)
 
