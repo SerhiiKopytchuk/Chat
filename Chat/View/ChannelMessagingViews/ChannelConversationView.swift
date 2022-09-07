@@ -43,43 +43,32 @@ struct ChannelConversationView: View {
 
     var body: some View {
         ZStack {
-            VStack {
-                VStack(spacing: 0) {
+            VStack(spacing: 0) {
+                HeaderWithBackButton(environment: _env, text: "Channel")
+                    .padding()
 
-                    HeaderWithBackButton(environment: _env, text: "Channel")
-                        .padding()
-
-                    ChannelTitleRow(channel: channelViewModel.currentChannel,
-                                    animationNamespace: animation,
-                                    isExpandedProfileImage: $isExpandedProfile,
-                                    isExpandedDetails: $isExpandedDetails,
-                                    channelWebImage: $channelImage,
-                                    isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
-                    )
-                    .background {
-                        Color.background
-                            .opacity(0.7)
-                    }
-
-                    VStack(spacing: 0) {
-                        expandedDetails
-                        messagesScrollView
-
-                        if isSubscribed {
-                            messagingTextField
-                                .padding(.horizontal)
-                                .padding(.bottom)
-                        } else {
-                            subscribeButton
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                    .background {
-                        Color.background
-                            .ignoresSafeArea()
-                    }
+                ChannelTitleRow(channel: channelViewModel.currentChannel,
+                                animationNamespace: animation,
+                                isExpandedProfileImage: $isExpandedProfile,
+                                isExpandedDetails: $isExpandedDetails,
+                                channelWebImage: $channelImage,
+                                isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
+                )
+                .background {
+                    Color.background
+                        .opacity(0.7)
                 }
-                .frame(maxWidth: .infinity)
+
+                expandedDetails
+
+                messagesScrollView
+
+                if isSubscribed {
+                    messagingTextField
+                        .ignoresSafeArea(.container, edges: .bottom)
+                } else {
+                    subscribeButton
+                }
 
             }
             .addGradientBackground()
