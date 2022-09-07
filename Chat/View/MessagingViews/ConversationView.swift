@@ -34,37 +34,34 @@ struct ConversationView: View {
 
     // MARK: - body
     var body: some View {
-        ZStack {
-            VStack {
-                HeaderWithBackButton(environment: _env, text: "Chat")
-                    .frame(height: 15)
-                    .padding()
+        VStack(spacing: 0) {
+            HeaderWithBackButton(environment: _env, text: "Chat")
+                .frame(height: 10)
+                .padding()
+                .padding(.bottom)
 
+            titleRow
+
+            if isFindChat {
                 VStack(spacing: 0) {
-                    titleRow
+                    messagesScrollView
 
-                    if isFindChat {
-                        VStack(spacing: 0) {
-                            messagesScrollView
-                            MessageField(messagingViewModel: messagingViewModel)
-                                .padding(.horizontal)
-                                .padding(.bottom)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .bottom)
-                        .background {
-                            Color.background
-                                .ignoresSafeArea()
-                        }
+                    MessageField(messagingViewModel: messagingViewModel)
+                        .ignoresSafeArea(.container, edges: .bottom)
 
-                    } else {
-                        createChatButton
-                    }
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
+                .background {
+                    Color.background
+                        .ignoresSafeArea()
+                }
+
+            } else {
+                createChatButton
             }
-            .addGradientBackground()
-            .navigationBarBackButtonHidden(loadExpandedContent)
         }
+        .frame(maxWidth: .infinity)
+        .addGradientBackground()
+        .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
             if showMessageEmojiView {
                 lightDarkEmptyBackground

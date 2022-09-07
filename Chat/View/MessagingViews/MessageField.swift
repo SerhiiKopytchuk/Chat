@@ -70,8 +70,7 @@ struct MessageField: View {
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
-        .background(Color.white)
-        .cornerRadius(15)
+        .background(.white)
     }
 
 }
