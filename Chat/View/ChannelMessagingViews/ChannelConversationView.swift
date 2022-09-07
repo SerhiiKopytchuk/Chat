@@ -42,40 +42,43 @@ struct ChannelConversationView: View {
     // MARK: - body
 
     var body: some View {
-        ZStack {
+        VStack(spacing: 0) {
+            HeaderWithBackButton(environment: _env, text: "Channel")
+                .padding()
+
+            ChannelTitleRow(channel: channelViewModel.currentChannel,
+                            animationNamespace: animation,
+                            isExpandedProfileImage: $isExpandedProfile,
+                            isExpandedDetails: $isExpandedDetails,
+                            channelWebImage: $channelImage,
+                            isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
+            )
+            .background {
+                Color.background
+                    .opacity(0.7)
+            }
+
+            expandedDetails
+
+            messagesScrollView
+
             VStack(spacing: 0) {
-                HeaderWithBackButton(environment: _env, text: "Channel")
-                    .padding()
-
-                ChannelTitleRow(channel: channelViewModel.currentChannel,
-                                animationNamespace: animation,
-                                isExpandedProfileImage: $isExpandedProfile,
-                                isExpandedDetails: $isExpandedDetails,
-                                channelWebImage: $channelImage,
-                                isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
-                )
-                .background {
-                    Color.background
-                        .opacity(0.7)
-                }
-
-                expandedDetails
-
-                messagesScrollView
-
                 if isSubscribed {
                     messagingTextField
                         .ignoresSafeArea(.container, edges: .bottom)
                 } else {
                     subscribeButton
+                        .ignoresSafeArea(.container, edges: .bottom)
                 }
-
             }
-            .addGradientBackground()
-            .frame(maxWidth: .infinity)
+            .background {
+                Color.background
+                    .ignoresSafeArea()
+            }
         }
-        .navigationBarHidden(true)
         .frame(maxWidth: .infinity)
+        .addGradientBackground()
+        .navigationBarHidden(true)
         .background {
             navigationLinks
         }
@@ -297,7 +300,6 @@ struct ChannelConversationView: View {
                 }
             }
         }
-        .padding(.bottom, isOwner() ? 0 : 15)
         .ignoresSafeArea()
     }
 
@@ -313,15 +315,17 @@ struct ChannelConversationView: View {
     @ViewBuilder var subscribeButton: some View {
         Button {
             channelViewModel.subscribeToChannel()
-            self.isSubscribed = true
+            withAnimation {
+                self.isSubscribed = true
+            }
             channelViewModel.currentChannel.subscribersId?.append(viewModel.currentUser.id)
         } label: {
             Text("Subscribe")
                 .font(.title2)
                 .fontWeight(.semibold)
-                .padding()
+                .frame(maxWidth: .infinity)
                 .background(Color.background)
-                .cornerRadius(15)
+                .ignoresSafeArea()
         }
     }
 
