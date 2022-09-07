@@ -68,7 +68,6 @@ struct ChannelMessageField: View {
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.white)
-        .cornerRadius(15)
     }}
 
 struct ChannelMessageField_Previews: PreviewProvider {
