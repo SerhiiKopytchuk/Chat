@@ -238,17 +238,15 @@
 		400142F3282EBAB900E5D497 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				408A661228C8C335006101CA /* Main */,
 				4039A6602854A01D00C74377 /* authetication */,
-				400142E7282EBA8400E5D497 /* RootView.swift */,
-				408E26112832C44800CE108E /* MainView.swift */,
 				40C3A105283AA2DB00A9683A /* SideMenuViews */,
 				4024EB0E28393CF40082E739 /* TabBarView.swift */,
-				40D5C41728429F580015DFBB /* CustomTabBar.swift */,
-				406DC3A3284C8E1400A41964 /* MessagingViews */,
+				40EF995F284747740062612E /* ConversationView.swift */,
 				409AC7632849E9A300BD00F9 /* SearchView.swift */,
 				40FA6F6128576D01001AAC09 /* EditProfileView.swift */,
 				400E81AC286861EE006A606E /* CreateChannelView.swift */,
-				403B51D3286C78150035804E /* ChannelMessagingViews */,
+				40153F27286B32460022DA46 /* ChannelConversationView.swift */,
 				4021DD0A288AA7E30060B18E /* ChannelViews */,
 			);
 			path = View;
@@ -288,6 +286,8 @@
 		400E81AB28686185006A606E /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				408A661328C8C360006101CA /* Conversation views */,
+				40D5C41728429F580015DFBB /* CustomTabBar.swift */,
 				4024EB00283802130082E739 /* CustomAlert.swift */,
 				4076E0AC283FB54A00E21131 /* LoaderView.swift */,
 				406DC3A1284C8B5E00A41964 /* SearchUserListRow.swift */,
@@ -298,8 +298,7 @@
 				40A766B728843045002D6FA5 /* removeUsersFromChannelListRow.swift */,
 				40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */,
 				40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */,
-				409894CB289D937C00720A1E /* AnimatedEmoji.swift */,
-				409894CD289D978000720A1E /* EmojiView.swift */,
+				408A661128C8C305006101CA /* Emoji reaction views */,
 				4056DA2A28A7ECD100246AC4 /* ResizeableTextView.swift */,
 				40C4F29328C5DCE9008D03C8 /* Blur.swift */,
 			);
@@ -325,33 +324,12 @@
 			path = authetication;
 			sourceTree = "<group>";
 		};
-		403B51D3286C78150035804E /* ChannelMessagingViews */ = {
-			isa = PBXGroup;
-			children = (
-				40153F27286B32460022DA46 /* ChannelConversationView.swift */,
-				40153F2B286B35A20022DA46 /* ChannelMessageField.swift */,
-				40153F2D286B370B0022DA46 /* ChannelTitleRow.swift */,
-			);
-			path = ChannelMessagingViews;
-			sourceTree = "<group>";
-		};
 		404B283B28C72F940096C8F0 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
 				404B283C28C72FAF0096C8F0 /* StorageReferencesManager.swift */,
 			);
 			path = Managers;
-			sourceTree = "<group>";
-		};
-		406DC3A3284C8E1400A41964 /* MessagingViews */ = {
-			isa = PBXGroup;
-			children = (
-				40EF995D284746BB0062612E /* ConversationTitleRow.swift */,
-				40EF995F284747740062612E /* ConversationView.swift */,
-				40EF9963284748250062612E /* MessageBubble.swift */,
-				40EF996728474B6F0062612E /* MessageField.swift */,
-			);
-			path = MessagingViews;
 			sourceTree = "<group>";
 		};
 		4089D6772888025B00FC987E /* ChatUITests */ = {
@@ -361,6 +339,36 @@
 				4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */,
 			);
 			path = ChatUITests;
+			sourceTree = "<group>";
+		};
+		408A661128C8C305006101CA /* Emoji reaction views */ = {
+			isa = PBXGroup;
+			children = (
+				409894CB289D937C00720A1E /* AnimatedEmoji.swift */,
+				409894CD289D978000720A1E /* EmojiView.swift */,
+			);
+			path = "Emoji reaction views";
+			sourceTree = "<group>";
+		};
+		408A661228C8C335006101CA /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				400142E7282EBA8400E5D497 /* RootView.swift */,
+				408E26112832C44800CE108E /* MainView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		408A661328C8C360006101CA /* Conversation views */ = {
+			isa = PBXGroup;
+			children = (
+				40EF995D284746BB0062612E /* ConversationTitleRow.swift */,
+				40EF9963284748250062612E /* MessageBubble.swift */,
+				40EF996728474B6F0062612E /* MessageField.swift */,
+				40153F2B286B35A20022DA46 /* ChannelMessageField.swift */,
+				40153F2D286B370B0022DA46 /* ChannelTitleRow.swift */,
+			);
+			path = "Conversation views";
 			sourceTree = "<group>";
 		};
 		40C3A105283AA2DB00A9683A /* SideMenuViews */ = {

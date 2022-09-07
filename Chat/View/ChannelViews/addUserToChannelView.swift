@@ -62,7 +62,7 @@ struct AddUserToChannelView: View {
     @ViewBuilder var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(editChannelViewModel.usersToAddToChannel, id: \.id) { user in
-                AddUserToChannelRow(user: user.name,
+                AddUserToChannelListRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id,
                                         colour: user.colour,
