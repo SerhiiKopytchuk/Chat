@@ -18,14 +18,14 @@ struct ChannelTitleRow: View {
     @Binding var isExpandedDetails: Bool
     @Binding var channelWebImage: WebImage
 
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     @State var isOwner: Bool
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
-
-    let imageSize: CGFloat = 50
+    // MARK: image properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    private let imageSize: CGFloat = 50
 
     // MARK: - body
     var body: some View {
@@ -59,7 +59,7 @@ struct ChannelTitleRow: View {
     }
 
     // MARK: - ViewBuilders
-    @ViewBuilder var channelImage: some View {
+    @ViewBuilder private var channelImage: some View {
         if isFindUserImage {
             VStack {
                 if isExpandedProfileImage {
@@ -102,7 +102,7 @@ struct ChannelTitleRow: View {
 
     // MARK: - functions
 
-    func imageSetup() {
+    private func imageSetup() {
         let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "someId")
 
         ref.downloadURL { url, err in

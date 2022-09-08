@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct EmojiView: View {
+    // MARK: - vars
     @Binding var hideView: Bool
     var message: Message
     var onTap: (String) -> Void
-    var emojis: [String] = ["🔥", "❤️", "😁", "👍", "😍", "💩"]
+    private let emojis: [String] = ["🔥", "❤️", "😁", "👍", "😍", "💩"]
 
-    @State var animateEmoji: [Bool] = Array(repeating: false, count: 6)
+    @State private var animateEmoji: [Bool] = Array(repeating: false, count: 6)
     @State var animateView: Bool = false
 
+    // MARK: - body
     var body: some View {
         HStack(spacing: 12) {
             ForEach(emojis.indices, id: \.self) { index in

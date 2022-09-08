@@ -12,21 +12,22 @@ import SDWebImageSwiftUI
 struct ConversationTitleRow: View {
     // MARK: - variables
     var user: User
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
 
     let animationNamespace: Namespace.ID
 
-    @State var showingAlert = false
+    @State private var showingAlert = false
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
+    // MARK: image properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
     @Binding var isFindChat: Bool
 
     @Binding var isExpandedProfile: Bool
     @Binding var profileImage: WebImage
 
-    let imageSize: CGFloat = 50
+    private let imageSize: CGFloat = 50
 
     // MARK: - Body
     var body: some View {
@@ -74,7 +75,7 @@ struct ConversationTitleRow: View {
     }
 
     // MARK: - viewBuilders
-    @ViewBuilder var userImage: some View {
+    @ViewBuilder private var userImage: some View {
         if isFindUserImage {
             VStack {
                 if isExpandedProfile {
@@ -117,7 +118,7 @@ struct ConversationTitleRow: View {
     }
 
     // MARK: - functions
-    func imageStartSetup() {
+    private func imageStartSetup() {
         let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
         ref.downloadURL { url, err in
             if err != nil {

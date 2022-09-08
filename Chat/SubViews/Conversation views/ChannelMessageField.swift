@@ -11,15 +11,13 @@ struct ChannelMessageField: View {
     // MARK: - Vars
     @State private var messageText = ""
 
-    @State var height: CGFloat = 40
+    @State private var height: CGFloat = 40
 
     var sizeOfButtons: CGFloat = 20
 
-    @FocusState private var autoSizingTextFieldIsFocused: Bool
-
     @ObservedObject var channelMessagingViewModel: ChannelMessagingViewModel
-    @ObservedObject var imageViewModel = ImageViewModel()
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @ObservedObject private var imageViewModel = ImageViewModel()
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     @State var isShowingImagePicker = false
     @State var image: UIImage?
@@ -32,7 +30,6 @@ struct ChannelMessageField: View {
             imagePickerViewButton
 
             sendMessageButton
-
 
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
@@ -51,7 +48,6 @@ struct ChannelMessageField: View {
     }
 
     // MARK: - viewBuilders
-    
     @ViewBuilder var imagePickerViewButton: some View {
         Button {
             isShowingImagePicker.toggle()
@@ -71,7 +67,6 @@ struct ChannelMessageField: View {
             channelMessagingViewModel.sendMessage(text: messageText)
             messageText = ""
             UIApplication.shared.endEditing()
-            autoSizingTextFieldIsFocused = false
             channelViewModel.changeLastActivityAndSortChannels()
 
         } label: {

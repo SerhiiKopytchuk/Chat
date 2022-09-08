@@ -10,23 +10,27 @@ import FirebaseStorage
 import SDWebImageSwiftUI
 
 struct AddUserToChannelListRow: View {
+    // MARK: - vars
     var user: String
     var userGmail: String
     var id: String
     var colour: String
     @Binding var subscribersId: [String]
-    @State var isAddedToChannel = false
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
+    @State private var isAddedToChannel = false
 
-    let imageSize: CGFloat = 40
+    // MARK: image properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    private let imageSize: CGFloat = 40
 
+    // MARK: - body
     var body: some View {
         HStack {
 
             userImage
 
+            // MARK: userName and userGmail
             VStack(alignment: .leading) {
                 Text(user)
                     .font(.title2)
@@ -39,24 +43,11 @@ struct AddUserToChannelListRow: View {
                     .lineLimit(1)
             }
             Spacer()
+
             addOrRemoveUserChannel
                 .padding()
                 .onTapGesture {
-                    if subscribersId.contains(id) {
-
-                        withAnimation {
-                            isAddedToChannel = false
-                        }
-                        if let index = subscribersId.firstIndex(of: id) {
-                            subscribersId.remove(at: index)
-                        }
-
-                    } else {
-                        isAddedToChannel = true
-                        withAnimation {
-                            subscribersId.append(id)
-                        }
-                    }
+                    addOrRemoveUserLogic()
                 }
         }
         .background {
@@ -64,26 +55,13 @@ struct AddUserToChannelListRow: View {
                 .fill(.white)
         }
         .onAppear {
-            let ref = StorageReferencesManager.shared.getProfileImageReference(userId: self.id)
-            ref.downloadURL { url, err in
-                if err != nil {
-                    self.isFindUserImage = false
-                    return
-                }
-                withAnimation(.easeInOut) {
-                    self.imageUrl = url
-                }
-            }
 
-            if subscribersId.contains(id) {
-                isAddedToChannel = true
-            } else {
-                isAddedToChannel = false
-            }
         }
     }
 
-    @ViewBuilder var userImage: some View {
+    // MARK: - viewBuilders
+
+    @ViewBuilder private var userImage: some View {
         if isFindUserImage {
             WebImage(url: imageUrl)
                 .resizable()
@@ -98,7 +76,7 @@ struct AddUserToChannelListRow: View {
         }
     }
 
-    @ViewBuilder var addOrRemoveUserChannel: some View {
+    @ViewBuilder private var addOrRemoveUserChannel: some View {
             if isAddedToChannel {
                 HStack {
                     Image(systemName: "minus")
@@ -116,6 +94,42 @@ struct AddUserToChannelListRow: View {
                     .foregroundColor(.blue.opacity(0.7))
                     .addLightShadow()
             }
+    }
+
+    // MARK: - functions
+    private func addOrRemoveUserLogic() {
+        if subscribersId.contains(id) {
+            withAnimation {
+                isAddedToChannel = false
+            }
+            if let index = subscribersId.firstIndex(of: id) {
+                subscribersId.remove(at: index)
+            }
+        } else {
+            isAddedToChannel = true
+            withAnimation {
+                subscribersId.append(id)
+            }
+        }
+    }
+
+    private func imageStartSetup() {
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: self.id)
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.imageUrl = url
+            }
+        }
+
+        if subscribersId.contains(id) {
+            isAddedToChannel = true
+        } else {
+            isAddedToChannel = false
+        }
     }
 }
 

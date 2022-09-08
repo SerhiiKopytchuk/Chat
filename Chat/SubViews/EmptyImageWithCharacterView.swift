@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct EmptyImageWithCharacterView: View {
-
+    // MARK: - vars
     var text: String
     var colour: String
     var size: CGFloat
 
+    // MARK: - body
     var body: some View {
         if let first = text.first {
             Text(String(first.uppercased()))

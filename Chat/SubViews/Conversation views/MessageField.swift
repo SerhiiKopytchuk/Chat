@@ -10,20 +10,18 @@ import Foundation
 
 struct MessageField: View {
     // MARK: - vars
-    @State var messageText: String = ""
+    @State private var messageText: String = ""
 
-    @State var height: CGFloat = 40
+    @State private var height: CGFloat = 40
 
     var sizeOfButtons: CGFloat = 20
 
-    @FocusState private var autoSizingTextFieldIsFocused: Bool
-
     @ObservedObject var messagingViewModel: MessagingViewModel
-    @ObservedObject var imageViewModel = ImageViewModel()
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @ObservedObject private var imageViewModel = ImageViewModel()
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
 
-    @State var isShowingImagePicker = false
-    @State var image: UIImage?
+    @State private var isShowingImagePicker = false
+    @State private var image: UIImage?
 
     // MARK: - body
     var body: some View {
@@ -52,7 +50,7 @@ struct MessageField: View {
     }
 
     // MARK: - ViewBuilders
-    @ViewBuilder var imagePickerButton: some View {
+    @ViewBuilder private var imagePickerButton: some View {
         Button {
             isShowingImagePicker.toggle()
         } label: {
@@ -65,13 +63,12 @@ struct MessageField: View {
         }
     }
 
-    @ViewBuilder var sendMessageButton: some View {
+    @ViewBuilder private var sendMessageButton: some View {
         Button {
             messageText = messageText.trimmingCharacters(in: .newlines)
             messagingViewModel.sendMessage(text: messageText)
             messageText = ""
             UIApplication.shared.endEditing()
-            autoSizingTextFieldIsFocused = false
             chattingViewModel.changeLastActivityAndSortChats()
         } label: {
             Image(systemName: "paperplane.fill")

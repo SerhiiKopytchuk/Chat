@@ -8,16 +8,18 @@
 import SwiftUI
 
 struct RollingText: View {
+    // MARK: - vars
+
     // MARK: text properties
     var font: Font = .caption
     var weight: Font.Weight = .light
 
     // MARK: animation properties
-
     @State var animationRange: [Int] = []
 
     @Binding var value: Int
 
+    // MARK: - body
     var body: some View {
         HStack(spacing: 0) {
             ForEach(0..<animationRange.count, id: \.self) { index in
@@ -51,25 +53,12 @@ struct RollingText: View {
                 updateText()
             }
         }.onChange(of: value) { _ in
-            let extra = "\(value)".count - animationRange.count
-            if extra > 0 {
-                for _ in 0..<extra {
-                    withAnimation(.easeIn(duration: 0.1)) {
-                        animationRange.append(0)
-                    }
-                }
-            } else {
-                for _ in 0..<(-extra) {
-                        animationRange.removeLast()
-                }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                updateText()
-            }
+            valueChanged()
         }
     }
 
-    func updateText() {
+    // MARK: - functions
+    private func updateText() {
         let stringValue = "\(value)"
         for (index, value) in zip(0..<stringValue.count, stringValue) {
 
@@ -80,4 +69,23 @@ struct RollingText: View {
             }
         }
     }
+
+    private func valueChanged() {
+        let extra = "\(value)".count - animationRange.count
+        if extra > 0 {
+            for _ in 0..<extra {
+                withAnimation(.easeIn(duration: 0.1)) {
+                    animationRange.append(0)
+                }
+            }
+        } else {
+            for _ in 0..<(-extra) {
+                    animationRange.removeLast()
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            updateText()
+        }
+    }
+
 }
