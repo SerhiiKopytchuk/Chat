@@ -18,22 +18,24 @@ struct ConversationView: View {
 
     @Namespace var animation
 
-    @State var isExpandedProfile: Bool = false
-    @State var profileImage: WebImage = WebImage(url: URL(string: ""))
-    @State var loadExpandedContent = false
-    @State var imageOffset: CGSize = .zero
+    // MARK: fullscreen profile image properties
+    @State private var isExpandedProfile: Bool = false
+    @State private var profileImage: WebImage = WebImage(url: URL(string: ""))
+    @State private var loadExpandedContent = false
+    @State private var imageOffset: CGSize = .zero
 
-    @State var showMessageEmojiView: Bool = false
+    @State private var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
-    @Environment(\.self) var env
+    @Environment(\.self) private var env
 
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var messagingViewModel: MessagingViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
 
     // MARK: - body
     var body: some View {
+
         VStack(spacing: 0) {
             HeaderWithBackButton(environment: _env, text: "Chat")
                 .frame(height: 10)
@@ -109,7 +111,7 @@ struct ConversationView: View {
 
     // MARK: - viewBuilders
 
-    @ViewBuilder var titleRow: some View {
+    @ViewBuilder private var titleRow: some View {
         ConversationTitleRow(user: secondUser,
                              animationNamespace: animation,
                              isFindChat: $isFindChat,
@@ -123,7 +125,7 @@ struct ConversationView: View {
         .environmentObject(chattingViewModel)
     }
 
-    @ViewBuilder var lightDarkEmptyBackground: some View {
+    @ViewBuilder private var lightDarkEmptyBackground: some View {
         Rectangle()
             .fill(.ultraThinMaterial)
             .environment(\.colorScheme, .dark)
@@ -136,7 +138,7 @@ struct ConversationView: View {
             }
     }
 
-    @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
+    @ViewBuilder private func expandedPhoto (image: WebImage ) -> some View {
         VStack {
             GeometryReader { proxy in
                 let size = proxy.size
@@ -190,7 +192,7 @@ struct ConversationView: View {
         }
     }
 
-    var turnOffImageButton: some View {
+    @ViewBuilder private var turnOffImageButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.3)) {
                 loadExpandedContent = false
@@ -206,7 +208,7 @@ struct ConversationView: View {
         }
     }
 
-    @ViewBuilder var messagesScrollView: some View {
+    @ViewBuilder private var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
                 VStack {
@@ -252,7 +254,7 @@ struct ConversationView: View {
         }
     }
 
-    @ViewBuilder var createChatButton: some View {
+    @ViewBuilder private var createChatButton: some View {
 
         VStack {
             Button {

@@ -11,17 +11,20 @@ import Contacts
 
 struct SideMenuView: View {
 
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
+    // MARK: - vars
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var messagingViewModel: MessagingViewModel
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
 
+    // MARK: - body
+
     var body: some View {
-        ZStack {
+
             Color.mainGradient
                 .ignoresSafeArea()
 
@@ -29,6 +32,7 @@ struct SideMenuView: View {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
                     .foregroundColor(.white)
                     .frame(height: 240)
+
                 ForEach(SideMenuViewModel.allCases, id: \.self) { option in
 
                     if option == SideMenuViewModel.profile {
@@ -72,7 +76,11 @@ struct SideMenuView: View {
                 }
                 Spacer()
             }
-        }.navigationBarHidden(true)
+            .background {
+                Color.mainGradient
+                    .ignoresSafeArea()
+            }
+            .navigationBarHidden(true)
     }
 }
 
