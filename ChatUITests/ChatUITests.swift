@@ -23,6 +23,9 @@ class ChatUITests: XCTestCase {
 //        // Put teardown code here. This method is called after the invocation of each test method in the class.
 //    }
 
+    // start on Ben account, Anna account is exist
+    // there is no channels. Without chat Ben with Anna
+
     let channelName = "testChannel"
     let channelDescription = "testChannelDescription"
     let channelNameEdited = "testChannelEdited"

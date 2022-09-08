@@ -13,6 +13,7 @@ import Firebase
 // SF Symbols
 struct RootView: View {
 
+    // MARK: - vars
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
@@ -20,6 +21,7 @@ struct RootView: View {
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
+    // MARK: - body
     var body: some View {
 
         NavigationView {
