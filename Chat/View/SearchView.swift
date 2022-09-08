@@ -10,32 +10,37 @@ import SwiftUI
 struct SearchView: View {
 
     // MARK: - vars
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var messagingViewModel: MessagingViewModel
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
     @Namespace var animation
 
     @Environment(\.self) var env
 
-    @State var showSearchBar = false
-    @State var searchUserText = ""
-    @State var searchChannelText = ""
-    @State var goToConversation = false
-    @State var isFindChat = true
+    @State private var showSearchBar = false
+    @State private var searchUserText = ""
+    @State private var searchChannelText = ""
 
-    @State var goToChannelConversation = false
-    @State var isSubscribedToChannel = true
+    @State private var goToConversation = false
+    @State private var isFindChat = true
 
-    @State var isSearchingChat = "Users"
+    @State private var goToChannelConversation = false
+    @State private var isSubscribedToChannel = true
+
+    @State private var isSearchingChat = "Users"
 
     // MARK: - body
     var body: some View {
         VStack {
 
-            HeaderWithBackButton(environment: _env, text: "Search")
+            HeaderWithBackButton(environment: _env, text: "Search") {
+                withAnimation {
+                    self.clearData()
+                }
+            }
                 .padding()
 
             VStack {
@@ -47,8 +52,9 @@ struct SearchView: View {
                 } else {
                     searchingChannels
                 }
+
             }
-                .padding()
+            .padding()
 
         }
         .background {
@@ -62,7 +68,7 @@ struct SearchView: View {
 
     // MARK: - viewBuilders
 
-    @ViewBuilder var searchingUsers: some View {
+    @ViewBuilder private var searchingUsers: some View {
         Label {
             TextField("Enter user name", text: $searchUserText)
                 .padding(.leading, 10)
@@ -85,7 +91,7 @@ struct SearchView: View {
         usersList
     }
 
-    @ViewBuilder var searchingChannels: some View {
+    @ViewBuilder private var searchingChannels: some View {
         Label {
             TextField("Enter channel name", text: $searchChannelText)
                 .padding(.leading, 10)
@@ -108,7 +114,7 @@ struct SearchView: View {
         channelList
     }
 
-    @ViewBuilder var chatOrChannelPicker: some View {
+    @ViewBuilder private var chatOrChannelPicker: some View {
         HStack(spacing: 0) {
             ForEach(["Users", "Channels"], id: (\.self)) { text in
                 Text(text.capitalized)
@@ -121,11 +127,7 @@ struct SearchView: View {
                         if isSearchingChat == text {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(
-                                    LinearGradient(colors: [
-                                        Color("Gradient1"),
-                                        Color("Gradient2"),
-                                        Color("Gradient3")
-                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                    Color.mainGradient
                                 )
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }
@@ -145,19 +147,19 @@ struct SearchView: View {
         }
     }
 
-    @ViewBuilder var usersList: some View {
+    @ViewBuilder private var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(viewModel.users, id: \.id) { user in
-                SearchUserCell(userName: user.name,
-                               userGmail: user.gmail,
-                               id: user.id,
-                               userColor: user.colour,
-                               rowTapped: {
+                SearchUserListRow(userName: user.name,
+                                  userGmail: user.gmail,
+                                  id: user.id,
+                                  userColor: user.colour,
+                                  rowTapped: {
                     viewModel.secondUser = user
                     messagingViewModel.secondUser = user
-                    messagingViewModel.user = viewModel.currentUser
+                    messagingViewModel.currentUser = viewModel.currentUser
                     chattingViewModel.secondUser = user
-                    chattingViewModel.user = viewModel.currentUser
+                    chattingViewModel.currentUser = viewModel.currentUser
 
                     chattingViewModel.getCurrentChat(secondUser: user) { chat in
                         self.messagingViewModel.currentChat = chat
@@ -177,7 +179,7 @@ struct SearchView: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder var channelList: some View {
+    @ViewBuilder private var channelList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(channelViewModel.searchChannels, id: \.id) { channel in
                 ChannelListRow(channel: channel) {
@@ -199,7 +201,7 @@ struct SearchView: View {
         }
     }
 
-    @ViewBuilder var navigationLinks: some View {
+    @ViewBuilder private var navigationLinks: some View {
         NavigationLink(isActive: $goToConversation) {
             ConversationView(secondUser: self.viewModel.secondUser, isFindChat: self.$isFindChat)
                 .environmentObject(viewModel)
@@ -215,6 +217,18 @@ struct SearchView: View {
                 .environmentObject(channelMessagingViewModel)
         } label: { Text("channelConversationView") }
             .hidden()
+    }
+
+    // MARK: - functions
+
+    private func clearData() {
+        self.searchUserText = ""
+        viewModel.searchText = ""
+        viewModel.getAllUsers()
+
+        self.searchChannelText = ""
+        channelViewModel.searchText = ""
+        channelViewModel.getSearchChannels()
     }
 
 }

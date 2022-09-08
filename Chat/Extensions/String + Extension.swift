@@ -18,6 +18,21 @@ extension String {
         return self.trimmingCharacters(in: .whitespaces)
     }
 
+    func trimToMessage() -> String {
+
+        var trimmedValue = self
+
+        while trimmedValue != trimmedValue.trimmingCharacters(in: .newlines) ||
+                trimmedValue != trimmedValue.trimmingCharacters(in: .whitespaces) {
+
+            trimmedValue = trimmedValue.trimmingCharacters(in: .whitespaces)
+            trimmedValue = trimmedValue.trimmingCharacters(in: .newlines)
+
+        }
+
+        return trimmedValue
+    }
+
     func isValidateLengthOfName() -> Bool {
         if self.count > 3 && self.count < 35 {
             return true

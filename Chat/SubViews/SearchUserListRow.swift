@@ -9,22 +9,25 @@ import SwiftUI
 import FirebaseStorage
 import SDWebImageSwiftUI
 
-struct SearchUserCell: View {
+struct SearchUserListRow: View {
+    // MARK: - vars
     var userName: String
     var userGmail: String
     var id: String
     var userColor: String
     let rowTapped: () -> Void
-    let imageSize: CGFloat = 50
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
-
+    // MARK: image properties
+    private let  imageSize: CGFloat = 50
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    // MARK: - Body
     var body: some View {
             HStack {
 
                 userImage
 
+                // MARK: userName and userGmail
                 VStack(alignment: .leading) {
                     Text(userName)
                         .font(.title)
@@ -48,20 +51,12 @@ struct SearchUserCell: View {
                 rowTapped()
             }
             .onAppear {
-                let ref = Storage.storage().reference(withPath: self.id )
-                ref.downloadURL { url, err in
-                    if err != nil {
-                        self.isFindUserImage = false
-                        return
-                    }
-                    withAnimation(.easeInOut) {
-                        self.imageUrl = url
-                    }
-                }
+                imageStartSetup()
             }
     }
 
-    @ViewBuilder var userImage: some View {
+    // MARK: - viewBuilders
+    @ViewBuilder private var userImage: some View {
         if isFindUserImage {
             WebImage(url: imageUrl)
                 .resizable()
@@ -73,6 +68,20 @@ struct SearchUserCell: View {
         } else {
             EmptyImageWithCharacterView(text: userName, colour: userColor, size: imageSize)
                 .padding(.trailing)
+        }
+    }
+
+    // MARK: - functions
+    private func imageStartSetup() {
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: self.id)
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.imageUrl = url
+            }
         }
     }
 }

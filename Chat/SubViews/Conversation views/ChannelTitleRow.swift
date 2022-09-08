@@ -10,36 +10,39 @@ import FirebaseStorage
 import SDWebImageSwiftUI
 
 struct ChannelTitleRow: View {
+    // MARK: - vars
     var channel: Channel
 
     let animationNamespace: Namespace.ID
     @Binding var isExpandedProfileImage: Bool
     @Binding var isExpandedDetails: Bool
-    @Binding var profileImage: WebImage
+    @Binding var channelWebImage: WebImage
 
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     @State var isOwner: Bool
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
+    // MARK: image properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    private let imageSize: CGFloat = 50
 
-    let imageSize: CGFloat = 50
-
+    // MARK: - body
     var body: some View {
         HStack(spacing: 20) {
 
             channelImage
 
+            // MARK: channel name and description
             VStack(alignment: .leading) {
                 Text(channel.name)
                     .font(.title).bold()
-                    .lineLimit(isExpandedDetails ? 2 : 1)
+                    .lineLimit(isExpandedDetails ? 5 : 1)
 
                 Text(channel.description)
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .lineLimit(isExpandedDetails ? 2 : 1)
+                    .lineLimit(isExpandedDetails ? 5 : 1)
 
             }
             .onTapGesture {
@@ -49,23 +52,14 @@ struct ChannelTitleRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .onAppear {
-                let ref = Storage.storage().reference(withPath: channel.id ?? "someId" )
-                ref.downloadURL { url, err in
-                    if err != nil {
-                        self.isFindUserImage = false
-                        return
-                    }
-                    withAnimation(.easeInOut) {
-                        self.profileImage = WebImage(url: url)
-                        self.imageUrl = url
-                    }
-                }
+                imageSetup()
             }
         }
         .padding()
     }
 
-    @ViewBuilder var channelImage: some View {
+    // MARK: - ViewBuilders
+    @ViewBuilder private var channelImage: some View {
         if isFindUserImage {
             VStack {
                 if isExpandedProfileImage {
@@ -102,6 +96,23 @@ struct ChannelTitleRow: View {
                             .fill(Color(channel.colour))
                     }
                     .addLightShadow()
+            }
+        }
+    }
+
+    // MARK: - functions
+
+    private func imageSetup() {
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "someId")
+
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.channelWebImage = WebImage(url: url)
+                self.imageUrl = url
             }
         }
     }

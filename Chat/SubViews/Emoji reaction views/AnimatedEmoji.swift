@@ -13,11 +13,12 @@ struct AnimatedEmoji: View {
     var emoji: String
     var color: Color = .blue
 
-    @State var animationValues: [Bool] = Array(repeating: false, count: 6)
+    @State private var animationValues: [Bool] = Array(repeating: false, count: 6)
 
     // MARK: - body
     var body: some View {
         ZStack {
+
             Text(emoji)
                 .font(.system(size: 25))
                 .padding(6)
@@ -48,22 +49,27 @@ struct AnimatedEmoji: View {
                 }
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation(.easeInOut(duration: 0.35)) {
-                    animationValues[0] = true
-                }
-                withAnimation(.easeInOut(duration: 0.45).delay(0.06)) {
-                    animationValues[1] = true
-                }
-                withAnimation(.easeInOut(duration: 0.35).delay(0.3)) {
-                    animationValues[2] = true
-                }
-                withAnimation(.easeInOut(duration: 0.35).delay(0.3)) {
-                    animationValues[3] = true
-                }
-                withAnimation(.easeInOut(duration: 0.55).delay(0.55)) {
-                    animationValues[4] = true
-                }
+            animate()
+        }
+    }
+
+    // MARK: - functions
+    private func animate() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.easeInOut(duration: 0.35)) {
+                animationValues[0] = true
+            }
+            withAnimation(.easeInOut(duration: 0.45).delay(0.06)) {
+                animationValues[1] = true
+            }
+            withAnimation(.easeInOut(duration: 0.35).delay(0.3)) {
+                animationValues[2] = true
+            }
+            withAnimation(.easeInOut(duration: 0.35).delay(0.3)) {
+                animationValues[3] = true
+            }
+            withAnimation(.easeInOut(duration: 0.55).delay(0.55)) {
+                animationValues[4] = true
             }
         }
     }

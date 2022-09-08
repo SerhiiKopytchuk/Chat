@@ -2,9 +2,11 @@ import SwiftUI
 import Foundation
 
 struct Loader: View {
-    @State var degrees: CGFloat = 0
-    @State var animate = false
+    // MARK: - vars
+    @State private var degrees: CGFloat = 0
+    @State private var animate = false
 
+    // MARK: - body
     var body: some View {
 
         VStack {

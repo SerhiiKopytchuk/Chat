@@ -11,30 +11,33 @@ import FirebaseAuth
 import SDWebImageSwiftUI
 
 struct ChatListRow: View {
-    // Inject properties into the struct
-    @EnvironmentObject var viewModel: UserViewModel
-    @ObservedObject var messageViewModel = MessagingViewModel()
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
+    // MARK: - vars
+    @EnvironmentObject private var viewModel: UserViewModel
+    @ObservedObject private var messageViewModel = MessagingViewModel()
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
 
-    @State var person: User?
-    @State var message = Message()
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
-    @State var isShowImage = false
+    @State private var person: User?
+    @State private var message = Message()
 
-    let formater = DateFormatter()
+    // MARK: image properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    @State private var isShowImage = false
+    private let imageSize: CGFloat = 50
+    @State private var lastMessageImageUrl = URL(string: "")
+
     let chat: Chat
-
-    let imageSize: CGFloat = 50
 
     let rowTapped: () -> Void
 
+    // MARK: - body
     var body: some View {
         HStack {
 
             userImage
 
             VStack(alignment: .leading) {
+                // MARK: name with last message date
                 HStack {
                     Text(person?.name ?? "")
                         .font(.title3)
@@ -46,11 +49,7 @@ struct ChatListRow: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-
-                Text(message.text )
-                    .font(.caption)
-                    .italic()
-                    .foregroundColor(.secondary)
+                lastMessagePreview
             }
         }
         .padding()
@@ -63,36 +62,10 @@ struct ChatListRow: View {
             rowTapped()
         }
         .contextMenu(menuItems: {
-            Button(role: .destructive) {
-                chattingViewModel.currentChat = self.chat
-                chattingViewModel.deleteChat()
-            } label: {
-                Label("remove chat", systemImage: "delete.left")
-            }
+            contextMenuButton
         })
         .onAppear {
-            DispatchQueue.main.async {
-                self.viewModel.getUserByChat(chat: self.chat) { user in
-                    withAnimation {
-                        self.person = user
-
-                        let ref = Storage.storage().reference(withPath: user.id )
-                        ref.downloadURL { url, err in
-                            if err != nil {
-                                self.isFindUserImage = false
-                                withAnimation(.easeInOut) {
-                                    self.isShowImage = true
-                                }
-                                return
-                            }
-                            withAnimation(.easeInOut) {
-                                self.imageUrl = url
-                                self.isShowImage = true
-                            }
-                        }
-                    }
-                }
-            }
+            userImageSetup()
 
             self.messageViewModel.currentChat = self.chat
 
@@ -104,7 +77,8 @@ struct ChatListRow: View {
         }
     }
 
-    @ViewBuilder var userImage: some View {
+    // MARK: - ViewBuilders
+    @ViewBuilder private var userImage: some View {
         if isFindUserImage {
             WebImage(url: imageUrl)
                 .resizable()
@@ -120,6 +94,75 @@ struct ChatListRow: View {
                                         colour: person?.colour ?? String.getRandomColorFromAssets(),
                                         size: imageSize)
                 .padding(5)
+        }
+    }
+
+    @ViewBuilder private var lastMessagePreview: some View {
+        if message.imageId == "" {
+            Text(message.text )
+                .font(.caption)
+                .italic()
+                .foregroundColor(.secondary)
+                .lineLimit(2)
+        } else {
+            WebImage(url: lastMessageImageUrl)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 20, height: 20)
+                .cornerRadius(3)
+                .onAppear {
+                    lastMessageImageSetup()
+                }
+        }
+    }
+
+    @ViewBuilder private var contextMenuButton: some View {
+        Button(role: .destructive) {
+            chattingViewModel.currentChat = self.chat
+            chattingViewModel.deleteChat()
+        } label: {
+            Label("remove chat", systemImage: "delete.left")
+        }
+    }
+
+    // MARK: - functions
+    private func lastMessageImageSetup() {
+        let imageId: String = message.imageId ?? "imageId"
+
+        let chatId: String = chat.id ?? "someID"
+        let ref = StorageReferencesManager.shared
+            .getChatMessageImageReference(chatId: chatId, imageId: imageId)
+
+        ref.downloadURL { url, err in
+            if err != nil {
+                return
+            }
+            self.lastMessageImageUrl = url
+        }
+    }
+
+    private func userImageSetup() {
+        DispatchQueue.main.async {
+            self.viewModel.getUserByChat(chat: self.chat) { user in
+                withAnimation {
+                    self.person = user
+
+                    let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
+                    ref.downloadURL { url, err in
+                        if err != nil {
+                            self.isFindUserImage = false
+                            withAnimation(.easeInOut) {
+                                self.isShowImage = true
+                            }
+                            return
+                        }
+                        withAnimation(.easeInOut) {
+                            self.imageUrl = url
+                            self.isShowImage = true
+                        }
+                    }
+                }
+            }
         }
     }
 

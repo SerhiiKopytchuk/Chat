@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import Foundation
+import Combine
 
 struct ConversationView: View {
 
@@ -16,87 +18,55 @@ struct ConversationView: View {
 
     @Namespace var animation
 
-    @State var isExpandedProfile: Bool = false
-    @State var profileImage: WebImage = WebImage(url: URL(string: ""))
-    @State var loadExpandedContent = false
-    @State var imageOffset: CGSize = .zero
+    // MARK: fullscreen profile image properties
+    @State private var isExpandedProfile: Bool = false
+    @State private var profileImage: WebImage = WebImage(url: URL(string: ""))
+    @State private var loadExpandedContent = false
+    @State private var imageOffset: CGSize = .zero
 
-    @State var showHighlight: Bool = false
+    @State private var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
-    @Environment(\.self) var env
+    @Environment(\.self) private var env
 
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var messagingViewModel: MessagingViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
 
     // MARK: - body
     var body: some View {
-        ZStack {
-            VStack {
-                HeaderWithBackButton(environment: _env, text: "Chat")
-                    .padding()
 
-                VStack {
-                    ConversationTitleRow(user: secondUser,
-                                         animationNamespace: animation,
-                                         isFindChat: $isFindChat,
-                                         isExpandedProfile: $isExpandedProfile,
-                                         profileImage: $profileImage
-                    )
-                    .background {
-                        Color("BG")
-                            .opacity(0.7)
-                    }
-                    .cornerRadius(12)
-                    .padding(.horizontal)
-                    .padding(.vertical, 5)
-                    .environmentObject(chattingViewModel)
+        VStack(spacing: 0) {
+            HeaderWithBackButton(environment: _env, text: "Chat")
+                .frame(height: 10)
+                .padding()
+                .padding(.bottom)
 
-                    if isFindChat {
-                        VStack(spacing: 0) {
-                            messagesScrollView
-                            MessageField(messagingViewModel: messagingViewModel)
-                                .padding()
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                        .background {
-                            Color("BG")
-                                .cornerRadius(30, corners: [.topLeft, .topRight])
-                                .ignoresSafeArea()
-                        }
+            titleRow
 
-                    } else {
-                        createChatButton
-                    }
+            if isFindChat {
+                VStack(spacing: 0) {
+                    messagesScrollView
+
+                    MessageField(messagingViewModel: messagingViewModel)
+                        .ignoresSafeArea(.container, edges: .bottom)
+
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .background {
+                    Color.background
+                        .ignoresSafeArea()
+                }
+
+            } else {
+                createChatButton
             }
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(
-                        LinearGradient(colors: [
-                            Color("Gradient1"),
-                            Color("Gradient2"),
-                            Color("Gradient3")
-                        ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    )
-                    .ignoresSafeArea()
-            }
-            .navigationBarBackButtonHidden(loadExpandedContent)
         }
+        .frame(maxWidth: .infinity)
+        .addGradientBackground()
+        .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
-            if showHighlight {
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .dark)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                            showHighlight = false
-                            highlightMessage = nil
-                        }
-                    }
+            if showMessageEmojiView {
+                lightDarkEmptyBackground
             }
         })
         .overlayPreferenceValue(BoundsPreference.self) { values in
@@ -108,15 +78,17 @@ struct ConversationView: View {
                         GeometryReader { proxy in
                             let rect = proxy[preference.value]
                             MessageBubble(message: highlightMessage,
-                                          showHighlight: $showHighlight,
+                                          showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage,
-                                          showLike: true)
+                                          showEmojiBarView: true)
+                            .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
+                            .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
+
                             .environmentObject(messagingViewModel)
                             .id(highlightMessage.id)
                             .frame(width: rect.width, height: rect.height)
                             .offset(x: rect.minX, y: rect.minY)
                         }
-//                        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
                         .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
                     }
                 }
@@ -139,7 +111,34 @@ struct ConversationView: View {
 
     // MARK: - viewBuilders
 
-    @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
+    @ViewBuilder private var titleRow: some View {
+        ConversationTitleRow(user: secondUser,
+                             animationNamespace: animation,
+                             isFindChat: $isFindChat,
+                             isExpandedProfile: $isExpandedProfile,
+                             profileImage: $profileImage
+        )
+        .background {
+            Color.background
+                .opacity(0.7)
+        }
+        .environmentObject(chattingViewModel)
+    }
+
+    @ViewBuilder private var lightDarkEmptyBackground: some View {
+        Rectangle()
+            .fill(.ultraThinMaterial)
+            .environment(\.colorScheme, .dark)
+            .ignoresSafeArea()
+            .onTapGesture {
+                highlightMessage = nil
+                withAnimation(.easeInOut) {
+                    showMessageEmojiView = false
+                }
+            }
+    }
+
+    @ViewBuilder private func expandedPhoto (image: WebImage ) -> some View {
         VStack {
             GeometryReader { proxy in
                 let size = proxy.size
@@ -193,7 +192,7 @@ struct ConversationView: View {
         }
     }
 
-    var turnOffImageButton: some View {
+    @ViewBuilder private var turnOffImageButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.3)) {
                 loadExpandedContent = false
@@ -209,27 +208,29 @@ struct ConversationView: View {
         }
     }
 
-    @ViewBuilder var messagesScrollView: some View {
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
+    @ViewBuilder private var messagesScrollView: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack {
                     ForEach(
                         self.messagingViewModel.currentChat.messages ?? [],
                         id: \.id) { message in
                             MessageBubble(message: message,
-                                          showHighlight: $showHighlight,
+                                          showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage)
+                            .accessibilityValue(message.imageId != "" ? "image" : "message")
+                            .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+                            .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
                             .environmentObject(messagingViewModel)
                             .id(message.id)
                             .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
-                            .padding(.bottom, messagingViewModel.currentChat.messages?.last?.id == message.id ?
-                                     10 : 0)
                             .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
                                 return [(message.id  ?? "someId"): anchor]
                             })
                             .onLongPressGesture {
                                 if message.isReply() {
                                     withAnimation(.easeInOut) {
-                                        showHighlight = true
+                                        showMessageEmojiView = true
                                         highlightMessage = message
                                     }
 
@@ -237,22 +238,23 @@ struct ConversationView: View {
                             }
                         }
                 }
-                .padding(.top)
-                .background(Color("BG"))
-                .cornerRadius(30, corners: [.topLeft, .topRight])
-                .onAppear {
-                    proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
-                }
-                .onChange(of: self.messagingViewModel.lastMessageId) { id in
-                    withAnimation {
-                        proxy.scrollTo(id, anchor: .bottom)
-                    }
+                .rotationEffect(Angle(degrees: 180))
+            }
+            .rotationEffect(Angle(degrees: 180))
+            .background(Color.background)
+            .onAppear {
+                proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
+            }
+            .onChange(of: self.messagingViewModel.lastMessageId) { id in
+                withAnimation {
+                    proxy.scrollTo(id, anchor: .bottom)
                 }
             }
             .padding(.horizontal, 12)
+        }
     }
 
-    @ViewBuilder var createChatButton: some View {
+    @ViewBuilder private var createChatButton: some View {
 
         VStack {
             Button {
@@ -262,6 +264,7 @@ struct ConversationView: View {
                     withAnimation {
                         isFindChat = true
                     }
+                    chattingViewModel.getChats(fromUpdate: true)
                 }
             } label: {
                 Text("Start Chat")
@@ -277,7 +280,7 @@ struct ConversationView: View {
 
     // MARK: - functions
 
-    func turnOffImageView() {
+    private func turnOffImageView() {
         withAnimation(.easeInOut(duration: 0.3)) {
             loadExpandedContent = false
         }
@@ -291,7 +294,7 @@ struct ConversationView: View {
         }
     }
 
-    func imageOffsetProgress() -> CGFloat {
+    private func imageOffsetProgress() -> CGFloat {
         let progress = imageOffset.height / 100
         if imageOffset.height < 0 {
             return 1
@@ -300,13 +303,4 @@ struct ConversationView: View {
         }
     }
 
-}
-
-struct ConversationView_Previews: PreviewProvider {
-    static var previews: some View {
-        ConversationView(secondUser: User(),
-                         isFindChat: .constant(true))
-        .environmentObject(MessagingViewModel())
-        .environmentObject(UserViewModel())
-    }
 }

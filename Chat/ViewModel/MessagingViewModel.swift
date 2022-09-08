@@ -7,22 +7,30 @@
 
 import Foundation
 import FirebaseFirestore
+import SwiftUI
 
 class MessagingViewModel: ObservableObject {
 
     @Published var currentChat: Chat = Chat()
-    @Published var user: User = User()
+    @Published var currentUser: User = User()
     @Published var secondUser = User()
 
     @Published var messages: [Message] = []
     @Published private(set) var lastMessageId: String = ""
+    @Published private(set) var firstMessageId: String = ""
 
     var dataBase = Firestore.firestore()
 
     func addEmoji(message: Message, emoji: String) {
         dataBase.collection("chats").document(self.currentChat.id ?? "someId")
             .collection("messages").document(message.id ?? "someIdd")
-            .updateData(["isEmojiAdded": true, "emojiValue": emoji])
+            .updateData(["emojiValue": emoji])
+    }
+
+    func removeEmoji(message: Message) {
+        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
+            .collection("messages").document(message.id ?? "someIdd")
+            .updateData(["emojiValue": ""])
     }
 
     func addSnapshotListenerToMessage(messageId: String, competition: @escaping (Message) -> Void) {
@@ -34,7 +42,7 @@ class MessagingViewModel: ObservableObject {
                 guard let message = try? document?.data(as: Message.self) else {
                     return
                 }
-                competition(message)
+                    competition(message)
             }
     }
 
@@ -54,6 +62,7 @@ class MessagingViewModel: ObservableObject {
 
                 self.sortMessages(messages: &messages)
 
+                self.getFirstMessage(messages: &messages)
                 self.getLastMessage(messages: &messages)
 
                 competition(messages)
@@ -83,18 +92,38 @@ class MessagingViewModel: ObservableObject {
         }
     }
 
+    private func getFirstMessage(messages: inout [Message]) {
+        if let id = messages.first?.id {
+            self.firstMessageId = id
+        }
+    }
+
+    func sendImage(imageId: String) {
+
+        let imageMessage = Message(imageId: imageId, senderId: self.currentUser.id)
+
+        do {
+            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+                .document().setData(from: imageMessage)
+            changeLastActivityTime()
+        } catch {
+            print("failed to send message" + error.localizedDescription)
+        }
+
+    }
+
     func sendMessage(text: String) {
 
-        if !messageIsValidated(text: text) { return }
+        let trimmedText = text.trimToMessage()
 
-        let trimmedText = text.trimmingCharacters(in: .whitespaces)
+        if !messageIsValidated(text: trimmedText) { return }
 
-        let newMessage = Message(text: trimmedText, senderId: self.user.id)
+        let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
 
         do {
             try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
                 .document().setData(from: newMessage)
-            changeLastMessageTime()
+            changeLastActivityTime()
         } catch {
             print("failed to send message" + error.localizedDescription)
         }
@@ -106,11 +135,10 @@ class MessagingViewModel: ObservableObject {
         if !text.trimmingCharacters(in: .whitespaces).isEmpty {
             return true
         }
-
         return false
     }
 
-    private func changeLastMessageTime() {
+    private func changeLastActivityTime() {
         dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 

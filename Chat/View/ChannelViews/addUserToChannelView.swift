@@ -9,15 +9,17 @@ import SwiftUI
 
 struct AddUserToChannelView: View {
 
-    @State var searchUserText = ""
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject var userViewModel: UserViewModel
+    // MARK: - vars
+    @State private var searchUserText = ""
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var userViewModel: UserViewModel
 
     @Environment(\.self) var env
 
-    @State var subscribersId: [String] = []
+    @State private var subscribersId: [String] = []
 
+    // MARK: - body
     var body: some View {
         VStack {
             HeaderWithBackButton(environment: _env, text: "Add users")
@@ -32,13 +34,15 @@ struct AddUserToChannelView: View {
                 .padding()
         }
         .background {
-            Color("BG")
+            Color.background
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)
     }
 
-    @ViewBuilder var addUsersTextField: some View {
+    // MARK: - viewBuilders
+
+    @ViewBuilder private var addUsersTextField: some View {
         Label {
             TextField("Search users", text: $searchUserText)
                 .padding(.leading, 10)
@@ -59,10 +63,10 @@ struct AddUserToChannelView: View {
         .padding()
     }
 
-    @ViewBuilder var usersList: some View {
+    @ViewBuilder private var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(editChannelViewModel.usersToAddToChannel, id: \.id) { user in
-                AddUserToChannelRow(user: user.name,
+                AddUserToChannelListRow(user: user.name,
                                         userGmail: user.gmail,
                                         id: user.id,
                                         colour: user.colour,
@@ -74,7 +78,7 @@ struct AddUserToChannelView: View {
         .padding(.horizontal)
     }
 
-    var applyButton: some View {
+    @ViewBuilder private var applyButton: some View {
         Button {
             editChannelViewModel.subscribeUsersToChannel(usersId: self.subscribersId)
             channelViewModel.currentChannel = editChannelViewModel.currentChannel

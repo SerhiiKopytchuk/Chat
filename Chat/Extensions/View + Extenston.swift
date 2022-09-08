@@ -9,6 +9,22 @@ import Foundation
 import SwiftUI
 
 extension View {
+    func addGradientBackground() -> some View {
+        return self.background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    LinearGradient(colors: [
+                        Color("Gradient1"),
+                        Color("Gradient2"),
+                        Color("Gradient3")
+                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+                .ignoresSafeArea()
+        }
+    }
+}
+
+extension View {
 
     func toButtonLightStyle(size: CGFloat) -> some View {
         return self.foregroundColor(.gray)
@@ -42,5 +58,14 @@ struct RoundedCorner: Shape {
             cornerRadii: CGSize(width: radius, height: radius)
         )
         return Path(path.cgPath)
+    }
+}
+
+extension View {
+    func backgroundBlur(radius: CGFloat = 3, opaque: Bool = false) -> some View {
+        self
+            .background(
+                Blur(radius: radius, opaque: opaque)
+            )
     }
 }

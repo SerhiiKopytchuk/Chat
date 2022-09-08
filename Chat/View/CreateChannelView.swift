@@ -12,20 +12,20 @@ import FirebaseStorage
 import UIKit
 
 struct CreateChannelView: View {
+    // MARK: - vars
+    @State private var channelImage: UIImage?
+    @State private var isShowingImagePicker = false
+    @State private var name: String = ""
+    @State private var description: String = ""
+    @State private var searchText: String = ""
+    @State private var isPrivate = true
 
-    @State var channelImage: UIImage?
-    @State var isShowingImagePicker = false
-    @State var name: String = ""
-    @State var description: String = ""
-    @State var searchText: String = ""
-    @State var isPrivate = true
+    // MARK: image properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindChannelImage = true
+    private let channelImageSize: CGFloat = 100
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindChannelImage = true
-
-    @State var isShowAlert = false
-
-    var channelImageSize: CGFloat = 100
+    @State private var isShowAlert = false
 
     @Namespace var animation
 
@@ -35,15 +35,12 @@ struct CreateChannelView: View {
 
     @Environment(\.self) var env
 
+    // MARK: - body
     var body: some View {
         ZStack {
 
-            LinearGradient(colors: [
-                Color("Gradient1"),
-                Color("Gradient2"),
-                Color("Gradient3")
-            ], startPoint: .topLeading, endPoint: .bottomTrailing)
-            .ignoresSafeArea()
+            Color.mainGradient
+                .ignoresSafeArea()
 
             VStack {
 
@@ -52,7 +49,7 @@ struct CreateChannelView: View {
 
                 ZStack(alignment: .top) {
 
-                    Color("BG")
+                    Color.background
                         .cornerRadius(30, corners: [.topLeft, .topRight])
                         .offset(x: 0, y: 50)
 
@@ -84,7 +81,8 @@ struct CreateChannelView: View {
         .navigationBarHidden(true)
     }
 
-    @ViewBuilder var changeChannelImageView: some View {
+    // MARK: - viewBuilders
+    @ViewBuilder private var changeChannelImageView: some View {
         Button {
             isShowingImagePicker.toggle()
         } label: {
@@ -105,7 +103,7 @@ struct CreateChannelView: View {
         .frame(width: 100, height: 100)
     }
 
-    @ViewBuilder var emptyImage: some View {
+    @ViewBuilder private var emptyImage: some View {
         Image(systemName: "photo.circle.fill")
             .resizable()
             .frame(width: channelImageSize, height: channelImageSize)
@@ -115,7 +113,7 @@ struct CreateChannelView: View {
             .addLightShadow()
     }
 
-    @ViewBuilder var channelNameTextField: some View {
+    @ViewBuilder private var channelNameTextField: some View {
         Label {
             TextField("Enter name of your channel", text: $name)
         } icon: {
@@ -133,7 +131,7 @@ struct CreateChannelView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var channelDescriptionTextField: some View {
+    @ViewBuilder private var channelDescriptionTextField: some View {
         Label {
             TextField("Describe your channel", text: $description)
         } icon: {
@@ -150,7 +148,7 @@ struct CreateChannelView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var channelCustomTabBar: some View {
+    @ViewBuilder private var channelCustomTabBar: some View {
         HStack(spacing: 0) {
             ForEach([ChannelType.publicType, ChannelType.privateType], id: (\.self)) { type in
                 Text(type.rawValue.capitalized)
@@ -163,11 +161,7 @@ struct CreateChannelView: View {
                         if channelViewModel.channelType == type {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
                                 .fill(
-                                    LinearGradient(colors: [
-                                        Color("Gradient1"),
-                                        Color("Gradient2"),
-                                        Color("Gradient3")
-                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                    Color.mainGradient
                                 )
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }
@@ -187,7 +181,7 @@ struct CreateChannelView: View {
         }
     }
 
-    @ViewBuilder var createChannelButton: some View {
+    @ViewBuilder private var createChannelButton: some View {
         Button {
             name = name.trim()
             description = description.trim()
@@ -204,8 +198,10 @@ struct CreateChannelView: View {
             channelViewModel.createChannel( name: self.name,
                                             description: self.description) { channel in
 
-                    imageViewModel.saveImage(image: self.channelImage ?? UIImage(),
-                                             imageName: channel.id ?? "some Id")
+                imageViewModel.saveChannelImage(image: self.channelImage ?? UIImage(),
+                                                channelId: channel.id ?? "some Id") { _ in
+
+                }
                 if channelImage != nil {
                     channelViewModel.saveImageLocally(image: self.channelImage ?? UIImage(),
                                                       imageName: channel.id ?? "someId")
@@ -219,7 +215,7 @@ struct CreateChannelView: View {
         .opacity(name.isValidateLengthOfName() ? 1 : 0.6)
     }
 
-    @ViewBuilder var customAlert: some View {
+    @ViewBuilder private var customAlert: some View {
         if isShowAlert {
             GeometryReader { geometry in
                 CustomAlert(show: $isShowAlert, text: name.count > 3 ?

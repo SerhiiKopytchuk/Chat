@@ -15,7 +15,7 @@ class ChattingViewModel: ObservableObject {
 
     // MARK: - vars
 
-    @Published var user: User = User()
+    @Published var currentUser: User = User()
     @Published var secondUser = User()
     @Published var currentChat: Chat = Chat()
 
@@ -29,7 +29,7 @@ class ChattingViewModel: ObservableObject {
         DispatchQueue.global(qos: .userInteractive).sync {
             self.dataBase.collection("chats")
             .whereField("user1Id", isEqualTo: secondUser.id)
-            .whereField("user2Id", isEqualTo: self.user.id)
+            .whereField("user2Id", isEqualTo: self.currentUser.id)
             .queryToChat { chat in
                 self.currentChat = chat
                 competition(chat)
@@ -38,7 +38,7 @@ class ChattingViewModel: ObservableObject {
 
             self.dataBase.collection("chats")
             .whereField("user2Id", isEqualTo: secondUser.id)
-            .whereField("user1Id", isEqualTo: self.user.id)
+            .whereField("user1Id", isEqualTo: self.currentUser.id)
             .queryToChat { chat in
                 self.currentChat = chat
                 competition(chat)
@@ -91,7 +91,7 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
 
-        let newChat = Chat(user1Id: user.id,
+        let newChat = Chat(user1Id: currentUser.id,
                            user2Id: secondUser.id,
                            lastActivityTimestamp: Date())
 
@@ -99,44 +99,51 @@ class ChattingViewModel: ObservableObject {
 
         getCurrentChat(secondUser: secondUser) { chat in
             self.addChatsIdToUsers()
-            self.changeLastMessageTime()
+            self.changeLastActivityTimestamp()
             competition(chat)
         } failure: { _ in }
 
     }
 
     fileprivate func addChatsIdToUsers() {
-        dataBase.collection("users").document(user.id)
+        dataBase.collection("users").document(currentUser.id)
             .updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
         dataBase.collection("users").document(secondUser.id)
             .updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
 
     }
 
-    private func changeLastMessageTime() {
+    private func changeLastActivityTimestamp() {
         dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
     }
 
+    func changeLastActivityAndSortChats() {
+        for index in self.chats.indices {
+            if chats[index].id == self.currentChat.id {
+                chats[index].lastActivityTimestamp = Date()
+                break
+            }
+        }
+        sortChats()
+    }
+
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
-        withAnimation {
-            self.chats = []
+        withAnimation(.easeInOut.delay(0.5)) {
 
             if chatsId.isEmpty {
-                for chatId in user.chats {
+                self.chats = []
+                for chatId in currentUser.chats {
                     dataBase.collection("chats").document(chatId)
                         .toChat { chat in
                             self.chats.append(chat)
                             self.sortChats()
                         }
                 }
-
             } else {
-                for chatId in chatsId {
-                    dataBase.collection("chats").document(chatId)
-                        .toChat { chat in
-                            self.chats.append(chat)
-                            self.sortChats()
-                        }
+                if chatsId.count > chats.count {
+                    addChats(chatsId: chatsId)
+                } else {
+                    removeChats(chatsId: chatsId)
                 }
             }
 
@@ -148,13 +155,35 @@ class ChattingViewModel: ObservableObject {
         }
     }
 
+    private func addChats(chatsId: [String]) {
+        for chatId in chatsId {
+            if !currentUser.chats.contains(chatId) {
+                dataBase.collection("chats").document(chatId)
+                    .toChat { chat in
+                        self.chats.append(chat)
+                        self.currentUser.chats.append(chat.id ?? "some chat id")
+                        self.sortChats()
+                    }
+            }
+        }
+    }
+
+    private func removeChats(chatsId: [String]) {
+        for chat in chats {
+            if !chatsId.contains(chat.id ?? "some id") {
+                self.chats = chats.filter({ $0.id != chat.id})
+                self.currentUser.chats = currentUser.chats.filter({ $0 != chat.id})
+            }
+        }
+    }
+
     func sortChats() {
         self.chats.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
     }
 
     fileprivate func updateChats() {
         DispatchQueue.main.async {
-            self.dataBase.collection("users").document(self.user.id)
+            self.dataBase.collection("users").document(self.currentUser.id)
                 .addSnapshotListener { document, error in
                     if self.isError(error: error) { return }
 
@@ -196,7 +225,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     func clearDataBeforeSingIn() {
-        self.user = User()
+        self.currentUser = User()
         self.secondUser = User()
         self.chats = []
     }

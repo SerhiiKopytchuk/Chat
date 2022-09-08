@@ -10,24 +10,27 @@ import FirebaseStorage
 import SDWebImageSwiftUI
 
 struct RemoveUsersFromChannelListRow: View {
+    // MARK: - vars
     var user: String
     var userGmail: String
     var id: String
     var color: String
 
-    var imageSize: CGFloat = 40
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
 
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
+    // MARK: image properties
+    private let imageSize: CGFloat = 40
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
-
+    // MARK: - body
     var body: some View {
         HStack {
 
             userImage
 
+            // MARK: user name and gmail
             VStack(alignment: .leading) {
                 Text(user)
                     .font(.title2)
@@ -40,43 +43,20 @@ struct RemoveUsersFromChannelListRow: View {
             }
 
             Spacer()
-            Image(systemName: "minus")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 30)
-                .foregroundColor(.blue.opacity(0.7))
-                .addLightShadow()
-                .padding()
-                .onTapGesture {
-                    editChannelViewModel.removeChannelFromSubscriptionsWithCertainUser(id: self.id)
-                    withAnimation {
-                        editChannelViewModel.removeUserFromSubscribersList(id: self.id)
-                    }
-                    editChannelViewModel.getChannelSubscribers()
-
-                    self.updateChannelViewModel()
-                }
+            removeUserButton
         }
         .background {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
                 .fill(.white)
         }
         .onAppear {
-            let ref = Storage.storage().reference(withPath: self.id )
-            ref.downloadURL { url, err in
-                if err != nil {
-                    self.isFindUserImage = false
-                    return
-                }
-                withAnimation(.easeInOut) {
-                    self.imageUrl = url
-                }
-            }
-
+            imageStartSetup()
         }
     }
 
-    @ViewBuilder var userImage: some View {
+    // MARK: - viewBuilders
+
+    @ViewBuilder private var userImage: some View {
         if isFindUserImage {
             WebImage(url: imageUrl)
                 .resizable()
@@ -91,18 +71,43 @@ struct RemoveUsersFromChannelListRow: View {
         }
     }
 
+    @ViewBuilder private var removeUserButton: some View {
+        Button {
+            editChannelViewModel.removeChannelFromSubscriptionsWithCertainUser(id: self.id)
+            withAnimation {
+                editChannelViewModel.removeUserFromSubscribersList(id: self.id)
+            }
+            editChannelViewModel.getChannelSubscribers()
+
+            self.updateChannelViewModel()
+        } label: {
+            Image(systemName: "minus")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30)
+                .foregroundColor(.blue.opacity(0.7))
+                .addLightShadow()
+                .padding()
+        }
+    }
+
+    // MARK: - functions
+
+    private func imageStartSetup() {
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: id)
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.imageUrl = url
+            }
+        }
+    }
+
     private func updateChannelViewModel() {
         channelViewModel.currentChannel = editChannelViewModel.currentChannel
         channelViewModel.channelSubscribers = editChannelViewModel.channelSubscribers
-    }
-}
-
-struct RemoveUsersFromChannelListRow_Previews: PreviewProvider {
-    static var previews: some View {
-        RemoveUsersFromChannelListRow(user: "Koch",
-                                userGmail: "koch@gmail.com",
-                                id: "someId",
-                                color: String.getRandomColorFromAssets()
-        )
     }
 }

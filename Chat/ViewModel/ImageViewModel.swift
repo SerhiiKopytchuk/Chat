@@ -11,6 +11,7 @@ import FirebaseStorage
 import FirebaseAuth
 import FirebaseFirestore
 import SDWebImageSwiftUI
+import SwiftUI
 
 class ImageViewModel: ObservableObject {
 
@@ -19,29 +20,42 @@ class ImageViewModel: ObservableObject {
 
     let dataBase = Firestore.firestore()
 
-    func saveImage(image: UIImage, imageName: String) {
-        guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
-        let ref = Storage.storage().reference(withPath: imageName)
+    func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        let imageId = UUID().uuidString
+        let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chatId, imageId: imageId)
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(message: "failed to save image", err: error) { return }
-            ref.downloadURL { url, error in
-                if self.isError(message: "failed to retrieve downloadURL:", err: error) { return }
-                self.imageURL = url?.absoluteString ?? ""
-
-            }
+            id(imageId)
         }
     }
 
-    func getImage(imageName: String, competition: @escaping (UIImage) -> Void) {
-        let ref = Storage.storage().reference(withPath: imageName)
-        ref.getData(maxSize: (1 * 1024 * 1024)) { data, err in
-            if self.isError(message: "Failed to download image: ", err: err) { return }
+    func saveProfileImage(image: UIImage, userId: String) {
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userId)
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(message: "failed to save image", err: error) { return }
+        }
+    }
 
-            if let imageData = data {
-                let image = UIImage(data: imageData)
-                competition(image ?? UIImage())
-            }
+    func saveChannelMessageImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        let imageId = UUID().uuidString
+        let ref = StorageReferencesManager.shared
+            .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(message: "failed to save image", err: error) { return }
+            id(imageId)
+        }
+    }
 
+    func saveChannelImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
+        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        let imageId = UUID().uuidString
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channelId)
+        ref.putData(imageData, metadata: nil) { _, error in
+            if self.isError(message: "failed to save image", err: error) { return }
+            id(imageId)
         }
     }
 

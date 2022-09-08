@@ -12,28 +12,30 @@ import FirebaseAuth
 import SDWebImageSwiftUI
 
 struct ChannelListRow: View {
-
-    @EnvironmentObject var userViewModel: UserViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    // MARK: - vars
+    @EnvironmentObject private var userViewModel: UserViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     @State var channel: Channel
-    @State var imageUrl = URL(string: "")
-    @State var isFindChannelImage = true
-    @State var countOfMessages = 0
-    @State var isShowImage = false
 
-    @ObservedObject var channelMessagingViewModel = ChannelMessagingViewModel()
+    @State private var countOfMessages = 0
 
-    let formater = DateFormatter()
+    // MARK: messages properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindChannelImage = true
+    @State private var isShowImage = false
+    private let imageSize: CGFloat = 50
+
+    @ObservedObject private var channelMessagingViewModel = ChannelMessagingViewModel()
 
     let rowTapped: () -> Void
 
-    let imageSize: CGFloat = 50
-
+    // MARK: - body
     var body: some View {
         HStack {
             channelImage
 
+            // MARK: name and description of channel
             VStack(alignment: .leading) {
                 Text(channel.name )
                     .font(.title3)
@@ -43,6 +45,7 @@ struct ChannelListRow: View {
                     .font(.caption)
                     .italic()
                     .foregroundColor(.secondary)
+                    .lineLimit(2)
             }
             Spacer()
 
@@ -61,40 +64,10 @@ struct ChannelListRow: View {
             rowTapped()
         }
         .contextMenu(menuItems: {
-            Button(role: .destructive) {
-                channelViewModel.currentChannel = self.channel
-
-                if channel.ownerId == userViewModel.currentUser.id {
-                    channelViewModel.deleteChannel()
-                } else {
-                    channelViewModel.removeChannelFromUserSubscriptions(id: self.channelViewModel.currentUser.id)
-                }
-
-            } label: {
-                if channel.ownerId == userViewModel.currentUser.id {
-                    Label("delete channel", systemImage: "delete.left")
-                } else {
-                    Label("unsubscribe", systemImage: "delete.left")
-                }
-            }
+            contextButton
         })
         .onAppear {
-            DispatchQueue.main.async {
-                let ref = Storage.storage().reference(withPath: self.channel.id ?? "SomeId")
-                ref.downloadURL { url, err in
-                    if err != nil {
-                        self.isFindChannelImage = false
-                        withAnimation(.easeInOut) {
-                            self.isShowImage = true
-                        }
-                        return
-                    }
-                    withAnimation(.easeInOut) {
-                        self.imageUrl = url
-                        self.isShowImage = true
-                    }
-                }
-            }
+            imageSetup()
 
             channelMessagingViewModel.currentChannel = self.channel
 
@@ -104,7 +77,8 @@ struct ChannelListRow: View {
         }
     }
 
-    @ViewBuilder var channelImage: some View {
+    // MARK: - viewBuilders
+    @ViewBuilder private var channelImage: some View {
         if channel.id == channelViewModel.lastCreatedChannelId && channelViewModel.isSavedImage {
             Image(uiImage: channelViewModel.createdChannelImage ?? UIImage())
                 .resizable()
@@ -133,6 +107,45 @@ struct ChannelListRow: View {
                 .padding(5)
                 .padding(.trailing)
 
+        }
+    }
+
+    @ViewBuilder private var contextButton: some View {
+        Button(role: .destructive) {
+            channelViewModel.currentChannel = self.channel
+
+            if channel.ownerId == userViewModel.currentUser.id {
+                channelViewModel.deleteChannel()
+            } else {
+                channelViewModel.removeChannelFromUserSubscriptions(id: self.channelViewModel.currentUser.id)
+            }
+
+        } label: {
+            if channel.ownerId == userViewModel.currentUser.id {
+                Label("delete channel", systemImage: "delete.left")
+            } else {
+                Label("unsubscribe", systemImage: "delete.left")
+            }
+        }
+    }
+
+    // MARK: - functions
+    private func imageSetup() {
+        DispatchQueue.main.async {
+            let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "some id")
+            ref.downloadURL { url, err in
+                if err != nil {
+                    self.isFindChannelImage = false
+                    withAnimation(.easeInOut) {
+                        self.isShowImage = true
+                    }
+                    return
+                }
+                withAnimation(.easeInOut) {
+                    self.imageUrl = url
+                    self.isShowImage = true
+                }
+            }
         }
     }
 }

@@ -13,25 +13,26 @@ struct SignInView: View {
 
     // MARK: - vars
 
-    @State var email: String = ""
-    @State var password: String = ""
+    @State private var email: String = ""
+    @State private var password: String = ""
 
-    @State var isButtonDisabled: Bool = true
-    @State var isShowingPassword: Bool = false
-    @State var canLoginUser = false
-    @State var isShowAlert = false
-    @State var alertText = ""
+    @State private var isButtonDisabled: Bool = true
+    @State private var isShowingPassword: Bool = false
+    @State private var canLoginUser = false
+    @State private var isShowAlert = false
+    @State private var alertText = ""
 
-    @ObservedObject var imageViewModel = EditProfileViewModel()
+    @ObservedObject private var imageViewModel = EditProfileViewModel()
 
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     // MARK: - body
     var body: some View {
             ZStack {
                 VStack(spacing: 30) {
+
                     Text("Sign In")
                         .font(.system(.largeTitle, design: .rounded))
                         .fontWeight(.bold)
@@ -41,6 +42,7 @@ struct SignInView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     inputFields
+
                     VStack {
 
                         signInButton
@@ -63,6 +65,7 @@ struct SignInView: View {
                             .padding(.top, 50)
 
                     }
+
                     Spacer()
 
                 }
@@ -72,20 +75,7 @@ struct SignInView: View {
                 }
 
                 if isShowAlert || viewModel.showAlert {
-                    GeometryReader { geometry in
-                        if viewModel.showAlert {
-                            CustomAlert(show: $isShowAlert, text: viewModel.alertText)
-                                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                                .frame(maxWidth: geometry.frame(in: .local).width - 20)
-                        } else {
-                            CustomAlert(show: $isShowAlert, text: alertText)
-                                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                                .frame(maxWidth: geometry.frame(in: .local).width - 20)
-                        }
-
-                    }.background(Color.white.opacity(0.65))
-                        .edgesIgnoringSafeArea(.all)
-
+                    customAlert
                 }
 
                 if viewModel.isShowLoader {
@@ -98,12 +88,11 @@ struct SignInView: View {
                 }
 
             }
-
     }
 
     // MARK: - ViewBuilders
 
-    @ViewBuilder var inputFields: some View {
+    @ViewBuilder private var inputFields: some View {
         VStack {
             Group {
                 HStack {
@@ -161,7 +150,7 @@ struct SignInView: View {
         }
     }
 
-    @ViewBuilder var signInButton: some View {
+    @ViewBuilder private var signInButton: some View {
         Button {
             // how to automatically change prop
             if isButtonDisabled {
@@ -174,7 +163,7 @@ struct SignInView: View {
                 clearPreviousDataBeforeSignIn()
 
                 viewModel.signIn(email: self.email, password: self.password) { user in
-                    chattingViewModel.user = user
+                    chattingViewModel.currentUser = user
                     chattingViewModel.getChats()
                     channelViewModel.currentUser = user
                     channelViewModel.getChannels()
@@ -191,7 +180,23 @@ struct SignInView: View {
 
     }
 
-    var googleButton: some View {
+    @ViewBuilder private var customAlert: some View {
+        GeometryReader { geometry in
+            if viewModel.showAlert {
+                CustomAlert(show: $isShowAlert, text: viewModel.alertText)
+                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            } else {
+                CustomAlert(show: $isShowAlert, text: alertText)
+                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            }
+
+        }.background(Color.white.opacity(0.65))
+            .edgesIgnoringSafeArea(.all)
+    }
+
+    @ViewBuilder private var googleButton: some View {
         Button {
             // handle singin
 
@@ -219,7 +224,7 @@ struct SignInView: View {
                 self.clearPreviousDataBeforeSignIn()
 
                 viewModel.signIn(credential: credential) { user in
-                    chattingViewModel.user = user
+                    chattingViewModel.currentUser = user
                     chattingViewModel.getChats()
                     channelViewModel.currentUser = user
                     channelViewModel.getChannels()

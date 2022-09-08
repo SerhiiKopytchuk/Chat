@@ -6,6 +6,8 @@
 //
 
 import XCTest
+import Foundation
+import SwiftUI
 
 class ChatUITests: XCTestCase {
 
@@ -21,6 +23,9 @@ class ChatUITests: XCTestCase {
 //        // Put teardown code here. This method is called after the invocation of each test method in the class.
 //    }
 
+    // start on Ben account, Anna account is exist
+    // there is no channels. Without chat Ben with Anna
+
     let channelName = "testChannel"
     let channelDescription = "testChannelDescription"
     let channelNameEdited = "testChannelEdited"
@@ -28,7 +33,17 @@ class ChatUITests: XCTestCase {
     let notExistsPredicate = NSPredicate(format: "exists == false")
     let existsPredicate = NSPredicate(format: "exists == true")
 
-    func test01CreatingChannel() throws {
+    // swiftlint:disable:next identifier_name
+    let AnnaAccountEmail = "Anna@gmail.com"
+    // swiftlint:disable:next identifier_name
+    let AnnaAccountPassword = "asdfjkl;"
+
+    // swiftlint:disable:next identifier_name
+    let BennAccountEmail = "Ben@gmail.com"
+    // swiftlint:disable:next identifier_name
+    let BennAccountPassword = "asdfjkl;"
+
+    func test001CreatingChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -51,7 +66,7 @@ class ChatUITests: XCTestCase {
         XCTAssert(app.scrollViews.staticTexts[channelName].exists)
     }
 
-    func test02SubscribeAnnaToChannel() throws {
+    func test002SubscribeAnnaToChannel() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -77,7 +92,7 @@ class ChatUITests: XCTestCase {
         XCTAssert(app.scrollViews.staticTexts["Anna"].exists)
     }
 
-    func test03UnsubscribeAnnaFromChannel() throws {
+    func test003UnsubscribeAnnaFromChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -94,7 +109,7 @@ class ChatUITests: XCTestCase {
 
         app.images["Remove"].tap()
 
-        app.scrollViews.otherElements.images["Remove"].tap()
+        app.scrollViews.otherElements.buttons["Remove"].tap()
 
         app.buttons["arrow.backward.circle.fill"].tap()
         sleep(1)
@@ -104,7 +119,7 @@ class ChatUITests: XCTestCase {
         XCTAssert(subscribersCount != subscribersCountAfter)
     }
 
-    func test04EditingChannel() throws {
+    func test004EditingChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -138,7 +153,7 @@ class ChatUITests: XCTestCase {
         wait(for: [editedChannelNameExpectation, editedChannelDescriptionExpectation], timeout: 5)
     }
 
-    func test05DeletingChannel() throws {
+    func test005DeletingChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -158,7 +173,7 @@ class ChatUITests: XCTestCase {
         XCTAssert(!app.scrollViews.staticTexts[channelNameEdited].exists)
     }
 
-    func test06CreateSeveralChannels() throws {
+    func test006CreateSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -196,7 +211,7 @@ class ChatUITests: XCTestCase {
         sleep(1)
     }
 
-    func test07DeleteSeveralChannels() throws {
+    func test007DeleteSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -226,7 +241,7 @@ class ChatUITests: XCTestCase {
         app.buttons["delete channel"].tap()
     }
 
-    func test08StartChatWithAnna() throws {
+    func test008StartChatWithAnna() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -252,7 +267,159 @@ class ChatUITests: XCTestCase {
         wait(for: [chatAnnaExpectation], timeout: 5)
     }
 
-    func test09DeleteChatWithAnna() throws {
+    func test009SendAnnaMessage() throws {
+
+        let app = XCUIApplication()
+        let message = "Hello Anna!"
+        app.launch()
+
+        app.scrollViews.staticTexts["Anna"].tap()
+        sleep(1)
+
+        app.textViews.firstMatch.tap()
+        app.textViews.firstMatch.typeText(message)
+
+        app.buttons["Send"].tap()
+
+        let sendMessage = app.scrollViews.staticTexts[message]
+        let sendMessageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendMessage)
+
+        wait(for: [sendMessageExpectation], timeout: 5)
+    }
+
+    func test010SendAnnaImage() throws {
+
+        let app = XCUIApplication()
+        app.launch()
+
+        app.scrollViews.staticTexts["Anna"].tap()
+        sleep(1)
+
+        app.buttons["Photo"].tap()
+        app.images["Фото, 09 серпня, 5:08 пп"].tap()
+
+        let sendImage = app.scrollViews.firstMatch.otherElements["image"]
+        let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
+
+        wait(for: [imageExpectation], timeout: 5)
+    }
+
+    func test011LogoutTest() throws {
+
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.buttons["Logout"].tap()
+        sleep(1)
+
+        let signUpText = app.staticTexts["Sign Up"]
+        let signUpTextExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: signUpText)
+
+        wait(for: [signUpTextExpectation], timeout: 5)
+    }
+
+    func test012SignInToAnnaAccount() throws {
+
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["Sign In"].tap()
+        sleep(1)
+
+        app.textFields["Email"].tap()
+        app.textFields["Email"].typeText(AnnaAccountEmail)
+
+        app.secureTextFields["Password"].tap()
+        app.secureTextFields["Password"].typeText(AnnaAccountPassword)
+
+        app.buttons["Sign in"].tap()
+        sleep(1)
+
+        let bySerhiiKopytchukText = app.staticTexts["Chats"]
+        let bySerhiiKopytchukTextExpectation = XCTNSPredicateExpectation(predicate: existsPredicate,
+                                                                         object: bySerhiiKopytchukText)
+
+        wait(for: [bySerhiiKopytchukTextExpectation], timeout: 5)
+    }
+
+    func test013CheckIfReceiveMessage() throws {
+
+        let app = XCUIApplication()
+        let message = "Hello Anna!"
+        app.launch()
+
+        app.scrollViews.staticTexts["Benn"].tap()
+        sleep(1)
+
+        let sendMessage = app.scrollViews.staticTexts[message]
+        let sendMessageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendMessage)
+
+        let sendImage = app.scrollViews.firstMatch.otherElements.otherElements.firstMatch
+        let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
+
+        wait(for: [sendMessageExpectation, imageExpectation], timeout: 5)
+    }
+
+    func test014AddEmojiReactionTest() throws {
+
+        let app = XCUIApplication()
+        let message = "Hello Anna!"
+        app.launch()
+
+        app.scrollViews.staticTexts["Benn"].tap()
+        sleep(1)
+
+        app.scrollViews.staticTexts[message].press(forDuration: 1)
+        sleep(1)
+
+        app.staticTexts["🔥"].firstMatch.tap()
+        let emojiReaction = app.scrollViews.staticTexts["🔥"]
+        let emojiReactionExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: emojiReaction)
+
+        wait(for: [emojiReactionExpectation], timeout: 5)
+    }
+
+    func test015SignInToBennAccount() throws {
+
+        let app = XCUIApplication()
+        app.launch()
+
+        logOut(app: app)
+
+        app.buttons["Sign In"].tap()
+        sleep(1)
+
+        app.textFields["Email"].tap()
+        app.textFields["Email"].typeText(BennAccountEmail)
+
+        app.secureTextFields["Password"].tap()
+        app.secureTextFields["Password"].typeText(BennAccountPassword)
+
+        app.buttons["Sign in"].tap()
+        sleep(2)
+
+        app.scrollViews.staticTexts["Anna"].tap()
+        sleep(1)
+
+        let emojiReaction = app.scrollViews.staticTexts["🔥"]
+        let emojiReactionExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: emojiReaction)
+
+        wait(for: [emojiReactionExpectation], timeout: 5)
+    }
+
+    private func logOut(app: XCUIApplication) {
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.buttons["Logout"].tap()
+        sleep(1)
+    }
+
+    func test016DeleteChatWithAnna() throws {
         let app = XCUIApplication()
         app.launch()
         sleep(1)
