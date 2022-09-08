@@ -11,27 +11,30 @@ import SDWebImageSwiftUI
 
 struct MessageBubble: View {
 
+    // MARK: - vars
     @State var message: Message
     @Binding var showHighlight: Bool
     @Binding var highlightedMessage: Message?
     @State var showEmojiBarView = false
-    @State var imageUrl = URL(string: "")
+    @State private var imageUrl = URL(string: "")
 
     @State var isFindImage = false
-    @State var imageHeight: CGFloat = 0
-    @State var imageWight: CGFloat = 0
+    @State private var imageHeight: CGFloat = 0
+    @State private var imageWight: CGFloat = 0
 
     var isChat: Bool = true
 
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var messagingViewModel: MessagingViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
 
+    // MARK: - Body
     var body: some View {
         VStack(alignment: message.isReply() ? .trailing : .leading) {
 
             addedEmojiView
 
+            // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
                 if message.imageId == "" {
                     Text(message.text)
@@ -53,16 +56,13 @@ struct MessageBubble: View {
         .padding(message.isReply() ? .trailing : .leading, 60)
         .padding(.horizontal, 10)
         .onAppear {
-            messagingViewModel.addSnapshotListenerToMessage(messageId: message.id ?? "someId") { message in
-                withAnimation(.easeInOut) {
-                    self.message = message
-                }
-            }
+            addMessageSnapshotListener()
         }
         .onTapGesture { }
     }
 
-    @ViewBuilder var imageView: some View {
+    // MARK: - viewBuilders
+    @ViewBuilder private var imageView: some View {
         VStack {
             if isFindImage {
                 WebImage(url: imageUrl, isAnimating: .constant(true))
@@ -84,7 +84,7 @@ struct MessageBubble: View {
         }
     }
 
-    @ViewBuilder var addedEmojiView: some View {
+    @ViewBuilder private var addedEmojiView: some View {
         if message.isEmojiAdded() {
             AnimatedEmoji(emoji: message.emojiValue, color: message.isReply() ? Color("Gray") : .blue)
                 .offset(x: message.isReply() ? 15 : -15)
@@ -101,7 +101,7 @@ struct MessageBubble: View {
         }
     }
 
-    @ViewBuilder var emojiBarView: some View {
+    @ViewBuilder private var emojiBarView: some View {
         if showEmojiBarView {
             EmojiView(hideView: $showHighlight, message: message) { emoji in
 
@@ -119,7 +119,8 @@ struct MessageBubble: View {
         }
     }
 
-    func imageSetup() {
+    // MARK: - functions
+    private func imageSetup() {
 
         let imageId: String = message.imageId ?? "imageId"
         var chatId: String = ""
@@ -142,6 +143,14 @@ struct MessageBubble: View {
                 self.imageUrl = url
             withAnimation {
                 self.isFindImage = true
+            }
+        }
+    }
+
+    private func addMessageSnapshotListener() {
+        messagingViewModel.addSnapshotListenerToMessage(messageId: message.id ?? "someId") { message in
+            withAnimation(.easeInOut) {
+                self.message = message
             }
         }
     }

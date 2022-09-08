@@ -13,31 +13,31 @@ struct ChannelConversationView: View {
     // MARK: - vars
     @State var currentUser: User
 
-    @Namespace var animation
+    @Namespace private var animation
     @Environment(\.self) var env
 
-    @State var isExpandedProfile: Bool = false
-    @State var channelImage: WebImage = WebImage(url: URL(string: ""))
-    @State var loadExpandedContent = false
-    @State var imageOffset: CGSize = .zero
-    @State var isExpandedDetails = false
-    @State var isGoToAddSubscribers = false
-    @State var isGoToRemoveSubscribers = false
-    @State var isGoToEditChannel = false
+    @State private var isExpandedProfile: Bool = false
+    @State private var channelImage: WebImage = WebImage(url: URL(string: ""))
+    @State private var loadExpandedContent = false
+    @State private var imageOffset: CGSize = .zero
+    @State private var isExpandedDetails = false
+    @State private var isGoToAddSubscribers = false
+    @State private var isGoToRemoveSubscribers = false
+    @State private var isGoToEditChannel = false
 
-    @State var showHighlight: Bool = false
-    @State var highlightMessage: Message?
+    @State private var showHighlight: Bool = false
+    @State private var highlightMessage: Message?
 
     @Binding var isSubscribed: Bool
 
-    @State var showingAlertOwner = false
-    @State var showingAlertSubscriber = false
+    @State private var showingAlertOwner = false
+    @State private var showingAlertSubscriber = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
 
     // MARK: - body
 
@@ -61,6 +61,11 @@ struct ChannelConversationView: View {
             expandedDetails
 
             messagesScrollView
+                .frame(maxWidth: .infinity)
+                .background {
+                    Color.background
+                        .ignoresSafeArea()
+                }
 
             VStack(spacing: 0) {
                 if isSubscribed {
@@ -112,7 +117,7 @@ struct ChannelConversationView: View {
 
     // MARK: - viewBuilders
 
-    @ViewBuilder var expandedDetails: some View {
+    @ViewBuilder private var expandedDetails: some View {
         if isExpandedDetails {
             VStack(alignment: .leading) {
                 ownerTitle
@@ -136,7 +141,7 @@ struct ChannelConversationView: View {
         }
     }
 
-    @ViewBuilder func expandedPhoto (image: WebImage ) -> some View {
+    @ViewBuilder private func expandedPhoto (image: WebImage ) -> some View {
         VStack {
             GeometryReader { proxy in
                 let size = proxy.size
@@ -190,7 +195,7 @@ struct ChannelConversationView: View {
         }
     }
 
-    @ViewBuilder var ownerTitle: some View {
+    @ViewBuilder private var ownerTitle: some View {
         HStack {
             Text("Owner: \(channelViewModel.currentChannel.ownerName)")
                 .font(.callout)
@@ -200,7 +205,7 @@ struct ChannelConversationView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var countOfSubscribersTitle: some View {
+    @ViewBuilder private var countOfSubscribersTitle: some View {
         HStack {
             Text("Subscribers: \(channelViewModel.currentChannel.subscribersId?.count ?? 0)")
                 .font(.callout)
@@ -210,7 +215,7 @@ struct ChannelConversationView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var addUsersToChannelButton: some View {
+    @ViewBuilder private var addUsersToChannelButton: some View {
         Image(systemName: "plus")
             .foregroundColor(.gray)
             .padding(10)
@@ -223,7 +228,7 @@ struct ChannelConversationView: View {
             }
     }
 
-    @ViewBuilder var unsubscribeUsersFromChannelButton: some View {
+    @ViewBuilder private var unsubscribeUsersFromChannelButton: some View {
         Image(systemName: "minus")
             .frame(height: 15)
             .foregroundColor(.gray)
@@ -238,7 +243,7 @@ struct ChannelConversationView: View {
             }
     }
 
-    @ViewBuilder var editChannelButton: some View {
+    @ViewBuilder private var editChannelButton: some View {
         Image(systemName: "pencil")
             .foregroundColor(.gray)
             .padding(10)
@@ -251,7 +256,7 @@ struct ChannelConversationView: View {
             }
     }
 
-    @ViewBuilder var removeOrDeleteChannelButton: some View {
+    @ViewBuilder private var removeOrDeleteChannelButton: some View {
         Image(systemName: "xmark")
             .foregroundColor(.gray)
             .padding(10)
@@ -267,7 +272,7 @@ struct ChannelConversationView: View {
             }
     }
 
-    @ViewBuilder var messagesScrollView: some View {
+    @ViewBuilder private var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 VStack {
@@ -303,7 +308,7 @@ struct ChannelConversationView: View {
         .ignoresSafeArea()
     }
 
-    @ViewBuilder var messagingTextField: some View {
+    @ViewBuilder private var messagingTextField: some View {
         if !isExpandedDetails {
             if currentUser.id == channelViewModel.currentChannel.ownerId {
                 ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
@@ -312,7 +317,7 @@ struct ChannelConversationView: View {
         }
     }
 
-    @ViewBuilder var subscribeButton: some View {
+    @ViewBuilder private var subscribeButton: some View {
         Button {
             channelViewModel.subscribeToChannel()
             withAnimation {
@@ -329,7 +334,7 @@ struct ChannelConversationView: View {
         }
     }
 
-    var turnOffImageButton: some View {
+    @ViewBuilder private var turnOffImageButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.3)) {
                 loadExpandedContent = false
@@ -345,7 +350,7 @@ struct ChannelConversationView: View {
         }
     }
 
-    @ViewBuilder var navigationLinks: some View {
+    @ViewBuilder private var navigationLinks: some View {
         NavigationLink(isActive: $isGoToAddSubscribers, destination: {
             AddUserToChannelView()
                 .environmentObject(viewModel)
@@ -374,11 +379,11 @@ struct ChannelConversationView: View {
 
     // MARK: - functions
 
-    func isOwner() -> Bool {
+    private func isOwner() -> Bool {
         return currentUser.id == channelViewModel.currentChannel.ownerId
     }
 
-    func turnOffImageView() {
+    private func turnOffImageView() {
         withAnimation(.easeInOut(duration: 0.3)) {
             loadExpandedContent = false
         }
@@ -392,7 +397,7 @@ struct ChannelConversationView: View {
         }
     }
 
-    func imageOffsetProgress() -> CGFloat {
+    private func imageOffsetProgress() -> CGFloat {
         let progress = imageOffset.height / 100
         if imageOffset.height < 0 {
             return 1

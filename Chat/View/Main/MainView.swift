@@ -10,6 +10,7 @@ import Firebase
 
 struct MainView: View {
 
+    // MARK: - vars
     @State private var isShowingSideMenu = false
     @State private var showSearchUsers = false
 
@@ -20,6 +21,7 @@ struct MainView: View {
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
 
+    // MARK: - body
     var body: some View {
         ZStack {
             if isShowingSideMenu {

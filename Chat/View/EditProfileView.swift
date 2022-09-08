@@ -11,32 +11,30 @@ import FirebaseStorage
 import UIKit
 
 struct EditProfileView: View {
+    // MARK: - vars
+    @State private var profileImage: UIImage?
+    @State private var isShowingImagePicker = false
+    @State private var newName: String = ""
 
-    @State var profileImage: UIImage?
-    @State var isShowingImagePicker = false
-    @State var newName: String = ""
+    // MARK: image properties
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    @State private var isChangedImage = false
+    private let imageSize: CGFloat = 100
 
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
-    @State var isChangedImage = false
+    @State private var isShowAlert = false
 
-    @State var isShowAlert = false
-
-    let imageSize: CGFloat = 100
-
-    @EnvironmentObject var userViewModel: UserViewModel
-    @ObservedObject var editProfileViewModel = EditProfileViewModel()
-    @ObservedObject var imageViewModel = ImageViewModel()
+    @EnvironmentObject private var userViewModel: UserViewModel
+    @ObservedObject private var editProfileViewModel = EditProfileViewModel()
+    @ObservedObject private var imageViewModel = ImageViewModel()
 
     @Environment (\.self) var env
 
+    // MARK: - body
     var body: some View {
         ZStack {
 
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(
-                    Color.mainGradient
-                )
+            Color.mainGradient
                 .ignoresSafeArea()
 
             VStack {
@@ -76,7 +74,6 @@ struct EditProfileView: View {
             newName = userViewModel.currentUser.name
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
-            editProfileViewModel.user = self.userViewModel.currentUser
             imageViewModel.saveProfileImage(image: newImage, userId: editProfileViewModel.user.id)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
@@ -84,7 +81,8 @@ struct EditProfileView: View {
         }
     }
 
-    @ViewBuilder var changeProfileImageButton: some View {
+    // MARK: - ViewBuilders
+    @ViewBuilder private var changeProfileImageButton: some View {
         Button {
             isShowingImagePicker.toggle()
         } label: {
@@ -125,24 +123,11 @@ struct EditProfileView: View {
         }
         .frame(width: imageSize, height: imageSize)
         .onAppear {
-            imageSetup()
+            imageStartSetup()
         }
     }
 
-    private func imageSetup() {
-        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUser.id)
-        ref.downloadURL { url, err in
-            if err != nil {
-                self.isFindUserImage = false
-                return
-            }
-            withAnimation(.easeInOut) {
-                self.imageUrl = url
-            }
-        }
-    }
-
-    @ViewBuilder var userNameTextField: some View {
+    @ViewBuilder private var userNameTextField: some View {
         Label {
             TextField("Enter your new name", text: $newName)
                 .padding(.leading, 10)
@@ -159,7 +144,7 @@ struct EditProfileView: View {
         .padding()
     }
 
-    @ViewBuilder var saveButton: some View {
+    @ViewBuilder private var saveButton: some View {
         Button {
 
             if !newName.isValidateLengthOfName() {
@@ -179,7 +164,7 @@ struct EditProfileView: View {
         .disabled(newName != userViewModel.currentUser.name ? false : true)
     }
 
-    @ViewBuilder var customAlert: some View {
+    @ViewBuilder private var customAlert: some View {
         if isShowAlert {
             GeometryReader { geometry in
                 CustomAlert(show: $isShowAlert, text: newName.count > 3 ?
@@ -193,24 +178,25 @@ struct EditProfileView: View {
             .edgesIgnoringSafeArea(.all)
         }
     }
+
+    // MARK: - functions
+    private func imageStartSetup() {
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUser.id)
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.imageUrl = url
+            }
+        }
+    }
 }
 
 struct EditProfileView_Previews: PreviewProvider {
     static var previews: some View {
         EditProfileView()
             .environmentObject(UserViewModel())
-    }
-}
-
-extension View {
-    func underlineTextField(text: String, underlineOn: Int) -> some View {
-        self
-            .padding(.vertical, 10)
-            .overlay(
-                Rectangle()
-                    .frame(height: 2).padding(.top, 35)
-                    .foregroundColor(text.count >= underlineOn ? .orange : .black)
-            )
-            .padding(10)
     }
 }

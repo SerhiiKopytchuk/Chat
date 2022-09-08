@@ -10,62 +10,53 @@ import FirebaseStorage
 import FirebaseAuth
 import SDWebImageSwiftUI
 struct SideMenuHeaderView: View {
-
+    // MARK: - vars
     @Binding var isShowingSideMenu: Bool
-    @EnvironmentObject var viewModel: UserViewModel
-    @State var user: User = User()
-    @State var myImageUrl = URL(string: "")
-    @State var isFindUserImage = true
+    @EnvironmentObject private var userViewModel: UserViewModel
+    @State private var user: User = User()
 
-    var imageSize: CGFloat = 65
+    // MARK: image properties
+    @State private var myImageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    private let imageSize: CGFloat = 65
 
+    // MARK: - body
     var body: some View {
 
         ZStack(alignment: .topTrailing) {
-            Button {
-                withAnimation(.spring()) {
-                    isShowingSideMenu.toggle()
-                }
-            } label: {
-                Image(systemName: "xmark")
-                    .frame(width: 32, height: 32)
-                    .padding()
-            }
+            closeSideMenuButton
 
             VStack(alignment: .leading) {
 
                 userImage
 
-                Text(user.name)
+                Text(userViewModel.currentUser.name)
                     .font(.system(size: 24, weight: .semibold))
 
-                Text(user.gmail)
+                Text(userViewModel.currentUser.gmail)
                     .font(.system(size: 14 ))
                     .padding(.bottom, 24)
+
+                // MARK: chats and channels label
                 HStack {
                     HStack {
-                        Text("\(viewModel.currentUser.chats.count)").bold()
-                        Text(viewModel.currentUser.chats.count == 1 ? "Chat" : "Chats")
+                        Text("\(userViewModel.currentUser.chats.count)").bold()
+                        Text(userViewModel.currentUser.chats.count == 1 ? "Chat" : "Chats")
                     }
                     HStack {
-                        Text("\(viewModel.currentUser.channels.count)").bold()
-                        Text(viewModel.currentUser.channels.count == 1 ? "Channel" : "Channels")
+                        Text("\(userViewModel.currentUser.channels.count)").bold()
+                        Text(userViewModel.currentUser.channels.count == 1 ? "Channel" : "Channels")
                     }
                     Spacer()
                 }
                 Spacer()
-            }.padding()
-        }
-        .onAppear {
-            self.viewModel.getCurrentUser { user in
-                withAnimation {
-                    self.user = user
-                }
             }
+            .padding()
         }
     }
 
-    @ViewBuilder var userImage: some View {
+    // MARK: - viewBuilders
+    @ViewBuilder private var userImage: some View {
         if isFindUserImage {
             WebImage(url: myImageUrl)
                 .resizable()
@@ -76,20 +67,37 @@ struct SideMenuHeaderView: View {
                 .padding(.bottom, 16)
                 .addLightShadow()
                 .onAppear {
-                    let ref = StorageReferencesManager.shared.getProfileImageReference(userId: viewModel.currentUser.id)
-                    ref.downloadURL { url, err in
-                        if err != nil {
-                            self.isFindUserImage = false
-                            return
-                        }
-                        withAnimation(.easeInOut) {
-                            self.myImageUrl = url
-                        }
-                    }
+                    imageStartSetup()
                 }
         } else {
             EmptyImageWithCharacterView(text: user.name, colour: user.colour, size: imageSize)
                 .padding(.bottom, 16)
+        }
+    }
+
+    @ViewBuilder private var closeSideMenuButton: some View {
+        Button {
+            withAnimation(.spring()) {
+                isShowingSideMenu.toggle()
+            }
+        } label: {
+            Image(systemName: "xmark")
+                .frame(width: 32, height: 32)
+                .padding()
+        }
+    }
+
+    // MARK: - functions
+    private func imageStartSetup() {
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUser.id)
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.myImageUrl = url
+            }
         }
     }
 }

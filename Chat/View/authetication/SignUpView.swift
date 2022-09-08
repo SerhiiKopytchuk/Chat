@@ -16,56 +16,27 @@ import FirebaseStorage
 struct SignUpView: View {
 
     // MARK: - vars
-    @State var fullName: String = ""
-    @State var email: String = ""
-    @State var password: String = ""
-    @State var retryPassword: String = ""
+    @State private var fullName: String = ""
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var retryPassword: String = ""
 
-    @State var isButtonDisabled: Bool = true
-    @State var isPresentSignInView: Bool = false
-    @State var isShowingPassword: Bool = false
-    @State var isShowingRetryPassword: Bool = false
-    @State var isShowAlert = false
-    @State var isShowLoader = false
-    @State var alertText = ""
-    @State var isShowingImagePicker = false
-    @State var image: UIImage?
+    @State private var isButtonDisabled: Bool = true
+    @State private var isPresentSignInView: Bool = false
+    @State private var isShowingPassword: Bool = false
+    @State private var isShowingRetryPassword: Bool = false
+    @State private var isShowAlert = false
+    @State private var isShowLoader = false
+    @State private var alertText = ""
+    @State private var isShowingImagePicker = false
+    @State private var image: UIImage?
 
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @ObservedObject var editProfileViewModel = EditProfileViewModel()
-    @ObservedObject var imageViewModel = ImageViewModel()
+    @ObservedObject private var editProfileViewModel = EditProfileViewModel()
+    @ObservedObject private var imageViewModel = ImageViewModel()
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
-
-    private func updateButton() {
-        let time: Double = 0.3
-
-        withAnimation(.easeInOut(duration: time)) {
-
-            if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty {
-                isButtonDisabled = true
-            } else {
-                if password == retryPassword {
-                    if password.count >= 8 {
-                        if email.contains("@gmail.com") || email.contains("@email.com") {
-                            if fullName.isValidateLengthOfName() {
-                                isButtonDisabled = false
-                            } else {
-                                isButtonDisabled = true
-                            }
-                        } else {
-                            isButtonDisabled = true
-                        }
-                    } else {
-                        isButtonDisabled = true
-                    }
-                } else {
-                    isButtonDisabled = true
-                }
-            }
-        }
-    }
 
     // MARK: - Body
     var body: some View {
@@ -87,11 +58,10 @@ struct SignUpView: View {
 
                 fields
                     .padding(.top)
+
+                // MARK: buttons
                 VStack {
                     createAccountButton
-                        .padding(.horizontal, 80)
-                        .opacity(isButtonDisabled ? 0.6 : 1)
-                        .cornerRadius(30)
 
                     Button("Sign In") {
                         self.isPresentSignInView = true
@@ -105,43 +75,21 @@ struct SignUpView: View {
                         .foregroundColor(.gray)
 
                     googleButton
-                        .foregroundColor(.brown)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 35)
-                                .stroke(Color.brown, lineWidth: 2)
-                        )
-                        .background(.clear)
-                        .cornerRadius(35)
-                        .padding(.top, 10)
+
                     Spacer()
 
                 }
-                NavigationLink(destination: SignInView(), isActive: $isPresentSignInView) { }
 
             }
             .background {
+                NavigationLink(destination: SignInView(), isActive: $isPresentSignInView) { }
+
                 Color("BG")
                     .ignoresSafeArea()
             }
-            .navigationBarHidden(true)
-            .navigationBarBackButtonHidden(true)
 
             if isShowAlert || viewModel.showAlert {
-                GeometryReader { geometry in
-                    if viewModel.showAlert {
-                        CustomAlert(show: $isShowAlert, text: viewModel.alertText)
-                            .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                            .frame(maxWidth: geometry.frame(in: .local).width - 20)
-                    } else {
-                        CustomAlert(show: $isShowAlert, text: alertText)
-                            .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                            .frame(maxWidth: geometry.frame(in: .local).width - 20)
-                    }
-
-                }.background(Color.white.opacity(0.65))
-                    .edgesIgnoringSafeArea(.all)
-
+                customAlertView
             }
 
             if viewModel.isShowLoader {
@@ -154,10 +102,13 @@ struct SignUpView: View {
             }
 
         }
+        .navigationBarHidden(true)
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $image)
         }
     }
+
+    // MARK: - ViewBuilders
 
     @ViewBuilder var fields: some View {
         VStack {
@@ -295,7 +246,7 @@ struct SignUpView: View {
         }.frame(width: 100, height: 100)
     }
 
-    var createAccountButton: some View {
+    @ViewBuilder private var createAccountButton: some View {
         Button {
             if isButtonDisabled {
                 withAnimation(.easeInOut) {
@@ -317,9 +268,12 @@ struct SignUpView: View {
             Text("Create Account")
                 .toButtonGradientStyle()
         }
+        .padding(.horizontal, 80)
+        .opacity(isButtonDisabled ? 0.6 : 1)
+        .cornerRadius(30)
     }
 
-    var googleButton: some View {
+    @ViewBuilder private var googleButton: some View {
         Button {
 
             guard let clientID = FirebaseApp.app()?.options.clientID else { return }
@@ -356,10 +310,66 @@ struct SignUpView: View {
             Image("google")
                 .resizable()
                 .frame(width: 32, height: 32)
+                .foregroundColor(.brown)
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 35)
+                        .stroke(Color.brown, lineWidth: 2)
+                )
+                .background(.clear)
+                .cornerRadius(35)
+                .padding(.top, 10)
         }
     }
 
-    func isValidatedName() -> Bool {
+    @ViewBuilder private var customAlertView: some View {
+        GeometryReader { geometry in
+            if viewModel.showAlert {
+                CustomAlert(show: $isShowAlert, text: viewModel.alertText)
+                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            } else {
+                CustomAlert(show: $isShowAlert, text: alertText)
+                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
+            }
+
+        }.background(Color.white.opacity(0.65))
+            .edgesIgnoringSafeArea(.all)
+    }
+
+    // MARK: - functions
+
+    private func updateButton() {
+        let time: Double = 0.3
+
+        withAnimation(.easeInOut(duration: time)) {
+
+            if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty {
+                isButtonDisabled = true
+            } else {
+                if password == retryPassword {
+                    if password.count >= 8 {
+                        if email.contains("@gmail.com") || email.contains("@email.com") {
+                            if fullName.isValidateLengthOfName() {
+                                isButtonDisabled = false
+                            } else {
+                                isButtonDisabled = true
+                            }
+                        } else {
+                            isButtonDisabled = true
+                        }
+                    } else {
+                        isButtonDisabled = true
+                    }
+                } else {
+                    isButtonDisabled = true
+                }
+            }
+        }
+    }
+
+    private func isValidatedName() -> Bool {
         fullName = fullName.trim()
         updateButton()
         if isButtonDisabled {

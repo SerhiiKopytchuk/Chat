@@ -9,13 +9,13 @@ import Foundation
 import SwiftUI
 
 struct CustomAlert: View {
-
+    // MARK: - vars
     @Binding var show: Bool
 
     var text: String
 
-    @EnvironmentObject var viewModel: UserViewModel
-
+    @EnvironmentObject private var viewModel: UserViewModel
+    // MARK: - body
     var body: some View {
         VStack {
             Text("Error")
@@ -23,24 +23,14 @@ struct CustomAlert: View {
                 .fontWeight(.semibold)
                 .padding()
                 .foregroundColor(.white)
+
             Text(text)
                 .font(.body)
                 .foregroundColor(.white)
                 .frame(alignment: .center)
                 .padding()
-            Button {
-                withAnimation {
-                    show = false
-                    viewModel.showAlert = false
-                }
-            } label: {
-                Text("Close")
-                    .padding()
-                    .padding(.horizontal, 50)
-                    .background(.white)
-                    .cornerRadius(15)
-            }
-            .buttonStyle(.borderless)
+
+            closeButton
 
         }
         .padding()
@@ -48,5 +38,22 @@ struct CustomAlert: View {
         .background(.gray)
         .cornerRadius(15)
 
+    }
+
+    // MARK: - ViewBuilders
+    @ViewBuilder private var closeButton: some View {
+        Button {
+            withAnimation {
+                show = false
+                viewModel.showAlert = false
+            }
+        } label: {
+            Text("Close")
+                .padding()
+                .padding(.horizontal, 50)
+                .background(.white)
+                .cornerRadius(15)
+        }
+        .buttonStyle(.borderless)
     }
 }

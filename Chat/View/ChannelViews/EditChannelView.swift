@@ -11,26 +11,30 @@ import FirebaseStorage
 
 struct EditChannelView: View {
 
+    // MARK: - vars
+
     @State var channelName: String
     @State var channelDescription: String
     @State var channelColor: String
 
+    // MARK: image properties
     @State var channelImage: UIImage?
-    @State var isShowingImagePicker = false
-    @State var imageUrl = URL(string: "")
-    @State var isFindUserImage = true
-    @State var isChangedImage = false
+    @State private var isShowingImagePicker = false
+    @State private var imageUrl = URL(string: "")
+    @State private var isFindUserImage = true
+    @State private var isChangedImage = false
+    private let imageSize: CGFloat = 50
 
-    @State var isShowAlert = false
+    @State private var isShowAlert = false
 
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @ObservedObject var imageViewModel = ImageViewModel()
+    @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @ObservedObject private var imageViewModel = ImageViewModel()
 
-    var imageSize: CGFloat = 50
 
     @Environment(\.self) var presentationMode
 
+    // MARK: - body
     var body: some View {
         VStack {
             header
@@ -77,7 +81,8 @@ struct EditChannelView: View {
         }
     }
 
-    @ViewBuilder var header: some View {
+    // MARK: - ViewBuilders
+    @ViewBuilder private var header: some View {
         HStack(spacing: 15) {
             Button {
                 presentationMode.dismiss()
@@ -113,7 +118,7 @@ struct EditChannelView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var imageButton: some View {
+    @ViewBuilder private var imageButton: some View {
         Button {
             isShowingImagePicker.toggle()
         } label: {
@@ -156,7 +161,7 @@ struct EditChannelView: View {
         }
     }
 
-    @ViewBuilder var customAlert: some View {
+    @ViewBuilder private var customAlert: some View {
         if isShowAlert {
             GeometryReader { geometry in
                 CustomAlert(show: $isShowAlert, text: channelName.count > 3 ?
@@ -171,7 +176,8 @@ struct EditChannelView: View {
         }
     }
 
-    func imageSetup() {
+    // MARK: - functions
+    private func imageSetup() {
         let ref = StorageReferencesManager.shared
             .getChannelImageReference(channelId: channelViewModel.currentChannel.id ?? "some id")
         ref.downloadURL { url, err in

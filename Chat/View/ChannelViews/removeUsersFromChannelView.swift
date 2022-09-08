@@ -9,14 +9,17 @@ import SwiftUI
 
 struct RemoveUsersFromChannelView: View {
 
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject var userViewModel: UserViewModel
+    // MARK: - vars
+
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var userViewModel: UserViewModel
 
     @Environment(\.self) var env
 
-    @State var subscribersId: [String] = []
+    @State private var subscribersId: [String] = []
 
+    // MARK: - body
     var body: some View {
         VStack {
 
@@ -34,7 +37,9 @@ struct RemoveUsersFromChannelView: View {
         .navigationBarHidden(true)
     }
 
-    @ViewBuilder var usersList: some View {
+    // MARK: - viewBuilders
+
+    @ViewBuilder private var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(editChannelViewModel.channelSubscribers, id: \.id) { user in
                 RemoveUsersFromChannelListRow(user: user.name,

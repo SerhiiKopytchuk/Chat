@@ -12,25 +12,25 @@ import FirebaseAuth
 struct TabBarView: View {
 
     // MARK: - vars
-    @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var messagingViewModel: MessagingViewModel
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
 
     @Binding var isShowingSideMenu: Bool
 
-    @State var currentTab: Tab = .chats
-    @State var goToConversation = false
-    @State var goToChannel = false
-    @State var selection = 0
+    @State private var currentTab: Tab = .chats
+    @State private var goToConversation = false
+    @State private var goToChannel = false
+    @State private var selection = 0
 
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // MARK: menuButton with lists
 
+            // MARK: menuButton
             menuButton
                 .padding(.top)
                 .padding(.leading)
@@ -89,7 +89,7 @@ struct TabBarView: View {
 
     // MARK: - View Builders
 
-    @ViewBuilder var menuButton: some View {
+    @ViewBuilder private var menuButton: some View {
         Button {
             withAnimation(.spring()) {
                 isShowingSideMenu.toggle()
@@ -102,7 +102,7 @@ struct TabBarView: View {
         .opacity(isShowingSideMenu ? 0 : 1)
     }
 
-    @ViewBuilder var chatsScrollView: some View {
+    @ViewBuilder private var chatsScrollView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(chattingViewModel.chats, id: \.id) { chat in
 
@@ -132,7 +132,7 @@ struct TabBarView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var channelsScrollView: some View {
+    @ViewBuilder private var channelsScrollView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(channelViewModel.channels, id: \.id) { channel in
                 ChannelListRow(channel: channel) {
@@ -154,7 +154,7 @@ struct TabBarView: View {
         .padding(.horizontal)
     }
 
-    @ViewBuilder var chatsAndChannelsView: some View {
+    @ViewBuilder private var chatsAndChannelsView: some View {
         VStack {
             if selection == 0 {
                 chatsScrollView
@@ -180,7 +180,4 @@ struct TabBarView_Previews: PreviewProvider {
             .environmentObject(ChannelMessagingViewModel())
             .environmentObject(EditChannelViewModel())
     }
-}
-
-extension View {
 }
