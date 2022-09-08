@@ -11,6 +11,7 @@ import SDWebImageSwiftUI
 
 struct MessageBubble: View {
 
+    // MARK: - vars
     @State var message: Message
     @Binding var showHighlight: Bool
     @Binding var highlightedMessage: Message?
@@ -27,11 +28,13 @@ struct MessageBubble: View {
     @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
+    // MARK: - Body
     var body: some View {
         VStack(alignment: message.isReply() ? .trailing : .leading) {
 
             addedEmojiView
 
+            // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
                 if message.imageId == "" {
                     Text(message.text)
@@ -53,15 +56,12 @@ struct MessageBubble: View {
         .padding(message.isReply() ? .trailing : .leading, 60)
         .padding(.horizontal, 10)
         .onAppear {
-            messagingViewModel.addSnapshotListenerToMessage(messageId: message.id ?? "someId") { message in
-                withAnimation(.easeInOut) {
-                    self.message = message
-                }
-            }
+            addMessageSnapshotListener()
         }
         .onTapGesture { }
     }
 
+    // MARK: - viewBuilders
     @ViewBuilder var imageView: some View {
         VStack {
             if isFindImage {
@@ -119,6 +119,7 @@ struct MessageBubble: View {
         }
     }
 
+    // MARK: - functions
     func imageSetup() {
 
         let imageId: String = message.imageId ?? "imageId"
@@ -142,6 +143,14 @@ struct MessageBubble: View {
                 self.imageUrl = url
             withAnimation {
                 self.isFindImage = true
+            }
+        }
+    }
+
+    func addMessageSnapshotListener() {
+        messagingViewModel.addSnapshotListenerToMessage(messageId: message.id ?? "someId") { message in
+            withAnimation(.easeInOut) {
+                self.message = message
             }
         }
     }

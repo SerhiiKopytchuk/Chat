@@ -9,7 +9,7 @@ import SwiftUI
 import Foundation
 
 struct MessageField: View {
-
+    // MARK: - vars
     @State var messageText: String = ""
 
     @State var height: CGFloat = 40
@@ -25,37 +25,15 @@ struct MessageField: View {
     @State var isShowingImagePicker = false
     @State var image: UIImage?
 
+    // MARK: - body
     var body: some View {
         HStack {
 
             ResizeableTextView(text: $messageText, height: $height, placeholderText: "Enter message")
 
-            Button {
-                isShowingImagePicker.toggle()
-            } label: {
-                Image(systemName: "photo")
-                    .frame(width: sizeOfButtons, height: sizeOfButtons)
-                    .foregroundColor(.white)
-                    .padding(10)
-                    .background(Color.gray)
-                    .cornerRadius(10)
-            }
+            imagePickerButton
 
-            Button {
-                messageText = messageText.trimmingCharacters(in: .newlines)
-                messagingViewModel.sendMessage(text: messageText)
-                messageText = ""
-                UIApplication.shared.endEditing()
-                autoSizingTextFieldIsFocused = false
-                chattingViewModel.changeLastActivityAndSortChats()
-            } label: {
-                Image(systemName: "paperplane.fill")
-                    .frame(width: sizeOfButtons, height: sizeOfButtons)
-                    .foregroundColor(.white)
-                    .padding(10)
-                    .background(Color.gray)
-                    .cornerRadius(10)
-            }
+            sendMessageButton
 
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
@@ -71,6 +49,38 @@ struct MessageField: View {
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(.white)
+    }
+
+    // MARK: - ViewBuilders
+    @ViewBuilder var imagePickerButton: some View {
+        Button {
+            isShowingImagePicker.toggle()
+        } label: {
+            Image(systemName: "photo")
+                .frame(width: sizeOfButtons, height: sizeOfButtons)
+                .foregroundColor(.white)
+                .padding(10)
+                .background(Color.gray)
+                .cornerRadius(10)
+        }
+    }
+
+    @ViewBuilder var sendMessageButton: some View {
+        Button {
+            messageText = messageText.trimmingCharacters(in: .newlines)
+            messagingViewModel.sendMessage(text: messageText)
+            messageText = ""
+            UIApplication.shared.endEditing()
+            autoSizingTextFieldIsFocused = false
+            chattingViewModel.changeLastActivityAndSortChats()
+        } label: {
+            Image(systemName: "paperplane.fill")
+                .frame(width: sizeOfButtons, height: sizeOfButtons)
+                .foregroundColor(.white)
+                .padding(10)
+                .background(Color.gray)
+                .cornerRadius(10)
+        }
     }
 
 }

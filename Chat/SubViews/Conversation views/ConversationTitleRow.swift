@@ -10,6 +10,7 @@ import FirebaseStorage
 import SDWebImageSwiftUI
 
 struct ConversationTitleRow: View {
+    // MARK: - variables
     var user: User
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -27,11 +28,13 @@ struct ConversationTitleRow: View {
 
     let imageSize: CGFloat = 50
 
+    // MARK: - Body
     var body: some View {
         HStack(spacing: 20) {
 
             userImage
 
+            // MARK: userName
             VStack(alignment: .leading) {
                 Text(user.name)
                     .font(.title).bold()
@@ -42,6 +45,8 @@ struct ConversationTitleRow: View {
 
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            // MARK: remove chat button
             if isFindChat {
                 Image(systemName: "xmark")
                     .foregroundColor(.gray)
@@ -53,20 +58,11 @@ struct ConversationTitleRow: View {
                         showingAlert.toggle()
                     }
             }
+
         }
         .padding()
         .onAppear {
-            let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
-            ref.downloadURL { url, err in
-                if err != nil {
-                    self.isFindUserImage = false
-                    return
-                }
-                withAnimation(.easeInOut) {
-                    self.profileImage = WebImage(url: url)
-                    self.imageUrl = url
-                }
-            }
+            imageStartSetup()
         }
         .alert("Do you really want to delete this chat?", isPresented: $showingAlert) {
             Button("Delete", role: .destructive) {
@@ -77,6 +73,7 @@ struct ConversationTitleRow: View {
         }
     }
 
+    // MARK: - viewBuilders
     @ViewBuilder var userImage: some View {
         if isFindUserImage {
             VStack {
@@ -117,5 +114,20 @@ struct ConversationTitleRow: View {
             }
         }
 
+    }
+
+    // MARK: - functions
+    func imageStartSetup() {
+        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
+        ref.downloadURL { url, err in
+            if err != nil {
+                self.isFindUserImage = false
+                return
+            }
+            withAnimation(.easeInOut) {
+                self.profileImage = WebImage(url: url)
+                self.imageUrl = url
+            }
+        }
     }
 }

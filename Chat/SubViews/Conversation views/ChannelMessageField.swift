@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ChannelMessageField: View {
+    // MARK: - Vars
     @State private var messageText = ""
 
     @State var height: CGFloat = 40
@@ -23,36 +24,15 @@ struct ChannelMessageField: View {
     @State var isShowingImagePicker = false
     @State var image: UIImage?
 
+    // MARK: - body
     var body: some View {
         HStack {
             ResizeableTextView(text: $messageText, height: $height, placeholderText: "Enter message")
 
-            Button {
-                isShowingImagePicker.toggle()
-            } label: {
-                Image(systemName: "photo")
-                    .frame(width: sizeOfButtons, height: sizeOfButtons)
-                    .foregroundColor(.white)
-                    .padding(10)
-                    .background(Color.gray)
-                    .cornerRadius(10)
-            }
+            imagePickerViewButton
 
-            Button {
-                messageText = messageText.trimmingCharacters(in: .newlines)
-                channelMessagingViewModel.sendMessage(text: messageText)
-                messageText = ""
-                UIApplication.shared.endEditing()
-                autoSizingTextFieldIsFocused = false
-                channelViewModel.changeLastActivityAndSortChannels()
+            sendMessageButton
 
-            } label: {
-                Image(systemName: "paperplane.fill")
-                    .foregroundColor(.white)
-                    .padding(10)
-                    .background(Color.gray)
-                    .cornerRadius(15)
-            }
 
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
@@ -68,7 +48,41 @@ struct ChannelMessageField: View {
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.white)
-    }}
+    }
+
+    // MARK: - viewBuilders
+    
+    @ViewBuilder var imagePickerViewButton: some View {
+        Button {
+            isShowingImagePicker.toggle()
+        } label: {
+            Image(systemName: "photo")
+                .frame(width: sizeOfButtons, height: sizeOfButtons)
+                .foregroundColor(.white)
+                .padding(10)
+                .background(Color.gray)
+                .cornerRadius(10)
+        }
+    }
+
+    @ViewBuilder var sendMessageButton: some View {
+        Button {
+            messageText = messageText.trimmingCharacters(in: .newlines)
+            channelMessagingViewModel.sendMessage(text: messageText)
+            messageText = ""
+            UIApplication.shared.endEditing()
+            autoSizingTextFieldIsFocused = false
+            channelViewModel.changeLastActivityAndSortChannels()
+
+        } label: {
+            Image(systemName: "paperplane.fill")
+                .foregroundColor(.white)
+                .padding(10)
+                .background(Color.gray)
+                .cornerRadius(15)
+        }
+    }
+}
 
 struct ChannelMessageField_Previews: PreviewProvider {
     static var previews: some View {

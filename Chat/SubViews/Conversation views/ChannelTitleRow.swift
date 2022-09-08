@@ -10,6 +10,7 @@ import FirebaseStorage
 import SDWebImageSwiftUI
 
 struct ChannelTitleRow: View {
+    // MARK: - vars
     var channel: Channel
 
     let animationNamespace: Namespace.ID
@@ -26,11 +27,13 @@ struct ChannelTitleRow: View {
 
     let imageSize: CGFloat = 50
 
+    // MARK: - body
     var body: some View {
         HStack(spacing: 20) {
 
             channelImage
 
+            // MARK: channel name and description
             VStack(alignment: .leading) {
                 Text(channel.name)
                     .font(.title).bold()
@@ -55,6 +58,7 @@ struct ChannelTitleRow: View {
         .padding()
     }
 
+    // MARK: - ViewBuilders
     @ViewBuilder var channelImage: some View {
         if isFindUserImage {
             VStack {
@@ -95,6 +99,8 @@ struct ChannelTitleRow: View {
             }
         }
     }
+
+    // MARK: - functions
 
     func imageSetup() {
         let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "someId")
