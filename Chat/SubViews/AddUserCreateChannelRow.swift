@@ -55,7 +55,7 @@ struct AddUserToChannelListRow: View {
                 .fill(.white)
         }
         .onAppear {
-
+            imageStartSetup()
         }
     }
 

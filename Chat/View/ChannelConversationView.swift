@@ -61,6 +61,11 @@ struct ChannelConversationView: View {
             expandedDetails
 
             messagesScrollView
+                .frame(maxWidth: .infinity)
+                .background {
+                    Color.background
+                        .ignoresSafeArea()
+                }
 
             VStack(spacing: 0) {
                 if isSubscribed {

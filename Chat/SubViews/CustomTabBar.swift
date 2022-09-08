@@ -51,7 +51,7 @@ struct CustomTabBar: View {
             }
 
         } label: {
-            Image(systemName: "character.bubble")
+            Image(systemName: selection == 0 ? "character.bubble" : "fibrechannel")
                 .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)

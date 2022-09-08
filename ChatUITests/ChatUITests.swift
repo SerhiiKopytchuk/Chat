@@ -106,7 +106,7 @@ class ChatUITests: XCTestCase {
 
         app.images["Remove"].tap()
 
-        app.scrollViews.otherElements.images["Remove"].tap()
+        app.scrollViews.otherElements.buttons["Remove"].tap()
 
         app.buttons["arrow.backward.circle.fill"].tap()
         sleep(1)
@@ -335,7 +335,7 @@ class ChatUITests: XCTestCase {
         app.buttons["Sign in"].tap()
         sleep(1)
 
-        let bySerhiiKopytchukText = app.staticTexts["by Serhii Kopytchuk"]
+        let bySerhiiKopytchukText = app.staticTexts["Chats"]
         let bySerhiiKopytchukTextExpectation = XCTNSPredicateExpectation(predicate: existsPredicate,
                                                                          object: bySerhiiKopytchukText)
 
