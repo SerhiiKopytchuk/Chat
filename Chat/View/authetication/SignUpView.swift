@@ -50,7 +50,7 @@ struct SignUpView: View {
                         .fontWeight(.bold)
                         .padding(.leading, 10)
                         .padding()
-                        .foregroundColor(.black.opacity(0.6))
+                        .foregroundColor(.primary.opacity(0.6))
                     Spacer()
                 }
 
@@ -84,7 +84,7 @@ struct SignUpView: View {
             .background {
                 NavigationLink(destination: SignInView(), isActive: $isPresentSignInView) { }
 
-                Color("BG")
+                Color.background
                     .ignoresSafeArea()
             }
 
@@ -232,12 +232,12 @@ struct SignUpView: View {
                         Spacer()
                         HStack {
                             Spacer()
-                            Image(systemName: "photo.circle")
+                            Image(systemName: "photo.circle.fill")
                                 .resizable()
                                 .frame(width: 30, height: 30)
-                                .background(.gray)
-                                .foregroundColor(.white)
-                                .cornerRadius(30)
+                                .background(Color.background)
+                                .foregroundColor(.gray)
+                                .cornerRadius(15)
                         }
                     }
 

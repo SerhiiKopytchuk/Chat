@@ -31,7 +31,6 @@ struct EditChannelView: View {
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @ObservedObject private var imageViewModel = ImageViewModel()
 
-
     @Environment(\.self) var presentationMode
 
     // MARK: - body
@@ -189,14 +188,5 @@ struct EditChannelView: View {
                 self.imageUrl = url
             }
         }
-    }
-}
-
-struct EditChannelView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditChannelView(channelName: "Koch",
-                        channelDescription: "description",
-                        channelColor: String.getRandomColorFromAssets(),
-                        imageViewModel: ImageViewModel())
     }
 }

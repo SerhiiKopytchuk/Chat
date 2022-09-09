@@ -57,7 +57,7 @@ struct ChannelListRow: View {
         .padding()
         .background {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .onTapGesture {
