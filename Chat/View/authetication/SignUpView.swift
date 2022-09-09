@@ -334,7 +334,7 @@ struct SignUpView: View {
                     .frame(maxWidth: geometry.frame(in: .local).width - 20)
             }
 
-        }.background(Color.white.opacity(0.65))
+        }.background(Color.black.opacity(0.65))
             .edgesIgnoringSafeArea(.all)
     }
 

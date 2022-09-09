@@ -22,11 +22,11 @@ struct CustomAlert: View {
                 .font(.title)
                 .fontWeight(.semibold)
                 .padding()
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
 
             Text(text)
                 .font(.body)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .frame(alignment: .center)
                 .padding()
 
@@ -35,7 +35,7 @@ struct CustomAlert: View {
         }
         .padding()
         .padding(.horizontal, 30)
-        .background(.gray)
+        .background(Color.background)
         .cornerRadius(15)
 
     }
@@ -51,7 +51,7 @@ struct CustomAlert: View {
             Text("Close")
                 .padding()
                 .padding(.horizontal, 50)
-                .background(.white)
+                .background(Color.secondPrimary)
                 .cornerRadius(15)
         }
         .buttonStyle(.borderless)
