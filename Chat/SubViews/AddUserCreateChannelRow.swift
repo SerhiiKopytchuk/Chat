@@ -33,6 +33,7 @@ struct AddUserToChannelListRow: View {
             // MARK: userName and userGmail
             VStack(alignment: .leading) {
                 Text(user)
+                    .foregroundColor(.primary)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .lineLimit(1)
@@ -52,7 +53,7 @@ struct AddUserToChannelListRow: View {
         }
         .background {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .onAppear {
             imageStartSetup()

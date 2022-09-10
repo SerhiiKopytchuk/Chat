@@ -63,7 +63,6 @@ struct ChannelConversationView: View {
             }
             .addGradientBackground()
 
-
             messagesScrollView
                 .frame(maxWidth: .infinity)
 

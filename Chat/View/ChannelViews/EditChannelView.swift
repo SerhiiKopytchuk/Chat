@@ -35,31 +35,32 @@ struct EditChannelView: View {
 
     // MARK: - body
     var body: some View {
-        VStack {
+        VStack(spacing: 5) {
             header
             HStack {
                 imageButton
 
                 TextField("Enter channel name", text: $channelName)
+                    .foregroundColor(.primary)
                     .padding(.vertical, 20)
                     .padding(.horizontal, 15)
                     .background {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(.white)
+                            .fill(Color.secondPrimary)
                     }
-                    .padding()
+                    .padding(.trailing)
+                    .padding(.vertical)
             }
 
             TextField("Type channel description", text: $channelDescription)
-
+                .foregroundColor(.primary)
                 .padding(.vertical, 20)
                 .padding(.horizontal, 15)
                 .background {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(.white)
+                        .fill(Color.secondPrimary)
                 }
-                .padding(.top, 15)
-                .padding()
+                .padding(.horizontal)
 
             Spacer()
         }
