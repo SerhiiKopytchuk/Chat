@@ -32,7 +32,7 @@ struct Loader: View {
 
         }
         .padding()
-        .background(Color.white.opacity(0.8))
+        .background(Color.background)
         .cornerRadius(15)
     }
 }

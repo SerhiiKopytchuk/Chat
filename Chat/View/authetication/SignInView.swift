@@ -83,7 +83,11 @@ struct SignInView: View {
                         GeometryReader { reader in
                             Loader()
                                 .position(x: reader.size.width/2, y: reader.size.height/2)
-                        }.background(Color.black.opacity(0.45).edgesIgnoringSafeArea(.all))
+                        }.background {
+                            Color.black
+                                .opacity(0.65)
+                                .edgesIgnoringSafeArea(.all)
+                        }
                     }
                 }
 
