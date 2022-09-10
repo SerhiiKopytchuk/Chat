@@ -131,14 +131,16 @@ struct EditProfileView: View {
         Label {
             TextField("Enter your new name", text: $newName)
                 .padding(.leading, 10)
+                .foregroundColor(.primary)
         } icon: {
             Image(systemName: "person")
+                .foregroundColor(.primary)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .padding(.top, 25)
         .padding()

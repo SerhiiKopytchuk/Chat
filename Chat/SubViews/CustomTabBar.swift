@@ -57,7 +57,7 @@ struct CustomTabBar: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 20, height: 30)
                 .frame(maxWidth: .infinity )
-                .foregroundColor(selection == selected ? Color.purple : .gray)
+                .foregroundColor(selection == selected ? Color("Gradient3") : .gray)
                 .scaleEffect(selection == selected && yOffset != 0 ? 1.5 : 1)
         }
     }

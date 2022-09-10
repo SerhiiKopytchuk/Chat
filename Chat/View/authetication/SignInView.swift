@@ -38,7 +38,7 @@ struct SignInView: View {
                         .fontWeight(.bold)
                         .padding(.leading, 10)
                         .padding()
-                        .foregroundColor(.black.opacity(0.6))
+                        .foregroundColor(.primary.opacity(0.6))
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     inputFields
@@ -83,7 +83,11 @@ struct SignInView: View {
                         GeometryReader { reader in
                             Loader()
                                 .position(x: reader.size.width/2, y: reader.size.height/2)
-                        }.background(Color.black.opacity(0.45).edgesIgnoringSafeArea(.all))
+                        }.background {
+                            Color.black
+                                .opacity(0.65)
+                                .edgesIgnoringSafeArea(.all)
+                        }
                     }
                 }
 
@@ -192,7 +196,7 @@ struct SignInView: View {
                     .frame(maxWidth: geometry.frame(in: .local).width - 20)
             }
 
-        }.background(Color.white.opacity(0.65))
+        }.background(Color.black.opacity(0.65))
             .edgesIgnoringSafeArea(.all)
     }
 

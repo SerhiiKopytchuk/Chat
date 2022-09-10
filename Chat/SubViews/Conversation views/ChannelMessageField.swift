@@ -44,7 +44,7 @@ struct ChannelMessageField: View {
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
-        .background(Color.white)
+        .background(Color.secondPrimary)
     }
 
     // MARK: - viewBuilders
@@ -53,10 +53,11 @@ struct ChannelMessageField: View {
             isShowingImagePicker.toggle()
         } label: {
             Image(systemName: "photo")
+                .symbolRenderingMode(.hierarchical)
                 .frame(width: sizeOfButtons, height: sizeOfButtons)
-                .foregroundColor(.white)
+                .foregroundColor(.secondPrimary)
                 .padding(10)
-                .background(Color.gray)
+                .background(Color.primary.opacity(0.5))
                 .cornerRadius(10)
         }
     }
@@ -71,10 +72,12 @@ struct ChannelMessageField: View {
 
         } label: {
             Image(systemName: "paperplane.fill")
-                .foregroundColor(.white)
+                .symbolRenderingMode(.hierarchical)
+                .frame(width: sizeOfButtons, height: sizeOfButtons)
+                .foregroundColor(.secondPrimary)
                 .padding(10)
-                .background(Color.gray)
-                .cornerRadius(15)
+                .background(Color.primary.opacity(0.5))
+                .cornerRadius(10)
         }
     }
 }

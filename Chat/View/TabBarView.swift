@@ -54,7 +54,7 @@ struct TabBarView: View {
                 // MARK: CustomTabBar
                 CustomTabBar(selected: $selection)
                     .padding(.bottom)
-                    .backgroundBlur(radius: 10, opaque: true)
+                    .backgroundBlur(radius: 20, opaque: true)
                     .clipShape(RoundedRectangle(cornerRadius: 0))
                     .frame(maxHeight: .infinity, alignment: .top)
             }
@@ -96,7 +96,7 @@ struct TabBarView: View {
             }
         } label: {
             Image(systemName: "list.bullet")
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
         .font(.title3)
         .opacity(isShowingSideMenu ? 0 : 1)

@@ -43,29 +43,28 @@ struct ChannelConversationView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HeaderWithBackButton(environment: _env, text: "Channel")
-                .padding()
+            VStack(spacing: 0) {
+                HeaderWithBackButton(environment: _env, text: "Channel")
+                    .padding()
 
-            ChannelTitleRow(channel: channelViewModel.currentChannel,
-                            animationNamespace: animation,
-                            isExpandedProfileImage: $isExpandedProfile,
-                            isExpandedDetails: $isExpandedDetails,
-                            channelWebImage: $channelImage,
-                            isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
-            )
-            .background {
-                Color.background
-                    .opacity(0.7)
+                ChannelTitleRow(channel: channelViewModel.currentChannel,
+                                animationNamespace: animation,
+                                isExpandedProfileImage: $isExpandedProfile,
+                                isExpandedDetails: $isExpandedDetails,
+                                channelWebImage: $channelImage,
+                                isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
+                )
+                .background {
+                    Color.secondPrimary
+                        .opacity(0.5)
+                }
+
+                expandedDetails
             }
-
-            expandedDetails
+            .addGradientBackground()
 
             messagesScrollView
                 .frame(maxWidth: .infinity)
-                .background {
-                    Color.background
-                        .ignoresSafeArea()
-                }
 
             VStack(spacing: 0) {
                 if isSubscribed {
@@ -76,13 +75,14 @@ struct ChannelConversationView: View {
                         .ignoresSafeArea(.container, edges: .bottom)
                 }
             }
-            .background {
-                Color.background
-                    .ignoresSafeArea()
-            }
+
         }
+
         .frame(maxWidth: .infinity)
-        .addGradientBackground()
+        .background {
+            Color.background
+                .ignoresSafeArea()
+        }
         .navigationBarHidden(true)
         .background {
             navigationLinks
@@ -135,9 +135,10 @@ struct ChannelConversationView: View {
             }
             .frame(maxWidth: .infinity)
             .background {
-                Color.background
-                    .opacity(0.7)
+                Color.secondPrimary
+                    .opacity(0.5)
             }
+            .transition(.opacity)
         }
     }
 
@@ -217,51 +218,50 @@ struct ChannelConversationView: View {
 
     @ViewBuilder private var addUsersToChannelButton: some View {
         Image(systemName: "plus")
-            .foregroundColor(.gray)
+            .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(.white)
-            .cornerRadius(40)
+            .background(Color.secondPrimary)
             .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 isGoToAddSubscribers.toggle()
             }
+            .clipShape(Circle())
     }
 
     @ViewBuilder private var unsubscribeUsersFromChannelButton: some View {
         Image(systemName: "minus")
             .frame(height: 15)
-            .foregroundColor(.gray)
+            .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(.white)
-            .cornerRadius(40)
+            .background(Color.secondPrimary)
             .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 editChannelViewModel.getChannelSubscribers()
                 isGoToRemoveSubscribers.toggle()
             }
+            .clipShape(Circle())
     }
 
     @ViewBuilder private var editChannelButton: some View {
         Image(systemName: "pencil")
-            .foregroundColor(.gray)
+            .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(.white)
-            .cornerRadius(40 )
+            .background(Color.secondPrimary)
             .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
                 isGoToEditChannel.toggle()
             }
+            .clipShape(Circle())
     }
 
     @ViewBuilder private var removeOrDeleteChannelButton: some View {
         Image(systemName: "xmark")
-            .foregroundColor(.gray)
+            .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(.white)
-            .cornerRadius(40 )
+            .background(Color.secondPrimary)
             .addLightShadow()
             .onTapGesture {
                 if currentUser.id == channelViewModel.currentChannel.ownerId {
@@ -270,6 +270,7 @@ struct ChannelConversationView: View {
                     showingAlertSubscriber.toggle()
                 }
             }
+            .clipShape(Circle())
     }
 
     @ViewBuilder private var messagesScrollView: some View {
@@ -312,6 +313,7 @@ struct ChannelConversationView: View {
         if !isExpandedDetails {
             if currentUser.id == channelViewModel.currentChannel.ownerId {
                 ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
+                    .transition(.flipFromBottom)
                     .environmentObject(channelViewModel)
             }
         }

@@ -31,36 +31,36 @@ struct EditChannelView: View {
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @ObservedObject private var imageViewModel = ImageViewModel()
 
-
     @Environment(\.self) var presentationMode
 
     // MARK: - body
     var body: some View {
-        VStack {
+        VStack(spacing: 5) {
             header
             HStack {
                 imageButton
 
                 TextField("Enter channel name", text: $channelName)
+                    .foregroundColor(.primary)
                     .padding(.vertical, 20)
                     .padding(.horizontal, 15)
                     .background {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(.white)
+                            .fill(Color.secondPrimary)
                     }
-                    .padding()
+                    .padding(.trailing)
+                    .padding(.vertical)
             }
 
             TextField("Type channel description", text: $channelDescription)
-
+                .foregroundColor(.primary)
                 .padding(.vertical, 20)
                 .padding(.horizontal, 15)
                 .background {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(.white)
+                        .fill(Color.secondPrimary)
                 }
-                .padding(.top, 15)
-                .padding()
+                .padding(.horizontal)
 
             Spacer()
         }
@@ -189,14 +189,5 @@ struct EditChannelView: View {
                 self.imageUrl = url
             }
         }
-    }
-}
-
-struct EditChannelView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditChannelView(channelName: "Koch",
-                        channelDescription: "description",
-                        channelColor: String.getRandomColorFromAssets(),
-                        imageViewModel: ImageViewModel())
     }
 }

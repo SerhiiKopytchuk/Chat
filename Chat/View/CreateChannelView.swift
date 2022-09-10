@@ -100,15 +100,16 @@ struct CreateChannelView: View {
             }
 
         }
-        .frame(width: 100, height: 100)
+        .frame(width: channelImageSize, height: channelImageSize)
     }
 
     @ViewBuilder private var emptyImage: some View {
         Image(systemName: "photo.circle.fill")
+            .symbolRenderingMode(.hierarchical)
             .resizable()
             .frame(width: channelImageSize, height: channelImageSize)
-            .foregroundColor(.black.opacity(0.70))
-            .background(.white)
+            .foregroundColor(.secondPrimary)
+            .background(Color.secondPrimaryReversed)
             .cornerRadius(channelImageSize/2)
             .addLightShadow()
     }
@@ -116,15 +117,17 @@ struct CreateChannelView: View {
     @ViewBuilder private var channelNameTextField: some View {
         Label {
             TextField("Enter name of your channel", text: $name)
+                .foregroundColor(.primary)
         } icon: {
             Image(systemName: "newspaper.fill")
+                .foregroundColor(.primary)
                 .opacity(0.7)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .padding(.top, 25)
         .padding(5)
@@ -134,15 +137,17 @@ struct CreateChannelView: View {
     @ViewBuilder private var channelDescriptionTextField: some View {
         Label {
             TextField("Describe your channel", text: $description)
+                .foregroundColor(.primary)
         } icon: {
             Image(systemName: "doc.plaintext")
+                .foregroundColor(.primary)
                 .opacity(0.7)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .padding(5)
         .padding(.horizontal)
@@ -153,7 +158,7 @@ struct CreateChannelView: View {
             ForEach([ChannelType.publicType, ChannelType.privateType], id: (\.self)) { type in
                 Text(type.rawValue.capitalized)
                     .fontWeight(.semibold)
-                    .foregroundColor(channelViewModel.channelType == type ? .white : .black)
+                    .foregroundColor(channelViewModel.channelType == type ? .white : .primary)
                     .opacity(channelViewModel.channelType == type ? 1 : 0.7)
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity)
@@ -177,7 +182,7 @@ struct CreateChannelView: View {
         .padding(5)
         .background {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
     }
 

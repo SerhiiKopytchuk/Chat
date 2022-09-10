@@ -13,7 +13,6 @@ struct SideMenuHeaderView: View {
     // MARK: - vars
     @Binding var isShowingSideMenu: Bool
     @EnvironmentObject private var userViewModel: UserViewModel
-    @State private var user: User = User()
 
     // MARK: image properties
     @State private var myImageUrl = URL(string: "")
@@ -70,7 +69,9 @@ struct SideMenuHeaderView: View {
                     imageStartSetup()
                 }
         } else {
-            EmptyImageWithCharacterView(text: user.name, colour: user.colour, size: imageSize)
+            EmptyImageWithCharacterView(text: userViewModel.currentUser.name,
+                                        colour: userViewModel.currentUser.colour,
+                                        size: imageSize)
                 .padding(.bottom, 16)
         }
     }

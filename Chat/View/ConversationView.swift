@@ -119,8 +119,8 @@ struct ConversationView: View {
                              profileImage: $profileImage
         )
         .background {
-            Color.background
-                .opacity(0.7)
+            Color.secondPrimary
+                .opacity(0.5)
         }
         .environmentObject(chattingViewModel)
     }
