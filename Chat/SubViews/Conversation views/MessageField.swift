@@ -46,7 +46,7 @@ struct MessageField: View {
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
-        .background(.white)
+        .background(Color.secondPrimary)
     }
 
     // MARK: - ViewBuilders
@@ -55,10 +55,11 @@ struct MessageField: View {
             isShowingImagePicker.toggle()
         } label: {
             Image(systemName: "photo")
+                .symbolRenderingMode(.hierarchical)
                 .frame(width: sizeOfButtons, height: sizeOfButtons)
-                .foregroundColor(.white)
+                .foregroundColor(.secondPrimary)
                 .padding(10)
-                .background(Color.gray)
+                .background(Color.primary.opacity(0.5))
                 .cornerRadius(10)
         }
     }
@@ -72,10 +73,11 @@ struct MessageField: View {
             chattingViewModel.changeLastActivityAndSortChats()
         } label: {
             Image(systemName: "paperplane.fill")
+                .symbolRenderingMode(.hierarchical)
                 .frame(width: sizeOfButtons, height: sizeOfButtons)
-                .foregroundColor(.white)
+                .foregroundColor(.secondPrimary)
                 .padding(10)
-                .background(Color.gray)
+                .background(Color.primary.opacity(0.5))
                 .cornerRadius(10)
         }
     }

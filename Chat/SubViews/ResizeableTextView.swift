@@ -22,6 +22,7 @@ struct ResizeableTextView: UIViewRepresentable {
         textView.text = placeholderText
         textView.textColor = .black
         textView.delegate = context.coordinator
+        textView.backgroundColor = UIColor.clear
 
         textView.font = .systemFont(ofSize: 18)
 
@@ -32,6 +33,8 @@ struct ResizeableTextView: UIViewRepresentable {
         if self.text.isEmpty == true {
             textView.text = self.editing ? "" : self.placeholderText
             textView.textColor = self.editing ? .black : .lightGray
+        } else {
+            textView.textColor = UIColor(Color.primary)
         }
 
         DispatchQueue.main.async {

@@ -50,14 +50,14 @@ struct ConversationTitleRow: View {
             // MARK: remove chat button
             if isFindChat {
                 Image(systemName: "xmark")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.primary.opacity(0.6))
                     .padding(10)
-                    .background(.white)
-                    .cornerRadius(40)
+                    .background(Color.secondPrimary)
                     .addLightShadow()
                     .onTapGesture {
                         showingAlert.toggle()
                     }
+                    .clipShape(Circle())
             }
 
         }

@@ -39,8 +39,8 @@ struct MessageBubble: View {
                 if message.imageId == "" {
                     Text(message.text)
                         .padding()
-                        .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .black)
-                        .background(message.senderId != viewModel.getUserUID() ? .blue : Color.white)
+                        .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .primary)
+                        .background(message.senderId != viewModel.getUserUID() ? .blue : Color.secondPrimary)
                         .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                       ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                         .frame(alignment: message.isReply() ? .leading : .trailing)
