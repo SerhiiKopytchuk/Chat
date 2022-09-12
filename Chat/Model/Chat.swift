@@ -15,6 +15,7 @@ struct Chat: Codable, Identifiable {
     var user2Id: String
     var messages: [Message]?
     var lastActivityTimestamp: Date
+    var storageFilesId: [String]?
 
     init () {
         self.id = UUID().uuidString
@@ -22,6 +23,7 @@ struct Chat: Codable, Identifiable {
         self.user2Id = ""
         self.messages = []
         self.lastActivityTimestamp = Date()
+        self.storageFilesId = []
     }
 
     internal init(user1Id: String, user2Id: String, messages: [Message]? = nil, lastActivityTimestamp: Date) {
@@ -29,6 +31,7 @@ struct Chat: Codable, Identifiable {
         self.user2Id = user2Id
         self.messages = messages
         self.lastActivityTimestamp = lastActivityTimestamp
+        self.storageFilesId = []
     }
 
 }

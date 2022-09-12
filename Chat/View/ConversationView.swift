@@ -61,7 +61,7 @@ struct ConversationView: View {
                 createChatButton
             }
         }
-        .frame(maxWidth: .infinity)
+//        .frame(maxWidth: UIScreen.main.bounds.width)
         .addGradientBackground()
         .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
@@ -223,7 +223,8 @@ struct ConversationView: View {
                             .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
                             .environmentObject(messagingViewModel)
                             .id(message.id)
-                            .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                            .frame(maxWidth: UIScreen.main.bounds.width,
+                                   alignment: message.isReply() ? .leading : .trailing)
                             .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
                                 return [(message.id  ?? "someId"): anchor]
                             })

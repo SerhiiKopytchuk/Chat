@@ -68,7 +68,7 @@ struct MessageBubble: View {
                 WebImage(url: imageUrl, isAnimating: .constant(true))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(height: 250)
+                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
                     .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] :
                                     [.topLeft, .topRight, .bottomLeft])

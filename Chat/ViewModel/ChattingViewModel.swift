@@ -76,6 +76,13 @@ class ChattingViewModel: ObservableObject {
         }
     }
 
+    func getCurrentChat(chatId: String, competition: @escaping (Chat) -> Void) {
+        dataBase.collection("chats").document(chatId)
+            .toChat { chat in
+                competition(chat)
+            }
+    }
+
     func createChat(competition: @escaping (Chat) -> Void) {
         do {
 
@@ -199,10 +206,12 @@ class ChattingViewModel: ObservableObject {
     }
 
     func deleteChat() {
-        dataBase.collection("chats").document("\(currentChat.id ?? "someId")").delete { err in
-            if self.isError(error: err) { return }
+        deleteFilesFromStorage { [self] in
+            dataBase.collection("chats").document("\(currentChat.id ?? "someId")").delete { err in
+                if self.isError(error: err) { return }
+            }
+            deleteChatIdFromUsersChats()
         }
-        deleteChatIdFromUsersChats()
     }
 
     fileprivate func deleteChatIdFromUsersChats() {
@@ -213,6 +222,23 @@ class ChattingViewModel: ObservableObject {
         dataBase.collection("users").document(currentChat.user2Id).updateData([
             "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
         ])
+    }
+
+    fileprivate func deleteFilesFromStorage(competition: @escaping () -> Void ) {
+
+        getCurrentChat(chatId: self.currentChat.id ?? "some Id") { chat in
+
+            competition()
+
+            for element in chat.storageFilesId ?? [] {
+                let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
+                                                                                       imageId: element)
+
+                ref.delete { err in
+                    if self.isError(error: err) { return }
+                }
+            }
+        }
     }
 
     fileprivate func isError(error: Error?) -> Bool {
