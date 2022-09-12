@@ -74,7 +74,7 @@ struct MessageBubble: View {
                                     [.topLeft, .topRight, .bottomLeft])
             } else {
                 ProgressView()
-                    .frame(width: 300, height: 250)
+                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
                     .aspectRatio(contentMode: .fill)
             }
 
