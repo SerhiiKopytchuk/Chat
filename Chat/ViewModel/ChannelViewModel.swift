@@ -269,9 +269,41 @@ class ChannelViewModel: ObservableObject {
     }
 
     func deleteChannel() {
-        removeChannelFromSubscribersAndOwner()
-        dataBase.collection("channels").document("\(currentChannel.id ?? "someId")").delete { err in
-            if self.isError(error: err) { return }
+        deleteChannelFiles {
+            self.removeChannelFromSubscribersAndOwner()
+            self.dataBase.collection("channels").document("\(self.currentChannel.id ?? "someId")").delete { err in
+                if self.isError(error: err) { return }
+            }
+        }
+    }
+
+    func deleteChannelFiles(competition: @escaping () -> Void) {
+        deleteChannelImageFile()
+        deleteChannelMessagesFiles {
+            competition()
+        }
+    }
+
+    fileprivate func deleteChannelImageFile() {
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: currentChannel.id ?? "someId")
+
+        ref.delete { error in
+            if self.isError(error: error) { return }
+        }
+    }
+
+    fileprivate func deleteChannelMessagesFiles(competition: @escaping () -> Void) {
+
+        self.getCurrentChannel(channelId: currentChannel.id ?? "someId") { channel in
+            competition()
+            for element in channel.storageFilesId {
+                let ref = StorageReferencesManager.shared
+                    .getChannelMessageImageReference(channelId: self.currentChannel.id ?? "someId",
+                                                     imageId: element)
+                ref.delete { error in
+                    if self.isError(error: error) { return }
+                }
+            }
         }
     }
 

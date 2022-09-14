@@ -42,12 +42,6 @@ struct EditProfileView: View {
                 HeaderWithBackButton(environment: _env, text: "Edit profile")
                     .padding()
 
-                ZStack(alignment: .top) {
-
-                    Color.background
-                        .cornerRadius(30, corners: [.topLeft, .topRight])
-                        .offset(x: 0, y: 50)
-
                     VStack {
                         changeProfileImageButton
 
@@ -64,7 +58,11 @@ struct EditProfileView: View {
                             .padding()
 
                     }
-                }
+                    .background {
+                        Color.background
+                            .cornerRadius(30, corners: [.topLeft, .topRight])
+                            .offset(x: 0, y: 50)
+                    }
             }
 
             customAlert
@@ -150,7 +148,9 @@ struct EditProfileView: View {
         Button {
 
             if !newName.isValidateLengthOfName() {
-                self.isShowAlert = true
+                withAnimation {
+                    self.isShowAlert = true
+                }
                 return
             }
 
@@ -176,7 +176,7 @@ struct EditProfileView: View {
                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                 .frame(maxWidth: geometry.frame(in: .local).width - 20)
             }
-            .background(Color.white.opacity(0.65))
+            .background(Color.black.opacity(0.65))
             .edgesIgnoringSafeArea(.all)
         }
     }

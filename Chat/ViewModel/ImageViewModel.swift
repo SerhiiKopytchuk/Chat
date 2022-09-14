@@ -27,7 +27,13 @@ class ImageViewModel: ObservableObject {
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(message: "failed to save image", err: error) { return }
             id(imageId)
+            self.addIdToChatFiles(chatId: chatId, fileId: imageId)
         }
+    }
+
+    private func addIdToChatFiles(chatId: String, fileId: String) {
+        dataBase.collection("chats").document(chatId)
+            .updateData(["storageFilesId": FieldValue.arrayUnion([fileId])])
     }
 
     func saveProfileImage(image: UIImage, userId: String) {
@@ -46,7 +52,13 @@ class ImageViewModel: ObservableObject {
         ref.putData(imageData, metadata: nil) { _, error in
             if self.isError(message: "failed to save image", err: error) { return }
             id(imageId)
+            self.addIdToChannelFiles(channelId: channelId, fileId: imageId)
         }
+    }
+
+    private func addIdToChannelFiles(channelId: String, fileId: String) {
+        dataBase.collection("channels").document(channelId)
+            .updateData(["storageFilesId": FieldValue.arrayUnion([fileId])])
     }
 
     func saveChannelImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
