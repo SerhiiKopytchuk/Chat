@@ -18,7 +18,5 @@
 		<key>UIImageName</key>
 		<string>icon</string>
 	</dict>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleDefault</string>
 </dict>
 </plist>

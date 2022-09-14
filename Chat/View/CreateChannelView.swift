@@ -37,48 +37,48 @@ struct CreateChannelView: View {
 
     // MARK: - body
     var body: some View {
+
         ZStack {
 
             Color.mainGradient
                 .ignoresSafeArea()
 
             VStack {
-
                 HeaderWithBackButton(environment: _env, text: "Create channel")
                     .padding()
 
-                ZStack(alignment: .top) {
+                VStack {
+                    changeChannelImageView
 
+                    channelNameTextField
+
+                    channelDescriptionTextField
+
+                    channelCustomTabBar
+                        .padding()
+
+                    Spacer()
+
+                    createChannelButton
+                        .padding()
+                }
+                .ignoresSafeArea(.keyboard, edges: .bottom)
+                .background {
                     Color.background
                         .cornerRadius(30, corners: [.topLeft, .topRight])
                         .offset(x: 0, y: 50)
-
-                    VStack {
-
-                        changeChannelImageView
-
-                        channelNameTextField
-
-                        channelDescriptionTextField
-
-                        channelCustomTabBar
-                            .padding()
-
-                        Spacer()
-
-                        createChannelButton
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
                 }
-            }
 
-            customAlert
+            }
+            .overlay {
+                customAlert
+            }
+            .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
+                ImagePicker(image: $channelImage)
+            }
+            .navigationBarHidden(true)
         }
-        .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $channelImage)
-        }
-        .navigationBarHidden(true)
+
     }
 
     // MARK: - viewBuilders
@@ -218,6 +218,7 @@ struct CreateChannelView: View {
                 .toButtonGradientStyle()
         }
         .opacity(name.isValidateLengthOfName() ? 1 : 0.6)
+        .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder private var customAlert: some View {
@@ -230,7 +231,7 @@ struct CreateChannelView: View {
                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                 .frame(maxWidth: geometry.frame(in: .local).width - 20)
             }
-            .background(Color.white.opacity(0.65))
+            .background(Color.black.opacity(0.65))
             .edgesIgnoringSafeArea(.all)
         }
     }
