@@ -198,13 +198,14 @@ struct CreateChannelView: View {
                 return
             }
 
-            channelViewModel.currentUser = viewModel.currentUser
             channelViewModel.owner = viewModel.currentUser
             channelViewModel.createChannel( name: self.name,
                                             description: self.description) { channel in
 
-                imageViewModel.saveChannelImage(image: self.channelImage ?? UIImage(),
-                                                channelId: channel.id ?? "some Id") { _ in
+                if let channelImageUnwrapped = channelImage {
+                    imageViewModel.saveChannelImage(image: channelImageUnwrapped,
+                                                    channelId: channel.id ?? "some Id") { _ in
+                }
 
                 }
                 if channelImage != nil {

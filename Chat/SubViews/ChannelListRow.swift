@@ -26,7 +26,7 @@ struct ChannelListRow: View {
     @State private var isShowImage = false
     private let imageSize: CGFloat = 50
 
-    @ObservedObject private var channelMessagingViewModel = ChannelMessagingViewModel()
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
 
     let rowTapped: () -> Void
 

@@ -57,6 +57,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Enter name of your channel"].typeText(channelName)
         app.textFields["Describe your channel"].tap()
         app.textFields["Describe your channel"].typeText(channelDescription)
+        app.buttons["return"].tap()
 
         app.buttons["Create"].tap()
         sleep(1)
@@ -206,6 +207,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Enter name of your channel"].typeText(name)
         app.textFields["Describe your channel"].tap()
         app.textFields["Describe your channel"].typeText(description)
+        app.buttons["return"].tap()
 
         app.buttons["Create"].tap()
         sleep(1)
@@ -296,7 +298,7 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.buttons["Photo"].tap()
-        app.images["Фото, 09 серпня, 5:08 пп"].tap()
+        app.images["Фотография, 30 марта 2018 г., 10:14 PM"].tap()
 
         let sendImage = app.scrollViews.firstMatch.otherElements["image"]
         let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)

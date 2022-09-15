@@ -212,6 +212,7 @@ class ChannelViewModel: ObservableObject {
                 } else {
                     removeChannels(channelsId: channelsId)
                 }
+                return
             }
 
         }
@@ -229,7 +230,7 @@ class ChannelViewModel: ObservableObject {
                 dataBase.collection("channels").document(channelId)
                     .toChannel { channel in
                         self.channels.append(channel)
-                        self.currentUser.chats.append(channel.id ?? "some channel id")
+                        self.currentUser.channels.append(channel.id ?? "some channel id")
                         self.sortChannels()
                     }
             }
@@ -261,9 +262,10 @@ class ChannelViewModel: ObservableObject {
                     }
 
                     if userLocal.channels.count != self.channels.count {
-                        self.getChannels(fromUpdate: true,
-                                         channelsId: userLocal.channels)
-                    }
+                            self.getChannels(fromUpdate: true,
+                                             channelsId: userLocal.channels)
+                        }
+
                 }
         }
     }

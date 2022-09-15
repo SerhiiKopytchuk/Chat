@@ -15,7 +15,7 @@ struct TabBarView: View {
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var messagingViewModel: MessagingViewModel
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
-    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
 
@@ -149,6 +149,7 @@ struct TabBarView: View {
                 }
                 .environmentObject(viewModel)
                 .environmentObject(channelViewModel)
+                .environmentObject(channelMessagingViewModel)
             }
         }
         .padding(.horizontal)
