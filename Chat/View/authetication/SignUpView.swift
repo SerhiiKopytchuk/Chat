@@ -167,6 +167,7 @@ struct SignUpView: View {
                             Image(systemName: "eye")
                                 .foregroundColor(.gray)
                         }
+                        .accessibilityLabel("first eye")
                     }
                 }
                 HStack {
@@ -199,6 +200,7 @@ struct SignUpView: View {
                             Image(systemName: "eye")
                                 .foregroundColor(.gray)
                         }
+                        .accessibilityLabel("second eye")
                     }
 
                 }

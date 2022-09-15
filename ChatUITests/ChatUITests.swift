@@ -30,18 +30,70 @@ class ChatUITests: XCTestCase {
     let channelDescription = "testChannelDescription"
     let channelNameEdited = "testChannelEdited"
     let channelDescriptionEdited = "testChannelDescriptionEdited"
+
+    // MARK: predicates
     let notExistsPredicate = NSPredicate(format: "exists == false")
     let existsPredicate = NSPredicate(format: "exists == true")
 
-    // swiftlint:disable:next identifier_name
-    let AnnaAccountEmail = "Anna@gmail.com"
-    // swiftlint:disable:next identifier_name
-    let AnnaAccountPassword = "asdfjkl;"
+    // MARK: firstAccount
+    let firstAccountName = "firstUser"
+    let firstAccountEmail = "firstUser@gmail.com"
+    let firstAccountPassword = "asdfjkl;"
 
-    // swiftlint:disable:next identifier_name
-    let BennAccountEmail = "Ben@gmail.com"
-    // swiftlint:disable:next identifier_name
-    let BennAccountPassword = "asdfjkl;"
+    // MARK: secondAccount
+    let secondAccountName = "secondUser"
+    let secondAccountEmail = "secondUser@gmail.com"
+    let secondAccountPassword = "asdfjkl;"
+
+    func test001SignUpFirstUserAccount () throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        let chatsLabel = app.staticTexts["Chats"]
+
+        if chatsLabel.exists {
+            logOut(app: app)
+        }
+
+        app.textFields["Full Name"].tap()
+        app.textFields["Full Name"].typeText(firstAccountName)
+
+        app.textFields["Email"].tap()
+        app.textFields["Email"].typeText(firstAccountEmail)
+
+        app.buttons["first eye"].tap()
+        app.buttons["second eye"].tap()
+
+        app.textFields["Password"].tap()
+        app.textFields["Password"].typeText(firstAccountPassword)
+
+        app.textFields["Re-enter"].tap()
+        app.textFields["Re-enter"].typeText(firstAccountPassword)
+
+        app.buttons["Create Account"].tap()
+        sleep(1)
+
+        if app.buttons["Close"].exists {
+
+            app.buttons["Close"].tap()
+            app.buttons["return"].tap()
+            app.buttons["Sign In"].tap()
+
+            app.textFields["Email"].tap()
+            app.textFields["Email"].typeText(firstAccountEmail)
+
+            app.secureTextFields["Password"].tap()
+            app.secureTextFields["Password"].typeText(firstAccountPassword)
+
+            app.buttons["Sign in"].tap()
+
+        }
+
+        let chatLabelExist = XCTNSPredicateExpectation(predicate: existsPredicate,
+                                      object: chatsLabel)
+        wait(for: [chatLabelExist], timeout: 5)
+
+    }
 
     func test001CreatingChannel() throws {
         let app = XCUIApplication()
@@ -332,10 +384,10 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.textFields["Email"].tap()
-        app.textFields["Email"].typeText(AnnaAccountEmail)
+        app.textFields["Email"].typeText(secondAccountEmail)
 
         app.secureTextFields["Password"].tap()
-        app.secureTextFields["Password"].typeText(AnnaAccountPassword)
+        app.secureTextFields["Password"].typeText(secondAccountPassword)
 
         app.buttons["Sign in"].tap()
         sleep(1)
@@ -395,10 +447,10 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.textFields["Email"].tap()
-        app.textFields["Email"].typeText(BennAccountEmail)
+        app.textFields["Email"].typeText(firstAccountEmail)
 
         app.secureTextFields["Password"].tap()
-        app.secureTextFields["Password"].typeText(BennAccountPassword)
+        app.secureTextFields["Password"].typeText(firstAccountPassword)
 
         app.buttons["Sign in"].tap()
         sleep(2)
@@ -521,3 +573,4 @@ class ChatUITests: XCTestCase {
 //        }
 //    }
 }
+
