@@ -438,6 +438,80 @@ class ChatUITests: XCTestCase {
         wait(for: [chatAnnaExpectation], timeout: 5)
     }
 
+    func test017CountOfChatsAndChannels() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.buttons["Search"].tap()
+        sleep(1)
+
+        app.textFields["Enter user name"].tap()
+        app.textFields["Enter user name"].typeText("A")
+
+        app.scrollViews.staticTexts["Anna"].tap()
+            sleep(1)
+        app.buttons["Start Chat"].tap()
+        app.buttons["arrow.backward.circle.fill"].tap()
+        app.buttons["arrow.backward.circle.fill"].tap()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.staticTexts["Create channel"].tap()
+        sleep(1)
+
+        app.textFields["Enter name of your channel"].tap()
+        app.textFields["Enter name of your channel"].typeText(channelName)
+        app.textFields["Describe your channel"].tap()
+        app.textFields["Describe your channel"].typeText(channelDescription)
+        app.buttons["return"].tap()
+
+        app.buttons["Create"].tap()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        let zeroStaticText = app.staticTexts["0"]
+
+        let zeroTextExpectation = XCTNSPredicateExpectation(predicate: notExistsPredicate, object: zeroStaticText)
+
+        wait(for: [zeroTextExpectation], timeout: 5)
+    }
+
+    func test018CreateChannelWithImage() throws {
+
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.staticTexts["Create channel"].tap()
+        sleep(1)
+
+        app.buttons["photo.circle.fill"].tap()
+        app.images["Фотография, 30 марта 2018 г., 10:14 PM"].tap()
+
+        app.textFields["Enter name of your channel"].tap()
+        app.textFields["Enter name of your channel"].typeText("channelWithImage")
+        app.textFields["Describe your channel"].tap()
+        app.textFields["Describe your channel"].typeText("channelWithImageDescription")
+        app.buttons["return"].tap()
+
+        app.buttons["Create"].tap()
+
+        app.buttons["fibrechannel"].tap()
+
+        let image = app.images["UIImage"]
+
+        let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: image)
+
+        wait(for: [imageExpectation], timeout: 5)
+    }
+
 //    func testLaunchPerformance() throws {
 //        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
 //            // This measures how long it takes to launch your application.
