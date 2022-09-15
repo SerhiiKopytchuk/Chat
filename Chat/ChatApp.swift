@@ -26,6 +26,7 @@ struct ChatApp: App {
             RootView()
                 .onAppear {
                         viewModel.getCurrentUser { user in
+                            viewModel.updateCurrentUser(userId: user.id)
                             chattingViewModel.currentUser = user
                             chattingViewModel.getChats(fromUpdate: false)
                             channelViewModel.currentUser = user
