@@ -12,7 +12,7 @@ import SDWebImageSwiftUI
 struct SideMenuHeaderView: View {
     // MARK: - vars
     @Binding var isShowingSideMenu: Bool
-    @EnvironmentObject private var userViewModel: UserViewModel
+    @EnvironmentObject var userViewModel: UserViewModel
 
     // MARK: image properties
     @State private var myImageUrl = URL(string: "")

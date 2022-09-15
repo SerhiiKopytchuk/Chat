@@ -30,6 +30,7 @@ struct SideMenuView: View {
 
             VStack {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
+                    .environmentObject(viewModel)
                     .foregroundColor(.white)
                     .frame(height: 240)
 

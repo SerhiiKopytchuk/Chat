@@ -48,6 +48,18 @@ class UserViewModel: ObservableObject {
         }
     }
 
+    func updateCurrentUser(userId: String) {
+        self.dataBase.collection("users").document(userId)
+            .addSnapshotListener { document, error in
+
+                if error != nil { return }
+
+                if let userLocal = try? document?.data(as: User.self) {
+                    self.currentUser = userLocal
+                }
+            }
+    }
+
     func getUser(id: String, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
         let docRef = self.dataBase.collection("users").document(id)
         var userToReturn: User = User()
