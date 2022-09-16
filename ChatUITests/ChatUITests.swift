@@ -26,26 +26,26 @@ class ChatUITests: XCTestCase {
     // start on Ben account, Anna account is exist
     // there is no channels. Without chat Ben with Anna
 
-    let channelName = "testChannel"
-    let channelDescription = "testChannelDescription"
-    let channelNameEdited = "testChannelEdited"
-    let channelDescriptionEdited = "testChannelDescriptionEdited"
+    let channelName = "Channel(Test)"
+    let channelDescription = "ChannelDescription(Test)"
+    let channelNameEdited = "ChannelEdited(Test)"
+    let channelDescriptionEdited = "testChannelDescriptionEdited(Test)"
 
     // MARK: predicates
     let notExistsPredicate = NSPredicate(format: "exists == false")
     let existsPredicate = NSPredicate(format: "exists == true")
 
     // MARK: firstAccount
-    let firstAccountName = "firstUser"
-    let firstAccountEmail = "firstUser@gmail.com"
-    let firstAccountPassword = "asdfjkl;"
+    let firstUserName = "FirstUser"
+    let firstUserEmail = "firstUser@gmail.com"
+    let firstUserPassword = "asdfjkl;"
 
     // MARK: secondAccount
-    let secondAccountName = "secondUser"
-    let secondAccountEmail = "secondUser@gmail.com"
-    let secondAccountPassword = "asdfjkl;"
+    let secondUserName = "SecondUser"
+    let secondUserEmail = "secondUser@gmail.com"
+    let secondUserPassword = "asdfjkl;"
 
-    func test001SignUpFirstUserAccount () throws {
+    func test001SignUpSecondUserAccount () throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -56,19 +56,19 @@ class ChatUITests: XCTestCase {
         }
 
         app.textFields["Full Name"].tap()
-        app.textFields["Full Name"].typeText(firstAccountName)
+        app.textFields["Full Name"].typeText(secondUserName)
 
         app.textFields["Email"].tap()
-        app.textFields["Email"].typeText(firstAccountEmail)
+        app.textFields["Email"].typeText(secondUserEmail)
 
         app.buttons["first eye"].tap()
         app.buttons["second eye"].tap()
 
         app.textFields["Password"].tap()
-        app.textFields["Password"].typeText(firstAccountPassword)
+        app.textFields["Password"].typeText(secondUserPassword)
 
         app.textFields["Re-enter"].tap()
-        app.textFields["Re-enter"].typeText(firstAccountPassword)
+        app.textFields["Re-enter"].typeText(secondUserPassword)
 
         app.buttons["Create Account"].tap()
         sleep(1)
@@ -80,10 +80,10 @@ class ChatUITests: XCTestCase {
             app.buttons["Sign In"].tap()
 
             app.textFields["Email"].tap()
-            app.textFields["Email"].typeText(firstAccountEmail)
+            app.textFields["Email"].typeText(secondUserEmail)
 
             app.secureTextFields["Password"].tap()
-            app.secureTextFields["Password"].typeText(firstAccountPassword)
+            app.secureTextFields["Password"].typeText(secondUserPassword)
 
             app.buttons["Sign in"].tap()
 
@@ -95,7 +95,57 @@ class ChatUITests: XCTestCase {
 
     }
 
-    func test001CreatingChannel() throws {
+    func test002SignUpFirstUserAccount () throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        let chatsLabel = app.staticTexts["Chats"]
+
+        if chatsLabel.exists {
+            logOut(app: app)
+        }
+
+        app.textFields["Full Name"].tap()
+        app.textFields["Full Name"].typeText(firstUserName)
+
+        app.textFields["Email"].tap()
+        app.textFields["Email"].typeText(firstUserEmail)
+
+        app.buttons["first eye"].tap()
+        app.buttons["second eye"].tap()
+
+        app.textFields["Password"].tap()
+        app.textFields["Password"].typeText(firstUserPassword)
+
+        app.textFields["Re-enter"].tap()
+        app.textFields["Re-enter"].typeText(firstUserPassword)
+
+        app.buttons["Create Account"].tap()
+        sleep(1)
+
+        if app.buttons["Close"].exists {
+
+            app.buttons["Close"].tap()
+            app.buttons["return"].tap()
+            app.buttons["Sign In"].tap()
+
+            app.textFields["Email"].tap()
+            app.textFields["Email"].typeText(firstUserEmail)
+
+            app.secureTextFields["Password"].tap()
+            app.secureTextFields["Password"].typeText(firstUserPassword)
+
+            app.buttons["Sign in"].tap()
+
+        }
+
+        let chatLabelExist = XCTNSPredicateExpectation(predicate: existsPredicate,
+                                      object: chatsLabel)
+        wait(for: [chatLabelExist], timeout: 5)
+
+    }
+
+    func test003CreateChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -119,7 +169,7 @@ class ChatUITests: XCTestCase {
         XCTAssert(app.scrollViews.staticTexts[channelName].exists)
     }
 
-    func test002SubscribeAnnaToChannel() throws {
+    func test004SubscribeSecondUserToChannel() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -134,7 +184,7 @@ class ChatUITests: XCTestCase {
 
         app.images["Add"].tap()
         app.textFields["Search users"].tap()
-        app.textFields["Search users"].typeText("Anna")
+        app.textFields["Search users"].typeText(secondUserName)
 
         app.scrollViews.otherElements.images["Add"].tap()
 
@@ -142,10 +192,10 @@ class ChatUITests: XCTestCase {
 
         app.images["Remove"].tap()
 
-        XCTAssert(app.scrollViews.staticTexts["Anna"].exists)
+        XCTAssert(app.scrollViews.staticTexts[secondUserName].exists)
     }
 
-    func test003UnsubscribeAnnaFromChannel() throws {
+    func test005UnsubscribeSecondUserFromChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -167,12 +217,11 @@ class ChatUITests: XCTestCase {
         app.buttons["arrow.backward.circle.fill"].tap()
         sleep(1)
 
-        print(subscribersCount)
         let subscribersCountAfter = app.staticTexts["Subscribers"]
         XCTAssert(subscribersCount != subscribersCountAfter)
     }
 
-    func test004EditingChannel() throws {
+    func test006EditingChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -187,16 +236,16 @@ class ChatUITests: XCTestCase {
         app.images["Edit"].tap()
         sleep(1)
 
-        app.textFields["Enter channel name"].tap()
-        app.textFields["Enter channel name"].typeText("Edited")
+        app.textFields["Enter channel name"].tap(withNumberOfTaps: 3, numberOfTouches: 1)
+        app.textFields["Enter channel name"].typeText(channelNameEdited)
 
-        app.textFields["Type channel description"].tap()
-        app.textFields["Type channel description"].typeText("Edited")
+        app.textFields["Type channel description"].tap(withNumberOfTaps: 3, numberOfTouches: 1)
+        app.textFields["Type channel description"].typeText(channelDescriptionEdited)
 
         app.buttons["Selected"].tap()
 
-        let editedChannelName = app.staticTexts["\(channelName)Edited"]
-        let editedChannelDescription = app.staticTexts["\(channelDescription)Edited"]
+        let editedChannelName = app.staticTexts[channelNameEdited]
+        let editedChannelDescription = app.staticTexts[channelDescriptionEdited]
 
         let editedChannelNameExpectation = XCTNSPredicateExpectation(predicate: existsPredicate,
                                                                      object: editedChannelName)
@@ -206,7 +255,7 @@ class ChatUITests: XCTestCase {
         wait(for: [editedChannelNameExpectation, editedChannelDescriptionExpectation], timeout: 5)
     }
 
-    func test005DeletingChannel() throws {
+    func test007DeletingChannel() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -226,7 +275,7 @@ class ChatUITests: XCTestCase {
         XCTAssert(!app.scrollViews.staticTexts[channelNameEdited].exists)
     }
 
-    func test006CreateSeveralChannels() throws {
+    func test008CreateSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -265,7 +314,7 @@ class ChatUITests: XCTestCase {
         sleep(1)
     }
 
-    func test007DeleteSeveralChannels() throws {
+    func test009DeleteSeveralChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -295,7 +344,7 @@ class ChatUITests: XCTestCase {
         app.buttons["delete channel"].tap()
     }
 
-    func test008StartChatWithAnna() throws {
+    func test010StartChatWithSecondUser() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -307,27 +356,27 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.textFields["Enter user name"].tap()
-        app.textFields["Enter user name"].typeText("A")
+        app.textFields["Enter user name"].typeText(secondUserName)
 
-        app.scrollViews.staticTexts["Anna"].tap()
+        app.scrollViews.staticTexts[secondUserName].tap()
             sleep(1)
         app.buttons["Start Chat"].tap()
         app.buttons["arrow.backward.circle.fill"].tap()
         app.buttons["arrow.backward.circle.fill"].tap()
 
-        let chatCell = app.scrollViews.staticTexts["Anna"]
-        let chatAnnaExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: chatCell)
+        let chatCell = app.scrollViews.staticTexts[secondUserName]
+        let chatWithSecondUserExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: chatCell)
 
-        wait(for: [chatAnnaExpectation], timeout: 5)
+        wait(for: [chatWithSecondUserExpectation], timeout: 5)
     }
 
-    func test009SendAnnaMessage() throws {
+    func test011SendSecondUserMessage() throws {
 
         let app = XCUIApplication()
-        let message = "Hello Anna!"
+        let message = "Hello \(secondUserName)!"
         app.launch()
 
-        app.scrollViews.staticTexts["Anna"].tap()
+        app.scrollViews.staticTexts[secondUserName].tap()
         sleep(1)
 
         app.textViews.firstMatch.tap()
@@ -341,12 +390,12 @@ class ChatUITests: XCTestCase {
         wait(for: [sendMessageExpectation], timeout: 5)
     }
 
-    func test010SendAnnaImage() throws {
+    func test012SendSecondUserImage() throws {
 
         let app = XCUIApplication()
         app.launch()
 
-        app.scrollViews.staticTexts["Anna"].tap()
+        app.scrollViews.staticTexts[secondUserName].tap()
         sleep(1)
 
         app.buttons["Photo"].tap()
@@ -358,7 +407,7 @@ class ChatUITests: XCTestCase {
         wait(for: [imageExpectation], timeout: 5)
     }
 
-    func test011LogoutTest() throws {
+    func test013LogoutTest() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -375,7 +424,7 @@ class ChatUITests: XCTestCase {
         wait(for: [signUpTextExpectation], timeout: 5)
     }
 
-    func test012SignInToAnnaAccount() throws {
+    func test014SignInToSecondUserAccount() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -384,28 +433,28 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.textFields["Email"].tap()
-        app.textFields["Email"].typeText(secondAccountEmail)
+        app.textFields["Email"].typeText(secondUserEmail)
 
         app.secureTextFields["Password"].tap()
-        app.secureTextFields["Password"].typeText(secondAccountPassword)
+        app.secureTextFields["Password"].typeText(secondUserPassword)
 
         app.buttons["Sign in"].tap()
         sleep(1)
 
-        let bySerhiiKopytchukText = app.staticTexts["Chats"]
-        let bySerhiiKopytchukTextExpectation = XCTNSPredicateExpectation(predicate: existsPredicate,
-                                                                         object: bySerhiiKopytchukText)
+        let chatsLabel = app.staticTexts["Chats"]
+        let chatsLabelExpectation = XCTNSPredicateExpectation(predicate: existsPredicate,
+                                                                         object: chatsLabel)
 
-        wait(for: [bySerhiiKopytchukTextExpectation], timeout: 5)
+        wait(for: [chatsLabelExpectation], timeout: 5)
     }
 
-    func test013CheckIfReceiveMessage() throws {
+    func test015CheckIfReceiveMessage() throws {
 
         let app = XCUIApplication()
-        let message = "Hello Anna!"
+        let message = "Hello \(secondUserName)!"
         app.launch()
 
-        app.scrollViews.staticTexts["Benn"].tap()
+        app.scrollViews.staticTexts[firstUserName].tap()
         sleep(1)
 
         let sendMessage = app.scrollViews.staticTexts[message]
@@ -417,13 +466,13 @@ class ChatUITests: XCTestCase {
         wait(for: [sendMessageExpectation, imageExpectation], timeout: 5)
     }
 
-    func test014AddEmojiReactionTest() throws {
+    func test016AddEmojiReactionTest() throws {
 
         let app = XCUIApplication()
-        let message = "Hello Anna!"
+        let message = "Hello \(secondUserName)!"
         app.launch()
 
-        app.scrollViews.staticTexts["Benn"].tap()
+        app.scrollViews.staticTexts[firstUserName].tap()
         sleep(1)
 
         app.scrollViews.staticTexts[message].press(forDuration: 1)
@@ -436,7 +485,7 @@ class ChatUITests: XCTestCase {
         wait(for: [emojiReactionExpectation], timeout: 5)
     }
 
-    func test015SignInToBennAccount() throws {
+    func test017SignInToFirstUserAccount() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -447,15 +496,15 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.textFields["Email"].tap()
-        app.textFields["Email"].typeText(firstAccountEmail)
+        app.textFields["Email"].typeText(firstUserEmail)
 
         app.secureTextFields["Password"].tap()
-        app.secureTextFields["Password"].typeText(firstAccountPassword)
+        app.secureTextFields["Password"].typeText(firstUserPassword)
 
         app.buttons["Sign in"].tap()
         sleep(2)
 
-        app.scrollViews.staticTexts["Anna"].tap()
+        app.scrollViews.staticTexts[secondUserName].tap()
         sleep(1)
 
         let emojiReaction = app.scrollViews.staticTexts["🔥"]
@@ -473,24 +522,24 @@ class ChatUITests: XCTestCase {
         sleep(1)
     }
 
-    func test016DeleteChatWithAnna() throws {
+    func test018DeleteChatWithSecondUser() throws {
         let app = XCUIApplication()
         app.launch()
         sleep(1)
 
-        app.scrollViews.staticTexts["Anna"].press(forDuration: 1)
+        app.scrollViews.staticTexts[secondUserName].press(forDuration: 1)
 
         app.buttons["remove chat"].tap()
         sleep(1)
 
-        let chatCell = app.scrollViews.staticTexts["Anna"]
+        let chatCell = app.scrollViews.staticTexts[secondUserName]
 
-        let chatAnnaExpectation = XCTNSPredicateExpectation(predicate: notExistsPredicate, object: chatCell)
+        let secondUserChatExpectation = XCTNSPredicateExpectation(predicate: notExistsPredicate, object: chatCell)
 
-        wait(for: [chatAnnaExpectation], timeout: 5)
+        wait(for: [secondUserChatExpectation], timeout: 5)
     }
 
-    func test017CountOfChatsAndChannels() throws {
+    func test019CountOfChatsAndChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -533,7 +582,7 @@ class ChatUITests: XCTestCase {
         wait(for: [zeroTextExpectation], timeout: 5)
     }
 
-    func test018CreateChannelWithImage() throws {
+    func test020CreateChannelWithImage() throws {
 
         let app = XCUIApplication()
         app.launch()
