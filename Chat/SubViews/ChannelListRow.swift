@@ -90,6 +90,7 @@ struct ChannelListRow: View {
                 .addLightShadow()
                 .padding(5)
                 .padding(.trailing)
+                .accessibilityValue("UIImage")
         } else if isFindChannelImage {
             WebImage(url: imageUrl)
                 .resizable()
