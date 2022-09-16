@@ -306,7 +306,7 @@ struct ChannelConversationView: View {
                 }
             }
         }
-        .ignoresSafeArea()
+        .ignoresSafeArea(.all, edges: .bottom)
     }
 
     @ViewBuilder private var messagingTextField: some View {
