@@ -81,9 +81,10 @@ struct SignUpView: View {
                 }
 
             }
+            .navigationDestination(isPresented: $isPresentSignInView, destination: {
+                SignInView()
+            })
             .background {
-                NavigationLink(destination: SignInView(), isActive: $isPresentSignInView) { }
-
                 Color.background
                     .ignoresSafeArea()
             }

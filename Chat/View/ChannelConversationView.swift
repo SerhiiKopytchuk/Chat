@@ -77,16 +77,31 @@ struct ChannelConversationView: View {
             }
 
         }
-
+        .navigationDestination(isPresented: $isGoToEditChannel, destination: {
+            EditChannelView(channelName: channelViewModel.currentChannel.name,
+                            channelDescription: channelViewModel.currentChannel.description,
+                            channelColor: channelViewModel.currentChannel.colour)
+            .environmentObject(channelViewModel)
+            .environmentObject(editChannelViewModel)
+        })
+        .navigationDestination(isPresented: $isGoToAddSubscribers, destination: {
+            AddUserToChannelView()
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        })
+        .navigationDestination(isPresented: $isGoToRemoveSubscribers, destination: {
+            RemoveUsersFromChannelView()
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        })
         .frame(maxWidth: .infinity)
         .background {
             Color.background
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)
-        .background {
-            navigationLinks
-        }
         .overlay(content: {
             Rectangle()
                 .fill(.black)
@@ -350,33 +365,6 @@ struct ChannelConversationView: View {
                 .font(.title3)
                 .foregroundColor(.white)
         }
-    }
-
-    @ViewBuilder private var navigationLinks: some View {
-        NavigationLink(isActive: $isGoToAddSubscribers, destination: {
-            AddUserToChannelView()
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
-        }, label: { })
-        .hidden()
-
-        NavigationLink(isActive: $isGoToRemoveSubscribers, destination: {
-            RemoveUsersFromChannelView()
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
-        }, label: { })
-        .hidden()
-
-        NavigationLink(isActive: $isGoToEditChannel, destination: {
-            EditChannelView(channelName: channelViewModel.currentChannel.name,
-                            channelDescription: channelViewModel.currentChannel.description,
-                            channelColor: channelViewModel.currentChannel.colour)
-            .environmentObject(channelViewModel)
-            .environmentObject(editChannelViewModel)
-        }, label: { })
-        .hidden()
     }
 
     // MARK: - functions

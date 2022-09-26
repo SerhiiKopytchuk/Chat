@@ -58,10 +58,21 @@ struct SearchView: View {
 
         }
         .background {
-            navigationLinks
             Color("BG")
                 .ignoresSafeArea()
         }
+        .navigationDestination(isPresented: $goToConversation, destination: {
+            ConversationView(secondUser: self.viewModel.secondUser, isFindChat: self.$isFindChat)
+                .environmentObject(viewModel)
+                .environmentObject(messagingViewModel)
+                .environmentObject(chattingViewModel)
+        })
+        .navigationDestination(isPresented: $goToChannelConversation, destination: {
+            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(channelMessagingViewModel)
+        })
         .navigationBarHidden(true)
 
     }
@@ -203,24 +214,6 @@ struct SearchView: View {
                 .environmentObject(channelViewModel)
             }
         }
-    }
-
-    @ViewBuilder private var navigationLinks: some View {
-        NavigationLink(isActive: $goToConversation) {
-            ConversationView(secondUser: self.viewModel.secondUser, isFindChat: self.$isFindChat)
-                .environmentObject(viewModel)
-                .environmentObject(messagingViewModel)
-                .environmentObject(chattingViewModel)
-        }label: { Text("conversationView") }
-            .hidden()
-
-        NavigationLink(isActive: $goToChannelConversation) {
-            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(channelMessagingViewModel)
-        } label: { Text("channelConversationView") }
-            .hidden()
     }
 
     // MARK: - functions
