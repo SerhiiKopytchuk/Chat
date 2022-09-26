@@ -153,7 +153,7 @@ struct ChannelConversationView: View {
                 Color.secondPrimary
                     .opacity(0.5)
             }
-            .transition(.opacity)
+            .transition(.push(from: .leading))
         }
     }
 

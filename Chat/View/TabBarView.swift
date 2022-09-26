@@ -65,6 +65,7 @@ struct TabBarView: View {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
                                 .environmentObject(viewModel)
                                 .environmentObject(messagingViewModel)
+                                .environmentObject(channelViewModel)
         })
         .navigationDestination(isPresented: $goToChannel, destination: {
             ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
@@ -113,7 +114,7 @@ struct TabBarView: View {
                         messagingViewModel.currentUser = self.viewModel.currentUser
                         messagingViewModel.currentChat = chat
                         messagingViewModel.getMessages { _ in }
-                        // don't remove dispatch
+//                         don't remove dispatch
                         DispatchQueue.main.async {
                             goToConversation.toggle()
                         }
@@ -153,10 +154,10 @@ struct TabBarView: View {
         VStack {
             if selection == 0 {
                 chatsScrollView
-                    .transition(.offset(x: -UIScreen.main.bounds.width))
+                    .transition(.push(from: .leading))
             } else {
                 channelsScrollView
-                    .transition(.offset(x: UIScreen.main.bounds.width))
+                    .transition(.push(from: .trailing))
             }
         }
         .frame(maxWidth: .infinity)
