@@ -24,7 +24,7 @@ struct RootView: View {
     // MARK: - body
     var body: some View {
 
-        NavigationView {
+        NavigationStack {
             VStack {
                 if viewModel.signedIn {
                     MainView()

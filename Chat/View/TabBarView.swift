@@ -61,28 +61,22 @@ struct TabBarView: View {
             .ignoresSafeArea(.all, edges: .bottom)
 
         }
+        .navigationDestination(isPresented: $goToConversation, destination: {
+            ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
+                                .environmentObject(viewModel)
+                                .environmentObject(messagingViewModel)
+        })
+        .navigationDestination(isPresented: $goToChannel, destination: {
+            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
+                .environmentObject(viewModel)
+                .environmentObject(channelMessagingViewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(editChannelViewModel)
+        })
         .frame(maxHeight: .infinity)
         .background {
-
             Color.background
                 .ignoresSafeArea()
-
-            // MARK: navigationLinks
-            NavigationLink(isActive: $goToConversation) {
-                ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
-                    .environmentObject(viewModel)
-                    .environmentObject(messagingViewModel)
-            } label: { }
-                .hidden()
-
-            NavigationLink(isActive: $goToChannel) {
-                ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
-                    .environmentObject(viewModel)
-                    .environmentObject(channelMessagingViewModel)
-                    .environmentObject(channelViewModel)
-                    .environmentObject(editChannelViewModel)
-            } label: { }
-                .hidden()
         }
         .navigationBarHidden(true)
     }
