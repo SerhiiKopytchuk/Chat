@@ -36,33 +36,7 @@ struct SideMenuView: View {
 
                 ForEach(SideMenuViewModel.allCases, id: \.self) { option in
 
-                    if option == SideMenuViewModel.profile {
-                        NavigationLink {
-                            EditProfileView()
-                        } label: {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    } else if option == SideMenuViewModel.createChannel {
-                        NavigationLink {
-                            CreateChannelView()
-                                .environmentObject(viewModel)
-                                .environmentObject(channelViewModel)
-                        } label: {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    } else if option == SideMenuViewModel.searchUsers {
-                        NavigationLink {
-                            SearchView()
-                                .environmentObject(messagingViewModel)
-                                .environmentObject(viewModel)
-                                .environmentObject(chattingViewModel)
-                                .environmentObject(channelViewModel)
-                                .environmentObject(channelMessagingViewModel)
-                                .navigationBarTitle("Search", displayMode: .automatic)
-                        } label: {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    } else {
+                    if option == SideMenuViewModel.logout {
                         Button {
                             if option == SideMenuViewModel.logout {
                                 withAnimation {
@@ -73,10 +47,34 @@ struct SideMenuView: View {
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
+                    } else {
+                        NavigationLink(value: option) {
+                            SideMenuOptionView(viewModel: option)
+                        }
                     }
+                    
                 }
                 Spacer()
             }
+            .navigationDestination(for: SideMenuViewModel.self, destination: { option in
+                switch option {
+                case .profile:
+                    EditProfileView()
+                case .search:
+                    SearchView()
+                        .environmentObject(messagingViewModel)
+                        .environmentObject(viewModel)
+                        .environmentObject(chattingViewModel)
+                        .environmentObject(channelViewModel)
+                        .environmentObject(channelMessagingViewModel)
+                case .createChannel:
+                    CreateChannelView()
+                        .environmentObject(viewModel)
+                        .environmentObject(channelViewModel)
+                default:
+                    EditProfileView()
+                }
+            })
             .background {
                 Color.mainGradient
                     .ignoresSafeArea()
