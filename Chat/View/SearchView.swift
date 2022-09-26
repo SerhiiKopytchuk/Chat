@@ -170,6 +170,7 @@ struct SearchView: View {
                                   id: user.id,
                                   userColor: user.colour,
                                   rowTapped: {
+
                     viewModel.secondUser = user
                     messagingViewModel.secondUser = user
                     messagingViewModel.currentUser = viewModel.currentUser
@@ -181,7 +182,7 @@ struct SearchView: View {
                         self.messagingViewModel.getMessages { _ in
                             isFindChat = true
                             DispatchQueue.main.async {
-                                goToConversation = true
+                                goToConversation.toggle()
                             }
                         }
                     } failure: { _ in

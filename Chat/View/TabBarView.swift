@@ -100,25 +100,21 @@ struct TabBarView: View {
     @ViewBuilder private var chatsScrollView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(chattingViewModel.chats, id: \.id) { chat in
-
                 ChatListRow(chat: chat) {
-                    _ = viewModel.getUser(
+                    viewModel.getUser(
                         id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
                     ) { user in
                         messagingViewModel.secondUser = user
-                    } failure: { }
+                        chattingViewModel.secondUser = user
 
-                    chattingViewModel.getCurrentChat(
-                        chat: chat, userNumber: viewModel.currentUser.id != chat.user1Id ? 1 : 2
-                    ) { chat in
-                        messagingViewModel.currentUser = self.viewModel.currentUser
-                        messagingViewModel.currentChat = chat
-                        messagingViewModel.getMessages { _ in }
-//                         don't remove dispatch
                         DispatchQueue.main.async {
                             goToConversation.toggle()
                         }
-                    }
+                    } failure: { }
+
+                    messagingViewModel.currentUser = self.viewModel.currentUser
+                    messagingViewModel.currentChat = chat
+                    messagingViewModel.getMessages { _ in }
                 }
                 .environmentObject(messagingViewModel)
                 .environmentObject(chattingViewModel)

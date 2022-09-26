@@ -61,7 +61,6 @@ struct ConversationView: View {
                 createChatButton
             }
         }
-//        .frame(maxWidth: UIScreen.main.bounds.width)
         .addGradientBackground()
         .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
