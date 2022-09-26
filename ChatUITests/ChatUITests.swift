@@ -622,4 +622,3 @@ class ChatUITests: XCTestCase {
 //        }
 //    }
 }
-
