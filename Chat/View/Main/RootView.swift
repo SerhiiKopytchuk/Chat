@@ -44,7 +44,6 @@ struct RootView: View {
             .ignoresSafeArea(.all, edges: .bottom)
             .navigationBarBackButtonHidden(true)
         }
-        .navigationViewStyle(.stack)
         .onAppear {
             viewModel.signedIn = viewModel.isSignedIn
         }

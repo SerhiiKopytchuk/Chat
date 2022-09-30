@@ -52,7 +52,6 @@ struct SideMenuView: View {
                             SideMenuOptionView(viewModel: option)
                         }
                     }
-                    
                 }
                 Spacer()
             }
