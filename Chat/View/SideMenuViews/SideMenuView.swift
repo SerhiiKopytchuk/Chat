@@ -25,9 +25,6 @@ struct SideMenuView: View {
 
     var body: some View {
 
-            Color.mainGradient
-                .ignoresSafeArea()
-
             VStack {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
                     .environmentObject(viewModel)
