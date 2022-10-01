@@ -20,7 +20,7 @@ struct ConversationView: View {
 
     // MARK: fullscreen profile image properties
     @State private var isExpandedProfile: Bool = false
-    @State private var profileImage: WebImage = WebImage(url: URL(string: ""))
+    @State var webImageUrl = URL(string: "")
     @State private var loadExpandedContent = false
     @State private var imageOffset: CGSize = .zero
 
@@ -102,7 +102,7 @@ struct ConversationView: View {
         })
         .overlay {
             if isExpandedProfile {
-                expandedPhoto(image: profileImage)
+                expandedPhoto()
             }
         }
         .navigationBarHidden(true)
@@ -115,7 +115,7 @@ struct ConversationView: View {
                              animationNamespace: animation,
                              isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,
-                             profileImage: $profileImage
+                             profileImageURL: $webImageUrl
         )
         .background {
             Color.secondPrimary
@@ -137,11 +137,11 @@ struct ConversationView: View {
             }
     }
 
-    @ViewBuilder private func expandedPhoto (image: WebImage ) -> some View {
+    @ViewBuilder private func expandedPhoto () -> some View {
         VStack {
             GeometryReader { proxy in
                 let size = proxy.size
-                profileImage
+                WebImage(url: webImageUrl)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: size.width, height: size.height)

@@ -65,7 +65,7 @@ struct TabBarView: View {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
                                 .environmentObject(viewModel)
                                 .environmentObject(messagingViewModel)
-                                .environmentObject(channelViewModel)
+                                .environmentObject(chattingViewModel)
         })
         .navigationDestination(isPresented: $goToChannel, destination: {
             ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct SearchView: View {
 
     // MARK: - vars
@@ -44,7 +43,6 @@ struct SearchView: View {
                 .padding()
 
             VStack {
-
                 chatOrChannelPicker
 
                 if isSearchingChat == "Users" {
@@ -67,12 +65,12 @@ struct SearchView: View {
                 .environmentObject(messagingViewModel)
                 .environmentObject(chattingViewModel)
         })
-        .navigationDestination(isPresented: $goToChannelConversation, destination: {
-            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(channelMessagingViewModel)
-        })
+//        .navigationDestination(isPresented: $goToChannelConversation, destination: {
+//            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
+//                .environmentObject(viewModel)
+//                .environmentObject(channelViewModel)
+//                .environmentObject(channelMessagingViewModel)
+//        })
         .navigationBarHidden(true)
 
     }
@@ -182,7 +180,7 @@ struct SearchView: View {
                         self.messagingViewModel.getMessages { _ in
                             isFindChat = true
                             DispatchQueue.main.async {
-                                goToConversation.toggle()
+                                goToConversation = true
                             }
                         }
                     } failure: { _ in
