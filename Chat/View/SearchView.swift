@@ -65,12 +65,12 @@ struct SearchView: View {
                 .environmentObject(messagingViewModel)
                 .environmentObject(chattingViewModel)
         })
-//        .navigationDestination(isPresented: $goToChannelConversation, destination: {
-//            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
-//                .environmentObject(viewModel)
-//                .environmentObject(channelViewModel)
-//                .environmentObject(channelMessagingViewModel)
-//        })
+        .navigationDestination(isPresented: $goToChannelConversation, destination: {
+            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
+                .environmentObject(viewModel)
+                .environmentObject(channelViewModel)
+                .environmentObject(channelMessagingViewModel)
+        })
         .navigationBarHidden(true)
 
     }
