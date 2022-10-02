@@ -20,31 +20,22 @@ struct RootView: View {
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var imageViewModel: ImageViewModel
 
     // MARK: - body
     var body: some View {
 
-        NavigationView {
+        NavigationStack {
             VStack {
                 if viewModel.signedIn {
                     MainView()
-                        .environmentObject(viewModel)
-                        .environmentObject(messagingViewModel)
-                        .environmentObject(chattingViewModel)
-                        .environmentObject(channelViewModel)
-                        .environmentObject(channelMessagingViewModel)
-                        .environmentObject(editChannelViewModel)
-                        .navigationBarTitleDisplayMode(.inline)
-
                 } else {
                     SignUpView()
-                        .environmentObject(chattingViewModel)
                 }
             }
             .ignoresSafeArea(.all, edges: .bottom)
             .navigationBarBackButtonHidden(true)
         }
-        .navigationViewStyle(.stack)
         .onAppear {
             viewModel.signedIn = viewModel.isSignedIn
         }

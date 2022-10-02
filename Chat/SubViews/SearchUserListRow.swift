@@ -36,7 +36,6 @@ struct SearchUserListRow: View {
                     Text(userGmail)
                         .font(.caption)
                         .foregroundColor(.gray)
-                        .foregroundColor(.gray)
                         .lineLimit(1)
                 }
             }
@@ -44,7 +43,7 @@ struct SearchUserListRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background {
                 RoundedRectangle(cornerRadius: 15, style: .continuous)
-                    .fill(.white)
+                    .fill(Color.secondPrimary)
             }
 
             .onTapGesture {

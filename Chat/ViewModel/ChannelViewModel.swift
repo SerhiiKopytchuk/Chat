@@ -212,6 +212,7 @@ class ChannelViewModel: ObservableObject {
                 } else {
                     removeChannels(channelsId: channelsId)
                 }
+                return
             }
 
         }
@@ -229,7 +230,7 @@ class ChannelViewModel: ObservableObject {
                 dataBase.collection("channels").document(channelId)
                     .toChannel { channel in
                         self.channels.append(channel)
-                        self.currentUser.chats.append(channel.id ?? "some channel id")
+                        self.currentUser.channels.append(channel.id ?? "some channel id")
                         self.sortChannels()
                     }
             }
@@ -261,17 +262,50 @@ class ChannelViewModel: ObservableObject {
                     }
 
                     if userLocal.channels.count != self.channels.count {
-                        self.getChannels(fromUpdate: true,
-                                         channelsId: userLocal.channels)
-                    }
+                            self.getChannels(fromUpdate: true,
+                                             channelsId: userLocal.channels)
+                        }
+
                 }
         }
     }
 
     func deleteChannel() {
-        removeChannelFromSubscribersAndOwner()
-        dataBase.collection("channels").document("\(currentChannel.id ?? "someId")").delete { err in
-            if self.isError(error: err) { return }
+        deleteChannelFiles {
+            self.removeChannelFromSubscribersAndOwner()
+            self.dataBase.collection("channels").document("\(self.currentChannel.id ?? "someId")").delete { err in
+                if self.isError(error: err) { return }
+            }
+        }
+    }
+
+    func deleteChannelFiles(competition: @escaping () -> Void) {
+        deleteChannelImageFile()
+        deleteChannelMessagesFiles {
+            competition()
+        }
+    }
+
+    fileprivate func deleteChannelImageFile() {
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: currentChannel.id ?? "someId")
+
+        ref.delete { error in
+            if self.isError(error: error) { return }
+        }
+    }
+
+    fileprivate func deleteChannelMessagesFiles(competition: @escaping () -> Void) {
+
+        self.getCurrentChannel(channelId: currentChannel.id ?? "someId") { channel in
+            competition()
+            for element in channel.storageFilesId {
+                let ref = StorageReferencesManager.shared
+                    .getChannelMessageImageReference(channelId: self.currentChannel.id ?? "someId",
+                                                     imageId: element)
+                ref.delete { error in
+                    if self.isError(error: error) { return }
+                }
+            }
         }
     }
 

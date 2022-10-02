@@ -25,43 +25,15 @@ struct SideMenuView: View {
 
     var body: some View {
 
-            Color.mainGradient
-                .ignoresSafeArea()
-
             VStack {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
+                    .environmentObject(viewModel)
                     .foregroundColor(.white)
                     .frame(height: 240)
 
                 ForEach(SideMenuViewModel.allCases, id: \.self) { option in
 
-                    if option == SideMenuViewModel.profile {
-                        NavigationLink {
-                            EditProfileView()
-                        } label: {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    } else if option == SideMenuViewModel.createChannel {
-                        NavigationLink {
-                            CreateChannelView()
-                                .environmentObject(viewModel)
-                                .environmentObject(channelViewModel)
-                        } label: {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    } else if option == SideMenuViewModel.searchUsers {
-                        NavigationLink {
-                            SearchView()
-                                .environmentObject(messagingViewModel)
-                                .environmentObject(viewModel)
-                                .environmentObject(chattingViewModel)
-                                .environmentObject(channelViewModel)
-                                .environmentObject(channelMessagingViewModel)
-                                .navigationBarTitle("Search", displayMode: .automatic)
-                        } label: {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    } else {
+                    if option == SideMenuViewModel.logout {
                         Button {
                             if option == SideMenuViewModel.logout {
                                 withAnimation {
@@ -72,10 +44,26 @@ struct SideMenuView: View {
                         } label: {
                             SideMenuOptionView(viewModel: option)
                         }
+                    } else {
+                        NavigationLink(value: option) {
+                            SideMenuOptionView(viewModel: option)
+                        }
                     }
                 }
                 Spacer()
             }
+            .navigationDestination(for: SideMenuViewModel.self, destination: { option in
+                switch option {
+                case .profile:
+                    EditProfileView()
+                case .search:
+                    SearchView()
+                case .createChannel:
+                    CreateChannelView()
+                default:
+                    EditProfileView()
+                }
+            })
             .background {
                 Color.mainGradient
                     .ignoresSafeArea()

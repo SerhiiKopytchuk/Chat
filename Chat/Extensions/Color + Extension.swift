@@ -21,10 +21,18 @@ extension Color {
                                                  endPoint: .bottomTrailing)
     static let background = Color("BG")
 
+    static let secondPrimary = Color("secondPrimary")
+    static let secondPrimaryReversed = Color("secondPrimaryReversed")
+
+    static let textFieldColor = Color("TextFieldColor")
+
     static let mainGradient = LinearGradient(gradient:
                                                 Gradient(colors: [
                                                    Color("Gradient1"),
                                                    Color("Gradient2"),
-                                                   Color("Gradient3")
+                                                   Color("Gradient3"),
+                                                   Color("Gradient4"),
+                                                   Color("Gradient5"),
+                                                   Color("Gradient6")
                                                 ]), startPoint: .topLeading, endPoint: .bottomTrailing)
 }

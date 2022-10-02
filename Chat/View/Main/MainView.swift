@@ -20,32 +20,20 @@ struct MainView: View {
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var imageViewModel: ImageViewModel
 
     // MARK: - body
     var body: some View {
         ZStack {
             if isShowingSideMenu {
                 SideMenuView(isShowingSideMenu: $isShowingSideMenu, isShowingSearchUsers: $showSearchUsers)
-                    .environmentObject(messagingViewModel)
-                    .environmentObject(viewModel)
-                    .environmentObject(chattingViewModel)
-                    .environmentObject(channelViewModel)
-                    .environmentObject(channelMessagingViewModel)
             }
-
             TabBarView(isShowingSideMenu: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
                 .cornerRadius(isShowingSideMenu ? 20 : 10)
                 .offset(x: isShowingSideMenu ? 300 : 0, y: isShowingSideMenu ? 44 : 0)
                 .scaleEffect(isShowingSideMenu ? 0.8 : 1)
                 .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
-                .environmentObject(messagingViewModel)
-                .environmentObject(viewModel)
-                .environmentObject(chattingViewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(channelMessagingViewModel)
-                .environmentObject(editChannelViewModel)
-
         }
         .background {
             Color.background
@@ -55,8 +43,6 @@ struct MainView: View {
             isShowingSideMenu = false
             chattingViewModel.currentUser = viewModel.currentUser
         }
-        .navigationViewStyle(.columns)
-
     }
 
 }

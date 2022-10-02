@@ -19,6 +19,7 @@ struct Channel: Codable, Identifiable {
     var lastActivityTimestamp: Date
     var isPrivate: Bool
     var colour: String
+    var storageFilesId: [String]
 
     internal init(name: String, description: String, ownerId: String, ownerName: String, isPrivate: Bool) {
         self.name = name
@@ -30,6 +31,7 @@ struct Channel: Codable, Identifiable {
         self.lastActivityTimestamp = Date()
         self.isPrivate = isPrivate
         self.colour = String.getRandomColorFromAssets()
+        self .storageFilesId = []
     }
 
     init() {
@@ -42,6 +44,7 @@ struct Channel: Codable, Identifiable {
         self.lastActivityTimestamp = Date()
         self.isPrivate = false
         self.colour = String.getRandomColorFromAssets()
+        self .storageFilesId = []
     }
 
 }

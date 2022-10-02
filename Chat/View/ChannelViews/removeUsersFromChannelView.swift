@@ -27,7 +27,6 @@ struct RemoveUsersFromChannelView: View {
                 .padding()
 
             usersList
-                .padding()
 
         }
         .background {

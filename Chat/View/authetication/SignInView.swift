@@ -24,6 +24,8 @@ struct SignInView: View {
 
     @ObservedObject private var imageViewModel = EditProfileViewModel()
 
+    @Binding var isPresented: Bool
+
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
@@ -33,13 +35,25 @@ struct SignInView: View {
             ZStack {
                 VStack(spacing: 30) {
 
-                    Text("Sign In")
-                        .font(.system(.largeTitle, design: .rounded))
-                        .fontWeight(.bold)
-                        .padding(.leading, 10)
-                        .padding()
-                        .foregroundColor(.black.opacity(0.6))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    HStack(spacing: 15) {
+
+                        Button {
+                            withAnimation {
+                                self.isPresented = false
+                            }
+                        } label: {
+                            Image(systemName: "arrow.backward.circle.fill")
+                                .toButtonLightStyle(size: 40)
+                        }
+
+                        Text("Sign In")
+                            .font(.system(.largeTitle, design: .rounded))
+                            .fontWeight(.bold)
+                            .padding()
+                            .foregroundColor(.primary.opacity(0.6))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding()
 
                     inputFields
 
@@ -83,7 +97,11 @@ struct SignInView: View {
                         GeometryReader { reader in
                             Loader()
                                 .position(x: reader.size.width/2, y: reader.size.height/2)
-                        }.background(Color.black.opacity(0.45).edgesIgnoringSafeArea(.all))
+                        }.background {
+                            Color.black
+                                .opacity(0.65)
+                                .edgesIgnoringSafeArea(.all)
+                        }
                     }
                 }
 
@@ -192,7 +210,7 @@ struct SignInView: View {
                     .frame(maxWidth: geometry.frame(in: .local).width - 20)
             }
 
-        }.background(Color.white.opacity(0.65))
+        }.background(Color.black.opacity(0.65))
             .edgesIgnoringSafeArea(.all)
     }
 
@@ -270,7 +288,7 @@ struct SignInView: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView().environmentObject(UserViewModel())
+        SignInView(isPresented: .constant(true)).environmentObject(UserViewModel())
     }
 
 }

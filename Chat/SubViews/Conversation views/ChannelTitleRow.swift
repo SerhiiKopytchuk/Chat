@@ -16,14 +16,13 @@ struct ChannelTitleRow: View {
     let animationNamespace: Namespace.ID
     @Binding var isExpandedProfileImage: Bool
     @Binding var isExpandedDetails: Bool
-    @Binding var channelWebImage: WebImage
+    @Binding var channelImageURL: URL?
 
     @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     @State var isOwner: Bool
 
     // MARK: image properties
-    @State private var imageUrl = URL(string: "")
     @State private var isFindUserImage = true
     private let imageSize: CGFloat = 50
 
@@ -63,7 +62,7 @@ struct ChannelTitleRow: View {
         if isFindUserImage {
             VStack {
                 if isExpandedProfileImage {
-                    WebImage(url: imageUrl)
+                    WebImage(url: channelImageURL)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: imageSize, height: imageSize)
@@ -71,7 +70,7 @@ struct ChannelTitleRow: View {
                         .addLightShadow()
                         .opacity(0)
                 } else {
-                    WebImage(url: imageUrl)
+                    WebImage(url: channelImageURL)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: imageSize, height: imageSize)
@@ -111,8 +110,7 @@ struct ChannelTitleRow: View {
                 return
             }
             withAnimation(.easeInOut) {
-                self.channelWebImage = WebImage(url: url)
-                self.imageUrl = url
+                self.channelImageURL = url
             }
         }
     }

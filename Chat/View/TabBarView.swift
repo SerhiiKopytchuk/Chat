@@ -15,7 +15,7 @@ struct TabBarView: View {
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var messagingViewModel: MessagingViewModel
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
-    @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
 
@@ -54,35 +54,23 @@ struct TabBarView: View {
                 // MARK: CustomTabBar
                 CustomTabBar(selected: $selection)
                     .padding(.bottom)
-                    .backgroundBlur(radius: 10, opaque: true)
+                    .backgroundBlur(radius: 20, opaque: true)
                     .clipShape(RoundedRectangle(cornerRadius: 0))
                     .frame(maxHeight: .infinity, alignment: .top)
             }
             .ignoresSafeArea(.all, edges: .bottom)
 
         }
+        .navigationDestination(isPresented: $goToConversation, destination: {
+            ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
+        })
+        .navigationDestination(isPresented: $goToChannel, destination: {
+            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
+        })
         .frame(maxHeight: .infinity)
         .background {
-
             Color.background
                 .ignoresSafeArea()
-
-            // MARK: navigationLinks
-            NavigationLink(isActive: $goToConversation) {
-                ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
-                    .environmentObject(viewModel)
-                    .environmentObject(messagingViewModel)
-            } label: { }
-                .hidden()
-
-            NavigationLink(isActive: $goToChannel) {
-                ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
-                    .environmentObject(viewModel)
-                    .environmentObject(channelMessagingViewModel)
-                    .environmentObject(channelViewModel)
-                    .environmentObject(editChannelViewModel)
-            } label: { }
-                .hidden()
         }
         .navigationBarHidden(true)
     }
@@ -96,7 +84,7 @@ struct TabBarView: View {
             }
         } label: {
             Image(systemName: "list.bullet")
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
         .font(.title3)
         .opacity(isShowingSideMenu ? 0 : 1)
@@ -105,25 +93,22 @@ struct TabBarView: View {
     @ViewBuilder private var chatsScrollView: some View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(chattingViewModel.chats, id: \.id) { chat in
-
                 ChatListRow(chat: chat) {
                     _ = viewModel.getUser(
                         id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
                     ) { user in
                         messagingViewModel.secondUser = user
-                    } failure: { }
+                        chattingViewModel.secondUser = user
 
-                    chattingViewModel.getCurrentChat(
-                        chat: chat, userNumber: viewModel.currentUser.id != chat.user1Id ? 1 : 2
-                    ) { chat in
-                        messagingViewModel.currentUser = self.viewModel.currentUser
-                        messagingViewModel.currentChat = chat
-                        messagingViewModel.getMessages { _ in }
-                        // don't remove dispatch
                         DispatchQueue.main.async {
                             goToConversation.toggle()
                         }
-                    }
+                    } failure: { }
+
+                    chattingViewModel.currentChat = chat
+                    messagingViewModel.currentUser = self.viewModel.currentUser
+                    messagingViewModel.currentChat = chat
+                    messagingViewModel.getMessages { _ in }
                 }
                 .environmentObject(messagingViewModel)
                 .environmentObject(chattingViewModel)
@@ -149,6 +134,7 @@ struct TabBarView: View {
                 }
                 .environmentObject(viewModel)
                 .environmentObject(channelViewModel)
+                .environmentObject(channelMessagingViewModel)
             }
         }
         .padding(.horizontal)
@@ -158,10 +144,10 @@ struct TabBarView: View {
         VStack {
             if selection == 0 {
                 chatsScrollView
-                    .transition(.offset(x: -UIScreen.main.bounds.width))
+                    .transition(.push(from: .leading))
             } else {
                 channelsScrollView
-                    .transition(.offset(x: UIScreen.main.bounds.width))
+                    .transition(.push(from: .trailing))
             }
         }
         .frame(maxWidth: .infinity)

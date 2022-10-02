@@ -33,6 +33,7 @@ struct RemoveUsersFromChannelListRow: View {
             // MARK: user name and gmail
             VStack(alignment: .leading) {
                 Text(user)
+                    .foregroundColor(.primary)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .lineLimit(1)
@@ -47,7 +48,7 @@ struct RemoveUsersFromChannelListRow: View {
         }
         .background {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .onAppear {
             imageStartSetup()

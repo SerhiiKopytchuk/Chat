@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct SearchView: View {
 
     // MARK: - vars
@@ -44,7 +43,6 @@ struct SearchView: View {
                 .padding()
 
             VStack {
-
                 chatOrChannelPicker
 
                 if isSearchingChat == "Users" {
@@ -58,10 +56,15 @@ struct SearchView: View {
 
         }
         .background {
-            navigationLinks
             Color("BG")
                 .ignoresSafeArea()
         }
+        .navigationDestination(isPresented: $goToConversation, destination: {
+            ConversationView(secondUser: self.viewModel.secondUser, isFindChat: self.$isFindChat)
+        })
+        .navigationDestination(isPresented: $goToChannelConversation, destination: {
+            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
+        })
         .navigationBarHidden(true)
 
     }
@@ -71,6 +74,7 @@ struct SearchView: View {
     @ViewBuilder private var searchingUsers: some View {
         Label {
             TextField("Enter user name", text: $searchUserText)
+                .foregroundColor(.primary)
                 .padding(.leading, 10)
                 .onChange(of: searchUserText, perform: { newValue in
                     viewModel.searchText = newValue
@@ -78,15 +82,16 @@ struct SearchView: View {
                 })
         } icon: {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundColor(.primary)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .padding(.top, 15)
+        .padding(.bottom)
 
         usersList
     }
@@ -94,6 +99,7 @@ struct SearchView: View {
     @ViewBuilder private var searchingChannels: some View {
         Label {
             TextField("Enter channel name", text: $searchChannelText)
+                .foregroundColor(.primary)
                 .padding(.leading, 10)
                 .onChange(of: searchChannelText, perform: { newText in
                     channelViewModel.searchText = newText
@@ -101,15 +107,16 @@ struct SearchView: View {
                 })
         } icon: {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundColor(.primary)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .padding(.top, 15)
+        .padding(.bottom)
 
         channelList
     }
@@ -119,7 +126,7 @@ struct SearchView: View {
             ForEach(["Users", "Channels"], id: (\.self)) { text in
                 Text(text.capitalized)
                     .fontWeight(.semibold)
-                    .foregroundColor(isSearchingChat == text ? .white : .black)
+                    .foregroundColor(isSearchingChat == text ? .white : .primary)
                     .opacity(isSearchingChat == text ? 1 : 0.7)
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity)
@@ -143,7 +150,7 @@ struct SearchView: View {
         .padding(5)
         .background {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
     }
 
@@ -155,6 +162,7 @@ struct SearchView: View {
                                   id: user.id,
                                   userColor: user.colour,
                                   rowTapped: {
+
                     viewModel.secondUser = user
                     messagingViewModel.secondUser = user
                     messagingViewModel.currentUser = viewModel.currentUser
@@ -199,24 +207,6 @@ struct SearchView: View {
                 .environmentObject(channelViewModel)
             }
         }
-    }
-
-    @ViewBuilder private var navigationLinks: some View {
-        NavigationLink(isActive: $goToConversation) {
-            ConversationView(secondUser: self.viewModel.secondUser, isFindChat: self.$isFindChat)
-                .environmentObject(viewModel)
-                .environmentObject(messagingViewModel)
-                .environmentObject(chattingViewModel)
-        }label: { Text("conversationView") }
-            .hidden()
-
-        NavigationLink(isActive: $goToChannelConversation) {
-            ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: $isSubscribedToChannel)
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(channelMessagingViewModel)
-        } label: { Text("channelConversationView") }
-            .hidden()
     }
 
     // MARK: - functions

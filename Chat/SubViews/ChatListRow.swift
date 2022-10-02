@@ -16,7 +16,7 @@ struct ChatListRow: View {
     @ObservedObject private var messageViewModel = MessagingViewModel()
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
 
-    @State private var person: User?
+    @State var person: User = User()
     @State private var message = Message()
 
     // MARK: image properties
@@ -39,7 +39,7 @@ struct ChatListRow: View {
             VStack(alignment: .leading) {
                 // MARK: name with last message date
                 HStack {
-                    Text(person?.name ?? "")
+                    Text(person.name)
                         .font(.title3)
                         .fontWeight(.semibold)
                         .lineLimit(1)
@@ -55,7 +55,7 @@ struct ChatListRow: View {
         .padding()
         .background {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .onTapGesture {
@@ -65,7 +65,7 @@ struct ChatListRow: View {
             contextMenuButton
         })
         .onAppear {
-            userImageSetup()
+            secondUserSetup()
 
             self.messageViewModel.currentChat = self.chat
 
@@ -90,8 +90,8 @@ struct ChatListRow: View {
                 .addLightShadow()
                 .padding(5)
         } else {
-            EmptyImageWithCharacterView(text: person?.name ?? "No Name",
-                                        colour: person?.colour ?? String.getRandomColorFromAssets(),
+            EmptyImageWithCharacterView(text: person.name ,
+                                        colour: person.colour ,
                                         size: imageSize)
                 .padding(5)
         }
@@ -141,7 +141,7 @@ struct ChatListRow: View {
         }
     }
 
-    private func userImageSetup() {
+    private func secondUserSetup() {
         DispatchQueue.main.async {
             self.viewModel.getUserByChat(chat: self.chat) { user in
                 withAnimation {

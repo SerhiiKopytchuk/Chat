@@ -45,6 +45,7 @@ struct AddUserToChannelView: View {
     @ViewBuilder private var addUsersTextField: some View {
         Label {
             TextField("Search users", text: $searchUserText)
+                .foregroundColor(.primary)
                 .padding(.leading, 10)
                 .onChange(of: searchUserText, perform: { newText in
                     editChannelViewModel.searchText = newText
@@ -52,12 +53,13 @@ struct AddUserToChannelView: View {
             })
         } icon: {
             Image(systemName: "magnifyingglass")
+                .foregroundColor(.primary)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .padding(.top, 5)
         .padding()
@@ -75,6 +77,7 @@ struct AddUserToChannelView: View {
                 .environmentObject(channelViewModel)
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal)
     }
 

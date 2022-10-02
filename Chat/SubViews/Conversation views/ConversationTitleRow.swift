@@ -20,13 +20,11 @@ struct ConversationTitleRow: View {
     @State private var showingAlert = false
 
     // MARK: image properties
-    @State private var imageUrl = URL(string: "")
     @State private var isFindUserImage = true
     @Binding var isFindChat: Bool
 
     @Binding var isExpandedProfile: Bool
-    @Binding var profileImage: WebImage
-
+    @Binding var profileImageURL: URL?
     private let imageSize: CGFloat = 50
 
     // MARK: - Body
@@ -50,14 +48,14 @@ struct ConversationTitleRow: View {
             // MARK: remove chat button
             if isFindChat {
                 Image(systemName: "xmark")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.primary.opacity(0.6))
                     .padding(10)
-                    .background(.white)
-                    .cornerRadius(40)
+                    .background(Color.secondPrimary)
                     .addLightShadow()
                     .onTapGesture {
                         showingAlert.toggle()
                     }
+                    .clipShape(Circle())
             }
 
         }
@@ -79,7 +77,7 @@ struct ConversationTitleRow: View {
         if isFindUserImage {
             VStack {
                 if isExpandedProfile {
-                    WebImage(url: imageUrl)
+                    WebImage(url: profileImageURL)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: imageSize, height: imageSize)
@@ -87,7 +85,7 @@ struct ConversationTitleRow: View {
                             .addLightShadow()
                             .opacity(0)
                 } else {
-                    WebImage(url: imageUrl)
+                    WebImage(url: profileImageURL)
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: imageSize, height: imageSize)
@@ -126,8 +124,7 @@ struct ConversationTitleRow: View {
                 return
             }
             withAnimation(.easeInOut) {
-                self.profileImage = WebImage(url: url)
-                self.imageUrl = url
+                    self.profileImageURL = url
             }
         }
     }

@@ -22,10 +22,12 @@ struct ChatApp: App {
             let channelViewModel = ChannelViewModel()
             let channelMessagingViewModel = ChannelMessagingViewModel()
             let editChannelViewModel = EditChannelViewModel()
+            let imageViewModel = ImageViewModel()
 
             RootView()
                 .onAppear {
                         viewModel.getCurrentUser { user in
+                            viewModel.updateCurrentUser(userId: user.id)
                             chattingViewModel.currentUser = user
                             chattingViewModel.getChats(fromUpdate: false)
                             channelViewModel.currentUser = user
@@ -38,6 +40,7 @@ struct ChatApp: App {
                 .environmentObject(channelViewModel)
                 .environmentObject(channelMessagingViewModel)
                 .environmentObject(editChannelViewModel)
+                .environmentObject(imageViewModel)
         }
 
     }

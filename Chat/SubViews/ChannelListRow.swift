@@ -26,7 +26,7 @@ struct ChannelListRow: View {
     @State private var isShowImage = false
     private let imageSize: CGFloat = 50
 
-    @ObservedObject private var channelMessagingViewModel = ChannelMessagingViewModel()
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
 
     let rowTapped: () -> Void
 
@@ -57,7 +57,7 @@ struct ChannelListRow: View {
         .padding()
         .background {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .fill(.white)
+                .fill(Color.secondPrimary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .onTapGesture {
@@ -90,6 +90,7 @@ struct ChannelListRow: View {
                 .addLightShadow()
                 .padding(5)
                 .padding(.trailing)
+                .accessibilityValue("UIImage")
         } else if isFindChannelImage {
             WebImage(url: imageUrl)
                 .resizable()
