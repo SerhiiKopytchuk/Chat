@@ -460,7 +460,7 @@ class ChatUITests: XCTestCase {
         let sendMessage = app.scrollViews.staticTexts[message]
         let sendMessageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendMessage)
 
-        let sendImage = app.scrollViews.firstMatch.otherElements.otherElements.firstMatch
+        let sendImage = app.scrollViews.images["image"]
         let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
 
         wait(for: [sendMessageExpectation, imageExpectation], timeout: 5)
@@ -550,9 +550,9 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.textFields["Enter user name"].tap()
-        app.textFields["Enter user name"].typeText("A")
+        app.textFields["Enter user name"].typeText(secondUserName)
 
-        app.scrollViews.staticTexts["Anna"].tap()
+        app.scrollViews.staticTexts[secondUserName].tap()
             sleep(1)
         app.buttons["Start Chat"].tap()
         app.buttons["arrow.backward.circle.fill"].tap()

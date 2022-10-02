@@ -17,8 +17,8 @@ struct MessageField: View {
     var sizeOfButtons: CGFloat = 20
 
     @ObservedObject var messagingViewModel: MessagingViewModel
-    @ObservedObject private var imageViewModel = ImageViewModel()
-    @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject var imageViewModel: ImageViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     @State private var isShowingImagePicker = false
     @State private var image: UIImage?

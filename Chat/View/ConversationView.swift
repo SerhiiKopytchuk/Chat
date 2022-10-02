@@ -49,6 +49,8 @@ struct ConversationView: View {
                     messagesScrollView
 
                     MessageField(messagingViewModel: messagingViewModel)
+                        .environmentObject(chattingViewModel)
+                        .environmentObject(messagingViewModel)
                         .ignoresSafeArea(.container, edges: .bottom)
 
                 }

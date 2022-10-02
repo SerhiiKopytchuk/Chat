@@ -29,7 +29,7 @@ struct EditChannelView: View {
 
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
-    @ObservedObject private var imageViewModel = ImageViewModel()
+    @EnvironmentObject private var imageViewModel: ImageViewModel
 
     @Environment(\.self) var presentationMode
 

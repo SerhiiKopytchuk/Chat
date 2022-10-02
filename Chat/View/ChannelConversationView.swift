@@ -38,6 +38,7 @@ struct ChannelConversationView: View {
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
+    @EnvironmentObject private var imageViewModel: ImageViewModel
 
     // MARK: - body
 
@@ -81,20 +82,12 @@ struct ChannelConversationView: View {
             EditChannelView(channelName: channelViewModel.currentChannel.name,
                             channelDescription: channelViewModel.currentChannel.description,
                             channelColor: channelViewModel.currentChannel.colour)
-            .environmentObject(channelViewModel)
-            .environmentObject(editChannelViewModel)
         })
         .navigationDestination(isPresented: $isGoToAddSubscribers, destination: {
             AddUserToChannelView()
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
         })
         .navigationDestination(isPresented: $isGoToRemoveSubscribers, destination: {
             RemoveUsersFromChannelView()
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
         })
         .frame(maxWidth: .infinity)
         .background {

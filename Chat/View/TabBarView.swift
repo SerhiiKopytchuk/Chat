@@ -63,16 +63,9 @@ struct TabBarView: View {
         }
         .navigationDestination(isPresented: $goToConversation, destination: {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
-                                .environmentObject(viewModel)
-                                .environmentObject(messagingViewModel)
-                                .environmentObject(chattingViewModel)
         })
         .navigationDestination(isPresented: $goToChannel, destination: {
             ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
-                .environmentObject(viewModel)
-                .environmentObject(channelMessagingViewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(editChannelViewModel)
         })
         .frame(maxHeight: .infinity)
         .background {
@@ -112,6 +105,7 @@ struct TabBarView: View {
                         }
                     } failure: { }
 
+                    chattingViewModel.currentChat = chat
                     messagingViewModel.currentUser = self.viewModel.currentUser
                     messagingViewModel.currentChat = chat
                     messagingViewModel.getMessages { _ in }

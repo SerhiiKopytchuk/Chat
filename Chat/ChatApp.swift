@@ -22,6 +22,7 @@ struct ChatApp: App {
             let channelViewModel = ChannelViewModel()
             let channelMessagingViewModel = ChannelMessagingViewModel()
             let editChannelViewModel = EditChannelViewModel()
+            let imageViewModel = ImageViewModel()
 
             RootView()
                 .onAppear {
@@ -39,6 +40,7 @@ struct ChatApp: App {
                 .environmentObject(channelViewModel)
                 .environmentObject(channelMessagingViewModel)
                 .environmentObject(editChannelViewModel)
+                .environmentObject(imageViewModel)
         }
 
     }

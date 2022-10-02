@@ -58,15 +58,8 @@ struct SideMenuView: View {
                     EditProfileView()
                 case .search:
                     SearchView()
-                        .environmentObject(messagingViewModel)
-                        .environmentObject(viewModel)
-                        .environmentObject(chattingViewModel)
-                        .environmentObject(channelViewModel)
-                        .environmentObject(channelMessagingViewModel)
                 case .createChannel:
                     CreateChannelView()
-                        .environmentObject(viewModel)
-                        .environmentObject(channelViewModel)
                 default:
                     EditProfileView()
                 }
