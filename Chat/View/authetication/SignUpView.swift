@@ -41,77 +41,82 @@ struct SignUpView: View {
     // MARK: - Body
     var body: some View {
 
-        ZStack {
-            VStack(spacing: 30) {
-                Spacer()
-                HStack {
-                    Text("Sign Up")
-                        .font(.system(.largeTitle, design: .rounded))
-                        .fontWeight(.bold)
-                        .padding(.leading, 10)
-                        .padding()
-                        .foregroundColor(.primary.opacity(0.6))
+        if !isPresentSignInView {
+            ZStack {
+                VStack(spacing: 30) {
                     Spacer()
-                }
-
-                userImage
-
-                fields
-                    .padding(.top)
-
-                // MARK: buttons
-                VStack {
-                    createAccountButton
-
-                    Button("Sign In") {
-                        self.isPresentSignInView = true
+                    HStack {
+                        Text("Sign Up")
+                            .font(.system(.largeTitle, design: .rounded))
+                            .fontWeight(.bold)
+                            .padding(.leading, 10)
+                            .padding()
+                            .foregroundColor(.primary.opacity(0.6))
+                        Spacer()
                     }
-                    .foregroundColor(.brown)
-                    .padding(.top, 20)
 
-                    Text("OR")
-                        .padding(.top, 10)
-                        .font(.system(.title3, design: .rounded))
-                        .foregroundColor(.gray)
+                    userImage
 
-                    googleButton
+                    fields
+                        .padding(.top)
 
-                    Spacer()
+                    // MARK: buttons
+                    VStack {
+                        createAccountButton
 
-                }
+                        Button("Sign In") {
+                            withAnimation {
+                                self.isPresentSignInView = true
+                            }
+                        }
+                        .foregroundColor(.brown)
+                        .padding(.top, 20)
 
-            }
-            .navigationDestination(isPresented: $isPresentSignInView, destination: {
-                SignInView()
-            })
-            .background {
-                Color.background
-                    .ignoresSafeArea()
-            }
+                        Text("OR")
+                            .padding(.top, 10)
+                            .font(.system(.title3, design: .rounded))
+                            .foregroundColor(.gray)
 
-            if isShowAlert || viewModel.showAlert {
-                customAlertView
-            }
+                        googleButton
 
-            if viewModel.isShowLoader {
-                withAnimation {
-                    GeometryReader { reader in
-                        Loader()
-                            .position(x: reader.size.width/2, y: reader.size.height/2)
-                    }.background {
-                        Color.black
-                            .opacity(0.65)
-                            .edgesIgnoringSafeArea(.all)
+                        Spacer()
 
                     }
-                }
-            }
 
+                }
+                .background {
+                    Color.background
+                        .ignoresSafeArea()
+                }
+
+                if isShowAlert || viewModel.showAlert {
+                    customAlertView
+                }
+
+                if viewModel.isShowLoader {
+                    withAnimation {
+                        GeometryReader { reader in
+                            Loader()
+                                .position(x: reader.size.width/2, y: reader.size.height/2)
+                        }.background {
+                            Color.black
+                                .opacity(0.65)
+                                .edgesIgnoringSafeArea(.all)
+
+                        }
+                    }
+                }
+
+            }
+            .navigationBarHidden(true)
+            .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
+                ImagePicker(image: $image)
+            }
+        } else {
+            SignInView(isPresented: $isPresentSignInView)
+                .transition(.push(from: .trailing))
         }
-        .navigationBarHidden(true)
-        .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $image)
-        }
+
     }
 
     // MARK: - ViewBuilders
