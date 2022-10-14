@@ -10,6 +10,8 @@ import SDWebImageSwiftUI
 
 struct FullScreenImageCoverHeader: View {
 
+    // MARK: - variables
+
     let animationHeaderImageNamespace: Namespace.ID
 
     @State var namespaceId: String
@@ -24,6 +26,7 @@ struct FullScreenImageCoverHeader: View {
 
     @EnvironmentObject private var channelViewModel: ChannelViewModel
 
+    // MARK: - body
     var body: some View {
         VStack {
             GeometryReader { proxy in
@@ -76,14 +79,27 @@ struct FullScreenImageCoverHeader: View {
                 loadExpandedContent = true
             }
         }
-        .background {
-            Rectangle()
-                .fill(.black)
-                .opacity(loadExpandedContent ? 1 : 0)
-                .opacity(imageOffsetProgress())
-                .ignoresSafeArea()
+    }
+
+    // MARK: - viewBuilders
+
+    @ViewBuilder private var turnOffImageButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                loadExpandedContent = false
+            }
+            withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+                isExpandedHeaderImage = false
+            }
+
+        } label: {
+            Image(systemName: "arrow.left")
+                .font(.title3)
+                .foregroundColor(.white)
         }
     }
+
+    // MARK: - functions
 
     private func imageOffsetProgress() -> CGFloat {
         let progress = imageOffset.height / 100
@@ -105,22 +121,6 @@ struct FullScreenImageCoverHeader: View {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             imageOffset = .zero
-        }
-    }
-
-    @ViewBuilder private var turnOffImageButton: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                loadExpandedContent = false
-            }
-            withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-                isExpandedHeaderImage = false
-            }
-
-        } label: {
-            Image(systemName: "arrow.left")
-                .font(.title3)
-                .foregroundColor(.white)
         }
     }
 

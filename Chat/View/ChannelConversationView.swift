@@ -27,7 +27,7 @@ struct ChannelConversationView: View {
     @State var imageId = ""
 
     @State private var loadExpandedContent = false
-    @State private var imageOffset: CGSize = .zero//
+    @State private var imageOffset: CGSize = .zero
 
     @State private var isExpandedDetails = false
     @State private var isGoToAddSubscribers = false
@@ -109,6 +109,13 @@ struct ChannelConversationView: View {
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)
+        .overlay(content: {
+            Rectangle()
+                .fill(.black)
+                .opacity(loadExpandedContent ? 1 : 0)
+                .opacity(imageOffsetProgress())
+                .ignoresSafeArea()
+        })
         .overlay {
             if isExpandedChannelImage {
                 FullScreenImageCoverHeader(animationHeaderImageNamespace: animationProfileImage,
@@ -335,5 +342,14 @@ struct ChannelConversationView: View {
     private func editChannelViewModelSetup() {
         editChannelViewModel.currentChannel = channelViewModel.currentChannel
         editChannelViewModel.currentUser = channelViewModel.currentUser
+    }
+
+    private func imageOffsetProgress() -> CGFloat {
+        let progress = imageOffset.height / 100
+        if imageOffset.height < 0 {
+            return 1
+        } else {
+            return 1  - (progress < 1 ? progress : 1)
+        }
     }
 }

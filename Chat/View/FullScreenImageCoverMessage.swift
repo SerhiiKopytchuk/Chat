@@ -10,6 +10,8 @@ import SDWebImageSwiftUI
 
 struct FullScreenImageCoverMessage: View {
 
+    // MARK: - variables
+
     let animationMessageImageNamespace: Namespace.ID
 
     @State var namespaceId: String
@@ -23,6 +25,7 @@ struct FullScreenImageCoverMessage: View {
 
     @Binding var loadExpandedContent: Bool
 
+    // MARK: - body
     var body: some View {
         VStack {
             GeometryReader { proxy in
@@ -59,7 +62,6 @@ struct FullScreenImageCoverMessage: View {
             }
             .padding()
             .opacity(loadExpandedContent ? 1 : 0)
-            .opacity(imageOffsetProgress())
         })
         .transition(.offset(x: 0, y: 1))
         .onAppear {
@@ -67,43 +69,9 @@ struct FullScreenImageCoverMessage: View {
                 loadExpandedContent = true
             }
         }
-        .background {
-            Rectangle()
-                .fill(.black)
-                .opacity(loadExpandedContent ? 1 : 0)
-                .opacity(imageOffsetProgress())
-                .ignoresSafeArea()
-        }
     }
 
-    private func imageOffsetProgress() -> CGFloat {
-        let progress = imageOffset.height / 100
-        if imageOffset.height < 0 {
-            return 1
-        } else {
-            return 1  - (progress < 1 ? progress : 1)
-        }
-    }
-
-    private func turnOffImageView() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            loadExpandedContent = false
-        }
-
-        withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-            isExpandedImage = false
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            withAnimation(.easeInOut) {
-                isExpandedImageWithDelay = false
-            }
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            imageOffset = .zero
-        }
-    }
+    // MARK: - ViewBuilders
 
     @ViewBuilder private var turnOffImageButton: some View {
         Button {
@@ -129,4 +97,24 @@ struct FullScreenImageCoverMessage: View {
         }
     }
 
+    // MARK: - functions
+    private func turnOffImageView() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            loadExpandedContent = false
+        }
+
+        withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
+            isExpandedImage = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            withAnimation(.easeInOut) {
+                isExpandedImageWithDelay = false
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            imageOffset = .zero
+        }
+    }
 }
