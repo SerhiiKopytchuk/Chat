@@ -27,6 +27,9 @@ struct ConversationView: View {
     @State private var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
+    @State private var isExpandedImage: Bool = false
+    @State private var messageImageURL = URL(string: "")
+
     @Environment(\.self) private var env
 
     @EnvironmentObject private var messagingViewModel: MessagingViewModel
@@ -81,7 +84,11 @@ struct ConversationView: View {
                             MessageBubble(message: highlightMessage,
                                           showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage,
-                                          showEmojiBarView: true)
+                                          showEmojiBarView: true,
+                                          animationNamespace: animation,
+                                          isHidden: $isExpandedImage,
+                                          extendedImageId: .constant(""),
+                                          imageTapped: {_, _ in})
                             .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
                             .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
 
@@ -103,9 +110,9 @@ struct ConversationView: View {
                 .ignoresSafeArea()
         })
         .overlay {
-            if isExpandedProfile {
-                expandedPhoto()
-            }
+//            if isExpandedProfile {
+//                expandedPhoto(url: webImageUrl)
+//            }
         }
         .navigationBarHidden(true)
     }
@@ -139,11 +146,11 @@ struct ConversationView: View {
             }
     }
 
-    @ViewBuilder private func expandedPhoto () -> some View {
+    @ViewBuilder private func expandedPhoto (url: URL) -> some View {
         VStack {
             GeometryReader { proxy in
                 let size = proxy.size
-                WebImage(url: webImageUrl)
+                WebImage(url: url)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: size.width, height: size.height)
@@ -218,7 +225,12 @@ struct ConversationView: View {
                         id: \.id) { message in
                             MessageBubble(message: message,
                                           showHighlight: $showMessageEmojiView,
-                                          highlightedMessage: $highlightMessage)
+                                          highlightedMessage: $highlightMessage,
+                                          showEmojiBarView: true,
+                                          animationNamespace: animation,
+                                          isHidden: $isExpandedImage,
+                                          extendedImageId: .constant(""),
+                                          imageTapped: {_, _ in})
                             .accessibilityValue(message.imageId != "" ? "image" : "message")
                             .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
                             .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
