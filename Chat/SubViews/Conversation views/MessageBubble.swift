@@ -19,8 +19,6 @@ struct MessageBubble: View {
     @State private var imageUrl = URL(string: "")
 
     @State var isFindImage = false
-    @State private var imageHeight: CGFloat = 0
-    @State private var imageWight: CGFloat = 0
 
     var isChat: Bool = true
 

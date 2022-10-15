@@ -21,7 +21,7 @@ struct FullScreenImageCoverMessage: View {
 
     @Binding var imageOffset: CGSize
 
-    @Binding var messageImageURL: URL?
+    @State var messageImageURL: URL?
 
     @Binding var loadExpandedContent: Bool
 

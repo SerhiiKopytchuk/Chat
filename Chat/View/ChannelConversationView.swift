@@ -72,13 +72,27 @@ struct ChannelConversationView: View {
                         }
                         expandedDetails
                     }
+                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                                     imageOffsetProgress: imageOffsetProgress())
                     .addGradientBackground()
-                    .transition(.push(from: .top))
                 }
 
                 messagesScrollView
                     .ignoresSafeArea(.all, edges: .top)
                     .frame(maxWidth: .infinity)
+                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                                     imageOffsetProgress: imageOffsetProgress())
+                    .overlay {
+                        if isExpandedImage {
+                            FullScreenImageCoverMessage(animationMessageImageNamespace: animationMessageImage,
+                                                        namespaceId: imageId,
+                                                        isExpandedImage: $isExpandedImage,
+                                                        isExpandedImageWithDelay: $isExpandedImageWithDelay,
+                                                        imageOffset: $imageOffset,
+                                                        messageImageURL: messageImageURL,
+                                                        loadExpandedContent: $loadExpandedContent)
+                        }
+                    }
 
                 VStack(spacing: 0) {
                     if isSubscribed {
@@ -89,6 +103,8 @@ struct ChannelConversationView: View {
                             .ignoresSafeArea(.container, edges: .bottom)
                     }
                 }
+                .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                                 imageOffsetProgress: imageOffsetProgress())
             }
 
         }
@@ -109,13 +125,6 @@ struct ChannelConversationView: View {
                 .ignoresSafeArea()
         }
         .navigationBarHidden(true)
-        .overlay(content: {
-            Rectangle()
-                .fill(.black)
-                .opacity(loadExpandedContent ? 1 : 0)
-                .opacity(imageOffsetProgress())
-                .ignoresSafeArea()
-        })
         .overlay {
             if isExpandedChannelImage {
                 FullScreenImageCoverHeader(animationHeaderImageNamespace: animationProfileImage,
@@ -124,15 +133,6 @@ struct ChannelConversationView: View {
                                            imageOffset: $imageOffset,
                                            headerImageURL: channelImageURL,
                                            loadExpandedContent: $loadExpandedContent)
-            }
-            if isExpandedImage {
-                FullScreenImageCoverMessage(animationMessageImageNamespace: animationMessageImage,
-                                            namespaceId: imageId,
-                                            isExpandedImage: $isExpandedImage,
-                                            isExpandedImageWithDelay: $isExpandedImageWithDelay,
-                                            imageOffset: $imageOffset,
-                                            messageImageURL: $messageImageURL,
-                                            loadExpandedContent: $loadExpandedContent)
             }
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
