@@ -54,28 +54,7 @@ struct ChannelConversationView: View {
 
             VStack(spacing: 0) {
 
-                if !isExpandedImageWithDelay {
-                    VStack(spacing: 0) {
-                            HeaderWithBackButton(environment: _env, text: "Channel")
-                                .padding()
-
-                            ChannelTitleRow(channel: channelViewModel.currentChannel,
-                                            animationNamespace: animationProfileImage,
-                                            isExpandedProfileImage: $isExpandedChannelImage,
-                                            isExpandedDetails: $isExpandedDetails,
-                                            channelImageURL: $channelImageURL,
-                                            isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
-                            )
-                        .background {
-                            Color.secondPrimary
-                                .opacity(0.5)
-                        }
-                        expandedDetails
-                    }
-                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                     imageOffsetProgress: imageOffsetProgress())
-                    .addGradientBackground()
-                }
+                header
 
                 messagesScrollView
                     .ignoresSafeArea(.all, edges: .top)
@@ -153,6 +132,31 @@ struct ChannelConversationView: View {
 
     // MARK: - viewBuilders
 
+    @ViewBuilder private var header: some View {
+        if !isExpandedImageWithDelay {
+            VStack(spacing: 0) {
+                    HeaderWithBackButton(environment: _env, text: "Channel")
+                        .padding()
+
+                    ChannelTitleRow(channel: channelViewModel.currentChannel,
+                                    animationNamespace: animationProfileImage,
+                                    isExpandedProfileImage: $isExpandedChannelImage,
+                                    isExpandedDetails: $isExpandedDetails,
+                                    channelImageURL: $channelImageURL,
+                                    isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
+                    )
+                .background {
+                    Color.secondPrimary
+                        .opacity(0.5)
+                }
+                expandedDetails
+            }
+            .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                             imageOffsetProgress: imageOffsetProgress())
+            .addGradientBackground()
+        }
+    }
+
     @ViewBuilder private var expandedDetails: some View {
         if isExpandedDetails {
             VStack(alignment: .leading) {
@@ -174,7 +178,7 @@ struct ChannelConversationView: View {
                 Color.secondPrimary
                     .opacity(0.5)
             }
-            .transition(.push(from: .leading))
+//            .transition(.push(from: .leading))
         }
     }
 
@@ -262,25 +266,7 @@ struct ChannelConversationView: View {
                     ForEach(
                         self.channelMessagingViewModel.currentChannel.messages ?? [],
                         id: \.id) { message in
-                            MessageBubble(message: message,
-                                          showHighlight: .constant(false),
-                                          highlightedMessage: .constant(Message()),
-                                          isChat: false,
-                                          animationNamespace: animationMessageImage,
-                                          isHidden: $isExpandedImage,
-                                          extendedImageId: $imageId,
-                                          imageTapped: { id, imageURl in
-
-                                self.imageId = id
-                                self.messageImageURL = imageURl
-
-                                withAnimation(.easeInOut) {
-                                    self.isExpandedDetails = false
-                                    self.isExpandedImage = true
-                                    self.isExpandedImageWithDelay = true
-                                }
-
-                            })
+                            messageBubble(message: message)
                             .environmentObject(channelViewModel)
                             .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
                             .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
@@ -304,6 +290,28 @@ struct ChannelConversationView: View {
             }
         }
         .ignoresSafeArea(.all, edges: .bottom)
+    }
+
+    @ViewBuilder private func messageBubble(message: Message) -> some View {
+        MessageBubble(message: message,
+                      showHighlight: .constant(false),
+                      highlightedMessage: .constant(Message()),
+                      isChat: false,
+                      animationNamespace: animationMessageImage,
+                      isHidden: $isExpandedImage,
+                      extendedImageId: $imageId,
+                      imageTapped: { id, imageURl in
+
+            self.imageId = id
+            self.messageImageURL = imageURl
+
+            withAnimation(.easeInOut) {
+                self.isExpandedDetails = false
+                self.isExpandedImage = true
+                self.isExpandedImageWithDelay = true
+            }
+
+        })
     }
 
     @ViewBuilder private var messagingTextField: some View {
