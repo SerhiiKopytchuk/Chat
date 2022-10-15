@@ -13,6 +13,7 @@ struct ChannelTitleRow: View {
     // MARK: - vars
     var channel: Channel
 
+
     let animationNamespace: Namespace.ID
     @Binding var isExpandedProfileImage: Bool
     @Binding var isExpandedDetails: Bool

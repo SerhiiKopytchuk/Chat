@@ -50,6 +50,8 @@
 		4089D6792888025B00FC987E /* ChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4089D6782888025B00FC987E /* ChatUITests.swift */; };
 		4089D67B2888025B00FC987E /* ChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */; };
 		408E26122832C44800CE108E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E26112832C44800CE108E /* MainView.swift */; };
+		408E747728F9553C00B3F28C /* FullScreenImageCoverHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E747628F9553C00B3F28C /* FullScreenImageCoverHeader.swift */; };
+		408E747928F9592700B3F28C /* FullScreenImageCoverMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E747828F9592700B3F28C /* FullScreenImageCoverMessage.swift */; };
 		4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4094461428301F8D00239F7B /* GoogleService-Info.plist */; };
 		409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CB289D937C00720A1E /* AnimatedEmoji.swift */; };
 		409894CE289D978000720A1E /* EmojiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CD289D978000720A1E /* EmojiView.swift */; };
@@ -134,6 +136,8 @@
 		4089D6782888025B00FC987E /* ChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITests.swift; sourceTree = "<group>"; };
 		4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		408E26112832C44800CE108E /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		408E747628F9553C00B3F28C /* FullScreenImageCoverHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageCoverHeader.swift; sourceTree = "<group>"; };
+		408E747828F9592700B3F28C /* FullScreenImageCoverMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageCoverMessage.swift; sourceTree = "<group>"; };
 		4094461428301F8D00239F7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		409894CB289D937C00720A1E /* AnimatedEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEmoji.swift; sourceTree = "<group>"; };
 		409894CD289D978000720A1E /* EmojiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiView.swift; sourceTree = "<group>"; };
@@ -248,6 +252,8 @@
 				400E81AC286861EE006A606E /* CreateChannelView.swift */,
 				40153F27286B32460022DA46 /* ChannelConversationView.swift */,
 				4021DD0A288AA7E30060B18E /* ChannelViews */,
+				408E747828F9592700B3F28C /* FullScreenImageCoverMessage.swift */,
+				408E747628F9553C00B3F28C /* FullScreenImageCoverHeader.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -560,10 +566,12 @@
 				40649D19288F2C5F00B8F500 /* ChannelType.swift in Sources */,
 				40153F28286B32460022DA46 /* ChannelConversationView.swift in Sources */,
 				4076E0AD283FB54A00E21131 /* LoaderView.swift in Sources */,
+				408E747728F9553C00B3F28C /* FullScreenImageCoverHeader.swift in Sources */,
 				409894CE289D978000720A1E /* EmojiView.swift in Sources */,
 				4021DD0C288AAFDA0060B18E /* String + Extension.swift in Sources */,
 				40A766B628842C19002D6FA5 /* removeUsersFromChannelView.swift in Sources */,
 				405FD37F282FEFD200361396 /* SignInView.swift in Sources */,
+				408E747928F9592700B3F28C /* FullScreenImageCoverMessage.swift in Sources */,
 				40EF9960284747740062612E /* ConversationView.swift in Sources */,
 				4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */,
 				40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */,

@@ -19,10 +19,14 @@ struct MessageBubble: View {
     @State private var imageUrl = URL(string: "")
 
     @State var isFindImage = false
-    @State private var imageHeight: CGFloat = 0
-    @State private var imageWight: CGFloat = 0
 
     var isChat: Bool = true
+
+    let animationNamespace: Namespace.ID
+
+    @Binding var isHidden: Bool
+    @Binding var extendedImageId: String
+    var imageTapped: (String, URL?) -> Void
 
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var messagingViewModel: MessagingViewModel
@@ -58,7 +62,7 @@ struct MessageBubble: View {
         .onAppear {
             addMessageSnapshotListener()
         }
-        .onTapGesture { }
+        .opacity(extendedImageId == self.message.imageId ? (isHidden ? 0 : 1) : 1)
     }
 
     // MARK: - viewBuilders
@@ -72,6 +76,11 @@ struct MessageBubble: View {
                     .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] :
                                     [.topLeft, .topRight, .bottomLeft])
+                .matchedGeometryEffect(id: message.imageId ?? "",
+                                           in: animationNamespace)
+                    .onTapGesture {
+                        imageTapped(message.imageId ?? "messageId", imageUrl)
+                    }
             } else {
                 ProgressView()
                     .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
@@ -140,7 +149,7 @@ struct MessageBubble: View {
             if err != nil {
                 return
             }
-                self.imageUrl = url
+            self.imageUrl = url
             withAnimation {
                 self.isFindImage = true
             }

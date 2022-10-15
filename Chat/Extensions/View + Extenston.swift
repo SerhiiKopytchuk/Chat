@@ -69,3 +69,17 @@ extension View {
             )
     }
 }
+
+extension View {
+    func addBlackOverlay(loadExpandedContent: Bool,
+                         imageOffsetProgress: CGFloat) -> some View {
+        self
+            .overlay(content: {
+                Rectangle()
+                    .fill(.black)
+                    .opacity(loadExpandedContent ? 1 : 0)
+                    .opacity(imageOffsetProgress)
+                    .ignoresSafeArea()
+            })
+    }
+}
