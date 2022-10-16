@@ -55,8 +55,14 @@ struct TabBarView: View {
                             }
 
                             if value.translation.width > 0 {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    selection = 0
+                                if selection == 0 {
+                                    withAnimation(.spring()) {
+                                        isShowingSideMenu.toggle()
+                                    }
+                                } else {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selection = 0
+                                    }
                                 }
                             }
                         })

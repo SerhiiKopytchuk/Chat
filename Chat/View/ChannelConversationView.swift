@@ -151,6 +151,9 @@ struct ChannelConversationView: View {
                 Color.secondPrimary
                     .ignoresSafeArea()
             }
+            .addRightGestureRecognizer {
+                env.dismiss()
+            }
         }
     }
 
@@ -260,6 +263,9 @@ struct ChannelConversationView: View {
                     proxy.scrollTo(id, anchor: .bottom)
                 }
             }
+        }
+        .addRightGestureRecognizer {
+            env.dismiss()
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }

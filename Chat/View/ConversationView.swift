@@ -126,6 +126,9 @@ struct ConversationView: View {
                              isExpandedProfile: $isExpandedProfile,
                              profileImageURL: $profileImageUrl
         )
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .background {
             Color.secondPrimary
                 .ignoresSafeArea()
@@ -190,6 +193,9 @@ struct ConversationView: View {
         }
         .ignoresSafeArea(.all, edges: .top)
         .frame(maxWidth: .infinity)
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .addBlackOverlay(loadExpandedContent: loadExpandedContent,
                          imageOffsetProgress: imageOffsetProgress())
         .overlay {
