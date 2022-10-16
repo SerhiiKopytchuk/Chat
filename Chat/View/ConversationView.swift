@@ -45,13 +45,6 @@ struct ConversationView: View {
         VStack(spacing: 0) {
 
             if !isExpandedImageWithDelay {
-                HeaderWithBackButton(environment: _env, text: "Chat")
-                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                     imageOffsetProgress: imageOffsetProgress())
-                    .frame(height: 10)
-                    .padding()
-                    .padding(.bottom)
-
                 titleRow
                     .addBlackOverlay(loadExpandedContent: loadExpandedContent,
                                      imageOffsetProgress: imageOffsetProgress())
@@ -75,7 +68,6 @@ struct ConversationView: View {
                 createChatButton
             }
         }
-        .addGradientBackground()
         .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
             if showMessageEmojiView {
@@ -128,6 +120,7 @@ struct ConversationView: View {
 
     @ViewBuilder private var titleRow: some View {
         ConversationTitleRow(user: secondUser,
+                             environment: _env,
                              animationNamespace: profileImageNamespace,
                              isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,
@@ -135,7 +128,7 @@ struct ConversationView: View {
         )
         .background {
             Color.secondPrimary
-                .opacity(0.5)
+                .ignoresSafeArea()
         }
     }
 

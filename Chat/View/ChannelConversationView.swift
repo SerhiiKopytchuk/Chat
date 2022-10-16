@@ -135,33 +135,28 @@ struct ChannelConversationView: View {
     @ViewBuilder private var header: some View {
         if !isExpandedImageWithDelay {
             VStack(spacing: 0) {
-                    HeaderWithBackButton(environment: _env, text: "Channel")
-                        .padding()
-
                     ChannelTitleRow(channel: channelViewModel.currentChannel,
+                                    environment: _env,
                                     animationNamespace: animationProfileImage,
                                     isExpandedProfileImage: $isExpandedChannelImage,
                                     isExpandedDetails: $isExpandedDetails,
                                     channelImageURL: $channelImageURL,
                                     isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
                     )
-                .background {
-                    Color.secondPrimary
-                        .opacity(0.5)
-                }
                 expandedDetails
             }
             .addBlackOverlay(loadExpandedContent: loadExpandedContent,
                              imageOffsetProgress: imageOffsetProgress())
-            .addGradientBackground()
+            .background {
+                Color.secondPrimary
+                    .ignoresSafeArea()
+            }
         }
     }
 
     @ViewBuilder private var expandedDetails: some View {
         if isExpandedDetails {
             VStack(alignment: .leading) {
-                ownerTitle
-                countOfSubscribersTitle
 
                 HStack {
                     if isOwner() {
@@ -170,43 +165,20 @@ struct ChannelConversationView: View {
                         editChannelButton
                     }
                     removeOrDeleteChannelButton
+
+                    Spacer()
                 }
                 .padding()
             }
             .frame(maxWidth: .infinity)
-            .background {
-                Color.secondPrimary
-                    .opacity(0.5)
-            }
-//            .transition(.push(from: .leading))
         }
-    }
-
-    @ViewBuilder private var ownerTitle: some View {
-        HStack {
-            Text("Owner: \(channelViewModel.currentChannel.ownerName)")
-                .font(.callout)
-            Spacer()
-        }
-        .padding(.vertical, 5)
-        .padding(.horizontal)
-    }
-
-    @ViewBuilder private var countOfSubscribersTitle: some View {
-        HStack {
-            Text("Subscribers: \(channelViewModel.currentChannel.subscribersId?.count ?? 0)")
-                .font(.callout)
-            Spacer()
-        }
-        .padding(.vertical, 5)
-        .padding(.horizontal)
     }
 
     @ViewBuilder private var addUsersToChannelButton: some View {
         Image(systemName: "plus")
             .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(Color.secondPrimary)
+            .background(Color.background)
             .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
@@ -220,7 +192,7 @@ struct ChannelConversationView: View {
             .frame(height: 15)
             .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(Color.secondPrimary)
+            .background(Color.background)
             .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
@@ -234,7 +206,7 @@ struct ChannelConversationView: View {
         Image(systemName: "pencil")
             .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(Color.secondPrimary)
+            .background(Color.background)
             .addLightShadow()
             .onTapGesture {
                 self.editChannelViewModelSetup()
@@ -247,7 +219,7 @@ struct ChannelConversationView: View {
         Image(systemName: "xmark")
             .foregroundColor(.primary.opacity(0.6))
             .padding(10)
-            .background(Color.secondPrimary)
+            .background(Color.background)
             .addLightShadow()
             .onTapGesture {
                 if currentUser.id == channelViewModel.currentChannel.ownerId {
