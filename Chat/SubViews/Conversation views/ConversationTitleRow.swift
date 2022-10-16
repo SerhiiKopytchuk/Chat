@@ -12,6 +12,7 @@ import SDWebImageSwiftUI
 struct ConversationTitleRow: View {
     // MARK: - variables
     var user: User
+    @Environment(\.self) var environment
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
 
@@ -31,12 +32,23 @@ struct ConversationTitleRow: View {
     var body: some View {
         HStack(spacing: 20) {
 
+            Button {
+                environment.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20)
+                    .foregroundColor(.gray)
+                    .padding(.trailing, 10)
+            }
+
             userImage
 
             // MARK: userName
             VStack(alignment: .leading) {
                 Text(user.name)
-                    .font(.title).bold()
+                    .font(.title2).bold()
 
                 Text("Online")
                     .font(.caption)
