@@ -67,6 +67,9 @@ struct EditProfileView: View {
 
             customAlert
         }
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .navigationBarHidden(true)
         .onAppear {
             newName = userViewModel.currentUser.name

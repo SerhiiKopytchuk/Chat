@@ -65,6 +65,9 @@ struct EditChannelView: View {
             Spacer()
         }
         .navigationBarHidden(true)
+        .addRightGestureRecognizer {
+            presentationMode.dismiss()
+        }
         .background {
             Color.background
                 .ignoresSafeArea()

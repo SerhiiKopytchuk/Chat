@@ -48,13 +48,13 @@ struct TabBarView: View {
                 chatsAndChannelsView
                     .gesture(DragGesture()
                         .onEnded({ value in
-                            if value.translation.width < 0 {
+                            if value.translation.width < 30 {
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     selection = 1
                                 }
                             }
 
-                            if value.translation.width > 0 {
+                            if value.translation.width > 30 {
                                 if selection == 0 {
                                     withAnimation(.spring()) {
                                         isShowingSideMenu.toggle()

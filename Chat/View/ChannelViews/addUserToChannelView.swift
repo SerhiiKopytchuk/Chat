@@ -33,6 +33,9 @@ struct AddUserToChannelView: View {
             applyButton
                 .padding()
         }
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .background {
             Color.background
                 .ignoresSafeArea()

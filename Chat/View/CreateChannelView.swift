@@ -78,6 +78,9 @@ struct CreateChannelView: View {
             }
             .navigationBarHidden(true)
         }
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
 
     }
 
