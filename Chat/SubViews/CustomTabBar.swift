@@ -49,7 +49,6 @@ struct CustomTabBar: View {
             withAnimation(.easeInOut(duration: 0.1).delay(0.1)) {
                 yOffset = 0
             }
-
         } label: {
             Image(systemName: selection == 0 ? "character.bubble" : "fibrechannel")
                 .renderingMode(.template)
@@ -59,6 +58,15 @@ struct CustomTabBar: View {
                 .frame(maxWidth: .infinity )
                 .foregroundColor(selection == selected ? Color("Gradient3") : .gray)
                 .scaleEffect(selection == selected && yOffset != 0 ? 1.5 : 1)
+        }
+        .onChange(of: selected) { newValue in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                self.selected = newValue
+                yOffset = 30
+            }
+            withAnimation(.easeInOut(duration: 0.1).delay(0.1)) {
+                yOffset = 0
+            }
         }
     }
 

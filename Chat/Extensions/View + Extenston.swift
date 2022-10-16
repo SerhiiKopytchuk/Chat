@@ -69,9 +69,7 @@ extension View {
                 Blur(radius: radius, opaque: opaque)
             )
     }
-}
 
-extension View {
     func addBlackOverlay(loadExpandedContent: Bool,
                          imageOffsetProgress: CGFloat) -> some View {
         self
@@ -82,5 +80,16 @@ extension View {
                     .opacity(imageOffsetProgress)
                     .ignoresSafeArea()
             })
+    }
+
+    func addRightGestureRecognizer(swiped: @escaping () -> Void) -> some View {
+        self
+            .gesture(DragGesture(minimumDistance: 30)
+                .onEnded({ value in
+                    if value.translation.width > 30 {
+                        swiped()
+                    }
+                })
+            )
     }
 }

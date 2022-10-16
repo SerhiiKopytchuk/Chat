@@ -46,6 +46,27 @@ struct TabBarView: View {
             ZStack(alignment: .top) {
                 // MARK: chats and channels lists
                 chatsAndChannelsView
+                    .gesture(DragGesture()
+                        .onEnded({ value in
+                            if value.translation.width < 30 {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selection = 1
+                                }
+                            }
+
+                            if value.translation.width > 30 {
+                                if selection == 0 {
+                                    withAnimation(.spring()) {
+                                        isShowingSideMenu.toggle()
+                                    }
+                                } else {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selection = 0
+                                    }
+                                }
+                            }
+                        })
+                    )
                     .safeAreaInset(edge: .top) {
                         EmptyView()
                             .frame(height: 65)
