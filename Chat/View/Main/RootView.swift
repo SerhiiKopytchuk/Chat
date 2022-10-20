@@ -21,8 +21,6 @@ struct RootView: View {
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject private var imageViewModel: ImageViewModel
-    @EnvironmentObject private var presenceViewModel: PresenceViewModel
-    @Environment(\.scenePhase) var scenePhase
 
     // MARK: - body
     var body: some View {
@@ -35,15 +33,6 @@ struct RootView: View {
                     SignUpView()
                 }
             }
-            .onChange(of: scenePhase, perform: { phase in
-                if phase == .active {
-                    viewModel.getCurrentUser { user in
-                        presenceViewModel.startSetup(user: user)
-                    }
-                } else {
-                    presenceViewModel.setOffline()
-                }
-            })
             .ignoresSafeArea(.all, edges: .bottom)
             .navigationBarBackButtonHidden(true)
         }

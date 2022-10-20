@@ -361,7 +361,7 @@ class ChatUITests: XCTestCase {
         app.scrollViews.staticTexts[secondUserName].tap()
             sleep(1)
         app.buttons["Start Chat"].tap()
-        app.buttons["arrow.backward.circle.fill"].tap()
+        app.buttons["arrow.backward"].tap()
         app.buttons["arrow.backward.circle.fill"].tap()
 
         let chatCell = app.scrollViews.staticTexts[secondUserName]
@@ -555,7 +555,7 @@ class ChatUITests: XCTestCase {
         app.scrollViews.staticTexts[secondUserName].tap()
             sleep(1)
         app.buttons["Start Chat"].tap()
-        app.buttons["arrow.backward.circle.fill"].tap()
+        app.buttons["arrow.backward"].tap()
         app.buttons["arrow.backward.circle.fill"].tap()
 
         app.buttons["List"].tap()
