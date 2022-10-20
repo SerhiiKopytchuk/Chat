@@ -17,6 +17,7 @@ struct SideMenuView: View {
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject private var presenceViewModel: PresenceViewModel
 
     @Binding var isShowingSideMenu: Bool
     @Binding var isShowingSearchUsers: Bool
@@ -37,6 +38,7 @@ struct SideMenuView: View {
                         Button {
                             if option == SideMenuViewModel.logout {
                                 withAnimation {
+                                    presenceViewModel.setOffline()
                                     viewModel.signOut()
                                     viewModel.currentUser.chats = []
                                 }
