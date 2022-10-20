@@ -23,6 +23,7 @@ struct ChatApp: App {
             let channelMessagingViewModel = ChannelMessagingViewModel()
             let editChannelViewModel = EditChannelViewModel()
             let imageViewModel = ImageViewModel()
+            let presenceViewModel = PresenceViewModel()
 
             RootView()
                 .onAppear {
@@ -32,6 +33,10 @@ struct ChatApp: App {
                             chattingViewModel.getChats(fromUpdate: false)
                             channelViewModel.currentUser = user
                             channelViewModel.getChannels(fromUpdate: false)
+
+                            if viewModel.isSignedIn {
+                                presenceViewModel.startSetup(user: viewModel.currentUser)
+                            }
                         }
                 }
                 .environmentObject(viewModel)
@@ -41,6 +46,7 @@ struct ChatApp: App {
                 .environmentObject(channelMessagingViewModel)
                 .environmentObject(editChannelViewModel)
                 .environmentObject(imageViewModel)
+                .environmentObject(presenceViewModel)
         }
 
     }

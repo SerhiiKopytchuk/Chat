@@ -29,6 +29,7 @@ struct SignInView: View {
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var presenceViewModel: PresenceViewModel
 
     // MARK: - body
     var body: some View {
@@ -190,6 +191,7 @@ struct SignInView: View {
                     chattingViewModel.getChats()
                     channelViewModel.currentUser = user
                     channelViewModel.getChannels()
+                    presenceViewModel.startSetup(user: user)
                 }
             }
         } label: {

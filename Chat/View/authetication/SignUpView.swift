@@ -33,6 +33,7 @@ struct SignUpView: View {
 
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var presenceViewModel: PresenceViewModel
     @ObservedObject private var editProfileViewModel = EditProfileViewModel()
     @ObservedObject private var imageViewModel = ImageViewModel()
 
@@ -274,6 +275,7 @@ struct SignUpView: View {
                         chattingViewModel.getChats()
                         channelViewModel.currentUser = user
                         channelViewModel.getChannels()
+                        presenceViewModel.startSetup(user: user)
                     }
                 }
             }
