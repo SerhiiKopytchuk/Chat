@@ -46,6 +46,7 @@ struct TabBarView: View {
             ZStack(alignment: .top) {
                 // MARK: chats and channels lists
                 chatsAndChannelsView
+                    .contentShape(Rectangle())
                     .gesture(DragGesture()
                         .onEnded({ value in
                             if value.translation.width < 30 {

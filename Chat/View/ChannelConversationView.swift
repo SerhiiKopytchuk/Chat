@@ -50,42 +50,42 @@ struct ChannelConversationView: View {
     // MARK: - body
 
     var body: some View {
-        ZStack(alignment: .top) {
+        VStack(spacing: 0) {
 
-            VStack(spacing: 0) {
+            header
 
-                header
-
-                messagesScrollView
-                    .ignoresSafeArea(.all, edges: .top)
-                    .frame(maxWidth: .infinity)
-                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                     imageOffsetProgress: imageOffsetProgress())
-                    .overlay {
-                        if isExpandedImage {
-                            FullScreenImageCoverMessage(animationMessageImageNamespace: animationMessageImage,
-                                                        namespaceId: imageId,
-                                                        isExpandedImage: $isExpandedImage,
-                                                        isExpandedImageWithDelay: $isExpandedImageWithDelay,
-                                                        imageOffset: $imageOffset,
-                                                        messageImageURL: messageImageURL,
-                                                        loadExpandedContent: $loadExpandedContent)
-                        }
-                    }
-
-                VStack(spacing: 0) {
-                    if isSubscribed {
-                        messagingTextField
-                            .ignoresSafeArea(.container, edges: .bottom)
-                    } else {
-                        subscribeButton
-                            .ignoresSafeArea(.container, edges: .bottom)
-                    }
-                }
+            messagesScrollView
+                .ignoresSafeArea(.all, edges: .top)
+                .frame(maxWidth: .infinity)
                 .addBlackOverlay(loadExpandedContent: loadExpandedContent,
                                  imageOffsetProgress: imageOffsetProgress())
-            }
+                .overlay {
+                    if isExpandedImage {
+                        FullScreenImageCoverMessage(animationMessageImageNamespace: animationMessageImage,
+                                                    namespaceId: imageId,
+                                                    isExpandedImage: $isExpandedImage,
+                                                    isExpandedImageWithDelay: $isExpandedImageWithDelay,
+                                                    imageOffset: $imageOffset,
+                                                    messageImageURL: messageImageURL,
+                                                    loadExpandedContent: $loadExpandedContent)
+                    }
+                }
 
+            VStack(spacing: 0) {
+                if isSubscribed {
+                    messagingTextField
+                        .ignoresSafeArea(.container, edges: .bottom)
+                } else {
+                    subscribeButton
+                        .ignoresSafeArea(.container, edges: .bottom)
+                }
+            }
+            .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                             imageOffsetProgress: imageOffsetProgress())
+        }
+        .contentShape(Rectangle())
+        .addRightGestureRecognizer {
+            env.dismiss()
         }
         .navigationDestination(isPresented: $isGoToEditChannel, destination: {
             EditChannelView(channelName: channelViewModel.currentChannel.name,
@@ -135,14 +135,14 @@ struct ChannelConversationView: View {
     @ViewBuilder private var header: some View {
         if !isExpandedImageWithDelay {
             VStack(spacing: 0) {
-                    ChannelTitleRow(channel: channelViewModel.currentChannel,
-                                    environment: _env,
-                                    animationNamespace: animationProfileImage,
-                                    isExpandedProfileImage: $isExpandedChannelImage,
-                                    isExpandedDetails: $isExpandedDetails,
-                                    channelImageURL: $channelImageURL,
-                                    isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
-                    )
+                ChannelTitleRow(channel: channelViewModel.currentChannel,
+                                environment: _env,
+                                animationNamespace: animationProfileImage,
+                                isExpandedProfileImage: $isExpandedChannelImage,
+                                isExpandedDetails: $isExpandedDetails,
+                                channelImageURL: $channelImageURL,
+                                isOwner: currentUser.id == channelViewModel.currentChannel.ownerId
+                )
                 expandedDetails
             }
             .addBlackOverlay(loadExpandedContent: loadExpandedContent,
@@ -150,9 +150,6 @@ struct ChannelConversationView: View {
             .background {
                 Color.secondPrimary
                     .ignoresSafeArea()
-            }
-            .addRightGestureRecognizer {
-                env.dismiss()
             }
         }
     }
@@ -242,11 +239,11 @@ struct ChannelConversationView: View {
                         self.channelMessagingViewModel.currentChannel.messages ?? [],
                         id: \.id) { message in
                             messageBubble(message: message)
-                            .environmentObject(channelViewModel)
-                            .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
-                            .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
-                            .id(message.id)
-                            .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+                                .environmentObject(channelViewModel)
+                                .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
+                                .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
+                                .id(message.id)
+                                .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
                         }
                 }
                 .rotationEffect(Angle(degrees: 180))
@@ -264,9 +261,7 @@ struct ChannelConversationView: View {
                 }
             }
         }
-        .addRightGestureRecognizer {
-            env.dismiss()
-        }
+
         .ignoresSafeArea(.all, edges: .bottom)
     }
 

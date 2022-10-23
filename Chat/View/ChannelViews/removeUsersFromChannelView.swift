@@ -29,6 +29,7 @@ struct RemoveUsersFromChannelView: View {
             usersList
 
         }
+        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             env.dismiss()
         }
