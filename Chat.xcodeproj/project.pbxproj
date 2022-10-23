@@ -74,6 +74,7 @@
 		40CFF1E028C4EDC7001544CD /* Color + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */; };
 		40D5C41628428B3A0015DFBB /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41528428B3A0015DFBB /* Tab.swift */; };
 		40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41728429F580015DFBB /* CustomTabBar.swift */; };
+		40E2546B2905356400FA604E /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40E2546A2905356400FA604E /* Launch Screen.storyboard */; };
 		40ECD6F328A03DF2006935B1 /* BoundsPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */; };
 		40EDFC25286EF5B500FD7A2A /* DocumentReference + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */; };
 		40EDFC27286EF5E400FD7A2A /* Query + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */; };
@@ -161,6 +162,7 @@
 		40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color + Extension.swift"; sourceTree = "<group>"; };
 		40D5C41528428B3A0015DFBB /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		40D5C41728429F580015DFBB /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
+		40E2546A2905356400FA604E /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundsPreference.swift; sourceTree = "<group>"; };
 		40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DocumentReference + Extension.swift"; sourceTree = "<group>"; };
 		40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Query + Extension.swift"; sourceTree = "<group>"; };
@@ -233,6 +235,7 @@
 				400142E5282EBA8400E5D497 /* ChatApp.swift */,
 				400142E9282EBA8500E5D497 /* Assets.xcassets */,
 				400142EB282EBA8500E5D497 /* Preview Content */,
+				40E2546A2905356400FA604E /* Launch Screen.storyboard */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -515,6 +518,7 @@
 			files = (
 				400142ED282EBA8500E5D497 /* Preview Assets.xcassets in Resources */,
 				400142EA282EBA8500E5D497 /* Assets.xcassets in Resources */,
+				40E2546B2905356400FA604E /* Launch Screen.storyboard in Resources */,
 				4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -775,6 +779,7 @@
 				INFOPLIST_FILE = Chat/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -811,6 +816,7 @@
 				INFOPLIST_FILE = Chat/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
