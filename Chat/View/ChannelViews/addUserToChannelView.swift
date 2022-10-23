@@ -33,6 +33,7 @@ struct AddUserToChannelView: View {
             applyButton
                 .padding()
         }
+        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             env.dismiss()
         }

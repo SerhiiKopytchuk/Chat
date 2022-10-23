@@ -63,7 +63,7 @@ struct SideMenuView: View {
                 case .createChannel:
                     CreateChannelView()
                 default:
-                    EditProfileView()
+                    Text("Sorry. This feature in development.")
                 }
             })
             .background {
