@@ -29,83 +29,89 @@ struct SignInView: View {
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var presenceViewModel: PresenceViewModel
 
     // MARK: - body
     var body: some View {
-            ZStack {
-                VStack(spacing: 30) {
+        ZStack {
+            VStack(spacing: 30) {
 
-                    HStack(spacing: 15) {
+                HStack(spacing: 15) {
 
-                        Button {
-                            withAnimation {
-                                self.isPresented = false
-                            }
-                        } label: {
-                            Image(systemName: "arrow.backward.circle.fill")
-                                .toButtonLightStyle(size: 40)
+                    Button {
+                        withAnimation {
+                            self.isPresented = false
                         }
-
-                        Text("Sign In")
-                            .font(.system(.largeTitle, design: .rounded))
-                            .fontWeight(.bold)
-                            .padding()
-                            .foregroundColor(.primary.opacity(0.6))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .padding()
-
-                    inputFields
-
-                    VStack {
-
-                        signInButton
-
-                        Text("OR")
-                            .padding(.top, 50)
-                            .font(.system(.title3, design: .rounded))
-                            .foregroundColor(.gray)
-
-                        // add google photo
-                        googleButton
-                            .foregroundColor(.brown)
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 35)
-                                    .stroke(Color.brown, lineWidth: 2)
-                            )
-                            .background(.clear)
-                            .cornerRadius(35)
-                            .padding(.top, 50)
-
+                    } label: {
+                        Image(systemName: "arrow.backward.circle.fill")
+                            .toButtonLightStyle(size: 40)
                     }
 
-                    Spacer()
+                    Text("Sign In")
+                        .font(.system(.largeTitle, design: .rounded))
+                        .fontWeight(.bold)
+                        .padding()
+                        .foregroundColor(.primary.opacity(0.6))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding()
+
+                inputFields
+
+                VStack {
+
+                    signInButton
+
+                    Text("OR")
+                        .padding(.top, 50)
+                        .font(.system(.title3, design: .rounded))
+                        .foregroundColor(.gray)
+
+                    // add google photo
+                    googleButton
+                        .foregroundColor(.brown)
+                        .padding()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 35)
+                                .stroke(Color.brown, lineWidth: 2)
+                        )
+                        .background(.clear)
+                        .cornerRadius(35)
+                        .padding(.top, 50)
 
                 }
-                .background {
-                    Color("BG")
-                        .ignoresSafeArea()
-                }
 
-                if isShowAlert || viewModel.showAlert {
-                    customAlert
-                }
-
-                if viewModel.isShowLoader {
-                    withAnimation {
-                        GeometryReader { reader in
-                            Loader()
-                                .position(x: reader.size.width/2, y: reader.size.height/2)
-                        }.background {
-                            Color.black
-                                .opacity(0.65)
-                                .edgesIgnoringSafeArea(.all)
-                        }
-                    }
-                }
+                Spacer()
 
             }
+            .background {
+                Color("BG")
+                    .ignoresSafeArea()
+            }
+
+            if isShowAlert || viewModel.showAlert {
+                customAlert
+            }
+
+            if viewModel.isShowLoader {
+                withAnimation {
+                    GeometryReader { reader in
+                        Loader()
+                            .position(x: reader.size.width/2, y: reader.size.height/2)
+                    }.background {
+                        Color.black
+                            .opacity(0.65)
+                            .edgesIgnoringSafeArea(.all)
+                    }
+                }
+            }
+
+        }
+        .addRightGestureRecognizer {
+            withAnimation {
+                self.isPresented = false
+            }
+        }
     }
 
     // MARK: - ViewBuilders
@@ -185,6 +191,7 @@ struct SignInView: View {
                     chattingViewModel.getChats()
                     channelViewModel.currentUser = user
                     channelViewModel.getChannels()
+                    presenceViewModel.startSetup(user: user)
                 }
             }
         } label: {

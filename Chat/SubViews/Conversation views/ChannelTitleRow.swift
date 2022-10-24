@@ -11,7 +11,10 @@ import SDWebImageSwiftUI
 
 struct ChannelTitleRow: View {
     // MARK: - vars
+
     var channel: Channel
+
+    @Environment(\.self) var environment
 
     let animationNamespace: Namespace.ID
     @Binding var isExpandedProfileImage: Bool
@@ -30,12 +33,23 @@ struct ChannelTitleRow: View {
     var body: some View {
         HStack(spacing: 20) {
 
+            Button {
+                environment.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20)
+                    .foregroundColor(.gray)
+                    .padding(.trailing, 10)
+            }
+
             channelImage
 
             // MARK: channel name and description
             VStack(alignment: .leading) {
                 Text(channel.name)
-                    .font(.title).bold()
+                    .font(.title2).bold()
                     .lineLimit(isExpandedDetails ? 5 : 1)
 
                 Text(channel.description)

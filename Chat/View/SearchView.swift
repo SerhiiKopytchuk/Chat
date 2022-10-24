@@ -55,6 +55,10 @@ struct SearchView: View {
             .padding()
 
         }
+        .contentShape(Rectangle())
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .background {
             Color("BG")
                 .ignoresSafeArea()

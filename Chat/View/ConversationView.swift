@@ -16,16 +16,22 @@ struct ConversationView: View {
     @State var secondUser: User
     @Binding var isFindChat: Bool
 
-    @Namespace var animation
+    @Namespace private var profileImageNamespace
+    @Namespace private var messageImageNamespace
 
     // MARK: fullscreen profile image properties
     @State private var isExpandedProfile: Bool = false
-    @State var webImageUrl = URL(string: "")
+    @State var profileImageUrl = URL(string: "")
     @State private var loadExpandedContent = false
     @State private var imageOffset: CGSize = .zero
+    @State private var isExpandedImageWithDelay = false
+    @State var imageId = ""
 
     @State private var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
+
+    @State private var isExpandedImage: Bool = false
+    @State private var messageImageURL = URL(string: "")
 
     @Environment(\.self) private var env
 
@@ -37,20 +43,20 @@ struct ConversationView: View {
     var body: some View {
 
         VStack(spacing: 0) {
-            HeaderWithBackButton(environment: _env, text: "Chat")
-                .frame(height: 10)
-                .padding()
-                .padding(.bottom)
 
-            titleRow
+            if !isExpandedImageWithDelay {
+                titleRow
+                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                                     imageOffsetProgress: imageOffsetProgress())
+            }
 
             if isFindChat {
                 VStack(spacing: 0) {
                     messagesScrollView
 
                     MessageField(messagingViewModel: messagingViewModel)
-                        .environmentObject(chattingViewModel)
-                        .environmentObject(messagingViewModel)
+                        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                                         imageOffsetProgress: imageOffsetProgress())
                         .ignoresSafeArea(.container, edges: .bottom)
 
                 }
@@ -58,12 +64,14 @@ struct ConversationView: View {
                     Color.background
                         .ignoresSafeArea()
                 }
-
             } else {
                 createChatButton
             }
         }
-        .addGradientBackground()
+        .contentShape(Rectangle())
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
             if showMessageEmojiView {
@@ -81,7 +89,11 @@ struct ConversationView: View {
                             MessageBubble(message: highlightMessage,
                                           showHighlight: $showMessageEmojiView,
                                           highlightedMessage: $highlightMessage,
-                                          showEmojiBarView: true)
+                                          showEmojiBarView: true,
+                                          animationNamespace: messageImageNamespace,
+                                          isHidden: $isExpandedImage,
+                                          extendedImageId: .constant(""),
+                                          imageTapped: {_, _ in})
                             .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
                             .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
 
@@ -95,16 +107,14 @@ struct ConversationView: View {
                 }
             }
         }
-        .overlay(content: {
-            Rectangle()
-                .fill(.black)
-                .opacity(loadExpandedContent ? 1 : 0)
-                .opacity(imageOffsetProgress())
-                .ignoresSafeArea()
-        })
         .overlay {
             if isExpandedProfile {
-                expandedPhoto()
+                FullScreenImageCoverHeader(animationHeaderImageNamespace: profileImageNamespace,
+                                           namespaceId: "profilePhoto",
+                                           isExpandedHeaderImage: $isExpandedProfile,
+                                           imageOffset: $imageOffset,
+                                           headerImageURL: profileImageUrl,
+                                           loadExpandedContent: $loadExpandedContent)
             }
         }
         .navigationBarHidden(true)
@@ -114,16 +124,16 @@ struct ConversationView: View {
 
     @ViewBuilder private var titleRow: some View {
         ConversationTitleRow(user: secondUser,
-                             animationNamespace: animation,
+                             environment: _env,
+                             animationNamespace: profileImageNamespace,
                              isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,
-                             profileImageURL: $webImageUrl
+                             profileImageURL: $profileImageUrl
         )
         .background {
             Color.secondPrimary
-                .opacity(0.5)
+                .ignoresSafeArea()
         }
-        .environmentObject(chattingViewModel)
     }
 
     @ViewBuilder private var lightDarkEmptyBackground: some View {
@@ -139,76 +149,6 @@ struct ConversationView: View {
             }
     }
 
-    @ViewBuilder private func expandedPhoto () -> some View {
-        VStack {
-            GeometryReader { proxy in
-                let size = proxy.size
-                WebImage(url: webImageUrl)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: size.width, height: size.height)
-                    .cornerRadius(loadExpandedContent ? 0 : size.height)
-                    .offset(y: loadExpandedContent ? imageOffset.height : .zero)
-                    .gesture(
-                        DragGesture()
-                            .onChanged({ value in
-                                imageOffset = value.translation
-                            }).onEnded({ value in
-                                let height = value.translation.height
-                                if height > 0 && height > 100 {
-                                    turnOffImageView()
-                                } else {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        imageOffset = .zero
-                                    }
-                                }
-                            })
-                    )
-            }
-            .matchedGeometryEffect(id: "profilePhoto", in: animation)
-            .frame(height: 300)
-
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(alignment: .top, content: {
-            HStack(spacing: 10) {
-
-                turnOffImageButton
-
-                Text(viewModel.secondUser.name)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-
-                Spacer(minLength: 10)
-            }
-            .padding()
-            .opacity(loadExpandedContent ? 1 : 0)
-            .opacity(imageOffsetProgress())
-        })
-        .transition(.offset(x: 0, y: 1))
-        .onAppear {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                loadExpandedContent = true
-            }
-        }
-    }
-
-    @ViewBuilder private var turnOffImageButton: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                loadExpandedContent = false
-            }
-            withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-                isExpandedProfile = false
-            }
-
-        } label: {
-            Image(systemName: "arrow.left")
-                .font(.title3)
-                .foregroundColor(.white)
-        }
-    }
-
     @ViewBuilder private var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -216,28 +156,26 @@ struct ConversationView: View {
                     ForEach(
                         self.messagingViewModel.currentChat.messages ?? [],
                         id: \.id) { message in
-                            MessageBubble(message: message,
-                                          showHighlight: $showMessageEmojiView,
-                                          highlightedMessage: $highlightMessage)
-                            .accessibilityValue(message.imageId != "" ? "image" : "message")
-                            .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
-                            .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
-                            .environmentObject(messagingViewModel)
-                            .id(message.id)
-                            .frame(maxWidth: UIScreen.main.bounds.width,
-                                   alignment: message.isReply() ? .leading : .trailing)
-                            .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
-                                return [(message.id  ?? "someId"): anchor]
-                            })
-                            .onLongPressGesture {
-                                if message.isReply() {
-                                    withAnimation(.easeInOut) {
-                                        showMessageEmojiView = true
-                                        highlightMessage = message
-                                    }
+                            messageBubble(message: message)
+                                .accessibilityValue(message.imageId != "" ? "image" : "message")
+                                .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+                                .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
+                                .environmentObject(messagingViewModel)
+                                .id(message.id)
+                                .frame(maxWidth: UIScreen.main.bounds.width,
+                                       alignment: message.isReply() ? .leading : .trailing)
+                                .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
+                                    return [(message.id  ?? "someId"): anchor]
+                                })
+                                .onLongPressGesture {
+                                    if message.isReply() {
+                                        withAnimation(.easeInOut) {
+                                            showMessageEmojiView = true
+                                            highlightMessage = message
+                                        }
 
+                                    }
                                 }
-                            }
                         }
                 }
                 .rotationEffect(Angle(degrees: 180))
@@ -254,6 +192,42 @@ struct ConversationView: View {
             }
             .padding(.horizontal, 12)
         }
+        .ignoresSafeArea(.all, edges: .top)
+        .frame(maxWidth: .infinity)
+        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                         imageOffsetProgress: imageOffsetProgress())
+        .overlay {
+            if isExpandedImage {
+                FullScreenImageCoverMessage(
+                    animationMessageImageNamespace: messageImageNamespace,
+                    namespaceId: imageId,
+                    isExpandedImage: $isExpandedImage,
+                    isExpandedImageWithDelay: $isExpandedImageWithDelay,
+                    imageOffset: $imageOffset,
+                    messageImageURL: messageImageURL,
+                    loadExpandedContent: $loadExpandedContent)
+            }
+        }
+    }
+
+    @ViewBuilder private func messageBubble(message: Message) -> some View {
+        MessageBubble(message: message,
+                      showHighlight: $showMessageEmojiView,
+                      highlightedMessage: $highlightMessage,
+                      animationNamespace: messageImageNamespace,
+                      isHidden: $isExpandedImage,
+                      extendedImageId: .constant(""),
+                      imageTapped: { id, imageURl in
+
+            self.imageId = id
+            self.messageImageURL = imageURl
+
+            withAnimation(.easeInOut) {
+                self.isExpandedImage = true
+                self.isExpandedImageWithDelay = true
+            }
+
+        })
     }
 
     @ViewBuilder private var createChatButton: some View {
@@ -281,20 +255,6 @@ struct ConversationView: View {
     }
 
     // MARK: - functions
-
-    private func turnOffImageView() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            loadExpandedContent = false
-        }
-
-        withAnimation(.easeInOut(duration: 0.3).delay(0.05)) {
-            isExpandedProfile = false
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            imageOffset = .zero
-        }
-    }
 
     private func imageOffsetProgress() -> CGFloat {
         let progress = imageOffset.height / 100

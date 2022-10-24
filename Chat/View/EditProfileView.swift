@@ -25,7 +25,7 @@ struct EditProfileView: View {
     @State private var isShowAlert = false
 
     @EnvironmentObject private var userViewModel: UserViewModel
-    @ObservedObject private var editProfileViewModel = EditProfileViewModel()
+    @ObservedObject var editProfileViewModel = EditProfileViewModel()
     @ObservedObject private var imageViewModel = ImageViewModel()
 
     @Environment (\.self) var env
@@ -67,12 +67,16 @@ struct EditProfileView: View {
 
             customAlert
         }
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .navigationBarHidden(true)
         .onAppear {
             newName = userViewModel.currentUser.name
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
-            imageViewModel.saveProfileImage(image: newImage, userId: editProfileViewModel.user.id)
+            imageViewModel.saveProfileImage(image: newImage,
+                                            userId: userViewModel.currentUser.id)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             ImagePicker(image: $profileImage)

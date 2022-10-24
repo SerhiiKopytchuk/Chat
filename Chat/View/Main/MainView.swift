@@ -21,6 +21,9 @@ struct MainView: View {
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject var editChannelViewModel: EditChannelViewModel
     @EnvironmentObject private var imageViewModel: ImageViewModel
+    @EnvironmentObject private var presenceViewModel: PresenceViewModel
+
+    @Environment(\.scenePhase) var scenePhase
 
     // MARK: - body
     var body: some View {
@@ -35,6 +38,15 @@ struct MainView: View {
                 .scaleEffect(isShowingSideMenu ? 0.8 : 1)
                 .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
         }
+        .onChange(of: scenePhase, perform: { phase in
+            if phase == .active {
+                viewModel.getCurrentUser { user in
+                    presenceViewModel.startSetup(user: user)
+                }
+            } else {
+                presenceViewModel.setOffline()
+            }
+        })
         .background {
             Color.background
                 .ignoresSafeArea()

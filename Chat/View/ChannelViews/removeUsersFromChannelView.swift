@@ -29,6 +29,10 @@ struct RemoveUsersFromChannelView: View {
             usersList
 
         }
+        .contentShape(Rectangle())
+        .addRightGestureRecognizer {
+            env.dismiss()
+        }
         .background {
             Color.background
                 .ignoresSafeArea()

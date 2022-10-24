@@ -27,7 +27,8 @@ extension View {
 extension View {
 
     func toButtonLightStyle(size: CGFloat) -> some View {
-        return self.foregroundColor(.gray)
+        return self
+            .foregroundColor(.gray)
             .frame(width: size, height: size)
             .background(Color.white, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             .shadow(color: .black.opacity(0.1), radius: 5, x: 5, y: 5 )
@@ -66,6 +67,29 @@ extension View {
         self
             .background(
                 Blur(radius: radius, opaque: opaque)
+            )
+    }
+
+    func addBlackOverlay(loadExpandedContent: Bool,
+                         imageOffsetProgress: CGFloat) -> some View {
+        self
+            .overlay(content: {
+                Rectangle()
+                    .fill(.black)
+                    .opacity(loadExpandedContent ? 1 : 0)
+                    .opacity(imageOffsetProgress)
+                    .ignoresSafeArea()
+            })
+    }
+
+    func addRightGestureRecognizer(swiped: @escaping () -> Void) -> some View {
+        self
+            .gesture(DragGesture(minimumDistance: 30)
+                .onEnded({ value in
+                    if value.translation.width > 30 {
+                        swiped()
+                    }
+                })
             )
     }
 }

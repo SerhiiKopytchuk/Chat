@@ -12,7 +12,9 @@ import SDWebImageSwiftUI
 struct ConversationTitleRow: View {
     // MARK: - variables
     var user: User
+    @Environment(\.self) var environment
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var presenceViewModel: PresenceViewModel
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
 
     let animationNamespace: Namespace.ID
@@ -31,16 +33,34 @@ struct ConversationTitleRow: View {
     var body: some View {
         HStack(spacing: 20) {
 
+            Button {
+                environment.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20)
+                    .foregroundColor(.gray)
+                    .padding(.trailing, 10)
+            }
+
             userImage
 
             // MARK: userName
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text(user.name)
-                    .font(.title).bold()
+                    .font(.title2).bold()
 
-                Text("Online")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                HStack(spacing: 0) {
+                    Circle()
+                        .frame(width: 10, height: 10)
+                        .foregroundColor(presenceViewModel.onlineUsers.contains(user.gmail) ? .green : .red)
+                        .padding(.trailing, 5)
+
+                    Text(presenceViewModel.onlineUsers.contains(user.gmail) ? "Online" : "Offline")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
 
             }
             .frame(maxWidth: .infinity, alignment: .leading)
