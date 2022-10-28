@@ -19,6 +19,8 @@ class MessagingViewModel: ObservableObject {
     @Published private(set) var lastMessageId: String = ""
     @Published private(set) var firstMessageId: String = ""
 
+    @Published var unsentMessages: [Message] = []
+
     var dataBase = Firestore.firestore()
 
     func addEmoji(message: Message, emoji: String) {
@@ -121,8 +123,27 @@ class MessagingViewModel: ObservableObject {
         let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
 
         do {
-            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-                .document().setData(from: newMessage)
+            guard let currentChatId = currentChat.id else { return }
+
+            unsentMessages.append(newMessage)
+
+            try self.dataBase.collection("chats").document(currentChatId).collection("messages")
+                .document().setData(from: newMessage, completion: { error in
+
+                    if let error {
+                        print("unable to sent message: \(error)")
+                        return
+                    }
+
+                    let index = self.unsentMessages.firstIndex {
+                        $0.id == newMessage.id
+                    }
+
+                    if let index {
+                        self.unsentMessages.remove(at: index)
+                    }
+
+                })
             changeLastActivityTime()
         } catch {
             print("failed to send message" + error.localizedDescription)
