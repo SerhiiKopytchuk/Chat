@@ -266,25 +266,20 @@ struct ChannelConversationView: View {
     }
 
     @ViewBuilder private func messageBubble(message: Message) -> some View {
-        MessageBubble(message: message,
-                      showHighlight: .constant(false),
-                      highlightedMessage: .constant(Message()),
-                      isChat: false,
-                      animationNamespace: animationMessageImage,
-                      isHidden: $isExpandedImage,
-                      extendedImageId: $imageId,
-                      imageTapped: { id, imageURl in
+        ChannelMessageBubble(message: message,
+                             animationNamespace: animationMessageImage,
+                             isHidden: $isExpandedImage,
+                             extendedImageId: $imageId) { id, imageUrl in
 
             self.imageId = id
-            self.messageImageURL = imageURl
+            self.messageImageURL = imageUrl
 
             withAnimation(.easeInOut) {
                 self.isExpandedDetails = false
                 self.isExpandedImage = true
                 self.isExpandedImageWithDelay = true
             }
-
-        })
+        }
     }
 
     @ViewBuilder private var messagingTextField: some View {

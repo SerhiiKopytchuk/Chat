@@ -1,0 +1,143 @@
+//
+//  MessageBubble.swift
+//  Chat
+//
+//  Created by Serhii Kopytchuk on 01.06.2022.
+//
+
+import SwiftUI
+import FirebaseStorage
+import SDWebImageSwiftUI
+
+struct ChannelMessageBubble: View {
+
+    // MARK: - vars
+    @State var message: Message
+    @State private var imageUrl = URL(string: "")
+
+    @State var isFindImage = false
+
+    let animationNamespace: Namespace.ID
+
+    @Binding var isHidden: Bool
+    @Binding var extendedImageId: String
+    var imageTapped: (String, URL?) -> Void
+
+    @State private var isShowUnsentMark = false
+
+    @EnvironmentObject private var viewModel: UserViewModel
+    @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
+
+    // MARK: - Body
+    var body: some View {
+        VStack(alignment: message.isReply() ? .trailing : .leading) {
+
+            // MARK: message text or image
+            ZStack(alignment: .bottomLeading) {
+                if message.imageId == "" {
+                    VStack(alignment: .trailing, spacing: 0) {
+                        Text(message.text)
+                            .onAppear(perform: showUnsentMark)
+
+                        unsentMark
+
+                    }
+                    .padding()
+                    .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .primary)
+                    .background(message.senderId != viewModel.getUserUID() ? .blue : Color.secondPrimary)
+                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
+                                  ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
+                    .frame(alignment: message.isReply() ? .leading : .trailing)
+                } else {
+                    VStack(spacing: 0) {
+                        imageView
+
+                        if channelMessagingViewModel.unsentMessages.isContains(message: message) {
+                            Image(systemName: "clock.arrow.circlepath")
+                                .font(.system(size: 12))
+                                .padding(.vertical, 5)
+                                .padding(.trailing, 10)
+                                .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), alignment: .trailing)
+                                .background(Color.secondPrimary)
+                                .foregroundColor(.gray)
+                                .cornerRadius(15, corners: [.bottomLeft])
+                        }
+                    }
+                }
+            }
+
+        }
+        .padding(message.isReply() ? .trailing : .leading, 60)
+        .padding(.horizontal, 10)
+        .opacity(extendedImageId == self.message.imageId ? (isHidden ? 0 : 1) : 1)
+    }
+
+    // MARK: - viewBuilders
+    @ViewBuilder private var imageView: some View {
+        VStack {
+            if isFindImage {
+                WebImage(url: imageUrl, isAnimating: .constant(true))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
+                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
+                                  ? [.topLeft, .topRight, .bottomRight] :
+                                    [.topLeft, .topRight])
+                    .matchedGeometryEffect(id: message.imageId ?? "",
+                                           in: animationNamespace)
+                    .onTapGesture {
+                        imageTapped(message.imageId ?? "messageId", imageUrl)
+                    }
+            } else {
+                ProgressView()
+                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
+                    .aspectRatio(contentMode: .fill)
+            }
+
+        }
+        .onAppear {
+            imageSetup()
+        }
+    }
+
+    @ViewBuilder private var unsentMark: some View {
+        if channelMessagingViewModel.unsentMessages.isContains(message: message) && isShowUnsentMark {
+            Image(systemName: "clock.arrow.circlepath")
+                .font(.system(size: 12))
+                .padding(.top, 4)
+                .frame(alignment: .trailing)
+                .foregroundColor(.gray)
+        }
+    }
+
+    // MARK: - functions
+
+    private func showUnsentMark() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation {
+                isShowUnsentMark = true
+            }
+        }
+    }
+    private func imageSetup() {
+
+        let imageId: String = message.imageId ?? "imageId"
+        var channelId: String = ""
+        var ref: StorageReference
+
+        channelId = channelViewModel.currentChannel.id ?? "channelID"
+        ref = StorageReferencesManager.shared
+            .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
+
+        ref.downloadURL { url, err in
+            if err != nil {
+                return
+            }
+            self.imageUrl = url
+            withAnimation {
+                self.isFindImage = true
+            }
+        }
+    }
+}

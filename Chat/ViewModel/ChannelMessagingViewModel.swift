@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import SwiftUI
 
 class ChannelMessagingViewModel: ObservableObject {
 
@@ -17,6 +18,8 @@ class ChannelMessagingViewModel: ObservableObject {
     @Published private(set) var messages: [Message] = []
     @Published private(set) var lastMessageId = ""
     @Published private(set) var firstMessageId = ""
+
+    @Published var unsentMessages: [Message] = []
 
     var dataBase = Firestore.firestore()
 
@@ -104,15 +107,21 @@ class ChannelMessagingViewModel: ObservableObject {
     func sendMessage(text: String) {
 
         if !messageIsValidated(text: text) { return }
-
         let trimmedText = text.trimmingCharacters(in: .whitespaces)
-
         let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
+        guard let currentChannelId = currentChannel.id else { return }
+        unsentMessages.append(newMessage)
 
         do {
-            try self.dataBase.collection("channels").document(currentChannel.id ?? "SomeChatId").collection("messages")
-                .document().setData(from: newMessage)
+            try self.dataBase.collection("channels").document(currentChannelId).collection("messages")
+                .document().setData(from: newMessage, completion: { error in
+
+                    if self.isError(error: error) { return }
+                    self.removeFromUnsentList(message: newMessage)
+                })
+
             changeLastActivityTime()
+
         } catch {
             print("failed to send message" + error.localizedDescription)
         }
@@ -131,5 +140,26 @@ class ChannelMessagingViewModel: ObservableObject {
     private func changeLastActivityTime() {
         dataBase.collection("channels").document(currentChannel.id ?? "someID")
             .updateData(["lastActivityTimestamp": Date()])
+    }
+
+    private func removeFromUnsentList(message: Message) {
+        let index = unsentMessages.firstIndex {
+            $0.id == message.id
+        }
+
+        if let index {
+            withAnimation {
+                _ = unsentMessages.remove(at: index)
+            }
+        }
+    }
+
+    fileprivate func isError(error: Error?) -> Bool {
+        if error != nil {
+            print(error?.localizedDescription ?? "error")
+            return true
+        } else {
+            return false
+        }
     }
 }
