@@ -28,6 +28,8 @@ struct MessageBubble: View {
     @Binding var extendedImageId: String
     var imageTapped: (String, URL?) -> Void
 
+    @State private var isShowUnsentMark = false
+
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var messagingViewModel: MessagingViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
@@ -43,14 +45,10 @@ struct MessageBubble: View {
                     if message.imageId == "" {
                         VStack(alignment: .trailing, spacing: 0) {
                             Text(message.text)
+                                .onAppear(perform: showUnsentMark)
 
-                            if messagingViewModel.unsentMessages.isContains(message: message) {
-                                Image(systemName: "clock.arrow.circlepath")
-                                    .font(.system(size: 12))
-                                    .padding(.top, 4)
-                                    .frame(alignment: .trailing)
-                                    .foregroundColor(.gray)
-                            }
+                            unsentMark
+
                         }
                             .padding()
                             .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .primary)
@@ -149,7 +147,25 @@ struct MessageBubble: View {
         }
     }
 
+    @ViewBuilder private var unsentMark: some View {
+            if messagingViewModel.unsentMessages.isContains(message: message) && isShowUnsentMark {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 12))
+                    .padding(.top, 4)
+                    .frame(alignment: .trailing)
+                    .foregroundColor(.gray)
+            }
+    }
+
     // MARK: - functions
+
+    private func showUnsentMark() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation {
+                isShowUnsentMark = true
+            }
+        }
+    }
     private func imageSetup() {
 
         let imageId: String = message.imageId ?? "imageId"
