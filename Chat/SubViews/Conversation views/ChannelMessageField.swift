@@ -39,6 +39,7 @@ struct ChannelMessageField: View {
             imageViewModel.saveChannelMessageImage(image: newImage,
                                             channelId: channelViewModel.currentChannel.id ?? "channelId") { imageId in
                 channelMessagingViewModel.sendImage(imageId: imageId)
+                self.image = UIImage()
             }
         })
         .frame( height: height < 160 ? self.height : 160)

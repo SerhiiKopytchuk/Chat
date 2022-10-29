@@ -50,20 +50,7 @@ struct ChannelMessageBubble: View {
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
                 } else {
-                    VStack(spacing: 0) {
                         imageView
-
-                        if channelMessagingViewModel.unsentMessages.isContains(message: message) {
-                            Image(systemName: "clock.arrow.circlepath")
-                                .font(.system(size: 12))
-                                .padding(.vertical, 5)
-                                .padding(.trailing, 10)
-                                .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), alignment: .trailing)
-                                .background(Color.secondPrimary)
-                                .foregroundColor(.gray)
-                                .cornerRadius(15, corners: [.bottomLeft])
-                        }
-                    }
                 }
             }
 
@@ -83,7 +70,7 @@ struct ChannelMessageBubble: View {
                     .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
                     .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] :
-                                    [.topLeft, .topRight])
+                                    [.topLeft, .topRight, .bottomLeft])
                     .matchedGeometryEffect(id: message.imageId ?? "",
                                            in: animationNamespace)
                     .onTapGesture {

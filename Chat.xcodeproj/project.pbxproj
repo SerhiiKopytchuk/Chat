@@ -57,7 +57,6 @@
 		408E747728F9553C00B3F28C /* FullScreenImageCoverHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E747628F9553C00B3F28C /* FullScreenImageCoverHeader.swift */; };
 		408E747928F9592700B3F28C /* FullScreenImageCoverMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E747828F9592700B3F28C /* FullScreenImageCoverMessage.swift */; };
 		4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4094461428301F8D00239F7B /* GoogleService-Info.plist */; };
-		40946EE4290A8C490006457F /* NetworkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40946EE3290A8C490006457F /* NetworkViewModel.swift */; };
 		409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CB289D937C00720A1E /* AnimatedEmoji.swift */; };
 		409894CE289D978000720A1E /* EmojiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CD289D978000720A1E /* EmojiView.swift */; };
 		4099D9AD28B7C70500DCE75F /* UIAplication + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */; };
@@ -148,7 +147,6 @@
 		408E747628F9553C00B3F28C /* FullScreenImageCoverHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageCoverHeader.swift; sourceTree = "<group>"; };
 		408E747828F9592700B3F28C /* FullScreenImageCoverMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageCoverMessage.swift; sourceTree = "<group>"; };
 		4094461428301F8D00239F7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		40946EE3290A8C490006457F /* NetworkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkViewModel.swift; sourceTree = "<group>"; };
 		409894CB289D937C00720A1E /* AnimatedEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEmoji.swift; sourceTree = "<group>"; };
 		409894CD289D978000720A1E /* EmojiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiView.swift; sourceTree = "<group>"; };
 		4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAplication + Extension.swift"; sourceTree = "<group>"; };
@@ -288,7 +286,6 @@
 				40153F29286B32BC0022DA46 /* ChannelMessagingViewModel.swift */,
 				40C6691F28894D270087A9DF /* EditChannelViewModel.swift */,
 				401E917F29012B400051D52A /* PresenceViewModel.swift */,
-				40946EE3290A8C490006457F /* NetworkViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -581,7 +578,6 @@
 				4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */,
 				40CFF1E028C4EDC7001544CD /* Color + Extension.swift in Sources */,
 				40A701622896CF74002ECB1C /* EmptyImageWithCharacterView.swift in Sources */,
-				40946EE4290A8C490006457F /* NetworkViewModel.swift in Sources */,
 				40B0A48C2869BC290008374E /* AddUserCreateChannelRow.swift in Sources */,
 				4024EB0F28393CF40082E739 /* TabBarView.swift in Sources */,
 				409AC7642849E9A300BD00F9 /* SearchView.swift in Sources */,
