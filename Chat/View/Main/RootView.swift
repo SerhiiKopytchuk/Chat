@@ -15,12 +15,6 @@ struct RootView: View {
 
     // MARK: - vars
     @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject private var imageViewModel: ImageViewModel
 
     // MARK: - body
     var body: some View {

@@ -22,7 +22,6 @@ struct EditChannelView: View {
     @State private var isShowingImagePicker = false
     @State private var imageUrl = URL(string: "")
     @State private var isFindUserImage = true
-    @State private var isChangedImage = false
     private let imageSize: CGFloat = 50
 
     @State private var isShowAlert = false

@@ -15,7 +15,7 @@ struct ChannelMessageField: View {
 
     var sizeOfButtons: CGFloat = 20
 
-    @ObservedObject var channelMessagingViewModel: ChannelMessagingViewModel
+    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
     @ObservedObject private var imageViewModel = ImageViewModel()
     @EnvironmentObject private var channelViewModel: ChannelViewModel
 
@@ -36,9 +36,19 @@ struct ChannelMessageField: View {
             ImagePicker(image: $image)
         }
         .onChange(of: image ?? UIImage(), perform: { newImage in
+
+            let newMessage = Message(imageName: newImage.description,
+                                     senderId: channelMessagingViewModel.currentUser.id)
+
+            channelMessagingViewModel.currentChannel.messages?.append(newMessage)
+
             imageViewModel.saveChannelMessageImage(image: newImage,
                                             channelId: channelViewModel.currentChannel.id ?? "channelId") { imageId in
+
+                channelMessagingViewModel.removeMessageFromCurrenChannelList(message: newMessage)
+
                 channelMessagingViewModel.sendImage(imageId: imageId)
+
                 self.image = UIImage()
             }
         })
@@ -85,6 +95,6 @@ struct ChannelMessageField: View {
 
 struct ChannelMessageField_Previews: PreviewProvider {
     static var previews: some View {
-        ChannelMessageField(channelMessagingViewModel: ChannelMessagingViewModel())
+        ChannelMessageField()
     }
 }

@@ -50,32 +50,6 @@ class ChattingViewModel: ObservableObject {
         }
     }
 
-    func getCurrentChat(chat: Chat, userNumber: Int, competition: @escaping (Chat) -> Void) {
-        if userNumber == 1 {
-
-            dataBase.collection("chats")
-                .whereField("user1Id", isEqualTo: chat.user1Id)
-                .whereField("user2Id", isEqualTo: chat.user2Id)
-                .queryToChat { chat in
-                    self.currentChat = chat
-                    competition(chat)
-                    return
-                }
-
-        } else {
-
-            dataBase.collection("chats")
-                .whereField("user1Id", isEqualTo: chat.user1Id)
-                .whereField("user2Id", isEqualTo: chat.user2Id)
-                .queryToChat { chat in
-                    self.currentChat = chat
-                    competition(chat)
-                    return
-                }
-
-        }
-    }
-
     func getCurrentChat(chatId: String, competition: @escaping (Chat) -> Void) {
         dataBase.collection("chats").document(chatId)
             .toChat { chat in

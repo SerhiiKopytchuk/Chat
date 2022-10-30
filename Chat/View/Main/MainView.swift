@@ -15,12 +15,7 @@ struct MainView: View {
     @State private var showSearchUsers = false
 
     @EnvironmentObject var viewModel: UserViewModel
-    @EnvironmentObject var messagingViewModel: MessagingViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
-    @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
-    @EnvironmentObject var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject private var imageViewModel: ImageViewModel
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
 
     @Environment(\.scenePhase) var scenePhase

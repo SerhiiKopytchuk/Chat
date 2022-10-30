@@ -15,7 +15,6 @@ class ChannelMessagingViewModel: ObservableObject {
 
     @Published var currentUser = User()
 
-    @Published private(set) var messages: [Message] = []
     @Published private(set) var lastMessageId = ""
     @Published private(set) var firstMessageId = ""
 
@@ -150,6 +149,18 @@ class ChannelMessagingViewModel: ObservableObject {
         if let index {
             withAnimation {
                 _ = unsentMessages.remove(at: index)
+            }
+        }
+    }
+
+    func removeMessageFromCurrenChannelList(message: Message) {
+        let index = currentChannel.messages?.firstIndex {
+            $0.id == message.id
+        }
+
+        if let index {
+            withAnimation {
+                _ = currentChannel.messages?.remove(at: index)
             }
         }
     }

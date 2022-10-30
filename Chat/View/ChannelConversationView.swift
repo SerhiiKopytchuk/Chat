@@ -40,8 +40,6 @@ struct ChannelConversationView: View {
     @State private var showingAlertSubscriber = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-    @State private var heightOfHeader: CGFloat = .zero
-
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
@@ -285,9 +283,8 @@ struct ChannelConversationView: View {
     @ViewBuilder private var messagingTextField: some View {
         if !isExpandedDetails {
             if currentUser.id == channelViewModel.currentChannel.ownerId {
-                ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
+                ChannelMessageField()
                     .transition(.flipFromBottom)
-                    .environmentObject(channelViewModel)
             }
         }
     }

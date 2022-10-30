@@ -23,8 +23,6 @@ class ChannelViewModel: ObservableObject {
     @Published var currentChannel: Channel = Channel()
     @Published var channelType: ChannelType = .publicType
 
-    @Published var channelSubscribers: [User] = []
-
     @Published var createdChannelImage: UIImage?
     @Published var lastCreatedChannelId: String?
     @Published private(set) var isSavedImage = false
@@ -37,16 +35,6 @@ class ChannelViewModel: ObservableObject {
         createdChannelImage = image
         lastCreatedChannelId = imageName
         isSavedImage = true
-    }
-
-    func getChannelOwner() {
-        dataBase.collection("users").document("\(currentChannel.ownerId)").getDocument { document, error in
-            if self.isError(error: error) { return }
-
-            if let channelOwner = try? document?.data(as: User.self) {
-                self.owner = channelOwner
-            }
-        }
     }
 
     func subscribeToChannel() {

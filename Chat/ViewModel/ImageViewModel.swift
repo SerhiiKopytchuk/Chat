@@ -15,9 +15,6 @@ import SwiftUI
 
 class ImageViewModel: ObservableObject {
 
-    @Published var imageURL: String?
-    @Published var myImage = WebImage(url: URL(string: ""))
-
     let dataBase = Firestore.firestore()
 
     func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {

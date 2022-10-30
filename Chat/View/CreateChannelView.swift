@@ -17,12 +17,7 @@ struct CreateChannelView: View {
     @State private var isShowingImagePicker = false
     @State private var name: String = ""
     @State private var description: String = ""
-    @State private var searchText: String = ""
-    @State private var isPrivate = true
 
-    // MARK: image properties
-    @State private var imageUrl = URL(string: "")
-    @State private var isFindChannelImage = true
     private let channelImageSize: CGFloat = 100
 
     @State private var isShowAlert = false

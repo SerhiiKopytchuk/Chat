@@ -140,13 +140,4 @@ class EditChannelViewModel: ObservableObject {
             "subscribersId": FieldValue.arrayRemove(["\(id)"])
         ])
     }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
-        }
-    }
 }

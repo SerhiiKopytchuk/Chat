@@ -13,9 +13,7 @@ class MessagingViewModel: ObservableObject {
 
     @Published var currentChat: Chat = Chat()
     @Published var currentUser: User = User()
-    @Published var secondUser = User()
 
-    @Published var messages: [Message] = []
     @Published private(set) var lastMessageId: String = ""
     @Published private(set) var firstMessageId: String = ""
 

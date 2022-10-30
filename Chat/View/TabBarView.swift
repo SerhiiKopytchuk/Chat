@@ -17,11 +17,9 @@ struct TabBarView: View {
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
-    @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
 
     @Binding var isShowingSideMenu: Bool
 
-    @State private var currentTab: Tab = .chats
     @State private var goToConversation = false
     @State private var goToChannel = false
     @State private var selection = 0
@@ -119,7 +117,6 @@ struct TabBarView: View {
                     _ = viewModel.getUser(
                         id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
                     ) { user in
-                        messagingViewModel.secondUser = user
                         chattingViewModel.secondUser = user
 
                         DispatchQueue.main.async {
@@ -132,6 +129,7 @@ struct TabBarView: View {
                     messagingViewModel.currentChat = chat
                     messagingViewModel.getMessages { _ in }
                 }
+
                 .environmentObject(messagingViewModel)
                 .environmentObject(chattingViewModel)
             }

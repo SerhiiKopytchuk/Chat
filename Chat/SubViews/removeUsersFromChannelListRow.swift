@@ -109,6 +109,5 @@ struct RemoveUsersFromChannelListRow: View {
 
     private func updateChannelViewModel() {
         channelViewModel.currentChannel = editChannelViewModel.currentChannel
-        channelViewModel.channelSubscribers = editChannelViewModel.channelSubscribers
     }
 }
