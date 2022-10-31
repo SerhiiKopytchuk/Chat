@@ -60,7 +60,7 @@ class UserViewModel: ObservableObject {
             }
     }
 
-    func getUser(id: String, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
+    func getUser(id: User.ID, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
         let docRef = self.dataBase.collection("users").document(id)
         var userToReturn: User = User()
         docRef.getDocument(as: User.self) { result in

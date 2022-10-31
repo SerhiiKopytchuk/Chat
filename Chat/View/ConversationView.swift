@@ -36,7 +36,6 @@ struct ConversationView: View {
     @Environment(\.self) private var env
 
     @EnvironmentObject private var messagingViewModel: MessagingViewModel
-    @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
 
     // MARK: - body

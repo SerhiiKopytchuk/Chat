@@ -26,7 +26,6 @@ struct SignUpView: View {
     @State private var isShowingPassword: Bool = false
     @State private var isShowingRetryPassword: Bool = false
     @State private var isShowAlert = false
-    @State private var isShowLoader = false
     @State private var alertText = ""
     @State private var isShowingImagePicker = false
     @State private var image: UIImage?
@@ -34,7 +33,6 @@ struct SignUpView: View {
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
-    @ObservedObject private var editProfileViewModel = EditProfileViewModel()
     @ObservedObject private var imageViewModel = ImageViewModel()
 
     @EnvironmentObject var channelViewModel: ChannelViewModel

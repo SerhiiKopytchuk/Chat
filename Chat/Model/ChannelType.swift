@@ -11,9 +11,3 @@ enum ChannelType: String {
     case publicType = "Public"
     case privateType = "Private"
 }
-
-enum ExpenseType: String {
-    case income = "Income"
-    case expense = "expenses"
-    case all = "ALL"
-}

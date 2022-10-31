@@ -19,7 +19,6 @@ struct EditProfileView: View {
     // MARK: image properties
     @State private var imageUrl = URL(string: "")
     @State private var isFindUserImage = true
-    @State private var isChangedImage = false
     private let imageSize: CGFloat = 100
 
     @State private var isShowAlert = false

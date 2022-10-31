@@ -19,7 +19,6 @@ struct SearchView: View {
 
     @Environment(\.self) var env
 
-    @State private var showSearchBar = false
     @State private var searchUserText = ""
     @State private var searchChannelText = ""
 
@@ -168,7 +167,6 @@ struct SearchView: View {
                                   rowTapped: {
 
                     viewModel.secondUser = user
-                    messagingViewModel.secondUser = user
                     messagingViewModel.currentUser = viewModel.currentUser
                     chattingViewModel.secondUser = user
                     chattingViewModel.currentUser = viewModel.currentUser

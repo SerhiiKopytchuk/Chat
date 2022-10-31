@@ -13,7 +13,6 @@ struct AddUserToChannelView: View {
     @State private var searchUserText = ""
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject private var userViewModel: UserViewModel
 
     @Environment(\.self) var env
 

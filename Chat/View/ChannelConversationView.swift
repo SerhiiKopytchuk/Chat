@@ -40,8 +40,6 @@ struct ChannelConversationView: View {
     @State private var showingAlertSubscriber = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-    @State private var heightOfHeader: CGFloat = .zero
-
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
@@ -266,33 +264,27 @@ struct ChannelConversationView: View {
     }
 
     @ViewBuilder private func messageBubble(message: Message) -> some View {
-        MessageBubble(message: message,
-                      showHighlight: .constant(false),
-                      highlightedMessage: .constant(Message()),
-                      isChat: false,
-                      animationNamespace: animationMessageImage,
-                      isHidden: $isExpandedImage,
-                      extendedImageId: $imageId,
-                      imageTapped: { id, imageURl in
+        ChannelMessageBubble(message: message,
+                             animationNamespace: animationMessageImage,
+                             isHidden: $isExpandedImage,
+                             extendedImageId: $imageId) { id, imageUrl in
 
             self.imageId = id
-            self.messageImageURL = imageURl
+            self.messageImageURL = imageUrl
 
             withAnimation(.easeInOut) {
                 self.isExpandedDetails = false
                 self.isExpandedImage = true
                 self.isExpandedImageWithDelay = true
             }
-
-        })
+        }
     }
 
     @ViewBuilder private var messagingTextField: some View {
         if !isExpandedDetails {
             if currentUser.id == channelViewModel.currentChannel.ownerId {
-                ChannelMessageField(channelMessagingViewModel: channelMessagingViewModel)
+                ChannelMessageField()
                     .transition(.flipFromBottom)
-                    .environmentObject(channelViewModel)
             }
         }
     }

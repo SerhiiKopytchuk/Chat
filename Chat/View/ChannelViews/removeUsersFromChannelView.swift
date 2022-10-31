@@ -13,11 +13,8 @@ struct RemoveUsersFromChannelView: View {
 
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject private var userViewModel: UserViewModel
 
     @Environment(\.self) var env
-
-    @State private var subscribersId: [String] = []
 
     // MARK: - body
     var body: some View {

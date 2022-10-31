@@ -13,11 +13,11 @@ class MessagingViewModel: ObservableObject {
 
     @Published var currentChat: Chat = Chat()
     @Published var currentUser: User = User()
-    @Published var secondUser = User()
 
-    @Published var messages: [Message] = []
     @Published private(set) var lastMessageId: String = ""
     @Published private(set) var firstMessageId: String = ""
+
+    @Published var unsentMessages: [Message] = []
 
     var dataBase = Firestore.firestore()
 
@@ -115,14 +115,21 @@ class MessagingViewModel: ObservableObject {
     func sendMessage(text: String) {
 
         let trimmedText = text.trimToMessage()
-
         if !messageIsValidated(text: trimmedText) { return }
-
         let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
 
         do {
-            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-                .document().setData(from: newMessage)
+            guard let currentChatId = currentChat.id else { return }
+            unsentMessages.append(newMessage)
+
+            try self.dataBase.collection("chats").document(currentChatId).collection("messages")
+                .document().setData(from: newMessage, completion: { error in
+
+                    if self.isError(error: error) { return }
+
+                    self.removeFromUnsentList(message: newMessage)
+
+                })
             changeLastActivityTime()
         } catch {
             print("failed to send message" + error.localizedDescription)
@@ -140,6 +147,27 @@ class MessagingViewModel: ObservableObject {
 
     private func changeLastActivityTime() {
         dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
+    }
+
+    private func removeFromUnsentList(message: Message) {
+        let index = unsentMessages.firstIndex {
+            $0.id == message.id
+        }
+
+        if let index {
+            withAnimation {
+                _ = unsentMessages.remove(at: index)
+            }
+        }
+    }
+
+    fileprivate func isError(error: Error?) -> Bool {
+        if error != nil {
+            print(error?.localizedDescription ?? "error")
+            return true
+        } else {
+            return false
+        }
     }
 
 }

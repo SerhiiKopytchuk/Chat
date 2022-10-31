@@ -21,8 +21,6 @@ struct ChannelTitleRow: View {
     @Binding var isExpandedDetails: Bool
     @Binding var channelImageURL: URL?
 
-    @EnvironmentObject private var channelViewModel: ChannelViewModel
-
     @State var isOwner: Bool
 
     // MARK: image properties
