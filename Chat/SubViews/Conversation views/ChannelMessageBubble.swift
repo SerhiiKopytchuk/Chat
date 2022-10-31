@@ -35,7 +35,7 @@ struct ChannelMessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imageId == "" && message.imageName == "" {
+                if message.imageId == "" {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
@@ -49,24 +49,9 @@ struct ChannelMessageBubble: View {
                     .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
-                } else if message.imageName == "" {
-                        imageView
                 } else {
-                    VStack(alignment: .trailing, spacing: 0) {
-                        Text(message.imageName ?? "img")
-                            .onAppear(perform: showUnsentMark)
-
-                        unsentMark
-
-                    }
-                    .padding()
-                    .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .primary)
-                    .background(message.senderId != viewModel.getUserUID() ? .blue : Color.secondPrimary)
-                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
-                                  ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
-                    .frame(alignment: message.isReply() ? .leading : .trailing)
+                        imageView
                 }
-
             }
 
         }

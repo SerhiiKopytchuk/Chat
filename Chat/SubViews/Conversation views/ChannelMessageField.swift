@@ -36,20 +36,10 @@ struct ChannelMessageField: View {
             ImagePicker(image: $image)
         }
         .onChange(of: image ?? UIImage(), perform: { newImage in
-
-            let newMessage = Message(imageName: newImage.description,
-                                     senderId: channelMessagingViewModel.currentUser.id)
-
-            channelMessagingViewModel.currentChannel.messages?.append(newMessage)
-
+            guard let currentChannelId = channelViewModel.currentChannel.id else { return }
             imageViewModel.saveChannelMessageImage(image: newImage,
-                                            channelId: channelViewModel.currentChannel.id ?? "channelId") { imageId in
-
-                channelMessagingViewModel.removeMessageFromCurrenChannelList(message: newMessage)
-
+                                                   channelId: currentChannelId) { imageId in
                 channelMessagingViewModel.sendImage(imageId: imageId)
-
-                self.image = UIImage()
             }
         })
         .frame( height: height < 160 ? self.height : 160)

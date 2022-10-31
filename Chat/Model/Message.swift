@@ -14,7 +14,6 @@ struct Message: Identifiable, Codable {
     var timestamp: Date
     var emojiValue: String
     var imageId: String?
-    var imageName: String?
 
     internal init(text: String, senderId: String) {
         self.id = UUID().uuidString
@@ -23,7 +22,6 @@ struct Message: Identifiable, Codable {
         self.timestamp = Date()
         self.emojiValue = ""
         self.imageId = ""
-        self.imageName = ""
     }
 
     init() {
@@ -33,7 +31,6 @@ struct Message: Identifiable, Codable {
         self.timestamp = Date()
         self.emojiValue = ""
         self.imageId = ""
-        self.imageName = ""
     }
 
     init(imageId: String, senderId: String) {
@@ -43,16 +40,6 @@ struct Message: Identifiable, Codable {
         self.timestamp = Date()
         self.emojiValue = ""
         self.imageId = imageId
-        self.imageName = ""
-    }
-
-    init(imageName: String, senderId: String) {
-        self.id = UUID().uuidString
-        self.text = ""
-        self.senderId = senderId
-        self.timestamp = Date()
-        self.emojiValue = ""
-        self.imageName = imageName
     }
 
     func isEmojiAdded() -> Bool {
