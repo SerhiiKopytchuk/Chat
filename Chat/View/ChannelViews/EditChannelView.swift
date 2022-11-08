@@ -194,3 +194,12 @@ struct EditChannelView: View {
         }
     }
 }
+
+struct EditChannelView_Previews: PreviewProvider {
+    static var previews: some View {
+        EditChannelView(channelName: "Channel", channelDescription: "Description", channelColor: "Red")
+            .environmentObject(ChannelViewModel())
+            .environmentObject(EditChannelViewModel())
+            .environmentObject(ImageViewModel())
+    }
+}

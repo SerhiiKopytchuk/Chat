@@ -111,3 +111,11 @@ struct RemoveUsersFromChannelListRow: View {
         channelViewModel.currentChannel = editChannelViewModel.currentChannel
     }
 }
+
+struct RemoveUsersFromChannelListRow_Previews: PreviewProvider {
+    static var previews: some View {
+        RemoveUsersFromChannelListRow(user: "User", userGmail: "some@gmail.com", id: "id", color: "Red")
+            .environmentObject(ChannelViewModel())
+            .environmentObject(EditChannelViewModel())
+    }
+}

@@ -404,7 +404,7 @@ struct SignUpView: View {
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView().environmentObject(UserViewModel())
-.previewInterfaceOrientation(.portrait)
+        SignUpView()
+            .environmentObject(UserViewModel())
     }
 }

@@ -326,3 +326,27 @@ struct ChannelConversationView: View {
         }
     }
 }
+
+struct ChannelConversationView_Previews: PreviewProvider {
+    @State static var channelViewModel = ChannelViewModel()
+    @State static var channelMessagingViewModel = ChannelMessagingViewModel()
+    static var previews: some View {
+        ChannelConversationView(currentUser: User(gmail: "some@gmail.com", id: "id", name: "Name"),
+                                isSubscribed: .constant(true))
+            .environmentObject(UserViewModel())
+            .environmentObject(channelViewModel)
+            .environmentObject(channelMessagingViewModel)
+            .environmentObject(EditChannelViewModel())
+            .onAppear {
+                self.channelViewModel.currentChannel = Channel(name: "Name",
+                                                               description: "Description",
+                                                               ownerId: "id",
+                                                               ownerName: "ownerNae",
+                                                               isPrivate: false)
+
+                self.channelMessagingViewModel.currentChannel.messages?.append(Message(text: "Hello", senderId: "id"))
+                self.channelMessagingViewModel.currentChannel.messages?
+                    .append(Message(text: "How are you?", senderId: "id"))
+            }
+    }
+}

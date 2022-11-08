@@ -127,3 +127,19 @@ struct ChannelTitleRow: View {
         }
     }
 }
+
+struct ChannelTitleRow_Previews: PreviewProvider {
+    @Namespace static var namespace
+    static var previews: some View {
+        ChannelTitleRow(channel: Channel(name: "Channel",
+                                         description: "Description",
+                                         ownerId: "ownerId",
+                                         ownerName: "OwnerName",
+                                         isPrivate: false),
+                        animationNamespace: namespace,
+                        isExpandedProfileImage: .constant(false),
+                        isExpandedDetails: .constant(false),
+                        channelImageURL: .constant(URL(string: "")),
+                        isOwner: true)
+    }
+}

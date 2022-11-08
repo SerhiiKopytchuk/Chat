@@ -78,8 +78,7 @@ struct ConversationView: View {
             }
         })
         .overlayPreferenceValue(BoundsPreference.self) { values in
-            if let highlightMessage = highlightMessage {
-                if highlightMessage.isReply() {
+            if let highlightMessage = highlightMessage, highlightMessage.isReply() {
                     if let preference = values.first(where: { item in
                         item.key == highlightMessage.id
                     }) {
@@ -103,7 +102,6 @@ struct ConversationView: View {
                         }
                         .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
                     }
-                }
             }
         }
         .overlay {
@@ -264,4 +262,17 @@ struct ConversationView: View {
         }
     }
 
+}
+
+struct ConversationView_Previews: PreviewProvider {
+    static var previews: some View {
+        ConversationView(secondUser: User(gmail: "some@gmail.com",
+                                          id: "secondUserId",
+                                          name: "secondUserName"),
+                         isFindChat: .constant(true))
+        .environmentObject(MessagingViewModel())
+        .environmentObject(ChattingViewModel())
+        .environmentObject(PresenceViewModel())
+
+    }
 }
