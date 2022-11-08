@@ -43,7 +43,7 @@ struct MessageField: View {
                 messagingViewModel.sendImage(imageId: imageId)
             }
         })
-        .frame( height: height < 160 ? self.height : 160)
+    .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.secondPrimary)
@@ -82,4 +82,23 @@ struct MessageField: View {
         }
     }
 
+}
+
+struct MessageField_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+
+            Spacer()
+
+            MessageField(messagingViewModel: MessagingViewModel())
+                .environmentObject(ImageViewModel())
+                .environmentObject(ChattingViewModel())
+
+        }
+        .background(
+            Color.gray
+                .ignoresSafeArea()
+        )
+
+    }
 }

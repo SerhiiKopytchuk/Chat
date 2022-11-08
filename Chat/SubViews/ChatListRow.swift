@@ -17,7 +17,7 @@ struct ChatListRow: View {
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
 
     @State var person: User = User()
-    @State private var message = Message()
+    @State fileprivate var message = Message()
 
     // MARK: image properties
     @State private var imageUrl = URL(string: "")
@@ -165,5 +165,18 @@ struct ChatListRow: View {
             }
         }
     }
+}
 
+struct ChatListRow_Previews: PreviewProvider {
+    static var previews: some View {
+
+        ChatListRow(person: User(gmail: "some@gmail.com", id: "id", name: "serhii"),
+                    chat: Chat(user1Id: "OCcDOefartfdWVenA5A8VFFMLXJ3",
+                               user2Id: "x3Av8lCgiQWb4KvfJtaK7xY9g632",
+                               lastActivityTimestamp: Date()),
+                    rowTapped: {})
+        .environmentObject(UserViewModel())
+        .environmentObject(ChattingViewModel())
+
+    }
 }

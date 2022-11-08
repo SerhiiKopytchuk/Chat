@@ -59,6 +59,6 @@ struct RemoveUsersFromChannelView_Previews: PreviewProvider {
     static var previews: some View {
         RemoveUsersFromChannelView()
             .environmentObject(ChannelViewModel())
-            .environmentObject(UserViewModel())
+            .environmentObject(EditChannelViewModel())
     }
 }

@@ -85,6 +85,19 @@ struct ChannelMessageField: View {
 
 struct ChannelMessageField_Previews: PreviewProvider {
     static var previews: some View {
-        ChannelMessageField()
+        VStack {
+
+            Spacer()
+
+            ChannelMessageField()
+                .environmentObject(ChannelViewModel())
+                .environmentObject(ChannelMessagingViewModel())
+
+        }
+        .background(
+            Color.gray
+                .ignoresSafeArea()
+        )
+
     }
 }

@@ -128,3 +128,18 @@ struct ChannelMessageBubble: View {
         }
     }
 }
+
+struct ChannelMessageBubble_Previews: PreviewProvider {
+    @Namespace static var namespace
+    static var previews: some View {
+        ChannelMessageBubble(message: Message(text: "hello",
+                                              senderId: "id"),
+                             animationNamespace: namespace,
+                             isHidden: .constant(false),
+                             extendedImageId: .constant("")) { _, _ in
+        }
+                             .environmentObject(UserViewModel())
+                             .environmentObject(ChannelViewModel())
+                             .environmentObject(ChannelMessagingViewModel())
+    }
+}

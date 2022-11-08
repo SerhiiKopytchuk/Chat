@@ -189,3 +189,19 @@ struct MessageBubble: View {
         }
     }
 }
+
+struct MessageBubble_Previews: PreviewProvider {
+    @Namespace static var namespace
+    static var previews: some View {
+        MessageBubble(message: Message(text: "Hello, how are you?",
+                                       senderId: "id"),
+                      showHighlight: .constant(false),
+                      highlightedMessage: .constant(Message()),
+                      animationNamespace: namespace,
+                      isHidden: .constant(true),
+                      extendedImageId: .constant("id")) { _, _ in }
+            .environmentObject(UserViewModel())
+            .environmentObject(MessagingViewModel())
+            .environmentObject(ChannelViewModel())
+    }
+}
