@@ -66,6 +66,16 @@ extension View {
             })
     }
 
+    func addBlackOverlay(loadExpandedContent: Bool) -> some View {
+        self
+            .overlay(content: {
+                Rectangle()
+                    .fill(.black)
+                    .opacity(loadExpandedContent ? 1 : 0)
+                    .ignoresSafeArea()
+            })
+    }
+
     func addRightGestureRecognizer(swiped: @escaping () -> Void) -> some View {
         self
             .gesture(DragGesture(minimumDistance: 30)

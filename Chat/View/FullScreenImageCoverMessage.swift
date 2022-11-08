@@ -25,6 +25,33 @@ struct FullScreenImageCoverMessage: View {
 
     @Binding var loadExpandedContent: Bool
 
+    @State private var scale = 1.0
+//    @State private var imageDragOffset: CGSize
+
+    var magnification: some Gesture {
+        MagnificationGesture()
+            .onChanged { size in
+                scale = size
+            }
+            .onEnded { _ in
+                withAnimation {
+                    scale = 1
+                }
+            }
+    }
+//
+//    var dragGestureSecond: some Gesture {
+//        DragGesture()
+//            .onChanged { value in
+//                imageDragOffset = value
+//            }
+//            .onEnded { _ in
+//                withAnimation {
+//
+//                }
+//            }
+//    }
+
     // MARK: - body
     var body: some View {
         VStack {
@@ -36,23 +63,28 @@ struct FullScreenImageCoverMessage: View {
                     .frame(width: size.width, height: size.height)
                     .cornerRadius(loadExpandedContent ? 0 : 15)
                     .offset(y: loadExpandedContent ? imageOffset.height : .zero)
+                    .offset(x: loadExpandedContent ? imageOffset.width : .zero)
+                    .scaleEffect(scale)
                     .gesture(
                         DragGesture()
-                            .onEnded({ value in
-                                let height = value.translation.height
-                                if height > 0 && height > 100 {
-                                    turnOffImageView()
-                                } else {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        imageOffset = .zero
-                                    }
+                            .onChanged({ value in
+                                imageOffset.height = value.translation.height
+                                imageOffset.width = value.translation.width
+                            })
+                            .onEnded({ _ in
+                                withAnimation(.interactiveSpring(response: 0.65,
+                                                                 dampingFraction: 0.7,
+                                                                 blendDuration: 0.3)) {
+                                    imageOffset = .zero
                                 }
                             })
                     )
+                    .gesture(magnification)
             }
             .matchedGeometryEffect(id: namespaceId, in: animationMessageImageNamespace)
             .frame(height: 300)
         }
+        .ignoresSafeArea()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .top, content: {
             HStack(spacing: 10) {
@@ -62,6 +94,7 @@ struct FullScreenImageCoverMessage: View {
             }
             .padding()
             .opacity(loadExpandedContent ? 1 : 0)
+            .opacity(scale == 1.0 ? 1 : 0)
         })
         .transition(.offset(x: 0, y: 1))
         .onAppear {
