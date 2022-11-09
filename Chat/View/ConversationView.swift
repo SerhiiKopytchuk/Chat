@@ -45,8 +45,6 @@ struct ConversationView: View {
 
             if !isExpandedImageWithDelay {
                 titleRow
-                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                     imageOffsetProgress: imageOffsetProgress())
             }
 
             if isFindChat {
@@ -55,17 +53,15 @@ struct ConversationView: View {
 
                     MessageField(messagingViewModel: messagingViewModel)
                         .ignoresSafeArea(.container, edges: .bottom)
-                        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
-                        .opacity(isExpandedProfile ? 1 : (loadExpandedContent ? 0 : 1))
-
+                        .opacity((isExpandedImage || isExpandedProfile) ? 0 : 1)
                 }
                 .background {
-                    Color.background
+                    Rectangle()
+                        .fill(.black)
+                        .opacity(loadExpandedContent ? 1 : 0)
                         .ignoresSafeArea()
-                        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
                 }
+
             } else {
                 createChatButton
             }
@@ -130,6 +126,8 @@ struct ConversationView: View {
                              isExpandedProfile: $isExpandedProfile,
                              profileImageURL: $profileImageUrl
         )
+        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                         imageOffsetProgress: imageOffsetProgress())
         .background {
             Color.secondPrimary
                 .ignoresSafeArea()
@@ -181,7 +179,6 @@ struct ConversationView: View {
                 .rotationEffect(Angle(degrees: 180))
             }
             .rotationEffect(Angle(degrees: 180))
-            .background(Color.background)
             .onAppear {
                 proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }
@@ -194,6 +191,7 @@ struct ConversationView: View {
         }
         .ignoresSafeArea(.all, edges: .top)
         .frame(maxWidth: .infinity)
+        .background(Color.background)
         .addBlackOverlay(loadExpandedContent: loadExpandedContent,
                          imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
         .overlay {
