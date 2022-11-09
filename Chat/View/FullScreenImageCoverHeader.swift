@@ -37,6 +37,7 @@ struct FullScreenImageCoverHeader: View {
                     .frame(width: size.width, height: size.height)
                     .cornerRadius(loadExpandedContent ? 0 : size.height)
                     .offset(y: loadExpandedContent ? imageOffset.height : .zero)
+                    .addPinchZoom()
                     .gesture(
                         DragGesture()
                             .onChanged({ value in

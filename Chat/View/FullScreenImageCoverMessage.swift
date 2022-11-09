@@ -26,31 +26,6 @@ struct FullScreenImageCoverMessage: View {
     @Binding var loadExpandedContent: Bool
 
     @State private var scale = 1.0
-//    @State private var imageDragOffset: CGSize
-
-    var magnification: some Gesture {
-        MagnificationGesture()
-            .onChanged { size in
-                scale = size
-            }
-            .onEnded { _ in
-                withAnimation {
-                    scale = 1
-                }
-            }
-    }
-//
-//    var dragGestureSecond: some Gesture {
-//        DragGesture()
-//            .onChanged { value in
-//                imageDragOffset = value
-//            }
-//            .onEnded { _ in
-//                withAnimation {
-//
-//                }
-//            }
-//    }
 
     // MARK: - body
     var body: some View {
@@ -64,22 +39,7 @@ struct FullScreenImageCoverMessage: View {
                     .cornerRadius(loadExpandedContent ? 0 : 15)
                     .offset(y: loadExpandedContent ? imageOffset.height : .zero)
                     .offset(x: loadExpandedContent ? imageOffset.width : .zero)
-                    .scaleEffect(scale)
-                    .gesture(
-                        DragGesture()
-                            .onChanged({ value in
-                                imageOffset.height = value.translation.height
-                                imageOffset.width = value.translation.width
-                            })
-                            .onEnded({ _ in
-                                withAnimation(.interactiveSpring(response: 0.65,
-                                                                 dampingFraction: 0.7,
-                                                                 blendDuration: 0.3)) {
-                                    imageOffset = .zero
-                                }
-                            })
-                    )
-                    .gesture(magnification)
+                    .addPinchZoom()
             }
             .matchedGeometryEffect(id: namespaceId, in: animationMessageImageNamespace)
             .frame(height: 300)

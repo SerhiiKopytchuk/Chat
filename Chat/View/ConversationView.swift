@@ -54,14 +54,17 @@ struct ConversationView: View {
                     messagesScrollView
 
                     MessageField(messagingViewModel: messagingViewModel)
-                        .opacity(loadExpandedContent ? 0 : 1)
                         .ignoresSafeArea(.container, edges: .bottom)
+                        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
+                        .opacity(isExpandedProfile ? 1 : (loadExpandedContent ? 0 : 1))
 
                 }
                 .background {
                     Color.background
                         .ignoresSafeArea()
-                        .addBlackOverlay(loadExpandedContent: loadExpandedContent)
+                        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
                 }
             } else {
                 createChatButton
@@ -191,7 +194,8 @@ struct ConversationView: View {
         }
         .ignoresSafeArea(.all, edges: .top)
         .frame(maxWidth: .infinity)
-        .addBlackOverlay(loadExpandedContent: loadExpandedContent)
+        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
         .overlay {
             if isExpandedImage {
                 FullScreenImageCoverMessage(
