@@ -73,17 +73,26 @@ struct ChannelConversationView: View {
                 if isSubscribed {
                     messagingTextField
                         .ignoresSafeArea(.container, edges: .bottom)
+
                 } else {
                     subscribeButton
                         .ignoresSafeArea(.container, edges: .bottom)
                 }
             }
-            .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                             imageOffsetProgress: imageOffsetProgress())
+            .opacity(loadExpandedContent ? (1 - imageOffsetProgress()) : 1)
+            .opacity(isExpandedImage ? 0 : 1)
+        }
+        .background {
+            Rectangle()
+                .fill(.black)
+                .opacity(loadExpandedContent ? 1 : 0)
+                .ignoresSafeArea()
         }
         .contentShape(Rectangle())
         .addRightGestureRecognizer {
-            env.dismiss()
+            if !isExpandedImage && !isExpandedChannelImage {
+                env.dismiss()
+            }
         }
         .navigationDestination(isPresented: $isGoToEditChannel, destination: {
             EditChannelView(channelName: channelViewModel.currentChannel.name,
@@ -104,7 +113,8 @@ struct ChannelConversationView: View {
         .navigationBarHidden(true)
         .overlay {
             if isExpandedChannelImage {
-                FullScreenImageCoverHeader(animationHeaderImageNamespace: animationProfileImage,
+                FullScreenImageCoverHeader(name: channelViewModel.currentChannel.name,
+                                           animationHeaderImageNamespace: animationProfileImage,
                                            namespaceId: "channelPhoto",
                                            isExpandedHeaderImage: $isExpandedChannelImage,
                                            imageOffset: $imageOffset,
@@ -113,18 +123,10 @@ struct ChannelConversationView: View {
             }
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
-            Button("Delete", role: .destructive) {
-                channelViewModel.deleteChannel()
-                presentationMode.wrappedValue.dismiss()
-            }.foregroundColor(.red)
-            Button("Cancel", role: .cancel) {}
+            alertDeleteAndCancelChannelButton
         }
         .alert("Do you really want to unsubscribe from this channel?", isPresented: $showingAlertSubscriber) {
-            Button("Unsubscribe", role: .destructive) {
-                channelViewModel.removeChannelFromUserSubscriptions(id: self.channelViewModel.currentUser.id)
-                presentationMode.wrappedValue.dismiss()
-            }.foregroundColor(.red)
-            Button("Cancel", role: .cancel) {}
+            alertUnsubscribeAndCancelChannelButton
         }
     }
 
@@ -157,7 +159,7 @@ struct ChannelConversationView: View {
             VStack(alignment: .leading) {
 
                 HStack {
-                    if isOwner() {
+                    if isOwner {
                         addUsersToChannelButton
                         unsubscribeUsersFromChannelButton
                         editChannelButton
@@ -237,11 +239,6 @@ struct ChannelConversationView: View {
                         self.channelMessagingViewModel.currentChannel.messages ?? [],
                         id: \.id) { message in
                             messageBubble(message: message)
-                                .environmentObject(channelViewModel)
-                                .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
-                                .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
-                                .id(message.id)
-                                .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
                         }
                 }
                 .rotationEffect(Angle(degrees: 180))
@@ -249,7 +246,6 @@ struct ChannelConversationView: View {
             .rotationEffect(Angle(degrees: 180))
             .padding(.horizontal, 12)
             .background(Color.background)
-
             .onAppear {
                 proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
             }
@@ -278,6 +274,11 @@ struct ChannelConversationView: View {
                 self.isExpandedImageWithDelay = true
             }
         }
+                             .environmentObject(channelViewModel)
+                             .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
+                             .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
+                             .id(message.id)
+                             .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
     }
 
     @ViewBuilder private var messagingTextField: some View {
@@ -306,9 +307,25 @@ struct ChannelConversationView: View {
         }
     }
 
+    @ViewBuilder private var alertDeleteAndCancelChannelButton: some View {
+        Button("Delete", role: .destructive) {
+            channelViewModel.deleteChannel()
+            presentationMode.wrappedValue.dismiss()
+        }.foregroundColor(.red)
+        Button("Cancel", role: .cancel) {}
+    }
+
+    @ViewBuilder private var alertUnsubscribeAndCancelChannelButton: some View {
+        Button("Unsubscribe", role: .destructive) {
+            channelViewModel.removeChannelFromUserSubscriptions(id: self.channelViewModel.currentUser.id)
+            presentationMode.wrappedValue.dismiss()
+        }.foregroundColor(.red)
+        Button("Cancel", role: .cancel) {}
+    }
+
     // MARK: - functions
 
-    private func isOwner() -> Bool {
+    private var isOwner: Bool {
         return currentUser.id == channelViewModel.currentChannel.ownerId
     }
 

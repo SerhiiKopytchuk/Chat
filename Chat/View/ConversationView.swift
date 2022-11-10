@@ -41,12 +41,11 @@ struct ConversationView: View {
     // MARK: - body
     var body: some View {
 
+        #warning("contentShape to extension")
         VStack(spacing: 0) {
 
             if !isExpandedImageWithDelay {
                 titleRow
-                    .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                     imageOffsetProgress: imageOffsetProgress())
             }
 
             if isFindChat {
@@ -54,22 +53,26 @@ struct ConversationView: View {
                     messagesScrollView
 
                     MessageField(messagingViewModel: messagingViewModel)
-                        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                         imageOffsetProgress: imageOffsetProgress())
                         .ignoresSafeArea(.container, edges: .bottom)
-
+                        .opacity(loadExpandedContent ? (1 - imageOffsetProgress()) : 1)
+                        .opacity(isExpandedImage ? 0 : 1)
                 }
                 .background {
-                    Color.background
+                    Rectangle()
+                        .fill(.black)
+                        .opacity(loadExpandedContent ? 1 : 0)
                         .ignoresSafeArea()
                 }
+
             } else {
                 createChatButton
             }
         }
         .contentShape(Rectangle())
         .addRightGestureRecognizer {
-            env.dismiss()
+            if !isExpandedImage && !isExpandedProfile {
+                env.dismiss()
+            }
         }
         .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
@@ -84,21 +87,7 @@ struct ConversationView: View {
                     }) {
                         GeometryReader { proxy in
                             let rect = proxy[preference.value]
-                            MessageBubble(message: highlightMessage,
-                                          showHighlight: $showMessageEmojiView,
-                                          highlightedMessage: $highlightMessage,
-                                          showEmojiBarView: true,
-                                          animationNamespace: messageImageNamespace,
-                                          isHidden: $isExpandedImage,
-                                          extendedImageId: .constant(""),
-                                          imageTapped: {_, _ in})
-                            .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
-                            .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
-
-                            .environmentObject(messagingViewModel)
-                            .id(highlightMessage.id)
-                            .frame(width: rect.width, height: rect.height)
-                            .offset(x: rect.minX, y: rect.minY)
+                            highlightedMessageBubble(for: highlightMessage, rect: rect)
                         }
                         .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
                     }
@@ -106,12 +95,13 @@ struct ConversationView: View {
         }
         .overlay {
             if isExpandedProfile {
-                FullScreenImageCoverHeader(animationHeaderImageNamespace: profileImageNamespace,
-                                           namespaceId: "profilePhoto",
-                                           isExpandedHeaderImage: $isExpandedProfile,
-                                           imageOffset: $imageOffset,
-                                           headerImageURL: profileImageUrl,
-                                           loadExpandedContent: $loadExpandedContent)
+                FullScreenImageCoverHeader( name: secondUser.name,
+                                            animationHeaderImageNamespace: profileImageNamespace,
+                                            namespaceId: "profilePhoto",
+                                            isExpandedHeaderImage: $isExpandedProfile,
+                                            imageOffset: $imageOffset,
+                                            headerImageURL: profileImageUrl,
+                                            loadExpandedContent: $loadExpandedContent)
             }
         }
         .navigationBarHidden(true)
@@ -127,23 +117,12 @@ struct ConversationView: View {
                              isExpandedProfile: $isExpandedProfile,
                              profileImageURL: $profileImageUrl
         )
+        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
+                         imageOffsetProgress: imageOffsetProgress())
         .background {
             Color.secondPrimary
                 .ignoresSafeArea()
         }
-    }
-
-    @ViewBuilder private var lightDarkEmptyBackground: some View {
-        Rectangle()
-            .fill(.ultraThinMaterial)
-            .environment(\.colorScheme, .dark)
-            .ignoresSafeArea()
-            .onTapGesture {
-                highlightMessage = nil
-                withAnimation(.easeInOut) {
-                    showMessageEmojiView = false
-                }
-            }
     }
 
     @ViewBuilder private var messagesScrollView: some View {
@@ -154,31 +133,11 @@ struct ConversationView: View {
                         self.messagingViewModel.currentChat.messages ?? [],
                         id: \.id) { message in
                             messageBubble(message: message)
-                                .accessibilityValue(message.imageId != "" ? "image" : "message")
-                                .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
-                                .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
-                                .environmentObject(messagingViewModel)
-                                .id(message.id)
-                                .frame(maxWidth: UIScreen.main.bounds.width,
-                                       alignment: message.isReply() ? .leading : .trailing)
-                                .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
-                                    return [(message.id  ?? "someId"): anchor]
-                                })
-                                .onLongPressGesture {
-                                    if message.isReply() {
-                                        withAnimation(.easeInOut) {
-                                            showMessageEmojiView = true
-                                            highlightMessage = message
-                                        }
-
-                                    }
-                                }
                         }
                 }
                 .rotationEffect(Angle(degrees: 180))
             }
             .rotationEffect(Angle(degrees: 180))
-            .background(Color.background)
             .onAppear {
                 proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }
@@ -191,8 +150,9 @@ struct ConversationView: View {
         }
         .ignoresSafeArea(.all, edges: .top)
         .frame(maxWidth: .infinity)
+        .background(Color.background)
         .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                         imageOffsetProgress: imageOffsetProgress())
+                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
         .overlay {
             if isExpandedImage {
                 FullScreenImageCoverMessage(
@@ -225,6 +185,43 @@ struct ConversationView: View {
             }
 
         })
+        .accessibilityValue(message.imageId != "" ? "image" : "message")
+        .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+        .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
+        .environmentObject(messagingViewModel)
+        .id(message.id)
+        .frame(maxWidth: UIScreen.main.bounds.width,
+               alignment: message.isReply() ? .leading : .trailing)
+        .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
+            return [(message.id  ?? "someId"): anchor]
+        })
+        .onLongPressGesture {
+            if message.isReply() {
+                withAnimation(.easeInOut) {
+                    showMessageEmojiView = true
+                    highlightMessage = message
+                }
+
+            }
+        }
+    }
+
+    @ViewBuilder private func highlightedMessageBubble(for highlightMessage: Message, rect: CGRect) -> some View {
+        MessageBubble(message: highlightMessage,
+                      showHighlight: $showMessageEmojiView,
+                      highlightedMessage: $highlightMessage,
+                      showEmojiBarView: true,
+                      animationNamespace: messageImageNamespace,
+                      isHidden: $isExpandedImage,
+                      extendedImageId: .constant(""),
+                      imageTapped: {_, _ in})
+        .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
+        .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
+
+        .environmentObject(messagingViewModel)
+        .id(highlightMessage.id)
+        .frame(width: rect.width, height: rect.height)
+        .offset(x: rect.minX, y: rect.minY)
     }
 
     @ViewBuilder private var createChatButton: some View {
@@ -249,6 +246,19 @@ struct ConversationView: View {
             }
         }.frame(maxHeight: .infinity)
 
+    }
+
+    @ViewBuilder private var lightDarkEmptyBackground: some View {
+        Rectangle()
+            .fill(.ultraThinMaterial)
+            .environment(\.colorScheme, .dark)
+            .ignoresSafeArea()
+            .onTapGesture {
+                highlightMessage = nil
+                withAnimation(.easeInOut) {
+                    showMessageEmojiView = false
+                }
+            }
     }
 
     // MARK: - functions
