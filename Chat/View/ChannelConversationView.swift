@@ -73,13 +73,20 @@ struct ChannelConversationView: View {
                 if isSubscribed {
                     messagingTextField
                         .ignoresSafeArea(.container, edges: .bottom)
+
                 } else {
                     subscribeButton
                         .ignoresSafeArea(.container, edges: .bottom)
                 }
             }
-            .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                             imageOffsetProgress: imageOffsetProgress())
+            .opacity(loadExpandedContent ? (1 - imageOffsetProgress()) : 1)
+            .opacity(isExpandedImage ? 0 : 1)
+        }
+        .background {
+            Rectangle()
+                .fill(.black)
+                .opacity(loadExpandedContent ? 1 : 0)
+                .ignoresSafeArea()
         }
         .contentShape(Rectangle())
         .addRightGestureRecognizer {
