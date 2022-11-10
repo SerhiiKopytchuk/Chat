@@ -87,21 +87,7 @@ struct ConversationView: View {
                     }) {
                         GeometryReader { proxy in
                             let rect = proxy[preference.value]
-                            MessageBubble(message: highlightMessage,
-                                          showHighlight: $showMessageEmojiView,
-                                          highlightedMessage: $highlightMessage,
-                                          showEmojiBarView: true,
-                                          animationNamespace: messageImageNamespace,
-                                          isHidden: $isExpandedImage,
-                                          extendedImageId: .constant(""),
-                                          imageTapped: {_, _ in})
-                            .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
-                            .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
-
-                            .environmentObject(messagingViewModel)
-                            .id(highlightMessage.id)
-                            .frame(width: rect.width, height: rect.height)
-                            .offset(x: rect.minX, y: rect.minY)
+                            highlightedMessageBubble(for: highlightMessage, rect: rect)
                         }
                         .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
                     }
@@ -139,19 +125,6 @@ struct ConversationView: View {
         }
     }
 
-    @ViewBuilder private var lightDarkEmptyBackground: some View {
-        Rectangle()
-            .fill(.ultraThinMaterial)
-            .environment(\.colorScheme, .dark)
-            .ignoresSafeArea()
-            .onTapGesture {
-                highlightMessage = nil
-                withAnimation(.easeInOut) {
-                    showMessageEmojiView = false
-                }
-            }
-    }
-
     @ViewBuilder private var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -160,25 +133,6 @@ struct ConversationView: View {
                         self.messagingViewModel.currentChat.messages ?? [],
                         id: \.id) { message in
                             messageBubble(message: message)
-                                .accessibilityValue(message.imageId != "" ? "image" : "message")
-                                .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
-                                .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
-                                .environmentObject(messagingViewModel)
-                                .id(message.id)
-                                .frame(maxWidth: UIScreen.main.bounds.width,
-                                       alignment: message.isReply() ? .leading : .trailing)
-                                .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
-                                    return [(message.id  ?? "someId"): anchor]
-                                })
-                                .onLongPressGesture {
-                                    if message.isReply() {
-                                        withAnimation(.easeInOut) {
-                                            showMessageEmojiView = true
-                                            highlightMessage = message
-                                        }
-
-                                    }
-                                }
                         }
                 }
                 .rotationEffect(Angle(degrees: 180))
@@ -231,6 +185,43 @@ struct ConversationView: View {
             }
 
         })
+        .accessibilityValue(message.imageId != "" ? "image" : "message")
+        .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
+        .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
+        .environmentObject(messagingViewModel)
+        .id(message.id)
+        .frame(maxWidth: UIScreen.main.bounds.width,
+               alignment: message.isReply() ? .leading : .trailing)
+        .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
+            return [(message.id  ?? "someId"): anchor]
+        })
+        .onLongPressGesture {
+            if message.isReply() {
+                withAnimation(.easeInOut) {
+                    showMessageEmojiView = true
+                    highlightMessage = message
+                }
+
+            }
+        }
+    }
+
+    @ViewBuilder private func highlightedMessageBubble(for highlightMessage: Message, rect: CGRect) -> some View {
+        MessageBubble(message: highlightMessage,
+                      showHighlight: $showMessageEmojiView,
+                      highlightedMessage: $highlightMessage,
+                      showEmojiBarView: true,
+                      animationNamespace: messageImageNamespace,
+                      isHidden: $isExpandedImage,
+                      extendedImageId: .constant(""),
+                      imageTapped: {_, _ in})
+        .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
+        .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
+
+        .environmentObject(messagingViewModel)
+        .id(highlightMessage.id)
+        .frame(width: rect.width, height: rect.height)
+        .offset(x: rect.minX, y: rect.minY)
     }
 
     @ViewBuilder private var createChatButton: some View {
@@ -255,6 +246,19 @@ struct ConversationView: View {
             }
         }.frame(maxHeight: .infinity)
 
+    }
+
+    @ViewBuilder private var lightDarkEmptyBackground: some View {
+        Rectangle()
+            .fill(.ultraThinMaterial)
+            .environment(\.colorScheme, .dark)
+            .ignoresSafeArea()
+            .onTapGesture {
+                highlightMessage = nil
+                withAnimation(.easeInOut) {
+                    showMessageEmojiView = false
+                }
+            }
     }
 
     // MARK: - functions
