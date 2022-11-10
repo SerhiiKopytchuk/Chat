@@ -169,7 +169,6 @@ struct CreateChannelView: View {
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }
                     }
-                    .contentShape(Rectangle())
                     .onTapGesture {
                         withAnimation {
                             channelViewModel.channelType = type

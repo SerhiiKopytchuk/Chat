@@ -64,7 +64,6 @@ struct EditChannelView: View {
             Spacer()
         }
         .navigationBarHidden(true)
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             presentationMode.dismiss()
         }
@@ -155,6 +154,7 @@ struct EditChannelView: View {
                         .addLightShadow()
                 } else {
                     EmptyImageWithCharacterView(text: channelName, colour: channelColor, size: imageSize)
+                        .accessibilityValue("emptyImage")
                 }
             }
         }

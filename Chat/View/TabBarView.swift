@@ -24,6 +24,30 @@ struct TabBarView: View {
     @State private var goToChannel = false
     @State private var selection = 0
 
+    // MARK: - computed vars
+    var navigationDragGesture: some Gesture {
+        DragGesture()
+            .onEnded({ value in
+                if value.translation.width < 30 {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        selection = 1
+                    }
+                }
+
+                if value.translation.width > 30 {
+                    if selection == 0 {
+                        withAnimation(.spring()) {
+                            isShowingSideMenu.toggle()
+                        }
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            selection = 0
+                        }
+                    }
+                }
+            })
+    }
+
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -45,27 +69,7 @@ struct TabBarView: View {
                 // MARK: chats and channels lists
                 chatsAndChannelsView
                     .contentShape(Rectangle())
-                    .gesture(DragGesture()
-                        .onEnded({ value in
-                            if value.translation.width < 30 {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    selection = 1
-                                }
-                            }
-
-                            if value.translation.width > 30 {
-                                if selection == 0 {
-                                    withAnimation(.spring()) {
-                                        isShowingSideMenu.toggle()
-                                    }
-                                } else {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        selection = 0
-                                    }
-                                }
-                            }
-                        })
-                    )
+                    .gesture(navigationDragGesture)
                     .safeAreaInset(edge: .top) {
                         EmptyView()
                             .frame(height: 65)

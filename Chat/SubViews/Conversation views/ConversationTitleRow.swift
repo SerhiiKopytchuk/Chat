@@ -113,6 +113,7 @@ struct ConversationTitleRow: View {
                             .cornerRadius(imageSize/2)
                             .addLightShadow()
                             .matchedGeometryEffect(id: "profilePhoto", in: animationNamespace)
+                            .accessibilityValue("profile image")
                 }
             }
             .onTapGesture {

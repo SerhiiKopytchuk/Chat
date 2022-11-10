@@ -41,7 +41,6 @@ struct ConversationView: View {
     // MARK: - body
     var body: some View {
 
-        #warning("contentShape to extension")
         VStack(spacing: 0) {
 
             if !isExpandedImageWithDelay {
@@ -68,7 +67,6 @@ struct ConversationView: View {
                 createChatButton
             }
         }
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             if !isExpandedImage && !isExpandedProfile {
                 env.dismiss()

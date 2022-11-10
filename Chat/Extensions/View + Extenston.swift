@@ -78,6 +78,7 @@ extension View {
 
     func addRightGestureRecognizer(swiped: @escaping () -> Void) -> some View {
         self
+            .contentShape(Rectangle())
             .gesture(DragGesture(minimumDistance: 30)
                 .onEnded({ value in
                     if value.translation.width > 30 {
