@@ -64,7 +64,6 @@ struct EditChannelView: View {
             Spacer()
         }
         .navigationBarHidden(true)
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             presentationMode.dismiss()
         }

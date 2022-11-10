@@ -88,7 +88,6 @@ struct ChannelConversationView: View {
                 .opacity(loadExpandedContent ? 1 : 0)
                 .ignoresSafeArea()
         }
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             if !isExpandedImage && !isExpandedChannelImage {
                 env.dismiss()

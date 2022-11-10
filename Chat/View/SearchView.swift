@@ -54,7 +54,6 @@ struct SearchView: View {
             .padding()
 
         }
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             env.dismiss()
         }
@@ -142,7 +141,6 @@ struct SearchView: View {
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }
                     }
-                    .contentShape(Rectangle())
                     .onTapGesture {
                         withAnimation {
                             self.isSearchingChat = text
