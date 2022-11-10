@@ -12,6 +12,8 @@ struct FullScreenImageCoverHeader: View {
 
     // MARK: - variables
 
+    var name: String
+
     let animationHeaderImageNamespace: Namespace.ID
 
     @State var namespaceId: String
@@ -63,7 +65,7 @@ struct FullScreenImageCoverHeader: View {
                 turnOffImageButton
 
                 if isExpandedHeaderImage {
-                    Text(channelViewModel.currentChannel.name)
+                    Text(name)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                 }

@@ -41,6 +41,7 @@ struct ConversationView: View {
     // MARK: - body
     var body: some View {
 
+        #warning("contentShape to extension")
         VStack(spacing: 0) {
 
             if !isExpandedImageWithDelay {
@@ -53,7 +54,8 @@ struct ConversationView: View {
 
                     MessageField(messagingViewModel: messagingViewModel)
                         .ignoresSafeArea(.container, edges: .bottom)
-                        .opacity((isExpandedImage || isExpandedProfile) ? 0 : 1)
+                        .opacity(loadExpandedContent ? (1 - imageOffsetProgress()) : 1)
+                        .opacity(isExpandedImage ? 0 : 1)
                 }
                 .background {
                     Rectangle()
@@ -68,7 +70,9 @@ struct ConversationView: View {
         }
         .contentShape(Rectangle())
         .addRightGestureRecognizer {
-            env.dismiss()
+            if !isExpandedImage && !isExpandedProfile {
+                env.dismiss()
+            }
         }
         .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
@@ -105,12 +109,13 @@ struct ConversationView: View {
         }
         .overlay {
             if isExpandedProfile {
-                FullScreenImageCoverHeader(animationHeaderImageNamespace: profileImageNamespace,
-                                           namespaceId: "profilePhoto",
-                                           isExpandedHeaderImage: $isExpandedProfile,
-                                           imageOffset: $imageOffset,
-                                           headerImageURL: profileImageUrl,
-                                           loadExpandedContent: $loadExpandedContent)
+                FullScreenImageCoverHeader( name: secondUser.name,
+                                            animationHeaderImageNamespace: profileImageNamespace,
+                                            namespaceId: "profilePhoto",
+                                            isExpandedHeaderImage: $isExpandedProfile,
+                                            imageOffset: $imageOffset,
+                                            headerImageURL: profileImageUrl,
+                                            loadExpandedContent: $loadExpandedContent)
             }
         }
         .navigationBarHidden(true)

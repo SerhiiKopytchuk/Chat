@@ -104,7 +104,8 @@ struct ChannelConversationView: View {
         .navigationBarHidden(true)
         .overlay {
             if isExpandedChannelImage {
-                FullScreenImageCoverHeader(animationHeaderImageNamespace: animationProfileImage,
+                FullScreenImageCoverHeader(name: channelViewModel.currentChannel.name,
+                                           animationHeaderImageNamespace: animationProfileImage,
                                            namespaceId: "channelPhoto",
                                            isExpandedHeaderImage: $isExpandedChannelImage,
                                            imageOffset: $imageOffset,
