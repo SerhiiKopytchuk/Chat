@@ -154,6 +154,7 @@ struct EditChannelView: View {
                         .addLightShadow()
                 } else {
                     EmptyImageWithCharacterView(text: channelName, colour: channelColor, size: imageSize)
+                        .accessibilityValue("emptyImage")
                 }
             }
         }
