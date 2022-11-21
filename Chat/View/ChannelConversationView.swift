@@ -54,7 +54,6 @@ struct ChannelConversationView: View {
 
             messagesScrollView
                 .ignoresSafeArea(.all, edges: .top)
-                .frame(maxWidth: .infinity)
                 .addBlackOverlay(loadExpandedContent: loadExpandedContent,
                                  imageOffsetProgress: imageOffsetProgress())
                 .overlay {
@@ -240,6 +239,7 @@ struct ChannelConversationView: View {
                             messageBubble(message: message)
                         }
                 }
+                .frame(width: UIScreen.main.bounds.width)
                 .rotationEffect(Angle(degrees: 180))
             }
             .rotationEffect(Angle(degrees: 180))
@@ -253,9 +253,10 @@ struct ChannelConversationView: View {
                     proxy.scrollTo(id, anchor: .bottom)
                 }
             }
+            .frame(width: UIScreen.main.bounds.width)
         }
-
-        .ignoresSafeArea(.all, edges: .bottom)
+        .frame(width: UIScreen.main.bounds.width)
+        .ignoresSafeArea(.all, edges: [.leading, .trailing, .bottom])
     }
 
     @ViewBuilder private func messageBubble(message: Message) -> some View {
