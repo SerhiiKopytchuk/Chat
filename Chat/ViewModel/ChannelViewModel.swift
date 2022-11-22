@@ -90,9 +90,9 @@ class ChannelViewModel: ObservableObject {
 
     func getCurrentChannel( channelId: String, competition: @escaping (Channel) -> Void) {
 
-        dataBase.collection("channels").document(channelId).getDocument { [weak self] document, error in
+        dataBase.collection("channels").document(channelId).getDocument { document, error in
 
-            if self?.isError(error: error) ?? true { return }
+            if error.review(message: "failed to getCurrentChannel") { return }
 
             if let channel = try? document?.data(as: Channel.self) {
                 competition(channel)
@@ -242,7 +242,7 @@ class ChannelViewModel: ObservableObject {
             self.dataBase.collection("users").document(self.currentUser.id)
                 .addSnapshotListener { [weak self] document, error in
 
-                    if self?.isError(error: error) ?? true { return }
+                    if error.review(message: "failed to updateChannels") { return }
 
                     guard let userLocal = try? document?.data(as: User.self) else {
                         return
@@ -261,7 +261,7 @@ class ChannelViewModel: ObservableObject {
         deleteChannelFiles { [weak self] in
             self?.removeChannelFromSubscribersAndOwner()
             self?.dataBase.collection("channels").document("\(self?.currentChannel.id ?? "someId")").delete { err in
-                if self?.isError(error: err) ?? true { return }
+                if err.review(message: "failed to delete channel") { return }
             }
         }
     }
@@ -276,8 +276,8 @@ class ChannelViewModel: ObservableObject {
     fileprivate func deleteChannelImageFile() {
         let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: currentChannel.id ?? "someId")
 
-        ref.delete { [weak self] error in
-            if self?.isError(error: error) ?? true { return }
+        ref.delete { error in
+            if error.review(message: "failed to deleteChannelImageFile") { return }
         }
     }
 
@@ -290,7 +290,7 @@ class ChannelViewModel: ObservableObject {
                     .getChannelMessageImageReference(channelId: self?.currentChannel.id ?? "someId",
                                                      imageId: element)
                 ref.delete { error in
-                    if self?.isError(error: error) ?? true { return }
+                    if error.review(message: "failed to deleteChannelMessagesFiles") { return }
                 }
             }
         }
@@ -319,15 +319,6 @@ class ChannelViewModel: ObservableObject {
         dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
             "subscribersId": FieldValue.arrayRemove(["\(currentUser.id )"])
         ])
-    }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
-        }
     }
 
     func clearPreviousDataBeforeSignIn() {

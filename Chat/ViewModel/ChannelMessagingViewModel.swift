@@ -114,8 +114,7 @@ class ChannelMessagingViewModel: ObservableObject {
         do {
             try self.dataBase.collection("channels").document(currentChannelId).collection("messages")
                 .document().setData(from: newMessage, completion: { [weak self] error in
-
-                    if self?.isError(error: error) ?? true { return }
+                    if error.review(message: "failed to sendMessage") { return }
                     self?.removeFromUnsentList(message: newMessage)
                 })
 
@@ -162,15 +161,6 @@ class ChannelMessagingViewModel: ObservableObject {
             withAnimation {
                 _ = currentChannel.messages?.remove(at: index)
             }
-        }
-    }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
         }
     }
 }

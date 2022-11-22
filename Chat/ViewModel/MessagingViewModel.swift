@@ -125,7 +125,7 @@ class MessagingViewModel: ObservableObject {
             try self.dataBase.collection("chats").document(currentChatId).collection("messages")
                 .document().setData(from: newMessage, completion: { [weak self] error in
 
-                    if self?.isError(error: error) ?? true { return }
+                    if error.review(message: "failed to send message") { return }
 
                     self?.removeFromUnsentList(message: newMessage)
 
@@ -160,14 +160,4 @@ class MessagingViewModel: ObservableObject {
             }
         }
     }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
-        }
-    }
-
 }

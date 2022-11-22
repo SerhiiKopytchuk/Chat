@@ -69,6 +69,7 @@
 		40A78B3C288D9E9B0026C465 /* Text + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A78B3B288D9E9B0026C465 /* Text + Extension.swift */; };
 		40B0A48C2869BC290008374E /* AddUserCreateChannelRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0A48B2869BC290008374E /* AddUserCreateChannelRow.swift */; };
 		40BD4FB9290BF517005B117B /* Array + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BD4FB8290BF517005B117B /* Array + Extension.swift */; };
+		40C27278292D0608008924A5 /* Optional + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C27277292D0608008924A5 /* Optional + Extension.swift */; };
 		40C3A103283A94E500A9683A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 40C3A102283A94E500A9683A /* GoogleSignIn */; };
 		40C4F29428C5DCE9008D03C8 /* Blur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C4F29328C5DCE9008D03C8 /* Blur.swift */; };
 		40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C64B92285D29830057F7CA /* MessagingViewModel.swift */; };
@@ -160,6 +161,7 @@
 		40B0A48B2869BC290008374E /* AddUserCreateChannelRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserCreateChannelRow.swift; sourceTree = "<group>"; };
 		40B2DA18283A7A3900965DC5 /* Chat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Chat.entitlements; sourceTree = "<group>"; };
 		40BD4FB8290BF517005B117B /* Array + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Extension.swift"; sourceTree = "<group>"; };
+		40C27277292D0608008924A5 /* Optional + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional + Extension.swift"; sourceTree = "<group>"; };
 		40C3A104283A958A00A9683A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		40C4F29328C5DCE9008D03C8 /* Blur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blur.swift; sourceTree = "<group>"; };
 		40C64B92285D29830057F7CA /* MessagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingViewModel.swift; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 				4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */,
 				40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */,
 				40BD4FB8290BF517005B117B /* Array + Extension.swift */,
+				40C27277292D0608008924A5 /* Optional + Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 				406DC3A2284C8B5E00A41964 /* SearchUserListRow.swift in Sources */,
 				409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */,
 				400E81A82868583A006A606E /* Channel.swift in Sources */,
+				40C27278292D0608008924A5 /* Optional + Extension.swift in Sources */,
 				4056D63B2833D8E8000A0872 /* SignUpView.swift in Sources */,
 				40442EAF289575F800E32FEF /* HeaderWithBackButton.swift in Sources */,
 				404B283D28C72FAF0096C8F0 /* StorageReferencesManager.swift in Sources */,

@@ -166,7 +166,8 @@ class ChattingViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.dataBase.collection("users").document(self.currentUser.id)
                 .addSnapshotListener { [weak self] document, error in
-                    if self?.isError(error: error) ?? true { return }
+
+                    if error.review(message: "failed to updateChats") { return }
 
                     guard let userLocal = try? document?.data(as: User.self) else {
                         return
@@ -182,8 +183,8 @@ class ChattingViewModel: ObservableObject {
 
     func deleteChat() {
         deleteFilesFromStorage { [weak self] in
-            self?.dataBase.collection("chats").document("\(self?.currentChat.id ?? "someId")").delete { err in
-                if self?.isError(error: err) ?? true { return }
+            self?.dataBase.collection("chats").document("\(self?.currentChat.id ?? "someId")").delete { error in
+                if error.review(message: "failed to deleteChat") { return }
             }
             self?.deleteChatIdFromUsersChats()
         }
@@ -201,7 +202,7 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func deleteFilesFromStorage(competition: @escaping () -> Void ) {
 
-        getCurrentChat(chatId: self.currentChat.id ?? "some Id") { [weak self] chat in
+        getCurrentChat(chatId: self.currentChat.id ?? "some Id") { chat in
 
             competition()
 
@@ -209,19 +210,10 @@ class ChattingViewModel: ObservableObject {
                 let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
                                                                                        imageId: element)
 
-                ref.delete { err in
-                    if self?.isError(error: err) ?? true { return }
+                ref.delete { error in
+                    if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
                 }
             }
-        }
-    }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
         }
     }
 

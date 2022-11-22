@@ -132,9 +132,9 @@ class UserViewModel: ObservableObject {
     func signIn(credential: AuthCredential, competition: @escaping (User) -> Void ) {
         Auth.auth().signIn(with: credential) { [weak self] result, error in
 
-            if self!.isError(result: result, error: error) {
-                return
-            }
+            if error.review(result: result, failure: {
+                self?.showAlert(text: error?.localizedDescription)
+            }) { return }
 
             self?.doesUserExist { [weak self] exist in
                 if exist {
@@ -177,9 +177,9 @@ class UserViewModel: ObservableObject {
         isShowLoader = true
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
 
-            if self!.isError(result: result, error: error) {
-                return
-            }
+            if error.review(result: result, failure: {
+                self?.showAlert(text: error?.localizedDescription)
+            }) { return }
 
             self?.getAllUsers()
             self?.setSignedInAndGetCurrentUser { user in
@@ -195,24 +195,15 @@ class UserViewModel: ObservableObject {
         isShowLoader = true
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
 
-            if self!.isError(result: result, error: error) {
-                return
-            }
+            if error.review(result: result, failure: {
+                self?.showAlert(text: error?.localizedDescription)
+            }) { return }
 
             self?.getAllUsers()
             self?.isShowLoader = false
             self?.setSignedInAndGetCurrentUser { user in
                 competition(user)
             }
-        }
-    }
-
-    fileprivate func isError(result: AuthDataResult?, error: Error?) -> Bool {
-        if result == nil, error != nil {
-            self.showAlert(text: error?.localizedDescription)
-            return true
-        } else {
-            return false
         }
     }
 
