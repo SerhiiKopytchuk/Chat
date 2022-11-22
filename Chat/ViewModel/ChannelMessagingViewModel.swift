@@ -40,19 +40,19 @@ class ChannelMessagingViewModel: ObservableObject {
         var messages: [Message] = []
 
         dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
-            .addSnapshotListener { querySnapshot, error in
+            .addSnapshotListener { [weak self] querySnapshot, error in
 
                 guard let documents = querySnapshot?.documents else {
                     print("Error fetching documets: \(String(describing: error))")
                     return
                 }
 
-                self.currentChannel.messages = self.documentsToMessages(messages: &messages, documents: documents)
+                self?.currentChannel.messages = self?.documentsToMessages(messages: &messages, documents: documents)
 
-                self.sortMessages(messages: &messages)
+                self?.sortMessages(messages: &messages)
 
-                self.getLastMessage(messages: &messages)
-                self.getFirstMessage(messages: &messages)
+                self?.getLastMessage(messages: &messages)
+                self?.getFirstMessage(messages: &messages)
 
                 competition(messages)
             }
@@ -113,10 +113,10 @@ class ChannelMessagingViewModel: ObservableObject {
 
         do {
             try self.dataBase.collection("channels").document(currentChannelId).collection("messages")
-                .document().setData(from: newMessage, completion: { error in
+                .document().setData(from: newMessage, completion: { [weak self] error in
 
-                    if self.isError(error: error) { return }
-                    self.removeFromUnsentList(message: newMessage)
+                    if self?.isError(error: error) ?? true { return }
+                    self?.removeFromUnsentList(message: newMessage)
                 })
 
             changeLastActivityTime()

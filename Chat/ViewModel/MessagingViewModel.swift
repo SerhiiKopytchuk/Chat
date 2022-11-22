@@ -51,19 +51,19 @@ class MessagingViewModel: ObservableObject {
         var messages: [Message] = []
 
         dataBase.collection("chats").document(self.currentChat.id ?? "someId").collection("messages")
-            .addSnapshotListener { querySnapshot, error in
+            .addSnapshotListener { [weak self] querySnapshot, error in
 
                 guard let documents = querySnapshot?.documents else {
                     print("Error fetching documents: \(error?.localizedDescription ?? "")")
                     return
                 }
 
-                self.currentChat.messages = self.documentsToMessages(messages: &messages, documents: documents)
+                self?.currentChat.messages = self?.documentsToMessages(messages: &messages, documents: documents)
 
-                self.sortMessages(messages: &messages)
+                self?.sortMessages(messages: &messages)
 
-                self.getFirstMessage(messages: &messages)
-                self.getLastMessage(messages: &messages)
+                self?.getFirstMessage(messages: &messages)
+                self?.getLastMessage(messages: &messages)
 
                 competition(messages)
             }
@@ -75,7 +75,7 @@ class MessagingViewModel: ObservableObject {
                 messages.append(try document.data(as: Message.self))
                 return  messages.last
             } catch {
-                print("error deconding documet into Message: \(error)")
+                print("error decoding document into Message: \(error)")
                 return nil
             }
         }
@@ -123,11 +123,11 @@ class MessagingViewModel: ObservableObject {
             unsentMessages.append(newMessage)
 
             try self.dataBase.collection("chats").document(currentChatId).collection("messages")
-                .document().setData(from: newMessage, completion: { error in
+                .document().setData(from: newMessage, completion: { [weak self] error in
 
-                    if self.isError(error: error) { return }
+                    if self?.isError(error: error) ?? true { return }
 
-                    self.removeFromUnsentList(message: newMessage)
+                    self?.removeFromUnsentList(message: newMessage)
 
                 })
             changeLastActivityTime()

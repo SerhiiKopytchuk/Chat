@@ -26,21 +26,21 @@ class ChattingViewModel: ObservableObject {
     // MARK: - functions
 
     func getCurrentChat( secondUser: User, competition: @escaping (Chat) -> Void, failure: @escaping (String) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).sync {
-            self.dataBase.collection("chats")
+        DispatchQueue.global(qos: .userInteractive).sync { [weak self] in
+            self?.dataBase.collection("chats")
             .whereField("user1Id", isEqualTo: secondUser.id)
-            .whereField("user2Id", isEqualTo: self.currentUser.id)
+            .whereField("user2Id", isEqualTo: self?.currentUser.id ?? "userId")
             .queryToChat { chat in
-                self.currentChat = chat
+                self?.currentChat = chat
                 competition(chat)
                 return
             }
 
-            self.dataBase.collection("chats")
+            self?.dataBase.collection("chats")
             .whereField("user2Id", isEqualTo: secondUser.id)
-            .whereField("user1Id", isEqualTo: self.currentUser.id)
+            .whereField("user1Id", isEqualTo: self?.currentUser.id ?? "userId")
             .queryToChat { chat in
-                self.currentChat = chat
+                self?.currentChat = chat
                 competition(chat)
                 return
             } failure: { error in
@@ -78,9 +78,9 @@ class ChattingViewModel: ObservableObject {
 
         try dataBase.collection("chats").document().setData(from: newChat)
 
-        getCurrentChat(secondUser: secondUser) { chat in
-            self.addChatsIdToUsers()
-            self.changeLastActivityTimestamp()
+        getCurrentChat(secondUser: secondUser) { [weak self] chat in
+            self?.addChatsIdToUsers()
+            self?.changeLastActivityTimestamp()
             competition(chat)
         } failure: { _ in }
 
@@ -115,9 +115,9 @@ class ChattingViewModel: ObservableObject {
                 self.chats = []
                 for chatId in currentUser.chats {
                     dataBase.collection("chats").document(chatId)
-                        .toChat { chat in
-                            self.chats.append(chat)
-                            self.sortChats()
+                        .toChat { [weak self] chat in
+                            self?.chats.append(chat)
+                            self?.sortChats()
                         }
                 }
             } else {
@@ -140,10 +140,10 @@ class ChattingViewModel: ObservableObject {
         for chatId in chatsId {
             if !currentUser.chats.contains(chatId) {
                 dataBase.collection("chats").document(chatId)
-                    .toChat { chat in
-                        self.chats.append(chat)
-                        self.currentUser.chats.append(chat.id ?? "some chat id")
-                        self.sortChats()
+                    .toChat { [weak self] chat in
+                        self?.chats.append(chat)
+                        self?.currentUser.chats.append(chat.id ?? "some chat id")
+                        self?.sortChats()
                     }
             }
         }
@@ -165,14 +165,15 @@ class ChattingViewModel: ObservableObject {
     fileprivate func updateChats() {
         DispatchQueue.main.async {
             self.dataBase.collection("users").document(self.currentUser.id)
-                .addSnapshotListener { document, error in
-                    if self.isError(error: error) { return }
+                .addSnapshotListener { [weak self] document, error in
+                    if self?.isError(error: error) ?? true { return }
 
                     guard let userLocal = try? document?.data(as: User.self) else {
                         return
                     }
-                    if userLocal.chats.count != self.chats.count {
-                        self.getChats(fromUpdate: true, chatsId: userLocal.chats)
+
+                    if userLocal.chats.count != self?.chats.count {
+                        self?.getChats(fromUpdate: true, chatsId: userLocal.chats)
                     }
 
                 }
@@ -180,11 +181,11 @@ class ChattingViewModel: ObservableObject {
     }
 
     func deleteChat() {
-        deleteFilesFromStorage { [self] in
-            dataBase.collection("chats").document("\(currentChat.id ?? "someId")").delete { err in
-                if self.isError(error: err) { return }
+        deleteFilesFromStorage { [weak self] in
+            self?.dataBase.collection("chats").document("\(self?.currentChat.id ?? "someId")").delete { err in
+                if self?.isError(error: err) ?? true { return }
             }
-            deleteChatIdFromUsersChats()
+            self?.deleteChatIdFromUsersChats()
         }
     }
 
@@ -200,7 +201,7 @@ class ChattingViewModel: ObservableObject {
 
     fileprivate func deleteFilesFromStorage(competition: @escaping () -> Void ) {
 
-        getCurrentChat(chatId: self.currentChat.id ?? "some Id") { chat in
+        getCurrentChat(chatId: self.currentChat.id ?? "some Id") { [weak self] chat in
 
             competition()
 
@@ -209,7 +210,7 @@ class ChattingViewModel: ObservableObject {
                                                                                        imageId: element)
 
                 ref.delete { err in
-                    if self.isError(error: err) { return }
+                    if self?.isError(error: err) ?? true { return }
                 }
             }
         }

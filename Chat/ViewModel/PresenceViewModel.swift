@@ -29,17 +29,17 @@ class PresenceViewModel: ObservableObject {
     }
 
     func observeAddOnline() {
-        usersRef.observe(.childAdded) { snap in
+        usersRef.observe(.childAdded) { [weak self] snap, _  in
                 guard let email = snap.value as? String else { return }
-                self.onlineUsers.append(email)
+                self?.onlineUsers.append(email)
             }
     }
 
     func observeRemoveOnline() {
-        usersRef.observe(.childRemoved) { snap  in
+        usersRef.observe(.childRemoved) { [weak self] snap  in
                 guard let emailToFind = snap.value as? String else { return }
-                if let index = self.onlineUsers.firstIndex(of: emailToFind) {
-                    self.onlineUsers.remove(at: index)
+                if let index = self?.onlineUsers.firstIndex(of: emailToFind) {
+                    self?.onlineUsers.remove(at: index)
                 }
             }
     }
