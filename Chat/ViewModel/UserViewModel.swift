@@ -37,10 +37,10 @@ class UserViewModel: ObservableObject {
 
     func getCurrentUser(competition: @escaping (User) -> Void) {
         let docRef = self.dataBase.collection("users").document(Auth.auth().currentUser?.uid ?? "SomeId")
-        docRef.getDocument(as: User.self) { result in
+        docRef.getDocument(as: User.self) { [weak self] result in
             switch result {
             case .success(let user):
-                self.currentUser = user
+                self?.currentUser = user
                 competition(user)
             case .failure(let error):
                 print(error)
@@ -50,12 +50,12 @@ class UserViewModel: ObservableObject {
 
     func updateCurrentUser(userId: String) {
         self.dataBase.collection("users").document(userId)
-            .addSnapshotListener { document, error in
+            .addSnapshotListener { [weak self] document, error in
 
                 if error != nil { return }
 
                 if let userLocal = try? document?.data(as: User.self) {
-                    self.currentUser = userLocal
+                    self?.currentUser = userLocal
                 }
             }
     }
@@ -63,10 +63,10 @@ class UserViewModel: ObservableObject {
     func getUser(id: User.ID, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
         let docRef = self.dataBase.collection("users").document(id)
         var userToReturn: User = User()
-        docRef.getDocument(as: User.self) { result in
+        docRef.getDocument(as: User.self) { [weak self] result in
             switch result {
             case .success(let user):
-                self.secondUser = user
+                self?.secondUser = user
                 userToReturn = user
                 competition(user)
             case .failure(let error):
@@ -104,7 +104,7 @@ class UserViewModel: ObservableObject {
                     let user = try document.data(as: User.self)
                     return self.filterUser(user: user)
                 } catch {
-                    print("error deconding documet into Message: \(error)")
+                    print("error decoding document into Message: \(error)")
                     return nil
                 }
             }
@@ -132,11 +132,11 @@ class UserViewModel: ObservableObject {
     func signIn(credential: AuthCredential, competition: @escaping (User) -> Void ) {
         Auth.auth().signIn(with: credential) { [weak self] result, error in
 
-            if self!.isError(result: result, error: error) {
-                return
-            }
+            if error.review(result: result, failure: {
+                self?.showAlert(text: error?.localizedDescription)
+            }) { return }
 
-            self?.doesUserExist { exist in
+            self?.doesUserExist { [weak self] exist in
                 if exist {
                     self?.setSignedInAndGetCurrentUser { user in
                         competition(user)
@@ -177,9 +177,9 @@ class UserViewModel: ObservableObject {
         isShowLoader = true
         auth.createUser(withEmail: email, password: password) { [weak self] result, error in
 
-            if self!.isError(result: result, error: error) {
-                return
-            }
+            if error.review(result: result, failure: {
+                self?.showAlert(text: error?.localizedDescription)
+            }) { return }
 
             self?.getAllUsers()
             self?.setSignedInAndGetCurrentUser { user in
@@ -195,24 +195,15 @@ class UserViewModel: ObservableObject {
         isShowLoader = true
         auth.signIn(withEmail: email, password: password) { [weak self] result, error in
 
-            if self!.isError(result: result, error: error) {
-                return
-            }
+            if error.review(result: result, failure: {
+                self?.showAlert(text: error?.localizedDescription)
+            }) { return }
 
             self?.getAllUsers()
             self?.isShowLoader = false
             self?.setSignedInAndGetCurrentUser { user in
                 competition(user)
             }
-        }
-    }
-
-    fileprivate func isError(result: AuthDataResult?, error: Error?) -> Bool {
-        if result == nil, error != nil {
-            self.showAlert(text: error?.localizedDescription)
-            return true
-        } else {
-            return false
         }
     }
 

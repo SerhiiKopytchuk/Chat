@@ -62,16 +62,16 @@ class ChannelViewModel: ObservableObject {
     func getSearchChannels() {
 
         dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
-            .addSnapshotListener { querySnapshot, error in
+            .addSnapshotListener { [weak self] querySnapshot, error in
 
                 guard let documents = querySnapshot?.documents else {
                     print("Error fetching documents: \(String(describing: error))")
                     return
                 }
 
-                self.searchChannels = documents.compactMap {document -> Channel? in
+                self?.searchChannels = documents.compactMap {document -> Channel? in
                     do {
-                        let channel = self.filterChannel(channel: try document.data(as: Channel.self))
+                        let channel = self?.filterChannel(channel: try document.data(as: Channel.self))
                         return channel
                     } catch {
                         print("error decoding document into Channel: \(error)")
@@ -92,7 +92,7 @@ class ChannelViewModel: ObservableObject {
 
         dataBase.collection("channels").document(channelId).getDocument { document, error in
 
-            if self.isError(error: error) { return }
+            if error.review(message: "failed to getCurrentChannel") { return }
 
             if let channel = try? document?.data(as: Channel.self) {
                 competition(channel)
@@ -108,8 +108,8 @@ class ChannelViewModel: ObservableObject {
         dataBase.collection("channels")
             .whereField("ownerId", isEqualTo: ownerId)
             .whereField("name", isEqualTo: name)
-            .queryToChannel { channel in
-                self.currentChannel = channel
+            .queryToChannel { [weak self] channel in
+                self?.currentChannel = channel
                 competition(channel)
                 return
 
@@ -148,9 +148,9 @@ class ChannelViewModel: ObservableObject {
 
         try dataBase.collection("channels").document().setData(from: newChannel)
 
-        getCurrentChannel(name: name, ownerId: currentUser.id) { channel in
-            self.currentChannel = channel
-            self.addChannelIdToOwner()
+        getCurrentChannel(name: name, ownerId: currentUser.id) { [weak self] channel in
+            self?.currentChannel = channel
+            self?.addChannelIdToOwner()
             competition(channel)
         } failure: { _ in
             print("failure")
@@ -187,10 +187,9 @@ class ChannelViewModel: ObservableObject {
 
                 for channelId in currentUser.channels {
                     dataBase.collection("channels").document(channelId)
-                        .toChannel { channel in
-                            self.channels.append(channel)
-                            self.sortChannels()
-
+                        .toChannel { [weak self] channel in
+                            self?.channels.append(channel)
+                            self?.sortChannels()
                         }
                 }
 
@@ -216,10 +215,10 @@ class ChannelViewModel: ObservableObject {
         for channelId in channelsId {
             if !currentUser.channels.contains(channelId) {
                 dataBase.collection("channels").document(channelId)
-                    .toChannel { channel in
-                        self.channels.append(channel)
-                        self.currentUser.channels.append(channel.id ?? "some channel id")
-                        self.sortChannels()
+                    .toChannel { [weak self] channel in
+                        self?.channels.append(channel)
+                        self?.currentUser.channels.append(channel.id ?? "some channel id")
+                        self?.sortChannels()
                     }
             }
         }
@@ -241,16 +240,16 @@ class ChannelViewModel: ObservableObject {
     private func updateChannels() {
         DispatchQueue.main.async {
             self.dataBase.collection("users").document(self.currentUser.id)
-                .addSnapshotListener { document, error in
+                .addSnapshotListener { [weak self] document, error in
 
-                    if self.isError(error: error) { return }
+                    if error.review(message: "failed to updateChannels") { return }
 
                     guard let userLocal = try? document?.data(as: User.self) else {
                         return
                     }
 
-                    if userLocal.channels.count != self.channels.count {
-                            self.getChannels(fromUpdate: true,
+                    if userLocal.channels.count != self?.channels.count {
+                            self?.getChannels(fromUpdate: true,
                                              channelsId: userLocal.channels)
                         }
 
@@ -259,10 +258,10 @@ class ChannelViewModel: ObservableObject {
     }
 
     func deleteChannel() {
-        deleteChannelFiles {
-            self.removeChannelFromSubscribersAndOwner()
-            self.dataBase.collection("channels").document("\(self.currentChannel.id ?? "someId")").delete { err in
-                if self.isError(error: err) { return }
+        deleteChannelFiles { [weak self] in
+            self?.removeChannelFromSubscribersAndOwner()
+            self?.dataBase.collection("channels").document("\(self?.currentChannel.id ?? "someId")").delete { err in
+                if err.review(message: "failed to delete channel") { return }
             }
         }
     }
@@ -278,20 +277,20 @@ class ChannelViewModel: ObservableObject {
         let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: currentChannel.id ?? "someId")
 
         ref.delete { error in
-            if self.isError(error: error) { return }
+            if error.review(message: "failed to deleteChannelImageFile") { return }
         }
     }
 
     fileprivate func deleteChannelMessagesFiles(competition: @escaping () -> Void) {
 
-        self.getCurrentChannel(channelId: currentChannel.id ?? "someId") { channel in
+        self.getCurrentChannel(channelId: currentChannel.id ?? "someId") { [weak self] channel in
             competition()
             for element in channel.storageFilesId {
                 let ref = StorageReferencesManager.shared
-                    .getChannelMessageImageReference(channelId: self.currentChannel.id ?? "someId",
+                    .getChannelMessageImageReference(channelId: self?.currentChannel.id ?? "someId",
                                                      imageId: element)
                 ref.delete { error in
-                    if self.isError(error: error) { return }
+                    if error.review(message: "failed to deleteChannelMessagesFiles") { return }
                 }
             }
         }
@@ -320,15 +319,6 @@ class ChannelViewModel: ObservableObject {
         dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
             "subscribersId": FieldValue.arrayRemove(["\(currentUser.id )"])
         ])
-    }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
-        }
     }
 
     func clearPreviousDataBeforeSignIn() {
