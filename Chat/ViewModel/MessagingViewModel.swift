@@ -22,51 +22,63 @@ class MessagingViewModel: ObservableObject {
     var dataBase = Firestore.firestore()
 
     func addEmoji(message: Message, emoji: String) {
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
-            .collection("messages").document(message.id ?? "someIdd")
-            .updateData(["emojiValue": emoji])
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId")
+                .collection("messages").document(message.id ?? "someIdd")
+                .updateData(["emojiValue": emoji])
+        }
     }
 
     func removeEmoji(message: Message) {
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
-            .collection("messages").document(message.id ?? "someIdd")
-            .updateData(["emojiValue": ""])
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId")
+                .collection("messages").document(message.id ?? "someIdd")
+                .updateData(["emojiValue": ""])
+        }
     }
 
     func addSnapshotListenerToMessage(messageId: String, competition: @escaping (Message) -> Void) {
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
-            .collection("messages").document(messageId)
-            .addSnapshotListener { document, error in
-                if error != nil { return }
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId")
+                .collection("messages").document(messageId)
+                .addSnapshotListener { document, error in
+                    if error != nil { return }
 
-                guard let message = try? document?.data(as: Message.self) else {
-                    return
+                    guard let message = try? document?.data(as: Message.self) else {
+                        return
+                    }
+                        competition(message)
                 }
-                    competition(message)
-            }
+        }
     }
 
     func getMessages(competition: @escaping ([Message]) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
 
-        var messages: [Message] = []
+            var messages: [Message] = []
 
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId").collection("messages")
-            .addSnapshotListener { [weak self] querySnapshot, error in
+            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId").collection("messages")
+                .addSnapshotListener { querySnapshot, error in
 
-                guard let documents = querySnapshot?.documents else {
-                    print("Error fetching documents: \(error?.localizedDescription ?? "")")
-                    return
+                    DispatchQueue.global(qos: .userInteractive).sync {
+
+                        guard let documents = querySnapshot?.documents else {
+                            print("Error fetching documents: \(error?.localizedDescription ?? "")")
+                            return
+                        }
+
+                        self?.currentChat.messages = self?.documentsToMessages(messages: &messages,
+                                                                                   documents: documents)
+
+                        self?.sortMessages(messages: &messages)
+
+                        self?.getFirstMessage(messages: &messages)
+                        self?.getLastMessage(messages: &messages)
+
+                        competition(messages)
+                    }
                 }
-
-                self?.currentChat.messages = self?.documentsToMessages(messages: &messages, documents: documents)
-
-                self?.sortMessages(messages: &messages)
-
-                self?.getFirstMessage(messages: &messages)
-                self?.getLastMessage(messages: &messages)
-
-                competition(messages)
-            }
+        }
     }
 
     private func documentsToMessages(messages: inout [Message], documents: [QueryDocumentSnapshot]) -> [Message] {
@@ -99,42 +111,46 @@ class MessagingViewModel: ObservableObject {
     }
 
     func sendImage(imageId: String) {
+        DispatchQueue.global(qos: .userInteractive).sync { [weak self] in
 
-        let imageMessage = Message(imageId: imageId, senderId: self.currentUser.id)
+            let imageMessage = Message(imageId: imageId, senderId: self?.currentUser.id ?? "id")
 
-        do {
-            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-                .document().setData(from: imageMessage)
-            changeLastActivityTime()
-        } catch {
-            print("failed to send message" + error.localizedDescription)
+            do {
+                try self?.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+                    .document().setData(from: imageMessage)
+                changeLastActivityTime()
+            } catch {
+                print("failed to send message" + error.localizedDescription)
+            }
         }
-
     }
 
     func sendMessage(text: String) {
+        DispatchQueue.global(qos: .userInteractive).sync { [weak self] in
+            let trimmedText = text.trimToMessage()
+            if !messageIsValidated(text: trimmedText) { return }
+            let newMessage = Message(text: trimmedText, senderId: self?.currentUser.id ?? "id")
 
-        let trimmedText = text.trimToMessage()
-        if !messageIsValidated(text: trimmedText) { return }
-        let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
+            do {
+                guard let currentChatId = currentChat.id else { return }
 
-        do {
-            guard let currentChatId = currentChat.id else { return }
-            unsentMessages.append(newMessage)
+                DispatchQueue.main.async {
+                    self?.unsentMessages.append(newMessage)
+                }
 
-            try self.dataBase.collection("chats").document(currentChatId).collection("messages")
-                .document().setData(from: newMessage, completion: { [weak self] error in
+                try self?.dataBase.collection("chats").document(currentChatId).collection("messages")
+                    .document().setData(from: newMessage, completion: { error in
 
-                    if error.review(message: "failed to send message") { return }
+                        if error.review(message: "failed to send message") { return }
 
-                    self?.removeFromUnsentList(message: newMessage)
+                        self?.removeFromUnsentList(message: newMessage)
 
-                })
-            changeLastActivityTime()
-        } catch {
-            print("failed to send message" + error.localizedDescription)
+                    })
+                changeLastActivityTime()
+            } catch {
+                print("failed to send message" + error.localizedDescription)
+            }
         }
-
     }
 
     private func messageIsValidated(text: String) -> Bool {
@@ -146,17 +162,24 @@ class MessagingViewModel: ObservableObject {
     }
 
     private func changeLastActivityTime() {
-        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.dataBase
+                .collection("chats")
+                .document(self?.currentChat.id ?? "someID")
+                .updateData(["lastActivityTimestamp": Date()])
+        }
     }
 
     private func removeFromUnsentList(message: Message) {
-        let index = unsentMessages.firstIndex {
-            $0.id == message.id
-        }
+        DispatchQueue.main.async { [weak self] in
+            let index = self?.unsentMessages.firstIndex {
+                $0.id == message.id
+            }
 
-        if let index {
-            withAnimation {
-                _ = unsentMessages.remove(at: index)
+            if let index {
+                withAnimation {
+                    _ = self?.unsentMessages.remove(at: index)
+                }
             }
         }
     }
