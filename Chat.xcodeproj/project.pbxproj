@@ -62,6 +62,7 @@
 		409894CE289D978000720A1E /* EmojiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CD289D978000720A1E /* EmojiView.swift */; };
 		4099D9AD28B7C70500DCE75F /* UIAplication + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */; };
 		409AC7642849E9A300BD00F9 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409AC7632849E9A300BD00F9 /* SearchView.swift */; };
+		409E2B6E2934AA9C002FE204 /* FirestorePathManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409E2B6D2934AA9C002FE204 /* FirestorePathManager.swift */; };
 		409F252F2882B574005D0E6A /* addUserToChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409F252E2882B574005D0E6A /* addUserToChannelView.swift */; };
 		40A1A5F72855BF5700D30A7B /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 40A1A5F62855BF5700D30A7B /* SDWebImageSwiftUI */; };
 		40A701622896CF74002ECB1C /* EmptyImageWithCharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */; };
@@ -155,6 +156,7 @@
 		409894CD289D978000720A1E /* EmojiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiView.swift; sourceTree = "<group>"; };
 		4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAplication + Extension.swift"; sourceTree = "<group>"; };
 		409AC7632849E9A300BD00F9 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		409E2B6D2934AA9C002FE204 /* FirestorePathManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorePathManager.swift; sourceTree = "<group>"; };
 		409F252E2882B574005D0E6A /* addUserToChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addUserToChannelView.swift; sourceTree = "<group>"; };
 		40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyImageWithCharacterView.swift; sourceTree = "<group>"; };
 		40A766B528842C19002D6FA5 /* removeUsersFromChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = removeUsersFromChannelView.swift; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				404B283C28C72FAF0096C8F0 /* StorageReferencesManager.swift */,
+				409E2B6D2934AA9C002FE204 /* FirestorePathManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -643,6 +646,7 @@
 				4001F19D2848950600D17CCA /* User.swift in Sources */,
 				40EF9962284747810062612E /* Message.swift in Sources */,
 				400142E6282EBA8400E5D497 /* ChatApp.swift in Sources */,
+				409E2B6E2934AA9C002FE204 /* FirestorePathManager.swift in Sources */,
 				40EF995E284746BB0062612E /* ConversationTitleRow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
