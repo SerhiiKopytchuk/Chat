@@ -19,28 +19,27 @@ class MessagingViewModel: ObservableObject {
 
     @Published var unsentMessages: [Message] = []
 
-    var dataBase = Firestore.firestore()
+    var firestoreManager = FirestorePathManager.shared
 
     func addEmoji(message: Message, emoji: String) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId")
-                .collection("messages").document(message.id ?? "someIdd")
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
+                                                      messageId: message.id)
                 .updateData(["emojiValue": emoji])
         }
     }
 
     func removeEmoji(message: Message) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId")
-                .collection("messages").document(message.id ?? "someIdd")
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
+                                                      messageId: message.id)
                 .updateData(["emojiValue": ""])
         }
     }
 
     func addSnapshotListenerToMessage(messageId: String, competition: @escaping (Message) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId")
-                .collection("messages").document(messageId)
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id, messageId: messageId)
                 .addSnapshotListener { document, error in
                     if error != nil { return }
 
@@ -57,9 +56,8 @@ class MessagingViewModel: ObservableObject {
 
             var messages: [Message] = []
 
-            self?.dataBase.collection("chats").document(self?.currentChat.id ?? "someId").collection("messages")
+            self?.firestoreManager.getChatMessagesCollectionReference(for: self?.currentChat.id)
                 .addSnapshotListener { querySnapshot, error in
-
                     DispatchQueue.global(qos: .userInteractive).sync {
 
                         guard let documents = querySnapshot?.documents else {
@@ -68,10 +66,10 @@ class MessagingViewModel: ObservableObject {
                         }
 
                         self?.currentChat.messages = self?.documentsToMessages(messages: &messages,
-                                                                                   documents: documents)
-
+                                                                               documents: documents)
                         self?.sortMessages(messages: &messages)
-
+                    }
+                    DispatchQueue.main.async {
                         self?.getFirstMessage(messages: &messages)
                         self?.getLastMessage(messages: &messages)
 
@@ -116,7 +114,7 @@ class MessagingViewModel: ObservableObject {
             let imageMessage = Message(imageId: imageId, senderId: self?.currentUser.id ?? "id")
 
             do {
-                try self?.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
+                try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChat.id)
                     .document().setData(from: imageMessage)
                 changeLastActivityTime()
             } catch {
@@ -138,7 +136,7 @@ class MessagingViewModel: ObservableObject {
                     self?.unsentMessages.append(newMessage)
                 }
 
-                try self?.dataBase.collection("chats").document(currentChatId).collection("messages")
+                try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChatId)
                     .document().setData(from: newMessage, completion: { error in
 
                         if error.review(message: "failed to send message") { return }
@@ -163,9 +161,7 @@ class MessagingViewModel: ObservableObject {
 
     private func changeLastActivityTime() {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.dataBase
-                .collection("chats")
-                .document(self?.currentChat.id ?? "someID")
+            self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
                 .updateData(["lastActivityTimestamp": Date()])
         }
     }
