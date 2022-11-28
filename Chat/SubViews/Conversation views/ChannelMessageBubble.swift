@@ -44,9 +44,9 @@ struct ChannelMessageBubble: View {
 
                     }
                     .padding()
-                    .foregroundColor(message.senderId != viewModel.getUserUID() ? .white : .primary)
-                    .background(message.senderId != viewModel.getUserUID() ? .blue : Color.secondPrimary)
-                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
+                    .foregroundColor(message.senderId != viewModel.currentUserUID ? .white : .primary)
+                    .background(message.senderId != viewModel.currentUserUID ? .blue : Color.secondPrimary)
+                    .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
                 } else {
@@ -68,7 +68,7 @@ struct ChannelMessageBubble: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .cornerRadius(15, corners: message.senderId != viewModel.getUserUID()
+                    .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
                                   ? [.topLeft, .topRight, .bottomRight] :
                                     [.topLeft, .topRight, .bottomLeft])
                     .matchedGeometryEffect(id: message.imageId ?? "",

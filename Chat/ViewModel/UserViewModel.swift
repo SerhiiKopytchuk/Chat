@@ -30,29 +30,32 @@ class UserViewModel: ObservableObject {
     @Published var alertText: String = ""
     @Published var showAlert = false
 
-    let dataBase = Firestore.firestore()
     let auth = Auth.auth()
+    let firebaseManager = FirestorePathManager.shared
 
+    var currentUserUID: String {
+        self.auth.currentUser?.uid ?? "no UID"
+    }
     // MARK: - functions
 
     func getCurrentUser(competition: @escaping (User) -> Void) {
-        let docRef = self.dataBase.collection("users").document(Auth.auth().currentUser?.uid ?? "SomeId")
-        docRef.getDocument(as: User.self) { [weak self] result in
-            switch result {
-            case .success(let user):
-                self?.currentUser = user
-                competition(user)
-            case .failure(let error):
-                print(error)
+        self.firebaseManager.getUserDocumentReference(for: currentUserUID)
+            .getDocument(as: User.self) { [weak self] result in
+                switch result {
+                case .success(let user):
+                    self?.currentUser = user
+                    competition(user)
+                case .failure(let error):
+                    print(error)
+                }
             }
-        }
     }
 
     func updateCurrentUser(userId: String) {
-        self.dataBase.collection("users").document(userId)
+        self.firebaseManager.getUserDocumentReference(for: userId)
             .addSnapshotListener { [weak self] document, error in
 
-                if error != nil { return }
+                if error.review(message: "failed to add snapshotListener") { return }
 
                 if let userLocal = try? document?.data(as: User.self) {
                     self?.currentUser = userLocal
@@ -61,24 +64,25 @@ class UserViewModel: ObservableObject {
     }
 
     func getUser(id: User.ID, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
-        let docRef = self.dataBase.collection("users").document(id)
         var userToReturn: User = User()
-        docRef.getDocument(as: User.self) { [weak self] result in
-            switch result {
-            case .success(let user):
-                self?.secondUser = user
-                userToReturn = user
-                competition(user)
-            case .failure(let error):
-                print(error)
-                failure()
+        self.firebaseManager.getUserDocumentReference(for: id)
+            .getDocument(as: User.self) { [weak self] result in
+                switch result {
+                case .success(let user):
+                    self?.secondUser = user
+                    userToReturn = user
+                    competition(user)
+                case .failure(let error):
+                    print(error)
+                    failure()
+                }
             }
-        }
         return userToReturn
     }
 
     func getUserByChat(chat: Chat, competition: @escaping (User) -> Void) {
-        dataBase.collection("users").document(self.currentUser.id != chat.user1Id ? chat.user1Id  : chat.user2Id)
+        self.firebaseManager.getUserDocumentReference(for: self.currentUser.id != chat.user1Id ?
+                                                      chat.user1Id  : chat.user2Id)
             .getDocument { document, err in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -90,9 +94,11 @@ class UserViewModel: ObservableObject {
             }
     }
 
-    // refactor this function
+    #warning("refactor this function")
     func getAllUsers() {
-        dataBase.collection("users").addSnapshotListener { querySnapshot, error in
+        firebaseManager.userCollection
+            .addSnapshotListener { querySnapshot, error in
+
             guard let documents = querySnapshot?.documents else {
                 print("Error fetching documets: \(String(describing: error))")
                 return
@@ -118,10 +124,6 @@ class UserViewModel: ObservableObject {
         return nil
     }
 
-    func getUserUID() -> String {
-        return self.auth.currentUser?.uid ?? "no UID"
-    }
-
     // MARK: - authorization
 
     func signOut() {
@@ -130,7 +132,7 @@ class UserViewModel: ObservableObject {
     }
 
     func signIn(credential: AuthCredential, competition: @escaping (User) -> Void ) {
-        Auth.auth().signIn(with: credential) { [weak self] result, error in
+        auth.signIn(with: credential) { [weak self] result, error in
 
             if error.review(result: result, failure: {
                 self?.showAlert(text: error?.localizedDescription)
@@ -154,8 +156,7 @@ class UserViewModel: ObservableObject {
     }
 
     fileprivate func doesUserExist(competition: @escaping (Bool) -> Void ) {
-        dataBase.collection("users")
-            .document(self.auth.currentUser?.uid ?? "someId")
+        firebaseManager.getUserDocumentReference(for: currentUserUID)
             .getDocument(as: User.self) { result in
                 switch result {
                 case .success:
@@ -186,7 +187,7 @@ class UserViewModel: ObservableObject {
                 competition(user)
             }
             self?.isShowLoader = false
-            self?.createFbUser(name: username, gmail: Auth.auth().currentUser?.email ?? "")
+            self?.createFbUser(name: username, gmail: self?.auth.currentUser?.email ?? "")
 
         }
     }
@@ -219,7 +220,8 @@ class UserViewModel: ObservableObject {
                                id: Auth.auth().currentUser?.uid ?? "\(UUID())",
                                name: name)
 
-            try dataBase.collection("users").document("\(newUser.id)").setData(from: newUser)
+            try firebaseManager.getUserDocumentReference(for: "\(newUser.id)")
+                .setData(from: newUser)
         } catch {
             print("error adding message to FireStore:: \(error)")
         }
