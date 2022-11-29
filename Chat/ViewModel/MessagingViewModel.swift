@@ -24,16 +24,16 @@ class MessagingViewModel: ObservableObject {
     func addEmoji(message: Message, emoji: String) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
-                                                      messageId: message.id)
-                .updateData(["emojiValue": emoji])
+                                                                   messageId: message.id)
+            .updateData(["emojiValue": emoji])
         }
     }
 
     func removeEmoji(message: Message) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
-                                                      messageId: message.id)
-                .updateData(["emojiValue": ""])
+                                                                   messageId: message.id)
+            .updateData(["emojiValue": ""])
         }
     }
 
@@ -46,7 +46,7 @@ class MessagingViewModel: ObservableObject {
                     guard let message = try? document?.data(as: Message.self) else {
                         return
                     }
-                        competition(message)
+                    competition(message)
                 }
         }
     }
@@ -58,7 +58,7 @@ class MessagingViewModel: ObservableObject {
 
             self?.firestoreManager.getChatMessagesCollectionReference(for: self?.currentChat.id)
                 .addSnapshotListener { querySnapshot, error in
-                    DispatchQueue.global(qos: .userInteractive).sync {
+                    DispatchQueue.main.async {
 
                         guard let documents = querySnapshot?.documents else {
                             print("Error fetching documents: \(error?.localizedDescription ?? "")")
@@ -68,8 +68,7 @@ class MessagingViewModel: ObservableObject {
                         self?.currentChat.messages = self?.documentsToMessages(messages: &messages,
                                                                                documents: documents)
                         self?.sortMessages(messages: &messages)
-                    }
-                    DispatchQueue.main.async {
+
                         self?.getFirstMessage(messages: &messages)
                         self?.getLastMessage(messages: &messages)
 

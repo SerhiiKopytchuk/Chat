@@ -48,6 +48,6 @@ struct Message: Identifiable, Codable {
     }
 
     func isReply() -> Bool {
-        self.senderId != Auth.auth().currentUser?.uid 
+        self.senderId != Auth.auth().currentUser?.uid
     }
 }
