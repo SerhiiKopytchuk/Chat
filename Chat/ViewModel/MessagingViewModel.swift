@@ -123,27 +123,26 @@ class MessagingViewModel: ObservableObject {
     }
 
     func sendMessage(text: String) {
-        DispatchQueue.global(qos: .userInteractive).sync { [weak self] in
+        DispatchQueue.main.async {
             let trimmedText = text.trimToMessage()
-            if !messageIsValidated(text: trimmedText) { return }
-            let newMessage = Message(text: trimmedText, senderId: self?.currentUser.id ?? "id")
+            if !(self.messageIsValidated(text: trimmedText) ) { return }
+            let newMessage = Message(text: trimmedText, senderId: self.currentUser.id )
 
             do {
-                guard let currentChatId = currentChat.id else { return }
+                guard let currentChatId = self.currentChat.id else { return }
 
-                DispatchQueue.main.async {
-                    self?.unsentMessages.append(newMessage)
-                }
+                self.unsentMessages.append(newMessage)
 
-                try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChatId)
+                try self.firestoreManager.getChatMessagesCollectionReference(for: currentChatId)
                     .document().setData(from: newMessage, completion: { error in
 
                         if error.review(message: "failed to send message") { return }
 
-                        self?.removeFromUnsentList(message: newMessage)
+                        self.removeFromUnsentList(message: newMessage)
 
                     })
-                changeLastActivityTime()
+
+                self.changeLastActivityTime()
             } catch {
                 print("failed to send message" + error.localizedDescription)
             }
