@@ -68,7 +68,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Re-enter"].typeText(secondUserPassword)
 
         app.buttons["Create Account"].tap()
-        sleep(1)
+        sleep(2)
 
         if app.buttons["Close"].exists {
 
@@ -118,7 +118,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Re-enter"].typeText(firstUserPassword)
 
         app.buttons["Create Account"].tap()
-        sleep(1)
+        sleep(2)
 
         if app.buttons["Close"].exists {
 
@@ -504,7 +504,7 @@ class ChatUITests: XCTestCase {
         let notEmptyImage = app.images["notEmptyImage"]
 
         let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: notEmptyImage)
-        wait(for: [imageExpectation], timeout: 5)
+        wait(for: [imageExpectation], timeout: 10)
     }
 
     func test018SignInToFirstUserAccount() throws {
@@ -642,6 +642,7 @@ class ChatUITests: XCTestCase {
         app.buttons["return"].tap()
 
         app.buttons["Create"].tap()
+        sleep(1)
 
         app.buttons["fibrechannel"].tap()
 

@@ -94,27 +94,25 @@ class UserViewModel: ObservableObject {
             }
     }
 
-    #warning("refactor this function")
     func getAllUsers() {
         firebaseManager.userCollection
-            .addSnapshotListener { querySnapshot, error in
-
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documets: \(String(describing: error))")
-                return
-            }
-
-            self.users = documents.compactMap { document -> User? in
-                do {
-
-                    let user = try document.data(as: User.self)
-                    return self.filterUser(user: user)
-                } catch {
-                    print("error decoding document into Message: \(error)")
-                    return nil
+            .getDocuments(completion: { querySnapshot, error in
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching documets: \(String(describing: error))")
+                    return
                 }
-            }
-        }
+
+                self.users = documents.compactMap { document -> User? in
+                    do {
+
+                        let user = try document.data(as: User.self)
+                        return self.filterUser(user: user)
+                    } catch {
+                        print("error decoding document into Message: \(error)")
+                        return nil
+                    }
+                }
+            })
     }
 
     fileprivate func filterUser(user: User) -> User? {
