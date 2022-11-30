@@ -499,7 +499,7 @@ class ChatUITests: XCTestCase {
         app.buttons["arrow.backward.circle.fill"].tap()
 
         app.buttons["List"].tap()
-        sleep(1)
+        sleep(3)
 
         let notEmptyImage = app.images["notEmptyImage"]
 

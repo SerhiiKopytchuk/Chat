@@ -23,30 +23,36 @@ class ChattingViewModel: ObservableObject {
 
     let dataBase = Firestore.firestore()
 
+    let firestoreManager = FirestorePathManager.shared
+
     // MARK: - functions
 
-    func getCurrentChat( secondUser: User, competition: @escaping (Chat) -> Void, failure: @escaping (String) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).sync { [weak self] in
-            self?.dataBase.collection("chats")
-            .whereField("user1Id", isEqualTo: secondUser.id)
-            .whereField("user2Id", isEqualTo: self?.currentUser.id ?? "userId")
-            .queryToChat { chat in
-                self?.currentChat = chat
-                competition(chat)
-                return
-            }
+    func getCurrentChat(with secondUser: User, competition: @escaping (Result<Chat, Error>) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
 
-            self?.dataBase.collection("chats")
-            .whereField("user2Id", isEqualTo: secondUser.id)
-            .whereField("user1Id", isEqualTo: self?.currentUser.id ?? "userId")
-            .queryToChat { chat in
-                self?.currentChat = chat
-                competition(chat)
-                return
-            } failure: { error in
-                failure(error)
-                return
-            }
+            self?.firestoreManager.getChatQuery(for: self?.currentUser.id, with: secondUser.id)
+                .queryToChat(competition: { chat, error in
+                    guard let chat, error == nil else {
+                        competition(.failure(error!))
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self?.currentChat = chat
+                        competition(.success(chat))
+                    }
+                })
+
+            self?.firestoreManager.getChatQuery(for: secondUser.id, with: self?.currentUser.id)
+                .queryToChat(competition: { chat, error in
+                    guard let chat, error == nil else {
+                        competition(.failure(error!))
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self?.currentChat = chat
+                        competition(.success(chat))
+                    }
+                })
         }
     }
 
@@ -78,11 +84,16 @@ class ChattingViewModel: ObservableObject {
 
         try dataBase.collection("chats").document().setData(from: newChat)
 
-        getCurrentChat(secondUser: secondUser) { [weak self] chat in
-            self?.addChatsIdToUsers()
-            self?.changeLastActivityTimestamp()
-            competition(chat)
-        } failure: { _ in }
+        getCurrentChat(with: secondUser) { [weak self] result in
+            switch result {
+            case .success(let chat):
+                self?.addChatsIdToUsers()
+                self?.changeLastActivityTimestamp()
+                competition(chat)
+            case .failure(let error):
+                print(error)
+            }
+        }
 
     }
 

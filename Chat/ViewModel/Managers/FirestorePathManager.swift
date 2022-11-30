@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseFirestore
 import FirebaseAuth
+import Firebase
 
 class FirestorePathManager {
     static let shared = FirestorePathManager()
@@ -15,9 +16,15 @@ class FirestorePathManager {
 
     private let dataBase = Firestore.firestore()
     private let auth = Auth.auth()
+
     private enum FirestoreNavigation: String {
-        case chats, messages, users
+        case chats, messages, users, user1Id, user2Id
     }
+
+    private var chatsCollection: CollectionReference {
+        dataBase.collection(FirestoreNavigation.chats.rawValue)
+    }
+
     // MARK: - for userViewModel
 
     var userCollection: CollectionReference {
@@ -25,26 +32,33 @@ class FirestorePathManager {
     }
 
     func getUserDocumentReference(for userId: String?) -> DocumentReference {
-        dataBase.collection(FirestoreNavigation.users.rawValue)
+        userCollection
             .document(userId ?? "userId")
     }
     // MARK: - for messagingViewModel
     func getChatMessageDocumentReference(for chatId: String?, messageId: String?) -> DocumentReference {
-        dataBase.collection(FirestoreNavigation.chats.rawValue)
+       chatsCollection
             .document(chatId ?? "someChatId")
             .collection(FirestoreNavigation.messages.rawValue)
             .document(messageId ?? "someMessageId")
     }
 
     func getChatMessagesCollectionReference(for chatId: String?) -> CollectionReference {
-        dataBase.collection(FirestoreNavigation.chats.rawValue)
+        chatsCollection
             .document(chatId ?? "someChatId")
             .collection(FirestoreNavigation.messages.rawValue)
     }
 
     func getChatDocumentReference(for chatId: String?) -> DocumentReference {
-        dataBase.collection(FirestoreNavigation.chats.rawValue)
+        chatsCollection
             .document(chatId ?? "someChatId")
+    }
+    // MARK: - for chattingViewModel
+
+    func getChatQuery(for currentUserId: String?, with secondUserId: String?) -> Query {
+        chatsCollection
+            .whereField("user1Id", isEqualTo: (currentUserId ?? "some id"))
+            .whereField("user2Id", isEqualTo: (secondUserId ?? "some id"))
     }
 
 }
