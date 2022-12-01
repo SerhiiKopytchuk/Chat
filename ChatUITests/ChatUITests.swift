@@ -497,14 +497,15 @@ class ChatUITests: XCTestCase {
         app.images["Фото, 30 березня 2018 р., 10:14 пп"].tap()
 
         app.buttons["arrow.backward.circle.fill"].tap()
+        sleep(3)
 
         app.buttons["List"].tap()
-        sleep(3)
+        sleep(1)
 
         let notEmptyImage = app.images["notEmptyImage"]
 
         let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: notEmptyImage)
-        wait(for: [imageExpectation], timeout: 10)
+        wait(for: [imageExpectation], timeout: 5)
     }
 
     func test018SignInToFirstUserAccount() throws {

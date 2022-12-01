@@ -56,57 +56,63 @@ class ChattingViewModel: ObservableObject {
         }
     }
 
-    func getCurrentChat(chatId: String, competition: @escaping (Chat) -> Void) {
-        dataBase.collection("chats").document(chatId)
-            .toChat { chat in
-                competition(chat)
-            }
+    func getCurrentChat(chatId: String?, competition: @escaping (Chat) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.getChatDocumentReference(for: chatId)
+                .toChat { chat in
+                    DispatchQueue.main.async {
+                        competition(chat)
+                    }
+                }
+        }
     }
 
     func createChat(competition: @escaping (Chat) -> Void) {
-        do {
-
-            try chatCreating(competition: { chat in
-                competition(chat)
-                return
-            })
-
-        } catch {
-            print("error creating chat to FireStore: \(error)")
-        }
+        chatCreating(competition: { chat in
+            competition(chat)
+            return
+        })
     }
 
-    fileprivate func chatCreating(competition: @escaping (Chat) -> Void) throws {
+    fileprivate func chatCreating(competition: @escaping (Chat) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            let newChat = Chat(user1Id: self?.currentUser.id ?? "some id",
+                               user2Id: self?.secondUser.id ?? "some id",
+                               lastActivityTimestamp: Date())
 
-        let newChat = Chat(user1Id: currentUser.id,
-                           user2Id: secondUser.id,
-                           lastActivityTimestamp: Date())
+            try? self?.firestoreManager.chatsCollection
+                .document()
+                .setData(from: newChat)
 
-        try dataBase.collection("chats").document().setData(from: newChat)
-
-        getCurrentChat(with: secondUser) { [weak self] result in
-            switch result {
-            case .success(let chat):
-                self?.addChatsIdToUsers()
-                self?.changeLastActivityTimestamp()
-                competition(chat)
-            case .failure(let error):
-                print(error)
+            self?.getCurrentChat(with: self?.secondUser ?? User()) { result in
+                switch result {
+                case .success(let chat):
+                    DispatchQueue.main.async {
+                        self?.addChatsIdToUsers()
+                        self?.changeLastActivityTimestamp()
+                        competition(chat)
+                    }
+                case .failure(let error):
+                    print(error)
+                }
             }
         }
-
     }
 
     fileprivate func addChatsIdToUsers() {
-        dataBase.collection("users").document(currentUser.id)
-            .updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
-        dataBase.collection("users").document(secondUser.id)
-            .updateData(["chats": FieldValue.arrayUnion([currentChat.id ?? "someChatId"])])
-
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.getUserDocumentReference(for: self?.currentUser.id)
+                .updateData(["chats": FieldValue.arrayUnion([self?.currentChat.id ?? "someChatId"])])
+            self?.firestoreManager.getUserDocumentReference(for: self?.secondUser.id)
+                .updateData(["chats": FieldValue.arrayUnion([self?.currentChat.id ?? "someChatId"])])
+        }
     }
 
     private func changeLastActivityTimestamp() {
-        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
+                .updateData(["lastActivityTimestamp": Date()])
+        }
     }
 
     func changeLastActivityAndSortChats() {
@@ -120,63 +126,99 @@ class ChattingViewModel: ObservableObject {
     }
 
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
-        withAnimation(.easeInOut.delay(0.5)) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
 
             if chatsId.isEmpty {
-                self.chats = []
-                for chatId in currentUser.chats {
-                    dataBase.collection("chats").document(chatId)
-                        .toChat { [weak self] chat in
-                            self?.chats.append(chat)
-                            self?.sortChats()
-                        }
+
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut.delay(0.5)) {
+                        self?.chats = []
+                    }
                 }
+
+                self?.getCurrentUserChats()
+
             } else {
-                if chatsId.count > chats.count {
-                    addChats(chatsId: chatsId)
-                } else {
-                    removeChats(chatsId: chatsId)
-                }
+                self?.addOrRemoveCurrentUserChats(chatsId: chatsId)
             }
 
             if !fromUpdate {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.updateChats()
+                    self?.updateChats()
                 }
             }
         }
+
     }
 
-    private func addChats(chatsId: [String]) {
-        for chatId in chatsId {
-            if !currentUser.chats.contains(chatId) {
-                dataBase.collection("chats").document(chatId)
-                    .toChat { [weak self] chat in
-                        self?.chats.append(chat)
-                        self?.currentUser.chats.append(chat.id ?? "some chat id")
-                        self?.sortChats()
+    private func getCurrentUserChats() {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            for chatId in self?.currentUser.chats ?? [] {
+                self?.firestoreManager.getChatDocumentReference(for: chatId)
+                    .toChat { chat in
+                        DispatchQueue.main.async {
+                            withAnimation(.easeInOut.delay(0.5)) {
+                                self?.chats.append(chat)
+                                self?.sortChats()
+                            }
+                        }
                     }
             }
         }
     }
 
+    private func addOrRemoveCurrentUserChats(chatsId: [String]) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            if chatsId.count > self?.chats.count ?? 0 {
+                    self?.addChats(chatsId: chatsId)
+            } else {
+                    self?.removeChats(chatsId: chatsId)
+            }
+        }
+    }
+
+    private func addChats(chatsId: [String]) {
+            for chatId in chatsId {
+                if !self.currentUser.chats.contains(chatId) {
+                    self.firestoreManager.getChatDocumentReference(for: chatId)
+                        .toChat { chat in
+                            DispatchQueue.main.async {
+                                withAnimation(.easeInOut.delay(0.5)) {
+                                    self.chats.append(chat)
+                                    self.currentUser.chats.append(chat.id ?? "some chat id")
+                                    self.sortChats()
+                                }
+                            }
+                        }
+                }
+            }
+    }
+
     private func removeChats(chatsId: [String]) {
         for chat in chats {
             if !chatsId.contains(chat.id ?? "some id") {
-                self.chats = chats.filter({ $0.id != chat.id})
-                self.currentUser.chats = currentUser.chats.filter({ $0 != chat.id})
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut.delay(0.5)) {
+                        self.chats = self.chats.filter({ $0.id != chat.id})
+                        self.currentUser.chats = self.currentUser.chats.filter({ $0 != chat.id})
+                    }
+                }
             }
         }
     }
 
     func sortChats() {
-        self.chats.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+        DispatchQueue.main.async {
+            withAnimation(.easeInOut.delay(0.5)) {
+                self.chats.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+            }
+        }
     }
 
     fileprivate func updateChats() {
-        DispatchQueue.main.async {
-            self.dataBase.collection("users").document(self.currentUser.id)
-                .addSnapshotListener { [weak self] document, error in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.firestoreManager.getUserDocumentReference(for: self?.currentUser.id)
+                .addSnapshotListener { document, error in
 
                     if error.review(message: "failed to updateChats") { return }
 
@@ -193,45 +235,51 @@ class ChattingViewModel: ObservableObject {
     }
 
     func deleteChat() {
-        deleteFilesFromStorage { [weak self] in
-            self?.dataBase.collection("chats").document("\(self?.currentChat.id ?? "someId")").delete { error in
-                if error.review(message: "failed to deleteChat") { return }
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            self?.deleteFilesFromStorage {
+                self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
+                    .delete { error in
+                    if error.review(message: "failed to deleteChat") { return }
+                }
+                self?.deleteChatIdFromUsersChats()
             }
-            self?.deleteChatIdFromUsersChats()
         }
     }
 
     fileprivate func deleteChatIdFromUsersChats() {
-        dataBase.collection("users").document(currentChat.user1Id).updateData([
+        self.firestoreManager.getUserDocumentReference(for: currentChat.user1Id).updateData([
             "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
         ])
 
-        dataBase.collection("users").document(currentChat.user2Id).updateData([
+        self.firestoreManager.getUserDocumentReference(for: currentChat.user1Id).updateData([
             "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
         ])
     }
 
     fileprivate func deleteFilesFromStorage(competition: @escaping () -> Void ) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            self?.getCurrentChat(chatId: self?.currentChat.id) { chat in
 
-        getCurrentChat(chatId: self.currentChat.id ?? "some Id") { chat in
+                competition()
 
-            competition()
+                for element in chat.storageFilesId ?? [] {
+                    let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
+                                                                                           imageId: element)
 
-            for element in chat.storageFilesId ?? [] {
-                let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
-                                                                                       imageId: element)
-
-                ref.delete { error in
-                    if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
+                    ref.delete { error in
+                        if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
+                    }
                 }
             }
         }
     }
 
     func clearDataBeforeSingIn() {
-        self.currentUser = User()
-        self.secondUser = User()
-        self.chats = []
+        DispatchQueue.main.async {
+            self.currentUser = User()
+            self.secondUser = User()
+            self.chats = []
+        }
     }
 
 }

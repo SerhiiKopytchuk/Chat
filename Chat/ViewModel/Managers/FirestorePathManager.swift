@@ -21,8 +21,12 @@ class FirestorePathManager {
         case chats, messages, users, user1Id, user2Id
     }
 
-    private var chatsCollection: CollectionReference {
+    var chatsCollection: CollectionReference {
         dataBase.collection(FirestoreNavigation.chats.rawValue)
+    }
+
+    var usersCollection: CollectionReference {
+        dataBase.collection(FirestoreNavigation.users.rawValue)
     }
 
     // MARK: - for userViewModel
@@ -59,6 +63,11 @@ class FirestorePathManager {
         chatsCollection
             .whereField("user1Id", isEqualTo: (currentUserId ?? "some id"))
             .whereField("user2Id", isEqualTo: (secondUserId ?? "some id"))
+    }
+
+    func getUserDocumentReference(for id: String?) {
+        userCollection
+            .document(id ?? "some id")
     }
 
 }
