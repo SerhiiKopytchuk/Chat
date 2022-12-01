@@ -21,8 +21,6 @@ class ChattingViewModel: ObservableObject {
 
     @Published private(set) var chats: [Chat] = []
 
-    let dataBase = Firestore.firestore()
-
     let firestoreManager = FirestorePathManager.shared
 
     // MARK: - functions
@@ -235,7 +233,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     func deleteChat() {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.deleteFilesFromStorage {
                 self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
                     .delete { error in
@@ -257,7 +255,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     fileprivate func deleteFilesFromStorage(competition: @escaping () -> Void ) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.getCurrentChat(chatId: self?.currentChat.id) { chat in
 
                 competition()
