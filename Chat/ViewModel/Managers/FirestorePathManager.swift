@@ -18,7 +18,7 @@ class FirestorePathManager {
     private let auth = Auth.auth()
 
     private enum FirestoreNavigation: String {
-        case chats, messages, users, user1Id, user2Id
+        case chats, channels, messages, users, user1Id, user2Id
     }
 
     var chatsCollection: CollectionReference {
@@ -27,6 +27,10 @@ class FirestorePathManager {
 
     var usersCollection: CollectionReference {
         dataBase.collection(FirestoreNavigation.users.rawValue)
+    }
+
+    var channelsCollection: CollectionReference {
+        dataBase.collection(FirestoreNavigation.channels.rawValue)
     }
 
     // MARK: - for userViewModel
@@ -41,7 +45,7 @@ class FirestorePathManager {
     }
     // MARK: - for messagingViewModel
     func getChatMessageDocumentReference(for chatId: String?, messageId: String?) -> DocumentReference {
-       chatsCollection
+        chatsCollection
             .document(chatId ?? "someChatId")
             .collection(FirestoreNavigation.messages.rawValue)
             .document(messageId ?? "someMessageId")
@@ -65,8 +69,10 @@ class FirestorePathManager {
             .whereField("user2Id", isEqualTo: (secondUserId ?? "some id"))
     }
 
-    func getUserDocumentReference(for id: String?) {
-        userCollection
+    // MARK: - for channelViewModel
+
+    func getChannelDocumentReference(for id: String?) -> DocumentReference {
+        channelsCollection
             .document(id ?? "some id")
     }
 

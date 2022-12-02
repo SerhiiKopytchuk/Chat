@@ -168,28 +168,28 @@ class ChattingViewModel: ObservableObject {
     private func addOrRemoveCurrentUserChats(chatsId: [String]) {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             if chatsId.count > self?.chats.count ?? 0 {
-                    self?.addChats(chatsId: chatsId)
+                self?.addChats(chatsId: chatsId)
             } else {
-                    self?.removeChats(chatsId: chatsId)
+                self?.removeChats(chatsId: chatsId)
             }
         }
     }
 
     private func addChats(chatsId: [String]) {
-            for chatId in chatsId {
-                if !self.currentUser.chats.contains(chatId) {
-                    self.firestoreManager.getChatDocumentReference(for: chatId)
-                        .toChat { chat in
-                            DispatchQueue.main.async {
-                                withAnimation(.easeInOut.delay(0.5)) {
-                                    self.chats.append(chat)
-                                    self.currentUser.chats.append(chat.id ?? "some chat id")
-                                    self.sortChats()
-                                }
+        for chatId in chatsId {
+            if !self.currentUser.chats.contains(chatId) {
+                self.firestoreManager.getChatDocumentReference(for: chatId)
+                    .toChat { chat in
+                        DispatchQueue.main.async {
+                            withAnimation(.easeInOut.delay(0.5)) {
+                                self.chats.append(chat)
+                                self.currentUser.chats.append(chat.id ?? "some chat id")
+                                self.sortChats()
                             }
                         }
-                }
+                    }
             }
+        }
     }
 
     private func removeChats(chatsId: [String]) {
@@ -237,8 +237,8 @@ class ChattingViewModel: ObservableObject {
             self?.deleteFilesFromStorage {
                 self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
                     .delete { error in
-                    if error.review(message: "failed to deleteChat") { return }
-                }
+                        if error.review(message: "failed to deleteChat") { return }
+                    }
                 self?.deleteChatIdFromUsersChats()
             }
         }

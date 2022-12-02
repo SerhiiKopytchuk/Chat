@@ -145,15 +145,18 @@ struct TabBarView: View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(channelViewModel.channels, id: \.id) { channel in
                 ChannelListRow(channel: channel) {
-                    channelViewModel.getCurrentChannel(name: channel.name,
-                                                       ownerId: channel.ownerId) { channel in
+                    channelViewModel.getChannel(name: channel.name,
+                                                ownerId: channel.ownerId) { channel, errorDescription in
+
+                        guard let channel, errorDescription == nil else { return }
+
                         channelMessagingViewModel.currentChannel = channel
                         channelMessagingViewModel.currentUser = viewModel.currentUser
                         channelMessagingViewModel.getMessages(competition: { _ in })
                         DispatchQueue.main.async {
                             self.goToChannel.toggle()
                         }
-                    } failure: { _ in }
+                    }
 
                 }
                 .environmentObject(viewModel)

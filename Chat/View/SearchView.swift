@@ -198,7 +198,7 @@ struct SearchView: View {
                     channelMessagingViewModel.currentChannel = channel
                     channelViewModel.currentUser = viewModel.currentUser
                     channelViewModel.currentChannel = channel
-                    self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed()
+                    self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed
                     channelMessagingViewModel.getMessages { _ in
                         DispatchQueue.main.async {
                             self.goToChannelConversation = true
