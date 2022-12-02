@@ -27,8 +27,6 @@ class ChannelViewModel: ObservableObject {
     @Published var lastCreatedChannelId: String?
     @Published private(set) var isSavedImage = false
 
-    let dataBase = Firestore.firestore()
-
     let firestoreManager = FirestorePathManager.shared
 
     // MARK: - computedProperties
