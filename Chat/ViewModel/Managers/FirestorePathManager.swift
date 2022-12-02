@@ -76,4 +76,10 @@ class FirestorePathManager {
             .document(id ?? "some id")
     }
 
+    // MARK: - for channelMessagingViewModel
+
+    func getChannelMessagesCollectionReference(for channelId: String?) -> CollectionReference {
+        channelsCollection.document(channelId ?? "someId").collection(FirestoreNavigation.messages.rawValue)
+    }
+
 }

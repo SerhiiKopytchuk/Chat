@@ -434,6 +434,7 @@ class ChatUITests: XCTestCase {
 
         app.secureTextFields["Password"].tap()
         app.secureTextFields["Password"].typeText(secondUserPassword)
+        sleep(1)
 
         app.buttons["Sign in"].tap()
         sleep(1)
