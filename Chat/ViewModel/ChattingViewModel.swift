@@ -249,7 +249,7 @@ class ChattingViewModel: ObservableObject {
             "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
         ])
 
-        self.firestoreManager.getUserDocumentReference(for: currentChat.user1Id).updateData([
+        self.firestoreManager.getUserDocumentReference(for: currentChat.user2Id).updateData([
             "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
         ])
     }
