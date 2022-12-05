@@ -9,22 +9,6 @@ import Foundation
 import SwiftUI
 
 extension View {
-    func addGradientBackground() -> some View {
-        return self.background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(
-                    LinearGradient(colors: [
-                        Color("Gradient1"),
-                        Color("Gradient2"),
-                        Color("Gradient3")
-                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-                .ignoresSafeArea()
-        }
-    }
-}
-
-extension View {
 
     func toButtonLightStyle(size: CGFloat) -> some View {
         return self
@@ -82,8 +66,19 @@ extension View {
             })
     }
 
+    func addBlackOverlay(loadExpandedContent: Bool) -> some View {
+        self
+            .overlay(content: {
+                Rectangle()
+                    .fill(.black)
+                    .opacity(loadExpandedContent ? 1 : 0)
+                    .ignoresSafeArea()
+            })
+    }
+
     func addRightGestureRecognizer(swiped: @escaping () -> Void) -> some View {
         self
+            .contentShape(Rectangle())
             .gesture(DragGesture(minimumDistance: 30)
                 .onEnded({ value in
                     if value.translation.width > 30 {

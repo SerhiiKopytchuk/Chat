@@ -13,11 +13,8 @@ struct RemoveUsersFromChannelView: View {
 
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject private var userViewModel: UserViewModel
 
     @Environment(\.self) var env
-
-    @State private var subscribersId: [String] = []
 
     // MARK: - body
     var body: some View {
@@ -29,7 +26,6 @@ struct RemoveUsersFromChannelView: View {
             usersList
 
         }
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             env.dismiss()
         }
@@ -62,6 +58,6 @@ struct RemoveUsersFromChannelView_Previews: PreviewProvider {
     static var previews: some View {
         RemoveUsersFromChannelView()
             .environmentObject(ChannelViewModel())
-            .environmentObject(UserViewModel())
+            .environmentObject(EditChannelViewModel())
     }
 }

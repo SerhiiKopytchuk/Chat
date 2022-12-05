@@ -22,50 +22,62 @@ class EditChannelViewModel: ObservableObject {
     @Published var searchText = ""
 
     let dataBase = Firestore.firestore()
+    private let firebaseManager = FirestorePathManager.shared
 
     func updateChannelInfo(name: String, description: String) {
-        dataBase.collection("channels").document("\(currentChannel.id ?? "someId")")
-            .updateData(["name": name,
-                         "description": description])
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firebaseManager.getChannelDocumentReference(for: self?.currentChannel.id)
+                .updateData(["name": name,
+                             "description": description])
 
-        self.currentChannel.name = name
-        self.currentChannel.description = description
+            DispatchQueue.main.async {
+                self?.currentChannel.name = name
+                self?.currentChannel.description = description
+            }
+        }
     }
 
     func removeUserFromSubscribersList(id: String) {
-
-        for index in currentChannel.subscribersId?.indices.reversed() ?? [] {
-            if id == currentChannel.subscribersId?[index] {
-                currentChannel.subscribersId?.remove(at: index)
+        withAnimation {
+            for index in self.currentChannel.subscribersId?.indices.reversed() ?? [] {
+                if id == self.currentChannel.subscribersId?[index] {
+                    self.currentChannel.subscribersId?.remove(at: index)
+                }
             }
-        }
 
-        for index in channelSubscribers.indices.reversed() {
-            if id == channelSubscribers[index].id {
-                channelSubscribers.remove(at: index)
-                return
+            for index in self.channelSubscribers.indices.reversed() {
+                if id == self.channelSubscribers[index].id {
+                    self.channelSubscribers.remove(at: index)
+                    return
+                }
             }
         }
     }
 
     func getChannelSubscribers() {
-        dataBase.collection("users").getDocuments { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                print("Error fetching documets: \(String(describing: error))")
-                return
-            }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firebaseManager.usersCollection
+                .getDocuments { querySnapshot, error in
 
-            self.channelSubscribers = documents.compactMap { document -> User? in
-                do {
+                    guard let documents = querySnapshot?.documents else {
+                        print("Error fetching documets: \(String(describing: error))")
+                        return
+                    }
 
-                    let user = try document.data(as: User.self)
+                    DispatchQueue.main.async {
+                        self?.channelSubscribers = documents.compactMap { document -> User? in
+                            do {
 
-                    return self.filterRemoveUsers(user: user)
-                } catch {
-                    print("error deconding documet into User: \(error)")
-                    return nil
+                                let user = try document.data(as: User.self)
+
+                                return self?.filterRemoveUsers(user: user)
+                            } catch {
+                                print("error deconding documet into User: \(error)")
+                                return nil
+                            }
+                        }
+                    }
                 }
-            }
         }
     }
 
@@ -129,24 +141,20 @@ class EditChannelViewModel: ObservableObject {
     }
 
     func removeChannelFromSubscriptionsWithCertainUser(id: String) {
-        removeCertainFromChannelSubscribers(id: id)
-        dataBase.collection("users").document(id).updateData([
-            "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
-        ])
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.removeCertainFromChannelSubscribers(id: id)
+            self?.firebaseManager.getUserDocumentReference(for: id).updateData([
+                "channels": FieldValue.arrayRemove(["\(self?.currentChannel.id ?? "someId")"])
+            ])
+        }
+
     }
 
     fileprivate func removeCertainFromChannelSubscribers(id: String) {
-        dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
-            "subscribersId": FieldValue.arrayRemove(["\(id)"])
-        ])
-    }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firebaseManager.getChannelDocumentReference(for: self?.currentChannel.id).updateData([
+                "subscribersId": FieldValue.arrayRemove(["\(id)"])
+            ])
         }
     }
 }

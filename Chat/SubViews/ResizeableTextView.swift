@@ -91,9 +91,3 @@ struct ResizeableTextView: UIViewRepresentable {
     }
 
 }
-
-extension View {
-    static func endEditing() {
-        UIApplication.shared.endEditing()
-    }
-}

@@ -3,7 +3,7 @@ import Foundation
 
 struct Loader: View {
     // MARK: - vars
-    @State private var degrees: CGFloat = 0
+
     @State private var animate = false
 
     // MARK: - body

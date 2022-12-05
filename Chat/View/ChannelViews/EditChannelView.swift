@@ -22,7 +22,6 @@ struct EditChannelView: View {
     @State private var isShowingImagePicker = false
     @State private var imageUrl = URL(string: "")
     @State private var isFindUserImage = true
-    @State private var isChangedImage = false
     private let imageSize: CGFloat = 50
 
     @State private var isShowAlert = false
@@ -65,7 +64,6 @@ struct EditChannelView: View {
             Spacer()
         }
         .navigationBarHidden(true)
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             presentationMode.dismiss()
         }
@@ -107,7 +105,8 @@ struct EditChannelView: View {
                 if channelName.isValidateLengthOfName() {
                     editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
 
-                    channelViewModel.currentChannel = editChannelViewModel.currentChannel
+                    channelViewModel.currentChannel.name = channelName
+                    channelViewModel.currentChannel.description = channelDescription
                     channelViewModel.getChannels(fromUpdate: true)
                     presentationMode.dismiss()
                 } else {
@@ -156,6 +155,7 @@ struct EditChannelView: View {
                         .addLightShadow()
                 } else {
                     EmptyImageWithCharacterView(text: channelName, colour: channelColor, size: imageSize)
+                        .accessibilityValue("emptyImage")
                 }
             }
         }
@@ -193,5 +193,14 @@ struct EditChannelView: View {
                 self.imageUrl = url
             }
         }
+    }
+}
+
+struct EditChannelView_Previews: PreviewProvider {
+    static var previews: some View {
+        EditChannelView(channelName: "Channel", channelDescription: "Description", channelColor: "Red")
+            .environmentObject(ChannelViewModel())
+            .environmentObject(EditChannelViewModel())
+            .environmentObject(ImageViewModel())
     }
 }

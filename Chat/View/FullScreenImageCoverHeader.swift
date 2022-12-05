@@ -12,6 +12,8 @@ struct FullScreenImageCoverHeader: View {
 
     // MARK: - variables
 
+    var name: String
+
     let animationHeaderImageNamespace: Namespace.ID
 
     @State var namespaceId: String
@@ -37,6 +39,7 @@ struct FullScreenImageCoverHeader: View {
                     .frame(width: size.width, height: size.height)
                     .cornerRadius(loadExpandedContent ? 0 : size.height)
                     .offset(y: loadExpandedContent ? imageOffset.height : .zero)
+                    .addPinchZoom()
                     .gesture(
                         DragGesture()
                             .onChanged({ value in
@@ -62,7 +65,7 @@ struct FullScreenImageCoverHeader: View {
                 turnOffImageButton
 
                 if isExpandedHeaderImage {
-                    Text(channelViewModel.currentChannel.name)
+                    Text(name)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                 }

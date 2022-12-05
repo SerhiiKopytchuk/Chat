@@ -21,8 +21,6 @@ struct ChannelTitleRow: View {
     @Binding var isExpandedDetails: Bool
     @Binding var channelImageURL: URL?
 
-    @EnvironmentObject private var channelViewModel: ChannelViewModel
-
     @State var isOwner: Bool
 
     // MARK: image properties
@@ -127,5 +125,21 @@ struct ChannelTitleRow: View {
                 self.channelImageURL = url
             }
         }
+    }
+}
+
+struct ChannelTitleRow_Previews: PreviewProvider {
+    @Namespace static var namespace
+    static var previews: some View {
+        ChannelTitleRow(channel: Channel(name: "Channel",
+                                         description: "Description",
+                                         ownerId: "ownerId",
+                                         ownerName: "OwnerName",
+                                         isPrivate: false),
+                        animationNamespace: namespace,
+                        isExpandedProfileImage: .constant(false),
+                        isExpandedDetails: .constant(false),
+                        channelImageURL: .constant(URL(string: "")),
+                        isOwner: true)
     }
 }

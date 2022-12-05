@@ -49,6 +49,7 @@ struct ConversationTitleRow: View {
             // MARK: userName
             VStack(alignment: .leading, spacing: 5) {
                 Text(user.name)
+                    .lineLimit(1)
                     .font(.title2).bold()
 
                 HStack(spacing: 0) {
@@ -112,6 +113,7 @@ struct ConversationTitleRow: View {
                             .cornerRadius(imageSize/2)
                             .addLightShadow()
                             .matchedGeometryEffect(id: "profilePhoto", in: animationNamespace)
+                            .accessibilityValue("profile image")
                 }
             }
             .onTapGesture {
@@ -146,6 +148,26 @@ struct ConversationTitleRow: View {
             withAnimation(.easeInOut) {
                     self.profileImageURL = url
             }
+        }
+    }
+}
+
+struct ConversationTitleRow_Previews: PreviewProvider {
+    @Namespace static var namespace // <- This
+
+    static var previews: some View {
+        VStack {
+            ConversationTitleRow(user: User(gmail: "gmail@gmail.com",
+                                            id: UUID().uuidString,
+                                            name: "secondUserName"),
+                                 animationNamespace: namespace,
+                                 isFindChat: .constant(true),
+                                 isExpandedProfile: .constant(false),
+                                 profileImageURL: .constant(URL(string: "")))
+            .environmentObject(ChattingViewModel())
+            .environmentObject(PresenceViewModel())
+
+            Spacer()
         }
     }
 }

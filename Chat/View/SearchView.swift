@@ -19,7 +19,6 @@ struct SearchView: View {
 
     @Environment(\.self) var env
 
-    @State private var showSearchBar = false
     @State private var searchUserText = ""
     @State private var searchChannelText = ""
 
@@ -55,7 +54,6 @@ struct SearchView: View {
             .padding()
 
         }
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             env.dismiss()
         }
@@ -143,7 +141,6 @@ struct SearchView: View {
                                 .matchedGeometryEffect(id: "TYPE", in: animation)
                         }
                     }
-                    .contentShape(Rectangle())
                     .onTapGesture {
                         withAnimation {
                             self.isSearchingChat = text
@@ -168,23 +165,24 @@ struct SearchView: View {
                                   rowTapped: {
 
                     viewModel.secondUser = user
-                    messagingViewModel.secondUser = user
                     messagingViewModel.currentUser = viewModel.currentUser
                     chattingViewModel.secondUser = user
                     chattingViewModel.currentUser = viewModel.currentUser
 
-                    chattingViewModel.getCurrentChat(secondUser: user) { chat in
-                        self.messagingViewModel.currentChat = chat
-                        self.messagingViewModel.getMessages { _ in
-                            isFindChat = true
-                            DispatchQueue.main.async {
+                    chattingViewModel.getCurrentChat(with: user) { result in
+                        switch result {
+                        case .success(let chat):
+                            self.messagingViewModel.currentChat = chat
+                            self.messagingViewModel.getMessages { _ in
+                                isFindChat = true
                                 goToConversation = true
                             }
+                        case .failure:
+                            isFindChat = false
+                            goToConversation = true
                         }
-                    } failure: { _ in
-                        isFindChat = false
-                        goToConversation = true
                     }
+
                 })
             }
         }
@@ -200,7 +198,7 @@ struct SearchView: View {
                     channelMessagingViewModel.currentChannel = channel
                     channelViewModel.currentUser = viewModel.currentUser
                     channelViewModel.currentChannel = channel
-                    self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed()
+                    self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed
                     channelMessagingViewModel.getMessages { _ in
                         DispatchQueue.main.async {
                             self.goToChannelConversation = true
@@ -225,4 +223,15 @@ struct SearchView: View {
         channelViewModel.getSearchChannels()
     }
 
+}
+
+struct SearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        SearchView()
+            .environmentObject(UserViewModel())
+            .environmentObject(MessagingViewModel())
+            .environmentObject(ChattingViewModel())
+            .environmentObject(ChannelViewModel())
+            .environmentObject(ChannelMessagingViewModel())
+    }
 }

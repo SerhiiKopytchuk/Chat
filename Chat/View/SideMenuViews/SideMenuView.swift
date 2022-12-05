@@ -13,10 +13,6 @@ struct SideMenuView: View {
 
     // MARK: - vars
     @EnvironmentObject private var viewModel: UserViewModel
-    @EnvironmentObject private var messagingViewModel: MessagingViewModel
-    @EnvironmentObject private var chattingViewModel: ChattingViewModel
-    @EnvironmentObject private var channelViewModel: ChannelViewModel
-    @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
 
     @Binding var isShowingSideMenu: Bool

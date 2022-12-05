@@ -13,60 +13,69 @@ class MessagingViewModel: ObservableObject {
 
     @Published var currentChat: Chat = Chat()
     @Published var currentUser: User = User()
-    @Published var secondUser = User()
 
-    @Published var messages: [Message] = []
     @Published private(set) var lastMessageId: String = ""
     @Published private(set) var firstMessageId: String = ""
 
-    var dataBase = Firestore.firestore()
+    @Published var unsentMessages: [Message] = []
+
+    var firestoreManager = FirestorePathManager.shared
 
     func addEmoji(message: Message, emoji: String) {
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
-            .collection("messages").document(message.id ?? "someIdd")
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
+                                                                   messageId: message.id)
             .updateData(["emojiValue": emoji])
+        }
     }
 
     func removeEmoji(message: Message) {
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
-            .collection("messages").document(message.id ?? "someIdd")
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
+                                                                   messageId: message.id)
             .updateData(["emojiValue": ""])
+        }
     }
 
     func addSnapshotListenerToMessage(messageId: String, competition: @escaping (Message) -> Void) {
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId")
-            .collection("messages").document(messageId)
-            .addSnapshotListener { document, error in
-                if error != nil { return }
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id, messageId: messageId)
+                .addSnapshotListener { document, error in
+                    if error != nil { return }
 
-                guard let message = try? document?.data(as: Message.self) else {
-                    return
-                }
+                    guard let message = try? document?.data(as: Message.self) else {
+                        return
+                    }
                     competition(message)
-            }
+                }
+        }
     }
 
     func getMessages(competition: @escaping ([Message]) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
 
-        var messages: [Message] = []
+            var messages: [Message] = []
 
-        dataBase.collection("chats").document(self.currentChat.id ?? "someId").collection("messages")
-            .addSnapshotListener { querySnapshot, error in
+            self?.firestoreManager.getChatMessagesCollectionReference(for: self?.currentChat.id)
+                .addSnapshotListener { querySnapshot, error in
+                    DispatchQueue.main.async {
 
-                guard let documents = querySnapshot?.documents else {
-                    print("Error fetching documents: \(error?.localizedDescription ?? "")")
-                    return
+                        guard let documents = querySnapshot?.documents else {
+                            print("Error fetching documents: \(error?.localizedDescription ?? "")")
+                            return
+                        }
+
+                        self?.currentChat.messages = self?.documentsToMessages(messages: &messages,
+                                                                               documents: documents)
+                        self?.sortMessages(messages: &messages)
+
+                        self?.getFirstMessage(messages: &messages)
+                        self?.getLastMessage(messages: &messages)
+
+                        competition(messages)
+                    }
                 }
-
-                self.currentChat.messages = self.documentsToMessages(messages: &messages, documents: documents)
-
-                self.sortMessages(messages: &messages)
-
-                self.getFirstMessage(messages: &messages)
-                self.getLastMessage(messages: &messages)
-
-                competition(messages)
-            }
+        }
     }
 
     private func documentsToMessages(messages: inout [Message], documents: [QueryDocumentSnapshot]) -> [Message] {
@@ -75,7 +84,7 @@ class MessagingViewModel: ObservableObject {
                 messages.append(try document.data(as: Message.self))
                 return  messages.last
             } catch {
-                print("error deconding documet into Message: \(error)")
+                print("error decoding document into Message: \(error)")
                 return nil
             }
         }
@@ -99,35 +108,45 @@ class MessagingViewModel: ObservableObject {
     }
 
     func sendImage(imageId: String) {
+        DispatchQueue.global(qos: .userInteractive).sync { [weak self] in
 
-        let imageMessage = Message(imageId: imageId, senderId: self.currentUser.id)
+            let imageMessage = Message(imageId: imageId, senderId: self?.currentUser.id ?? "id")
 
-        do {
-            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-                .document().setData(from: imageMessage)
-            changeLastActivityTime()
-        } catch {
-            print("failed to send message" + error.localizedDescription)
+            do {
+                try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChat.id)
+                    .document().setData(from: imageMessage)
+                changeLastActivityTime()
+            } catch {
+                print("failed to send message" + error.localizedDescription)
+            }
         }
-
     }
 
     func sendMessage(text: String) {
+        DispatchQueue.main.async {
+            let trimmedText = text.trimToMessage()
+            if !(self.messageIsValidated(text: trimmedText) ) { return }
+            let newMessage = Message(text: trimmedText, senderId: self.currentUser.id )
 
-        let trimmedText = text.trimToMessage()
+            do {
+                guard let currentChatId = self.currentChat.id else { return }
 
-        if !messageIsValidated(text: trimmedText) { return }
+                self.unsentMessages.append(newMessage)
 
-        let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
+                try self.firestoreManager.getChatMessagesCollectionReference(for: currentChatId)
+                    .document().setData(from: newMessage, completion: { error in
 
-        do {
-            try self.dataBase.collection("chats").document(currentChat.id ?? "SomeChatId").collection("messages")
-                .document().setData(from: newMessage)
-            changeLastActivityTime()
-        } catch {
-            print("failed to send message" + error.localizedDescription)
+                        if error.review(message: "failed to send message") { return }
+
+                        self.removeFromUnsentList(message: newMessage)
+
+                    })
+
+                self.changeLastActivityTime()
+            } catch {
+                print("failed to send message" + error.localizedDescription)
+            }
         }
-
     }
 
     private func messageIsValidated(text: String) -> Bool {
@@ -139,7 +158,23 @@ class MessagingViewModel: ObservableObject {
     }
 
     private func changeLastActivityTime() {
-        dataBase.collection("chats").document(currentChat.id ?? "someID").updateData(["lastActivityTimestamp": Date()])
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
+                .updateData(["lastActivityTimestamp": Date()])
+        }
     }
 
+    private func removeFromUnsentList(message: Message) {
+        DispatchQueue.main.async { [weak self] in
+            let index = self?.unsentMessages.firstIndex {
+                $0.id == message.id
+            }
+
+            if let index {
+                withAnimation {
+                    _ = self?.unsentMessages.remove(at: index)
+                }
+            }
+        }
+    }
 }

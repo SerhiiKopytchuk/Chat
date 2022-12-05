@@ -24,6 +24,7 @@ struct ChatApp: App {
             let editChannelViewModel = EditChannelViewModel()
             let imageViewModel = ImageViewModel()
             let presenceViewModel = PresenceViewModel()
+//            let networkMonitor = NetworkMonitor()
 
             RootView()
                 .onAppear {

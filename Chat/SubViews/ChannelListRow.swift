@@ -13,8 +13,6 @@ import SDWebImageSwiftUI
 
 struct ChannelListRow: View {
     // MARK: - vars
-    @EnvironmentObject private var userViewModel: UserViewModel
-    @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     @State var channel: Channel
 
@@ -26,6 +24,8 @@ struct ChannelListRow: View {
     @State private var isShowImage = false
     private let imageSize: CGFloat = 50
 
+    @EnvironmentObject private var userViewModel: UserViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject var channelMessagingViewModel: ChannelMessagingViewModel
 
     let rowTapped: () -> Void
@@ -153,6 +153,14 @@ struct ChannelListRow: View {
 
 struct ChannelListRow_Previews: PreviewProvider {
     static var previews: some View {
-        ChannelListRow(channel: Channel()) { }
+        ChannelListRow(channel: Channel(name: "Channel",
+                                        description: "Description",
+                                        ownerId: "OwnerId",
+                                        ownerName: "OwnerName",
+                                        isPrivate: false),
+                       rowTapped: {})
+            .environmentObject(UserViewModel())
+            .environmentObject(ChannelViewModel())
+            .environmentObject(ChannelMessagingViewModel())
     }
 }

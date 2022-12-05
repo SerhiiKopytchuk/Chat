@@ -18,11 +18,8 @@ struct SignInView: View {
 
     @State private var isButtonDisabled: Bool = true
     @State private var isShowingPassword: Bool = false
-    @State private var canLoginUser = false
     @State private var isShowAlert = false
     @State private var alertText = ""
-
-    @ObservedObject private var imageViewModel = EditProfileViewModel()
 
     @Binding var isPresented: Bool
 
@@ -295,7 +292,8 @@ struct SignInView: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView(isPresented: .constant(true)).environmentObject(UserViewModel())
+        SignInView(isPresented: .constant(true))
+            .environmentObject(UserViewModel())
     }
 
 }

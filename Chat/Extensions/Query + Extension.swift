@@ -7,6 +7,12 @@
 
 import Foundation
 import Firebase
+import FirebaseFirestore
+
+enum QueryError: Error {
+    case noDocuments
+    case other
+}
 
 extension Query {
 
@@ -25,45 +31,45 @@ extension Query {
         }
     }
 
-    func queryToChat(competition: @escaping (Chat) -> Void, failure: @escaping (String) -> Void) {
-        self.getDocuments { querySnapshot, error in
+    func queryToChat(competition: @escaping (Chat?, Error?) -> Void ) {
+            self.getDocuments { querySnapshot, error in
 
-            if error != nil { return }
+                if error != nil { return }
 
-            if querySnapshot?.documents.count == 0 {
-                failure("No chats")
-                return
-            }
+                if querySnapshot?.documents.count == 0 {
+                    competition(nil, QueryError.noDocuments)
+                }
 
-            for document in querySnapshot!.documents {
-                do {
-                    competition(try document.data(as: Chat.self))
-                } catch {
-                    failure("error to get Chat data")
-                    print(error.localizedDescription)
+                for document in querySnapshot!.documents {
+                    do {
+                        competition(try document.data(as: Chat.self), nil)
+                    } catch let error {
+                        competition(nil, error)
+                        print(error.localizedDescription)
+                    }
                 }
             }
-        }
     }
 
-    func queryToChannel(competition: @escaping (Channel) -> Void, failure: @escaping (String) -> Void) {
+    func queryToChannel(competition: @escaping (Channel?, Error?) -> Void) {
         self.getDocuments { querySnapshot, error in
 
             if error != nil {
-                failure(error?.localizedDescription ?? "error")
+                competition(nil, error)
                 return
             }
 
             if querySnapshot?.documents.count == 0 {
-                failure("No channels")
+                competition(nil, QueryError.noDocuments)
                 return
             }
 
             for document in querySnapshot!.documents {
                 do {
-                    competition(try document.data(as: Channel.self))
+                    competition(try document.data(as: Channel.self), nil)
                     return
-                } catch {
+                } catch let error {
+                    competition(nil, error)
                     print(error.localizedDescription)
                 }
             }

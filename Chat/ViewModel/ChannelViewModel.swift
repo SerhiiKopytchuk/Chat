@@ -23,45 +23,15 @@ class ChannelViewModel: ObservableObject {
     @Published var currentChannel: Channel = Channel()
     @Published var channelType: ChannelType = .publicType
 
-    @Published var channelSubscribers: [User] = []
-
     @Published var createdChannelImage: UIImage?
     @Published var lastCreatedChannelId: String?
     @Published private(set) var isSavedImage = false
 
-    let dataBase = Firestore.firestore()
+    let firestoreManager = FirestorePathManager.shared
 
-    // MARK: - functions
+    // MARK: - computedProperties
 
-    func saveImageLocally(image: UIImage, imageName: String) {
-        createdChannelImage = image
-        lastCreatedChannelId = imageName
-        isSavedImage = true
-    }
-
-    func getChannelOwner() {
-        dataBase.collection("users").document("\(currentChannel.ownerId)").getDocument { document, error in
-            if self.isError(error: error) { return }
-
-            if let channelOwner = try? document?.data(as: User.self) {
-                self.owner = channelOwner
-            }
-        }
-    }
-
-    func subscribeToChannel() {
-        DispatchQueue.main.async {
-
-            self.dataBase.collection("users").document(self.currentUser.id)
-                .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
-
-            self.dataBase.collection("channels").document(self.currentChannel.id ?? "SomeChannelId")
-                .updateData(["subscribersId": FieldValue.arrayUnion([self.currentUser.id ])])
-
-        }
-    }
-
-    func doesUsesSubscribed () -> Bool {
+    var doesUsesSubscribed: Bool {
         for id in currentChannel.subscribersId ?? [] where id == currentUser.id {
             return true
         }
@@ -71,148 +41,160 @@ class ChannelViewModel: ObservableObject {
         return false
     }
 
+    // MARK: - functions
+
+    func saveImageLocally(image: UIImage, imageName: String) {
+        DispatchQueue.main.async {
+            self.createdChannelImage = image
+            self.lastCreatedChannelId = imageName
+            self.isSavedImage = true
+        }
+    }
+
+    func subscribeToChannel() {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+
+            self?.firestoreManager.getUserDocumentReference(for: self?.currentUser.id)
+                .updateData(["channels": FieldValue.arrayUnion([self?.currentChannel.id ?? "someChannelId"])])
+
+            self?.firestoreManager.getChannelDocumentReference(for: self?.currentChannel.id)
+                .updateData(["subscribersId": FieldValue.arrayUnion([self?.currentUser.id ?? "someUserId"])])
+
+        }
+    }
+
     func getSearchChannels() {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.channelsCollection.whereField("isPrivate", isEqualTo: false)
+                .getDocuments(completion: { querySnapshot, error in
 
-        dataBase.collection("channels").whereField("isPrivate", isEqualTo: false)
-            .addSnapshotListener { querySnapshot, error in
-
-                guard let documents = querySnapshot?.documents else {
-                    print("Error fetching documents: \(String(describing: error))")
-                    return
-                }
-
-                self.searchChannels = documents.compactMap {document -> Channel? in
-                    do {
-                        let channel = self.filterChannel(channel: try document.data(as: Channel.self))
-                        return channel
-                    } catch {
-                        print("error decoding document into Channel: \(error)")
-                        return nil
+                    guard let documents = querySnapshot?.documents else {
+                        print("Error fetching documents: \(String(describing: error))")
+                        return
                     }
-                }
-            }
+
+                    DispatchQueue.main.async {
+                        self?.searchChannels = documents.compactMap {document -> Channel? in
+                            do {
+                                let channel = self?.filterChannel(channel: try document.data(as: Channel.self))
+                                return channel
+                            } catch {
+                                print("error decoding document into Channel: \(error)")
+                                return nil
+                            }
+                        }
+                    }
+                })
+        }
     }
 
     private func filterChannel(channel: Channel) -> Channel? {
-        if channel.name.contains(self.searchText) {
+        if channel.name.lowercased()
+            .contains(self.searchText.lowercased()) {
             return channel
         }
         return nil
     }
 
     func getCurrentChannel( channelId: String, competition: @escaping (Channel) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.getChannelDocumentReference(for: channelId)
+                .getDocument { document, error in
 
-        dataBase.collection("channels").document(channelId).getDocument { document, error in
+                    if error.review(message: "failed to getCurrentChannel") { return }
 
-            if self.isError(error: error) { return }
-
-            if let channel = try? document?.data(as: Channel.self) {
-                competition(channel)
-            }
-
+                    if let channel = try? document?.data(as: Channel.self) {
+                        DispatchQueue.main.async {
+                            competition(channel)
+                        }
+                    }
+                }
         }
     }
 
-    func getCurrentChannel( name: String, ownerId: String,
-                            competition: @escaping (Channel) -> Void,
-                            failure: @escaping (String) -> Void) {
+    func getChannel( name: String, ownerId: String, competition: @escaping (Channel?, String?) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.channelsCollection
+                .whereField("ownerId", isEqualTo: ownerId)
+                .whereField("name", isEqualTo: name)
+                .queryToChannel(competition: { channel, error in
 
-        dataBase.collection("channels")
-            .whereField("ownerId", isEqualTo: ownerId)
-            .whereField("name", isEqualTo: name)
-            .queryToChannel { channel in
-                self.currentChannel = channel
-                competition(channel)
-                return
+                    guard let channel, error == nil else {
+                        competition(nil, error?.localizedDescription)
+                        return
+                    }
 
-            } failure: { text in
-                failure(text)
-                return
-            }
-
+                    DispatchQueue.main.async {
+                        self?.currentChannel = channel
+                        competition(channel, nil)
+                    }
+                })
+        }
     }
 
     func createChannel(name: String,
                        description: String,
                        competition: @escaping (Channel) -> Void) {
-        do {
 
-            try creatingChannel(name: name,
-                                description: description,
-                                competition: { channel in
-                competition(channel)
-            })
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            let newChannel = Channel(name: name,
+                                     description: description,
+                                     ownerId: self?.currentUser.id ?? "some id",
+                                     ownerName: self?.currentUser.name ?? "some id",
+                                     isPrivate: self?.channelType == ChannelType.privateType)
 
-        } catch {
-            print("error creating chat to Firestore:: \(error)")
+            try? self?.firestoreManager.channelsCollection.document().setData(from: newChannel)
+
+            self?.getChannel(name: name, ownerId: self?.currentUser.id ?? "some id") { channel, errorDescription in
+
+                guard let channel, errorDescription == nil else {
+                    print(errorDescription ?? "")
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    self?.currentChannel = channel
+                    self?.addChannelIdToOwner()
+                    competition(channel)
+                }
+            }
         }
-    }
-
-    fileprivate func creatingChannel(name: String,
-                                     description: String,
-                                     competition: @escaping (Channel) -> Void) throws {
-
-        let newChannel = Channel(name: name,
-                                 description: description,
-                                 ownerId: currentUser.id,
-                                 ownerName: currentUser.name,
-                                 isPrivate: channelType == ChannelType.privateType)
-
-        try dataBase.collection("channels").document().setData(from: newChannel)
-
-        getCurrentChannel(name: name, ownerId: currentUser.id) { channel in
-            self.currentChannel = channel
-            self.addChannelIdToOwner()
-            competition(channel)
-        } failure: { _ in
-            print("failure")
-        }
-
     }
 
     fileprivate func addChannelIdToOwner() {
-        DispatchQueue.main.async {
-
-            self.dataBase.collection("users").document(self.owner.id)
-                .updateData(["channels": FieldValue.arrayUnion([self.currentChannel.id ?? "someChatId"])])
-
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.getUserDocumentReference(for: self?.owner.id)
+                .updateData(["channels": FieldValue.arrayUnion([self?.currentChannel.id ?? "someChannelId"])])
         }
     }
 
     func changeLastActivityAndSortChannels() {
-        for index in self.channels.indices {
-            if channels[index].id == self.currentChannel.id {
-                channels[index].lastActivityTimestamp = Date()
-                break
+        DispatchQueue.main.async {
+            for index in self.channels.indices {
+                if self.channels[index].id == self.currentChannel.id {
+                    self.channels[index].lastActivityTimestamp = Date()
+                    break
+                }
             }
+            self.sortChannels()
         }
-        sortChannels()
     }
 
     func getChannels(fromUpdate: Bool = false, channelsId: [String] = []) {
-
-        withAnimation(.easeInOut.delay(0.5)) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
 
             if channelsId.isEmpty {
 
-                self.channels = []
-
-                for channelId in currentUser.channels {
-                    dataBase.collection("channels").document(channelId)
-                        .toChannel { channel in
-                            self.channels.append(channel)
-                            self.sortChannels()
-
-                        }
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut.delay(0.5)) {
+                        self?.channels = []
+                    }
                 }
+
+                self?.getCurrentUserChannels()
 
             } else {
-                if channelsId.count > channels.count {
-                    addChannels(channelsId: channelsId)
-                } else {
-                    removeChannels(channelsId: channelsId)
-                }
-                return
+                self?.addOrRemoveChannels(channelsId: channelsId)
             }
 
         }
@@ -224,14 +206,45 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
+    private func getCurrentUserChannels() {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            for channelId in self?.currentUser.channels ?? [] {
+                self?.firestoreManager.getChannelDocumentReference(for: channelId)
+                    .toChannel { channel in
+                        DispatchQueue.main.async {
+                            withAnimation(.easeInOut.delay(0.5)) {
+                                self?.channels.append(channel)
+                                self?.sortChannels()
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    private func addOrRemoveChannels(channelsId: [String]) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            if channelsId.count > self?.channels.count ?? 0 {
+                self?.addChannels(channelsId: channelsId)
+            } else {
+                self?.removeChannels(channelsId: channelsId)
+            }
+        }
+    }
+
     private func addChannels(channelsId: [String]) {
         for channelId in channelsId {
-            if !currentUser.channels.contains(channelId) {
-                dataBase.collection("channels").document(channelId)
-                    .toChannel { channel in
-                        self.channels.append(channel)
-                        self.currentUser.channels.append(channel.id ?? "some channel id")
-                        self.sortChannels()
+            if !self.currentUser.channels.contains(channelId) {
+                self.firestoreManager.getChannelDocumentReference(for: channelId)
+                    .toChannel { [weak self] channel in
+                        DispatchQueue.main.async {
+                            withAnimation(.easeInOut.delay(0.5)) {
+                                self?.channels.append(channel)
+                                self?.currentUser.channels.append(channel.id ?? "some channel id")
+                                self?.sortChannels()
+                            }
+                        }
+
                     }
             }
         }
@@ -240,114 +253,123 @@ class ChannelViewModel: ObservableObject {
     private func removeChannels(channelsId: [String]) {
         for channel in channels {
             if !channelsId.contains(channel.id ?? "some id") {
-                self.channels = channels.filter({ $0.id != channel.id})
-                self.currentUser.channels = currentUser.channels.filter({ $0 != channel.id})
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut.delay(0.5)) {
+                        self.channels = self.channels.filter({ $0.id != channel.id})
+                        self.currentUser.channels = self.currentUser.channels.filter({ $0 != channel.id})
+                    }
+                }
             }
         }
     }
 
     func sortChannels() {
-        self.channels.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+        DispatchQueue.main.async {
+            withAnimation(.easeInOut.delay(0.5)) {
+                self.channels.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+            }
+        }
     }
 
     private func updateChannels() {
-        DispatchQueue.main.async {
-            self.dataBase.collection("users").document(self.currentUser.id)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.getUserDocumentReference(for: self?.currentUser.id)
                 .addSnapshotListener { document, error in
 
-                    if self.isError(error: error) { return }
+                    if error.review(message: "failed to updateChannels") { return }
 
                     guard let userLocal = try? document?.data(as: User.self) else {
                         return
                     }
 
-                    if userLocal.channels.count != self.channels.count {
-                            self.getChannels(fromUpdate: true,
-                                             channelsId: userLocal.channels)
-                        }
+                    if userLocal.channels.count != self?.channels.count {
+                        self?.getChannels(fromUpdate: true,
+                                          channelsId: userLocal.channels)
+                    }
 
                 }
         }
     }
 
     func deleteChannel() {
-        deleteChannelFiles {
-            self.removeChannelFromSubscribersAndOwner()
-            self.dataBase.collection("channels").document("\(self.currentChannel.id ?? "someId")").delete { err in
-                if self.isError(error: err) { return }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.deleteChannelFiles {
+                self?.removeChannelFromSubscribersAndOwner()
+                self?.firestoreManager.getChannelDocumentReference(for: self?.currentChannel.id)
+                    .delete { err in
+                        if err.review(message: "failed to delete channel") { return }
+                    }
             }
         }
     }
 
     func deleteChannelFiles(competition: @escaping () -> Void) {
-        deleteChannelImageFile()
-        deleteChannelMessagesFiles {
-            competition()
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.deleteChannelImageFile()
+            self?.deleteChannelMessagesFiles {
+                competition()
+            }
         }
     }
 
     fileprivate func deleteChannelImageFile() {
         let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: currentChannel.id ?? "someId")
-
         ref.delete { error in
-            if self.isError(error: error) { return }
+            if error.review(message: "failed to deleteChannelImageFile") { return }
         }
     }
 
     fileprivate func deleteChannelMessagesFiles(competition: @escaping () -> Void) {
-
-        self.getCurrentChannel(channelId: currentChannel.id ?? "someId") { channel in
-            competition()
-            for element in channel.storageFilesId {
-                let ref = StorageReferencesManager.shared
-                    .getChannelMessageImageReference(channelId: self.currentChannel.id ?? "someId",
-                                                     imageId: element)
-                ref.delete { error in
-                    if self.isError(error: error) { return }
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.getCurrentChannel(channelId: self?.currentChannel.id ?? "someId") { channel in
+                for element in channel.storageFilesId {
+                    let ref = StorageReferencesManager.shared
+                        .getChannelMessageImageReference(channelId: self?.currentChannel.id ?? "someId",
+                                                         imageId: element)
+                    ref.delete { error in
+                        if error.review(message: "failed to deleteChannelMessagesFiles") { return }
+                    }
                 }
+                competition()
             }
         }
     }
 
     fileprivate func removeChannelFromSubscribersAndOwner() {
-        if let subscribersId  = currentChannel.subscribersId {
-            if !subscribersId.isEmpty {
-                for id in subscribersId {
-                    removeChannelFromUserSubscriptions(id: id)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            if let subscribersId  = self?.currentChannel.subscribersId {
+                if !subscribersId.isEmpty {
+                    for id in subscribersId {
+                        self?.removeChannelFromUserSubscriptions(id: id)
+                    }
                 }
             }
+            self?.removeChannelFromUserSubscriptions(id: self?.currentChannel.ownerId ?? "some id")
         }
-
-        removeChannelFromUserSubscriptions(id: currentChannel.ownerId)
     }
 
     func removeChannelFromUserSubscriptions(id: String = "someId") {
         removeCurrentUserFromChannelSubscribers()
-        dataBase.collection("users").document(id).updateData([
-            "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
-        ])
+        self.firestoreManager.getUserDocumentReference(for: id)
+            .updateData([
+                "channels": FieldValue.arrayRemove(["\(currentChannel.id ?? "someId")"])
+            ])
     }
 
     fileprivate func removeCurrentUserFromChannelSubscribers() {
-        dataBase.collection("channels").document(currentChannel.id ?? "some ID").updateData([
-            "subscribersId": FieldValue.arrayRemove(["\(currentUser.id )"])
-        ])
-    }
-
-    fileprivate func isError(error: Error?) -> Bool {
-        if error != nil {
-            print(error?.localizedDescription ?? "error")
-            return true
-        } else {
-            return false
-        }
+        self.firestoreManager.getChannelDocumentReference(for: currentChannel.id)
+            .updateData([
+                "subscribersId": FieldValue.arrayRemove(["\(currentUser.id )"])
+            ])
     }
 
     func clearPreviousDataBeforeSignIn() {
-        currentUser = User()
-        searchText = ""
-        channels = []
-        searchChannels = []
+        DispatchQueue.main.async {
+            self.currentUser = User()
+            self.searchText = ""
+            self.channels = []
+            self.searchChannels = []
+        }
     }
 
 }

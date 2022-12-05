@@ -23,9 +23,6 @@ class ChatUITests: XCTestCase {
 //        // Put teardown code here. This method is called after the invocation of each test method in the class.
 //    }
 
-    // start on Ben account, Anna account is exist
-    // there is no channels. Without chat Ben with Anna
-
     let channelName = "Channel(Test)"
     let channelDescription = "ChannelDescription(Test)"
     let channelNameEdited = "ChannelEdited(Test)"
@@ -71,7 +68,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Re-enter"].typeText(secondUserPassword)
 
         app.buttons["Create Account"].tap()
-        sleep(1)
+        sleep(2)
 
         if app.buttons["Close"].exists {
 
@@ -121,7 +118,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Re-enter"].typeText(firstUserPassword)
 
         app.buttons["Create Account"].tap()
-        sleep(1)
+        sleep(2)
 
         if app.buttons["Close"].exists {
 
@@ -399,9 +396,9 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.buttons["Photo"].tap()
-        app.images["Фотография, 30 марта 2018 г., 10:14 PM"].tap()
+        app.images["Фото, 30 березня 2018 р., 10:14 пп"].tap()
 
-        let sendImage = app.scrollViews.firstMatch.otherElements["image"]
+        let sendImage = app.scrollViews.firstMatch.images["image"]
         let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
 
         wait(for: [imageExpectation], timeout: 5)
@@ -437,6 +434,7 @@ class ChatUITests: XCTestCase {
 
         app.secureTextFields["Password"].tap()
         app.secureTextFields["Password"].typeText(secondUserPassword)
+        sleep(1)
 
         app.buttons["Sign in"].tap()
         sleep(1)
@@ -485,7 +483,33 @@ class ChatUITests: XCTestCase {
         wait(for: [emojiReactionExpectation], timeout: 5)
     }
 
-    func test017SignInToFirstUserAccount() throws {
+    func test017SetProfileImage() throws {
+        let app = XCUIApplication()
+        let firstLetterOfName = String(secondUserName.prefix(1))
+        app.launch()
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        app.buttons["Profile"].tap()
+
+        app.buttons[firstLetterOfName].tap()
+
+        app.images["Фото, 30 березня 2018 р., 10:14 пп"].tap()
+
+        app.buttons["arrow.backward.circle.fill"].tap()
+        sleep(3)
+
+        app.buttons["List"].tap()
+        sleep(1)
+
+        let notEmptyImage = app.images["notEmptyImage"]
+
+        let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: notEmptyImage)
+        wait(for: [imageExpectation], timeout: 5)
+    }
+
+    func test018SignInToFirstUserAccount() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -502,7 +526,7 @@ class ChatUITests: XCTestCase {
         app.secureTextFields["Password"].typeText(firstUserPassword)
 
         app.buttons["Sign in"].tap()
-        sleep(2)
+        sleep(3)
 
         app.scrollViews.staticTexts[secondUserName].tap()
         sleep(1)
@@ -522,7 +546,24 @@ class ChatUITests: XCTestCase {
         sleep(1)
     }
 
-    func test018DeleteChatWithSecondUser() throws {
+    func test19CheckFullScreenHeaderView() throws {
+        let app = XCUIApplication()
+        app.launch()
+        sleep(1)
+
+        app.scrollViews.staticTexts[secondUserName].tap()
+        sleep(1)
+
+        app.images["profile image"].firstMatch.tap()
+
+        let text = app.staticTexts[secondUserName]
+
+        let secondUserTextExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: text)
+
+        wait(for: [secondUserTextExpectation], timeout: 5)
+    }
+
+    func test020DeleteChatWithSecondUser() throws {
         let app = XCUIApplication()
         app.launch()
         sleep(1)
@@ -539,7 +580,7 @@ class ChatUITests: XCTestCase {
         wait(for: [secondUserChatExpectation], timeout: 5)
     }
 
-    func test019CountOfChatsAndChannels() throws {
+    func test021CountOfChatsAndChannels() throws {
         let app = XCUIApplication()
         app.launch()
 
@@ -582,7 +623,7 @@ class ChatUITests: XCTestCase {
         wait(for: [zeroTextExpectation], timeout: 5)
     }
 
-    func test020CreateChannelWithImage() throws {
+    func test022CreateChannelWithImage() throws {
 
         let app = XCUIApplication()
         app.launch()
@@ -594,7 +635,7 @@ class ChatUITests: XCTestCase {
         sleep(1)
 
         app.buttons["photo.circle.fill"].tap()
-        app.images["Фотография, 30 марта 2018 г., 10:14 PM"].tap()
+        app.images["Фото, 30 березня 2018 р., 10:14 пп"].tap()
 
         app.textFields["Enter name of your channel"].tap()
         app.textFields["Enter name of your channel"].typeText("channelWithImage")
@@ -603,6 +644,7 @@ class ChatUITests: XCTestCase {
         app.buttons["return"].tap()
 
         app.buttons["Create"].tap()
+        sleep(1)
 
         app.buttons["fibrechannel"].tap()
 

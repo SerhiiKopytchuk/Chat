@@ -34,4 +34,8 @@ struct Chat: Codable, Identifiable {
         self.storageFilesId = []
     }
 
+    mutating func changeLastActivityTimestamp() {
+        self.lastActivityTimestamp = Date()
+    }
+
 }

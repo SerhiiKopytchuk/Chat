@@ -68,6 +68,7 @@ struct SideMenuHeaderView: View {
                 .onAppear {
                     imageStartSetup()
                 }
+                .accessibilityValue("notEmptyImage")
         } else {
             EmptyImageWithCharacterView(text: userViewModel.currentUser.name,
                                         colour: userViewModel.currentUser.colour,

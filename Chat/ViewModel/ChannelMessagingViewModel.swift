@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import SwiftUI
 
 class ChannelMessagingViewModel: ObservableObject {
 
@@ -14,46 +15,54 @@ class ChannelMessagingViewModel: ObservableObject {
 
     @Published var currentUser = User()
 
-    @Published private(set) var messages: [Message] = []
     @Published private(set) var lastMessageId = ""
     @Published private(set) var firstMessageId = ""
 
+    @Published var unsentMessages: [Message] = []
+
     var dataBase = Firestore.firestore()
+    let firestoreManager = FirestorePathManager.shared
 
     func getMessagesCount(competition: @escaping (Int) -> Void) {
-        dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
-            .addSnapshotListener { querySnapshot, error in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firestoreManager.getChannelMessagesCollectionReference(for: self?.currentChannel.id)
+                .addSnapshotListener { querySnapshot, error in
+                    guard let documents = querySnapshot?.documents else {
+                        print("Error fetching documets: \(String(describing: error))")
+                        return
+                    }
 
-                guard let documents = querySnapshot?.documents else {
-                    print("Error fetching documets: \(String(describing: error))")
-                    return
+                    DispatchQueue.main.async {
+                        competition(documents.count)
+                    }
                 }
-
-                competition(documents.count)
-            }
+        }
     }
 
     func getMessages(competition: @escaping ([Message]) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async {  [weak self] in
+            var messages: [Message] = []
 
-        var messages: [Message] = []
+            self?.firestoreManager.getChannelMessagesCollectionReference(for: self?.currentChannel.id)
+                .addSnapshotListener { querySnapshot, error in
+                    guard let documents = querySnapshot?.documents else {
+                        print("Error fetching documents: \(String(describing: error))")
+                        return
+                    }
 
-        dataBase.collection("channels").document(self.currentChannel.id ?? "someId").collection("messages")
-            .addSnapshotListener { querySnapshot, error in
+                    DispatchQueue.main.async {
+                        self?.currentChannel.messages = self?.documentsToMessages(messages: &messages,
+                                                                                  documents: documents)
 
-                guard let documents = querySnapshot?.documents else {
-                    print("Error fetching documets: \(String(describing: error))")
-                    return
+                        self?.sortMessages(messages: &messages)
+
+                        self?.getLastMessage(messages: &messages)
+                        self?.getFirstMessage(messages: &messages)
+
+                        competition(messages)
+                    }
                 }
-
-                self.currentChannel.messages = self.documentsToMessages(messages: &messages, documents: documents)
-
-                self.sortMessages(messages: &messages)
-
-                self.getLastMessage(messages: &messages)
-                self.getFirstMessage(messages: &messages)
-
-                competition(messages)
-            }
+        }
     }
 
     private func documentsToMessages(messages: inout [Message], documents: [QueryDocumentSnapshot]) -> [Message] {
@@ -86,35 +95,47 @@ class ChannelMessagingViewModel: ObservableObject {
     }
 
     func sendImage(imageId: String) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            let imageMessage = Message(imageId: imageId, senderId: self?.currentUser.id ?? "some id")
 
-        let imageMessage = Message(imageId: imageId, senderId: self.currentUser.id)
-
-        do {
-            try self.dataBase.collection("channels")
-                .document(currentChannel.id ?? "SomeChannelId")
-                .collection("messages")
-                .document().setData(from: imageMessage)
-            changeLastActivityTime()
-        } catch {
-            print("failed to send message" + error.localizedDescription)
+            do {
+                try self?.firestoreManager.getChannelMessagesCollectionReference(for: self?.currentChannel.id)
+                    .document().setData(from: imageMessage)
+                DispatchQueue.main.async {
+                    self?.changeLastActivityTime()
+                }
+            } catch {
+                print("failed to send message" + error.localizedDescription)
+            }
         }
-
     }
 
     func sendMessage(text: String) {
 
-        if !messageIsValidated(text: text) { return }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            if !(self?.messageIsValidated(text: text) ?? false) { return }
+            let trimmedText = text.trimmingCharacters(in: .whitespaces)
+            let newMessage = Message(text: trimmedText, senderId: self?.currentUser.id ?? "some id")
+            guard let currentChannelId = self?.currentChannel.id else { return }
 
-        let trimmedText = text.trimmingCharacters(in: .whitespaces)
+            DispatchQueue.main.async {
+                self?.unsentMessages.append(newMessage)
+            }
 
-        let newMessage = Message(text: trimmedText, senderId: self.currentUser.id)
+            do {
+                try self?.firestoreManager.getChannelMessagesCollectionReference(for: currentChannelId)
+                    .document().setData(from: newMessage, completion: { error in
+                        if error.review(message: "failed to sendMessage") { return }
+                        DispatchQueue.main.async {
+                            self?.removeFromUnsentList(message: newMessage)
+                        }
+                    })
 
-        do {
-            try self.dataBase.collection("channels").document(currentChannel.id ?? "SomeChatId").collection("messages")
-                .document().setData(from: newMessage)
-            changeLastActivityTime()
-        } catch {
-            print("failed to send message" + error.localizedDescription)
+                    self?.changeLastActivityTime()
+
+            } catch {
+                print("failed to send message" + error.localizedDescription)
+            }
         }
 
     }
@@ -129,7 +150,31 @@ class ChannelMessagingViewModel: ObservableObject {
     }
 
     private func changeLastActivityTime() {
-        dataBase.collection("channels").document(currentChannel.id ?? "someID")
+        firestoreManager.getChannelDocumentReference(for: currentChannel.id)
             .updateData(["lastActivityTimestamp": Date()])
+    }
+
+    private func removeFromUnsentList(message: Message) {
+        let index = unsentMessages.firstIndex {
+            $0.id == message.id
+        }
+
+        if let index {
+            withAnimation {
+                _ = unsentMessages.remove(at: index)
+            }
+        }
+    }
+
+    func removeMessageFromCurrenChannelList(message: Message) {
+        let index = currentChannel.messages?.firstIndex {
+            $0.id == message.id
+        }
+
+        if let index {
+            withAnimation {
+                _ = currentChannel.messages?.remove(at: index)
+            }
+        }
     }
 }

@@ -8,74 +8,74 @@
 import Foundation
 import UIKit
 import FirebaseStorage
-import FirebaseAuth
 import FirebaseFirestore
-import SDWebImageSwiftUI
-import SwiftUI
 
 class ImageViewModel: ObservableObject {
 
-    @Published var imageURL: String?
-    @Published var myImage = WebImage(url: URL(string: ""))
-
-    let dataBase = Firestore.firestore()
+    let firestoreManager = FirestorePathManager.shared
+    let storageManager = StorageReferencesManager.shared
 
     func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
-        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-        let imageId = UUID().uuidString
-        let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chatId, imageId: imageId)
-        ref.putData(imageData, metadata: nil) { _, error in
-            if self.isError(message: "failed to save image", err: error) { return }
-            id(imageId)
-            self.addIdToChatFiles(chatId: chatId, fileId: imageId)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+            let imageId = UUID().uuidString
+            self?.storageManager.getChatMessageImageReference(chatId: chatId, imageId: imageId)
+                .putData(imageData, metadata: nil) { [weak self] _, error in
+                    if error.review(message: "failed to save image") { return }
+
+                    id(imageId)
+                    self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
+                }
         }
     }
 
     private func addIdToChatFiles(chatId: String, fileId: String) {
-        dataBase.collection("chats").document(chatId)
-            .updateData(["storageFilesId": FieldValue.arrayUnion([fileId])])
+        DispatchQueue.global(qos: .utility).async {
+            self.firestoreManager.getChatDocumentReference(for: chatId)
+                .updateData(["storageFilesId": FieldValue.arrayUnion([fileId])])
+        }
     }
 
     func saveProfileImage(image: UIImage, userId: String) {
-        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userId)
-        ref.putData(imageData, metadata: nil) { _, error in
-            if self.isError(message: "failed to save image", err: error) { return }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+            self?.storageManager.getProfileImageReference(userId: userId)
+                .putData(imageData, metadata: nil) { _, error in
+                    if error.review(message: "failed to save image") { return }
+                }
         }
     }
 
     func saveChannelMessageImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
-        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-        let imageId = UUID().uuidString
-        let ref = StorageReferencesManager.shared
-            .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
-        ref.putData(imageData, metadata: nil) { _, error in
-            if self.isError(message: "failed to save image", err: error) { return }
-            id(imageId)
-            self.addIdToChannelFiles(channelId: channelId, fileId: imageId)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+            let imageId = UUID().uuidString
+            self?.storageManager.getChannelMessageImageReference(channelId: channelId, imageId: imageId)
+                .putData(imageData, metadata: nil) { [weak self] _, error in
+                    if error.review(message: "failed to save image") { return }
+
+                    id(imageId)
+                    self?.addIdToChannelFiles(channelId: channelId, fileId: imageId)
+                }
         }
     }
 
     private func addIdToChannelFiles(channelId: String, fileId: String) {
-        dataBase.collection("channels").document(channelId)
-            .updateData(["storageFilesId": FieldValue.arrayUnion([fileId])])
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            self?.firestoreManager.getChannelDocumentReference(for: channelId)
+                .updateData(["storageFilesId": FieldValue.arrayUnion([fileId])])
+        }
     }
 
     func saveChannelImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
-        guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-        let imageId = UUID().uuidString
-        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channelId)
-        ref.putData(imageData, metadata: nil) { _, error in
-            if self.isError(message: "failed to save image", err: error) { return }
-            id(imageId)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self ] in
+            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+            let imageId = UUID().uuidString
+            self?.storageManager.getChannelImageReference(channelId: channelId)
+                .putData(imageData, metadata: nil) { _, error in
+                    if error.review(message: "failed to save image") { return }
+                    id(imageId)
+                }
         }
-    }
-
-    fileprivate func isError(message: String, err: Error?) -> Bool {
-        if let err = err {
-            print(message + err.localizedDescription)
-            return true
-        }
-        return false
     }
 }

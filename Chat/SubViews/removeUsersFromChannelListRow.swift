@@ -75,9 +75,7 @@ struct RemoveUsersFromChannelListRow: View {
     @ViewBuilder private var removeUserButton: some View {
         Button {
             editChannelViewModel.removeChannelFromSubscriptionsWithCertainUser(id: self.id)
-            withAnimation {
-                editChannelViewModel.removeUserFromSubscribersList(id: self.id)
-            }
+            editChannelViewModel.removeUserFromSubscribersList(id: self.id)
             editChannelViewModel.getChannelSubscribers()
 
             self.updateChannelViewModel()
@@ -109,6 +107,13 @@ struct RemoveUsersFromChannelListRow: View {
 
     private func updateChannelViewModel() {
         channelViewModel.currentChannel = editChannelViewModel.currentChannel
-        channelViewModel.channelSubscribers = editChannelViewModel.channelSubscribers
+    }
+}
+
+struct RemoveUsersFromChannelListRow_Previews: PreviewProvider {
+    static var previews: some View {
+        RemoveUsersFromChannelListRow(user: "User", userGmail: "some@gmail.com", id: "id", color: "Red")
+            .environmentObject(ChannelViewModel())
+            .environmentObject(EditChannelViewModel())
     }
 }

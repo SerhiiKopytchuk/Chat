@@ -13,7 +13,6 @@ struct AddUserToChannelView: View {
     @State private var searchUserText = ""
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var editChannelViewModel: EditChannelViewModel
-    @EnvironmentObject private var userViewModel: UserViewModel
 
     @Environment(\.self) var env
 
@@ -33,7 +32,6 @@ struct AddUserToChannelView: View {
             applyButton
                 .padding()
         }
-        .contentShape(Rectangle())
         .addRightGestureRecognizer {
             env.dismiss()
         }
@@ -105,6 +103,6 @@ struct AddUserToChannelView_Previews: PreviewProvider {
     static var previews: some View {
         AddUserToChannelView()
             .environmentObject(ChannelViewModel())
-            .environmentObject(UserViewModel())
+            .environmentObject(EditChannelViewModel())
     }
 }
