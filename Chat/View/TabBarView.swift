@@ -153,15 +153,10 @@ struct TabBarView: View {
                         channelMessagingViewModel.currentChannel = channel
                         channelMessagingViewModel.currentUser = viewModel.currentUser
                         channelMessagingViewModel.getMessages(competition: { _ in })
-                        DispatchQueue.main.async {
-                            self.goToChannel.toggle()
-                        }
+                        self.goToChannel.toggle()
                     }
 
                 }
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
-                .environmentObject(channelMessagingViewModel)
             }
         }
         .padding(.horizontal)
