@@ -6,6 +6,7 @@
 //
 import Foundation
 import FirebaseFirestoreSwift
+import FirebaseAuth
 
 struct Message: Identifiable, Codable {
     @DocumentID var id = "\(UUID())"
@@ -47,6 +48,6 @@ struct Message: Identifiable, Codable {
     }
 
     func isReply() -> Bool {
-        return self.senderId != UserViewModel().getUserUID()
+        self.senderId != Auth.auth().currentUser?.uid
     }
 }

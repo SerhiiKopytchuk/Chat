@@ -68,7 +68,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Re-enter"].typeText(secondUserPassword)
 
         app.buttons["Create Account"].tap()
-        sleep(1)
+        sleep(2)
 
         if app.buttons["Close"].exists {
 
@@ -118,7 +118,7 @@ class ChatUITests: XCTestCase {
         app.textFields["Re-enter"].typeText(firstUserPassword)
 
         app.buttons["Create Account"].tap()
-        sleep(1)
+        sleep(2)
 
         if app.buttons["Close"].exists {
 
@@ -398,7 +398,7 @@ class ChatUITests: XCTestCase {
         app.buttons["Photo"].tap()
         app.images["Фото, 30 березня 2018 р., 10:14 пп"].tap()
 
-        let sendImage = app.scrollViews.firstMatch.otherElements["image"]
+        let sendImage = app.scrollViews.firstMatch.images["image"]
         let imageExpectation = XCTNSPredicateExpectation(predicate: existsPredicate, object: sendImage)
 
         wait(for: [imageExpectation], timeout: 5)
@@ -434,6 +434,7 @@ class ChatUITests: XCTestCase {
 
         app.secureTextFields["Password"].tap()
         app.secureTextFields["Password"].typeText(secondUserPassword)
+        sleep(1)
 
         app.buttons["Sign in"].tap()
         sleep(1)
@@ -497,6 +498,7 @@ class ChatUITests: XCTestCase {
         app.images["Фото, 30 березня 2018 р., 10:14 пп"].tap()
 
         app.buttons["arrow.backward.circle.fill"].tap()
+        sleep(3)
 
         app.buttons["List"].tap()
         sleep(1)
@@ -642,6 +644,7 @@ class ChatUITests: XCTestCase {
         app.buttons["return"].tap()
 
         app.buttons["Create"].tap()
+        sleep(1)
 
         app.buttons["fibrechannel"].tap()
 

@@ -14,12 +14,14 @@ import SDWebImageSwiftUI
 
 class EditProfileViewModel: ObservableObject {
 
-    let dataBase = Firestore.firestore()
+    lazy var dataBase = Firestore.firestore()
 
     func changeName(newName: String, userId: String) {
-        dataBase.collection("users").document(userId).getDocument { querySnapshot, err in
-            if err.review(message: "change name failure") { return }
-            querySnapshot?.reference.updateData([ "name": newName])
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.dataBase.collection("users").document(userId).getDocument { querySnapshot, err in
+                if err.review(message: "change name failure") { return }
+                querySnapshot?.reference.updateData([ "name": newName])
+            }
         }
     }
 }

@@ -169,18 +169,20 @@ struct SearchView: View {
                     chattingViewModel.secondUser = user
                     chattingViewModel.currentUser = viewModel.currentUser
 
-                    chattingViewModel.getCurrentChat(secondUser: user) { chat in
-                        self.messagingViewModel.currentChat = chat
-                        self.messagingViewModel.getMessages { _ in
-                            isFindChat = true
-                            DispatchQueue.main.async {
+                    chattingViewModel.getCurrentChat(with: user) { result in
+                        switch result {
+                        case .success(let chat):
+                            self.messagingViewModel.currentChat = chat
+                            self.messagingViewModel.getMessages { _ in
+                                isFindChat = true
                                 goToConversation = true
                             }
+                        case .failure:
+                            isFindChat = false
+                            goToConversation = true
                         }
-                    } failure: { _ in
-                        isFindChat = false
-                        goToConversation = true
                     }
+
                 })
             }
         }
@@ -196,7 +198,7 @@ struct SearchView: View {
                     channelMessagingViewModel.currentChannel = channel
                     channelViewModel.currentUser = viewModel.currentUser
                     channelViewModel.currentChannel = channel
-                    self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed()
+                    self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed
                     channelMessagingViewModel.getMessages { _ in
                         DispatchQueue.main.async {
                             self.goToChannelConversation = true

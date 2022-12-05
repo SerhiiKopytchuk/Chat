@@ -105,7 +105,8 @@ struct EditChannelView: View {
                 if channelName.isValidateLengthOfName() {
                     editChannelViewModel.updateChannelInfo(name: channelName, description: channelDescription)
 
-                    channelViewModel.currentChannel = editChannelViewModel.currentChannel
+                    channelViewModel.currentChannel.name = channelName
+                    channelViewModel.currentChannel.description = channelDescription
                     channelViewModel.getChannels(fromUpdate: true)
                     presentationMode.dismiss()
                 } else {

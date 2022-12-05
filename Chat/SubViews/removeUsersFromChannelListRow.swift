@@ -75,9 +75,7 @@ struct RemoveUsersFromChannelListRow: View {
     @ViewBuilder private var removeUserButton: some View {
         Button {
             editChannelViewModel.removeChannelFromSubscriptionsWithCertainUser(id: self.id)
-            withAnimation {
-                editChannelViewModel.removeUserFromSubscribersList(id: self.id)
-            }
+            editChannelViewModel.removeUserFromSubscribersList(id: self.id)
             editChannelViewModel.getChannelSubscribers()
 
             self.updateChannelViewModel()
