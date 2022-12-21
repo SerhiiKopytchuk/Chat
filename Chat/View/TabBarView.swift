@@ -118,7 +118,7 @@ struct TabBarView: View {
         ScrollView(.vertical, showsIndicators: false) {
             ForEach(chattingViewModel.chats, id: \.id) { chat in
                 ChatListRow(chat: chat) {
-                    _ = viewModel.getUser(
+                    viewModel.getUser(
                         id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
                     ) { user in
                         chattingViewModel.secondUser = user
