@@ -15,17 +15,38 @@ class ImageViewModel: ObservableObject {
     let firestoreManager = FirestorePathManager.shared
     let storageManager = StorageReferencesManager.shared
 
-    func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-            let imageId = UUID().uuidString
-            self?.storageManager.getChatMessageImageReference(chatId: chatId, imageId: imageId)
-                .putData(imageData, metadata: nil) { [weak self] _, error in
-                    if error.review(message: "failed to save image") { return }
+//    func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
+//        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+//            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+//            let imageId = UUID().uuidString
+//            self?.storageManager.getChatMessageImageReference(chatId: chatId, imageId: imageId)
+//                .putData(imageData, metadata: nil) { [weak self] _, error in
+//                    if error.review(message: "failed to save image") { return }
+//
+//                    id(imageId)
+//                    self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
+//                }
+//        }
+//    }
 
-                    id(imageId)
-                    self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
-                }
+    func saveChat(images: [UIImage], chatId: String?, id: @escaping ([String]) -> Void) {
+        guard let chatId else { return }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            var imagesId: [String] = []
+            images.forEach { image in
+                guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+                let imageId = UUID().uuidString
+                self?.storageManager.getChatMessageImageReference(chatId: chatId, imageId: imageId)
+                    .putData(imageData, metadata: nil) { [weak self] _, error in
+                        if error.review(message: "failed to save image") { return }
+
+                        imagesId.append(imageId)
+                        self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
+                        if images.count == imagesId.count {
+                            id(imagesId)
+                        }
+                    }
+            }
         }
     }
 

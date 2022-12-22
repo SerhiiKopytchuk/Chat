@@ -35,7 +35,9 @@ struct ChannelMessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imageId == "" {
+                if message.imagesId != nil {
+                    imagesView
+                } else {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
@@ -49,19 +51,17 @@ struct ChannelMessageBubble: View {
                     .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
-                } else {
-                        imageView
                 }
             }
 
         }
         .padding(message.isReply() ? .trailing : .leading, 60)
         .padding(.horizontal, 10)
-        .opacity(extendedImageId == self.message.imageId ? (isHidden ? 0 : 1) : 1)
+        .opacity(extendedImageId == self.message.imagesId?.first ? (isHidden ? 0 : 1) : 1)
     }
 
     // MARK: - viewBuilders
-    @ViewBuilder private var imageView: some View {
+    @ViewBuilder private var imagesView: some View {
         VStack {
             if isFindImage {
                 WebImage(url: imageUrl, isAnimating: .constant(true))
@@ -71,10 +71,10 @@ struct ChannelMessageBubble: View {
                     .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
                                   ? [.topLeft, .topRight, .bottomRight] :
                                     [.topLeft, .topRight, .bottomLeft])
-                    .matchedGeometryEffect(id: message.imageId ?? "",
+                    .matchedGeometryEffect(id: message.imagesId?.first ?? "",
                                            in: animationNamespace)
                     .onTapGesture {
-                        imageTapped(message.imageId ?? "messageId", imageUrl)
+                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
                     }
             } else {
                 ProgressView()
@@ -109,7 +109,7 @@ struct ChannelMessageBubble: View {
     }
     private func imageSetup() {
 
-        let imageId: String = message.imageId ?? "imageId"
+        let imageId: String = message.imagesId?.first ?? "imageId"
         var channelId: String = ""
         var ref: StorageReference
 

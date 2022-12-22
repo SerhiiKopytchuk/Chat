@@ -98,7 +98,7 @@ struct ChatListRow: View {
     }
 
     @ViewBuilder private var lastMessagePreview: some View {
-        if message.imageId == "" {
+        if message.imagesId == nil {
             Text(message.text )
                 .font(.caption)
                 .italic()
@@ -127,7 +127,7 @@ struct ChatListRow: View {
 
     // MARK: - functions
     private func lastMessageImageSetup() {
-        let imageId: String = message.imageId ?? "imageId"
+        let imageId: String = message.imagesId?.first ?? "imageId"
 
         let chatId: String = chat.id ?? "someID"
         let ref = StorageReferencesManager.shared

@@ -42,7 +42,7 @@ struct MessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imageId == "" {
+                if message.imagesId == nil {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
@@ -69,7 +69,7 @@ struct MessageBubble: View {
         .onAppear {
             addMessageSnapshotListener()
         }
-        .opacity(extendedImageId == self.message.imageId ? (isHidden ? 0 : 1) : 1)
+        .opacity(extendedImageId == self.message.imagesId?.first ? (isHidden ? 0 : 1) : 1)
     }
 
     // MARK: - viewBuilders
@@ -83,10 +83,10 @@ struct MessageBubble: View {
                     .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
                                   ? [.topLeft, .topRight, .bottomRight] :
                                     [.topLeft, .topRight, .bottomLeft])
-                    .matchedGeometryEffect(id: message.imageId ?? "",
+                    .matchedGeometryEffect(id: message.imagesId?.first ?? "",
                                            in: animationNamespace)
                     .onTapGesture {
-                        imageTapped(message.imageId ?? "messageId", imageUrl)
+                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
                     }
             } else {
                 ProgressView()
@@ -156,7 +156,7 @@ struct MessageBubble: View {
     }
     private func imageSetup() {
 
-        let imageId: String = message.imageId ?? "imageId"
+        let imageId: String = message.imagesId?.first ?? "imageId"
         var chatId: String = ""
         var channelId: String = ""
         var ref: StorageReference

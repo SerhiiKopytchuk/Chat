@@ -39,7 +39,7 @@ struct ChannelMessageField: View {
             guard let currentChannelId = channelViewModel.currentChannel.id else { return }
             imageViewModel.saveChannelMessageImage(image: newImage,
                                                    channelId: currentChannelId) { imageId in
-                channelMessagingViewModel.sendImage(imageId: imageId)
+//                channelMessagingViewModel.sendImage(imageId: imageId)
             }
         })
         .frame( height: height < 160 ? self.height : 160)

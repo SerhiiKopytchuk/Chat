@@ -59,7 +59,7 @@ struct MessageField: View {
                         }
 
                         if assets.count == selectedImages.count {
-                            print("send")
+                            sendImages()
                         }
                     }
                 }
@@ -106,13 +106,12 @@ struct MessageField: View {
         }
     }
 
-    // MARK: - Fucntions
+    // MARK: - Functions
+
     func sendImages() {
-        imageViewModel.saveChatImage(image: newImage,
-                                     chatId: chattingViewModel.currentChat.id ?? "some chat id") { imageId in
-            messagingViewModel.sendImage(imageId: imageId)
-        }
-    }
+        imageViewModel.saveChat(images: selectedImages, chatId: chattingViewModel.currentChat.id) { imagesId in
+            messagingViewModel.send(imagesId: imagesId)
+        }    }
 }
 
 struct MessageField_Previews: PreviewProvider {

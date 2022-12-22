@@ -183,7 +183,7 @@ struct ConversationView: View {
             }
 
         })
-        .accessibilityValue(message.imageId != "" ? "image" : "message")
+        .accessibilityValue(message.imagesId != nil ? "image" : "message")
         .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
         .environmentObject(messagingViewModel)
