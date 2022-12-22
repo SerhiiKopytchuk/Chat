@@ -35,8 +35,11 @@ struct ChannelMessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imagesId != nil {
-                    imagesView
+                if message.imagesId != [] {
+                    CoupleImagesView(imagesId: message.imagesId ?? [],
+                                     isChat: false,
+                                     isReceive: message.isReply(),
+                                     animationNamespace: animationNamespace)
                 } else {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
@@ -61,32 +64,6 @@ struct ChannelMessageBubble: View {
     }
 
     // MARK: - viewBuilders
-    @ViewBuilder private var imagesView: some View {
-        VStack {
-            if isFindImage {
-                WebImage(url: imageUrl, isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
-                                  ? [.topLeft, .topRight, .bottomRight] :
-                                    [.topLeft, .topRight, .bottomLeft])
-                    .matchedGeometryEffect(id: message.imagesId?.first ?? "",
-                                           in: animationNamespace)
-                    .onTapGesture {
-                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
-                    }
-            } else {
-                ProgressView()
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .aspectRatio(contentMode: .fill)
-            }
-
-        }
-        .onAppear {
-            imageSetup()
-        }
-    }
 
     @ViewBuilder private var unsentMark: some View {
         if channelMessagingViewModel.unsentMessages.isContains(message: message) && isShowUnsentMark {
@@ -104,26 +81,6 @@ struct ChannelMessageBubble: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation {
                 isShowUnsentMark = true
-            }
-        }
-    }
-    private func imageSetup() {
-
-        let imageId: String = message.imagesId?.first ?? "imageId"
-        var channelId: String = ""
-        var ref: StorageReference
-
-        channelId = channelViewModel.currentChannel.id ?? "channelID"
-        ref = StorageReferencesManager.shared
-            .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
-
-        ref.downloadURL { url, err in
-            if err != nil {
-                return
-            }
-            self.imageUrl = url
-            withAnimation {
-                self.isFindImage = true
             }
         }
     }

@@ -94,21 +94,21 @@ class ChannelMessagingViewModel: ObservableObject {
         }
     }
 
-//    func sendImage(imageId: String) {
-//        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-//            let imageMessage = Message(imageId: imageId, senderId: self?.currentUser.id ?? "some id")
-//
-//            do {
-//                try self?.firestoreManager.getChannelMessagesCollectionReference(for: self?.currentChannel.id)
-//                    .document().setData(from: imageMessage)
-//                DispatchQueue.main.async {
-//                    self?.changeLastActivityTime()
-//                }
-//            } catch {
-//                print("failed to send message" + error.localizedDescription)
-//            }
-//        }
-//    }
+    func send(imagesId: [String]) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            let imageMessage = Message(imagesId: imagesId, senderId: self?.currentUser.id ?? "some id")
+
+            do {
+                try self?.firestoreManager.getChannelMessagesCollectionReference(for: self?.currentChannel.id)
+                    .document().setData(from: imageMessage)
+                DispatchQueue.main.async {
+                    self?.changeLastActivityTime()
+                }
+            } catch {
+                print("failed to send message" + error.localizedDescription)
+            }
+        }
+    }
 
     func sendMessage(text: String) {
 

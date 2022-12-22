@@ -42,7 +42,7 @@ struct MessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imagesId == nil {
+                if message.imagesId == [] {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
@@ -57,9 +57,12 @@ struct MessageBubble: View {
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
                 } else {
-                    imageView
+                    CoupleImagesView(imagesId: message.imagesId ?? [],
+                                     isChat: true,
+                                     isReceive: message.isReply(),
+                                     animationNamespace: animationNamespace
+                    )
                 }
-
                 emojiBarView
             }
 
@@ -73,32 +76,6 @@ struct MessageBubble: View {
     }
 
     // MARK: - viewBuilders
-    @ViewBuilder private var imageView: some View {
-        VStack {
-            if isFindImage {
-                WebImage(url: imageUrl, isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
-                                  ? [.topLeft, .topRight, .bottomRight] :
-                                    [.topLeft, .topRight, .bottomLeft])
-                    .matchedGeometryEffect(id: message.imagesId?.first ?? "",
-                                           in: animationNamespace)
-                    .onTapGesture {
-                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
-                    }
-            } else {
-                ProgressView()
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .aspectRatio(contentMode: .fill)
-            }
-
-        }
-        .onAppear {
-            imageSetup()
-        }
-    }
 
     @ViewBuilder private var addedEmojiView: some View {
         if message.isEmojiAdded() {
@@ -151,32 +128,6 @@ struct MessageBubble: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation {
                 isShowUnsentMark = true
-            }
-        }
-    }
-    private func imageSetup() {
-
-        let imageId: String = message.imagesId?.first ?? "imageId"
-        var chatId: String = ""
-        var channelId: String = ""
-        var ref: StorageReference
-
-        if isChat {
-            chatId = messagingViewModel.currentChat.id ?? "chatID"
-            ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chatId, imageId: imageId)
-        } else {
-            channelId = channelViewModel.currentChannel.id ?? "channelID"
-            ref = StorageReferencesManager.shared
-                .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
-        }
-
-        ref.downloadURL { url, err in
-            if err != nil {
-                return
-            }
-            self.imageUrl = url
-            withAnimation {
-                self.isFindImage = true
             }
         }
     }

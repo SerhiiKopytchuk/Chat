@@ -57,6 +57,7 @@ struct CustomImagePicker: View {
                 }
                 .padding()
             }
+            .frame(maxHeight: .infinity)
             .safeAreaInset(edge: .bottom) {
                 if !imagePickerModel.selectedImages.isEmpty {
                     Button {
@@ -65,16 +66,19 @@ struct CustomImagePicker: View {
                         }
                         onSelect(imageAssets)
                     } label: {
-                        Text("Send \(imagePickerModel.selectedImages.count) images")
-                            .font(.callout)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 30)
-                            .padding(.vertical, 10)
-                            .background {
-                                Capsule()
-                                    .fill(.blue)
-                            }
+                        Text("Send \(imagePickerModel.selectedImages.count) " +
+                             (imagePickerModel.selectedImages.count == 1 ?
+                              "image" :
+                                "images"))
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 30)
+                        .padding(.vertical, 10)
+                        .background {
+                            Capsule()
+                                .fill(.blue)
+                        }
                     }
                     .disabled(imagePickerModel.selectedImages.isEmpty)
                     .opacity(imagePickerModel.selectedImages.isEmpty ? 0.6 : 1)
@@ -83,7 +87,6 @@ struct CustomImagePicker: View {
 
             }
         }
-        .frame(height: deviceSize.height / 1.8)
         .frame(maxWidth: (deviceSize.width - 40) > 350 ? 350 : (deviceSize.width - 40))
     }
 
@@ -132,22 +135,7 @@ struct CustomImagePicker: View {
             }
             .clipped()
             .onTapGesture {
-                withAnimation(.easeInOut) {
-                    if let index = imagePickerModel.selectedImages.firstIndex(where: { asset in
-                        asset.id == imageAsset.id
-                    }) {
-                        imagePickerModel.selectedImages.remove(at: index)
-                        imagePickerModel.selectedImages.enumerated().forEach { item in
-                            imagePickerModel.selectedImages[item.offset].assetIndex = item.offset
-                        }
-                    } else {
-                        if imagePickerModel.selectedImages.count < 3 {
-                            var newAsset = imageAsset
-                            newAsset.assetIndex = imagePickerModel.selectedImages.count
-                            imagePickerModel.selectedImages.append(newAsset)
-                        }
-                    }
-                }
+                imageTap(imageAsset: imageAsset)
             }
         }
         .frame(height: 70)
@@ -155,6 +143,24 @@ struct CustomImagePicker: View {
 
     // MARK: - functions
 
+    func imageTap(imageAsset: ImageAsset) {
+        withAnimation(.easeInOut) {
+            if let index = imagePickerModel.selectedImages.firstIndex(where: { asset in
+                asset.id == imageAsset.id
+            }) {
+                imagePickerModel.selectedImages.remove(at: index)
+                imagePickerModel.selectedImages.enumerated().forEach { item in
+                    imagePickerModel.selectedImages[item.offset].assetIndex = item.offset
+                }
+            } else {
+                if imagePickerModel.selectedImages.count < 3 {
+                    var newAsset = imageAsset
+                    newAsset.assetIndex = imagePickerModel.selectedImages.count
+                    imagePickerModel.selectedImages.append(newAsset)
+                }
+            }
+        }
+    }
 }
 
 #if DEBUG
@@ -163,7 +169,7 @@ struct CustomImagePicker_Previews: PreviewProvider {
         CustomImagePicker {
 
         } onSelect: { _ in
-            
+
         }
 
     }

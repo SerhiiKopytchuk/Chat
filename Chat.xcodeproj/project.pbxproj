@@ -39,6 +39,7 @@
 		4024EB0F28393CF40082E739 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0E28393CF40082E739 /* TabBarView.swift */; };
 		4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6612854B4F000C74377 /* ImagePicker.swift */; };
 		4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */; };
+		403ED1542954802500F4954D /* CoupleImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 403ED1532954802500F4954D /* CoupleImagesView.swift */; };
 		404303A529535D64008C8452 /* ImagePickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404303A429535D64008C8452 /* ImagePickerViewModel.swift */; };
 		404303A729535DCD008C8452 /* ImageAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404303A629535DCD008C8452 /* ImageAsset.swift */; };
 		404303A929535F54008C8452 /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404303A829535F54008C8452 /* CustomImagePicker.swift */; };
@@ -135,6 +136,7 @@
 		4024EB0E28393CF40082E739 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		4039A6612854B4F000C74377 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
+		403ED1532954802500F4954D /* CoupleImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoupleImagesView.swift; sourceTree = "<group>"; };
 		404303A429535D64008C8452 /* ImagePickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerViewModel.swift; sourceTree = "<group>"; };
 		404303A629535DCD008C8452 /* ImageAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAsset.swift; sourceTree = "<group>"; };
 		404303A829535F54008C8452 /* CustomImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				4021DD0A288AA7E30060B18E /* ChannelViews */,
 				408E747828F9592700B3F28C /* FullScreenImageCoverMessage.swift */,
 				408E747628F9553C00B3F28C /* FullScreenImageCoverHeader.swift */,
+				403ED1532954802500F4954D /* CoupleImagesView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -632,6 +635,7 @@
 				4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */,
 				40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */,
 				40ECD6F328A03DF2006935B1 /* BoundsPreference.swift in Sources */,
+				403ED1542954802500F4954D /* CoupleImagesView.swift in Sources */,
 				40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */,
 				40EF9964284748250062612E /* MessageBubble.swift in Sources */,
 				409F252F2882B574005D0E6A /* addUserToChannelView.swift in Sources */,

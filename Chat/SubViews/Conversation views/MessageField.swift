@@ -39,31 +39,7 @@ struct MessageField: View {
             CustomImagePicker {
 
             } onSelect: { assets in
-                isShowingImagePicker = false
-
-                let manager = PHCachingImageManager.default()
-                let options = PHImageRequestOptions()
-                options.isSynchronous = true
-
-                DispatchQueue.global(qos: .userInteractive).async {
-                    assets.forEach { asset in
-                        manager.requestImage(for: asset,
-                                             targetSize: .init(),
-                                             contentMode: .default,
-                                             options: options) { image, _ in
-                            guard let image else { return }
-                            DispatchQueue.main.async {
-                                self.selectedImages.append(image)
-                                print(selectedImages.count)
-                            }
-                        }
-
-                        if assets.count == selectedImages.count {
-                            sendImages()
-                        }
-                    }
-                }
-
+                parseImages(with: assets)
             }
 
         })
@@ -108,10 +84,38 @@ struct MessageField: View {
 
     // MARK: - Functions
 
+    func parseImages(with assets: [PHAsset]) {
+        isShowingImagePicker = false
+
+        let manager = PHCachingImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            assets.forEach { asset in
+                manager.requestImage(for: asset,
+                                     targetSize: .init(),
+                                     contentMode: .default,
+                                     options: options) { image, _ in
+                    guard let image else { return }
+                    DispatchQueue.main.async {
+                        self.selectedImages.append(image)
+                        print(selectedImages.count)
+                    }
+                }
+
+                if assets.count == selectedImages.count {
+                    sendImages()
+                }
+            }
+        }
+    }
+
     func sendImages() {
         imageViewModel.saveChat(images: selectedImages, chatId: chattingViewModel.currentChat.id) { imagesId in
             messagingViewModel.send(imagesId: imagesId)
-        }    }
+        }
+    }
 }
 
 struct MessageField_Previews: PreviewProvider {

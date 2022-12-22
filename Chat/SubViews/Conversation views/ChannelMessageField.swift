@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ChannelMessageField: View {
     // MARK: - Vars
@@ -20,7 +21,7 @@ struct ChannelMessageField: View {
     @EnvironmentObject private var channelViewModel: ChannelViewModel
 
     @State var isShowingImagePicker = false
-    @State var image: UIImage?
+    @State private var selectedImages: [UIImage] = []
 
     // MARK: - body
     var body: some View {
@@ -33,15 +34,12 @@ struct ChannelMessageField: View {
 
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $image)
-        }
-        .onChange(of: image ?? UIImage(), perform: { newImage in
-            guard let currentChannelId = channelViewModel.currentChannel.id else { return }
-            imageViewModel.saveChannelMessageImage(image: newImage,
-                                                   channelId: currentChannelId) { imageId in
-//                channelMessagingViewModel.sendImage(imageId: imageId)
+            CustomImagePicker {
+
+            } onSelect: { imageAssets in
+                parseImages(with: imageAssets)
             }
-        })
+        }
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
@@ -79,6 +77,42 @@ struct ChannelMessageField: View {
                 .padding(10)
                 .background(Color.primary.opacity(0.5))
                 .cornerRadius(10)
+        }
+    }
+
+    // MARK: - functions
+
+    func parseImages(with assets: [PHAsset]) {
+        isShowingImagePicker = false
+
+        let manager = PHCachingImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            assets.forEach { asset in
+                manager.requestImage(for: asset,
+                                     targetSize: .init(),
+                                     contentMode: .default,
+                                     options: options) { image, _ in
+                    guard let image else { return }
+                    DispatchQueue.main.async {
+                        self.selectedImages.append(image)
+                        print(selectedImages.count)
+                    }
+                }
+
+                if assets.count == selectedImages.count {
+                    sendImages()
+                }
+            }
+        }
+    }
+
+    func sendImages() {
+        guard let currentChannelId = channelViewModel.currentChannel.id else { return }
+        imageViewModel.saveChannelMessages(images: selectedImages, channelId: currentChannelId) { imagesId in
+            channelMessagingViewModel.send(imagesId: imagesId)
         }
     }
 }
