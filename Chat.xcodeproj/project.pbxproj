@@ -39,6 +39,9 @@
 		4024EB0F28393CF40082E739 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0E28393CF40082E739 /* TabBarView.swift */; };
 		4039A6622854B4F000C74377 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6612854B4F000C74377 /* ImagePicker.swift */; };
 		4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */; };
+		404303A529535D64008C8452 /* ImagePickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404303A429535D64008C8452 /* ImagePickerViewModel.swift */; };
+		404303A729535DCD008C8452 /* ImageAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404303A629535DCD008C8452 /* ImageAsset.swift */; };
+		404303A929535F54008C8452 /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404303A829535F54008C8452 /* CustomImagePicker.swift */; };
 		40442EAF289575F800E32FEF /* HeaderWithBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */; };
 		404B283D28C72FAF0096C8F0 /* StorageReferencesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404B283C28C72FAF0096C8F0 /* StorageReferencesManager.swift */; };
 		404B877A292F66BB00005C42 /* Thread  + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404B8779292F66BB00005C42 /* Thread  + Extension.swift */; };
@@ -132,6 +135,9 @@
 		4024EB0E28393CF40082E739 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		4039A6612854B4F000C74377 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
+		404303A429535D64008C8452 /* ImagePickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerViewModel.swift; sourceTree = "<group>"; };
+		404303A629535DCD008C8452 /* ImageAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAsset.swift; sourceTree = "<group>"; };
+		404303A829535F54008C8452 /* CustomImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
 		40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderWithBackButton.swift; sourceTree = "<group>"; };
 		404B283C28C72FAF0096C8F0 /* StorageReferencesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageReferencesManager.swift; sourceTree = "<group>"; };
 		404B8779292F66BB00005C42 /* Thread  + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Thread  + Extension.swift"; sourceTree = "<group>"; };
@@ -293,6 +299,7 @@
 				40153F29286B32BC0022DA46 /* ChannelMessagingViewModel.swift */,
 				40C6691F28894D270087A9DF /* EditChannelViewModel.swift */,
 				401E917F29012B400051D52A /* PresenceViewModel.swift */,
+				404303A429535D64008C8452 /* ImagePickerViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -306,6 +313,7 @@
 				406DC3A4284C8F6500A41964 /* Chat.swift */,
 				400E81A72868583A006A606E /* Channel.swift */,
 				40649D18288F2C5F00B8F500 /* ChannelType.swift */,
+				404303A629535DCD008C8452 /* ImageAsset.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -329,6 +337,7 @@
 				408A661128C8C305006101CA /* Emoji reaction views */,
 				4056DA2A28A7ECD100246AC4 /* ResizeableTextView.swift */,
 				40C4F29328C5DCE9008D03C8 /* Blur.swift */,
+				404303A829535F54008C8452 /* CustomImagePicker.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -577,8 +586,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				404303A929535F54008C8452 /* CustomImagePicker.swift in Sources */,
 				40153F2A286B32BC0022DA46 /* ChannelMessagingViewModel.swift in Sources */,
 				40153F24286B18F70022DA46 /* ChannelListRow.swift in Sources */,
+				404303A529535D64008C8452 /* ImagePickerViewModel.swift in Sources */,
 				406DC3A2284C8B5E00A41964 /* SearchUserListRow.swift in Sources */,
 				409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */,
 				400E81A82868583A006A606E /* Channel.swift in Sources */,
@@ -611,6 +622,7 @@
 				4021DD09288AA7CA0060B18E /* EditChannelView.swift in Sources */,
 				4056D6412834024B000A0872 /* ChatListRow.swift in Sources */,
 				4024EB01283802130082E739 /* CustomAlert.swift in Sources */,
+				404303A729535DCD008C8452 /* ImageAsset.swift in Sources */,
 				4024EB0928382B190082E739 /* SideMenuOptionView.swift in Sources */,
 				40FA6F6228576D01001AAC09 /* EditProfileView.swift in Sources */,
 				40EF996628474AA60062612E /* View + Extenston.swift in Sources */,
@@ -801,6 +813,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chat/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Our app need access to your photos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
@@ -838,6 +851,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Chat/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Our app need access to your photos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";

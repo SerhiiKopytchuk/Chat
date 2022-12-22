@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+import PhotosUI
 
 struct MessageField: View {
     // MARK: - vars
@@ -21,7 +22,7 @@ struct MessageField: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
 
     @State private var isShowingImagePicker = false
-    @State private var image: UIImage?
+    @State private var selectedImages: [UIImage] = []
 
     // MARK: - body
     var body: some View {
@@ -34,16 +35,39 @@ struct MessageField: View {
             sendMessageButton
 
         }
-        .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $image)
-        }
-        .onChange(of: image ?? UIImage(), perform: { newImage in
-            imageViewModel.saveChatImage(image: newImage,
-                                     chatId: chattingViewModel.currentChat.id ?? "some chat id") { imageId in
-                messagingViewModel.sendImage(imageId: imageId)
+        .sheet(isPresented: $isShowingImagePicker, content: {
+            CustomImagePicker {
+
+            } onSelect: { assets in
+                isShowingImagePicker = false
+
+                let manager = PHCachingImageManager.default()
+                let options = PHImageRequestOptions()
+                options.isSynchronous = true
+
+                DispatchQueue.global(qos: .userInteractive).async {
+                    assets.forEach { asset in
+                        manager.requestImage(for: asset,
+                                             targetSize: .init(),
+                                             contentMode: .default,
+                                             options: options) { image, _ in
+                            guard let image else { return }
+                            DispatchQueue.main.async {
+                                self.selectedImages.append(image)
+                                print(selectedImages.count)
+                            }
+                        }
+
+                        if assets.count == selectedImages.count {
+                            print("send")
+                        }
+                    }
+                }
+
             }
+
         })
-    .frame( height: height < 160 ? self.height : 160)
+        .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(Color.secondPrimary)
@@ -82,6 +106,13 @@ struct MessageField: View {
         }
     }
 
+    // MARK: - Fucntions
+    func sendImages() {
+        imageViewModel.saveChatImage(image: newImage,
+                                     chatId: chattingViewModel.currentChat.id ?? "some chat id") { imageId in
+            messagingViewModel.sendImage(imageId: imageId)
+        }
+    }
 }
 
 struct MessageField_Previews: PreviewProvider {
