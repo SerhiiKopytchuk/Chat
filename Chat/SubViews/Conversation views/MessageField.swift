@@ -36,12 +36,11 @@ struct MessageField: View {
 
         }
         .sheet(isPresented: $isShowingImagePicker, content: {
-            CustomImagePicker {
-
-            } onSelect: { assets in
+            CustomImagePicker(onSelect: { assets in
+                self.selectedImages = []
                 parseImages(with: assets)
-            }
-
+            }, isPresented: $isShowingImagePicker,
+                              imagePickerModel: ImagePickerViewModel())
         })
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
@@ -100,7 +99,6 @@ struct MessageField: View {
                     guard let image else { return }
                     DispatchQueue.main.async {
                         self.selectedImages.append(image)
-                        print(selectedImages.count)
                     }
                 }
 

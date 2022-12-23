@@ -16,14 +16,19 @@ struct ImageDetailedView: View {
     @State private var imageScale: CGFloat = 1
     @State private var imageOffset: CGSize = .zero
     @State private var isDrawerOpen: Bool = false
-    let animationNamespace: Namespace.ID
 
     let imagesURL: [URL?]
     @State var pageIndex: Int
-    let imagesID: [String]
 
     @Binding var isPresented: Bool
-    @Binding var isExpandedImageWithDelay: Bool
+
+    var screenWidth: CGFloat {
+        return min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+    }
+
+    var screenHeight: CGFloat {
+        return max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+    }
 
     // MARK: - body
     var body: some View {
@@ -40,8 +45,6 @@ struct ImageDetailedView: View {
                 .opacity(isAnimating ? 1 : 0)
                 .offset(imageOffset)
                 .scaleEffect(imageScale)
-                .matchedGeometryEffect(id: imagesID[0],
-                                       in: animationNamespace)
                 .onTapGesture(count: 2) {
                     if imageScale == 1 {
                         withAnimation(.spring()) {
@@ -54,8 +57,8 @@ struct ImageDetailedView: View {
                 .gesture(
                     DragGesture()
                         .onChanged({ value in
-                            withAnimation(.linear(duration: 1)) {
-                                imageOffset = value.translation
+                                withAnimation(.linear(duration: 1)) {
+                                    imageOffset = value.translation
                             }
                         })
                         .onEnded({ _ in
@@ -90,16 +93,10 @@ struct ImageDetailedView: View {
             }
         }
         .overlay(alignment: .topLeading) {
-
             Button {
+
                 withAnimation(.easeOut(duration: 0.3).delay(0.05)) {
                     isPresented = false
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        isExpandedImageWithDelay = false
-                    }
                 }
             } label: {
                 Image(systemName: "arrow.left")
@@ -107,10 +104,6 @@ struct ImageDetailedView: View {
                     .padding(.horizontal)
                     .padding(.top, 30)
             }
-
-            InfoPanelView(scale: imageScale, offset: imageOffset)
-                .padding(.horizontal)
-                .padding(.top, 30)
         }
         .overlay(alignment: .bottom) {
             Group {
@@ -158,45 +151,46 @@ struct ImageDetailedView: View {
             .padding(.bottom, 30)
         }
         .overlay(alignment: .topTrailing) {
-            HStack(spacing: 20) {
-                Image(systemName: isDrawerOpen ? "chevron.compact.right" : "chevron.compact.left")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 40)
-                    .padding(8)
-                    .foregroundColor(.secondary)
-                    .onTapGesture {
-                        withAnimation(.easeOut) {
-                            isDrawerOpen.toggle()
-                        }
-                    }
-
-                ForEach(imagesURL, id: \.self) { imageURL in
-                    WebImage(url: imageURL)
+            if imagesURL.count > 1 {
+                HStack(spacing: 20) {
+                    Image(systemName: isDrawerOpen ? "chevron.compact.right" : "chevron.compact.left")
                         .resizable()
                         .scaledToFit()
-                        .cornerRadius(8)
-                        .shadow(radius: 4)
-                        .opacity(isDrawerOpen ? 1 : 0)
-                        .animation(.easeOut(duration: 0.5), value: isDrawerOpen)
+                        .frame(height: 40)
+                        .padding(8)
+                        .foregroundColor(.secondary)
                         .onTapGesture {
-                            isAnimating = true
-                            self.pageIndex = imagesURL.firstIndex(of: imageURL) ?? 0
+                            withAnimation(.easeOut) {
+                                isDrawerOpen.toggle()
+                            }
                         }
-                }
 
-                Spacer()
+                    ForEach(imagesURL, id: \.self) { imageURL in
+                        WebImage(url: imageURL)
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(8)
+                            .shadow(radius: 4)
+                            .opacity(isDrawerOpen ? 1 : 0)
+                            .animation(.easeOut(duration: 0.5), value: isDrawerOpen)
+                            .onTapGesture {
+                                isAnimating = true
+                                self.pageIndex = imagesURL.firstIndex(of: imageURL) ?? 0
+                            }
+                    }
+
+                    Spacer()
+                }
+                .padding(EdgeInsets(top: 16, leading: 8, bottom: 16, trailing: 8))
+                .background(.ultraThinMaterial)
+                .cornerRadius(12)
+                .opacity(isAnimating ? 1 : 0)
+                .frame(width: 260)
+                .padding(.top, UIScreen.main.bounds.height / 12)
+                .offset(x: isDrawerOpen ? 20 : 215)
             }
-            .padding(EdgeInsets(top: 16, leading: 8, bottom: 16, trailing: 8))
-            .background(.ultraThinMaterial)
-            .cornerRadius(12)
-            .opacity(isAnimating ? 1 : 0)
-            .frame(width: 260)
-            .padding(.top, UIScreen.main.bounds.height / 12)
-            .offset(x: isDrawerOpen ? 20 : 215)
         }
         .background(Color.background)
-        .offset(y: 0.01)
     }
 
     // MARK: - ViewBuilders
@@ -207,6 +201,7 @@ struct ImageDetailedView: View {
         return withAnimation(.spring()) {
             imageScale = 1
             imageOffset = .zero
+            print(UIScreen.main.bounds)
         }
     }
 }

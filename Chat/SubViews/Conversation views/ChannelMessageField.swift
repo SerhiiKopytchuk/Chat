@@ -34,11 +34,10 @@ struct ChannelMessageField: View {
 
         }
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            CustomImagePicker {
-
-            } onSelect: { imageAssets in
-                parseImages(with: imageAssets)
-            }
+            CustomImagePicker(onSelect: { assets in
+                parseImages(with: assets)
+            }, isPresented: $isShowingImagePicker,
+                              imagePickerModel: ImagePickerViewModel())
         }
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)

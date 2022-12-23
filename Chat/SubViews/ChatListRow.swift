@@ -98,7 +98,7 @@ struct ChatListRow: View {
     }
 
     @ViewBuilder private var lastMessagePreview: some View {
-        if message.imagesId == nil {
+        if message.imagesId == [] {
             Text(message.text )
                 .font(.caption)
                 .italic()

@@ -24,7 +24,6 @@ struct ConversationView: View {
     @State var profileImageUrl = URL(string: "")
     @State private var loadExpandedContent = false
     @State private var imageOffset: CGSize = .zero
-    @State private var isExpandedImageWithDelay = false
     @State var imageId = ""
 
     @State private var showMessageEmojiView: Bool = false
@@ -49,7 +48,6 @@ struct ConversationView: View {
             if isFindChat {
                 VStack(spacing: 0) {
                     messagesScrollView
-
 
                     MessageField(messagingViewModel: messagingViewModel)
                         .ignoresSafeArea(.container, edges: .bottom)
@@ -92,23 +90,16 @@ struct ConversationView: View {
         }
         .overlay {
             if isExpandedImage {
-                ImageDetailedView(animationNamespace: messageImageNamespace,
-                                  imagesURL: messageImagesURL,
+                ImageDetailedView(imagesURL: messageImagesURL,
                                   pageIndex: imageIndex,
-                                  imagesID: [imageId],
-                                  isPresented: $isExpandedImage,
-                                  isExpandedImageWithDelay: $isExpandedImageWithDelay)
+                                  isPresented: $isExpandedImage)
             }
         }
         .overlay {
             if isExpandedProfile {
-                FullScreenImageCoverHeader( name: secondUser.name,
-                                            animationHeaderImageNamespace: profileImageNamespace,
-                                            namespaceId: "profilePhoto",
-                                            isExpandedHeaderImage: $isExpandedProfile,
-                                            imageOffset: $imageOffset,
-                                            headerImageURL: profileImageUrl,
-                                            loadExpandedContent: $loadExpandedContent)
+                ImageDetailedView(imagesURL: [profileImageUrl],
+                                  pageIndex: 0,
+                                  isPresented: $isExpandedProfile)
             }
         }
         .navigationBarHidden(true)
@@ -177,7 +168,6 @@ struct ConversationView: View {
 
             withAnimation(.easeInOut) {
                 self.isExpandedImage = true
-                self.isExpandedImageWithDelay = true
             }
 
         })

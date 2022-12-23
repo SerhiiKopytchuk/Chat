@@ -59,8 +59,9 @@ struct CoupleImagesView: View {
     @ViewBuilder func oneImageView() -> some View {
         VStack {
             if isFindImage {
-                WebImage(url: imagesURL.first, isAnimating: .constant(true))
+                WebImage(url: imagesURL.first)
                     .resizable()
+                    .transition(.fade(duration: 0.5))
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
                     .cornerRadius(15, corners: isReceive

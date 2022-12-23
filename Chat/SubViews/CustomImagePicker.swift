@@ -12,12 +12,12 @@ struct CustomImagePicker: View {
 
     // MARK: - Variables
 
-    var onEnd: () -> Void
     var onSelect: ([PHAsset]) -> Void
+    @Binding var isPresented: Bool
 
     // MARK: - EnvironmentObjects
 
-    @StateObject private var imagePickerModel = ImagePickerViewModel()
+    @StateObject var imagePickerModel: ImagePickerViewModel
 
     // MARK: - body
     var body: some View {
@@ -29,7 +29,7 @@ struct CustomImagePicker: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button {
-                    onEnd()
+                    isPresented = false
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title3)
@@ -87,6 +87,12 @@ struct CustomImagePicker: View {
 
             }
         }
+        .onChange(of: isPresented, perform: { _ in
+            imagePickerModel.selectedImages = []
+        })
+        .onAppear(perform: {
+            imagePickerModel.selectedImages = []
+        })
         .frame(maxWidth: (deviceSize.width - 40) > 350 ? 350 : (deviceSize.width - 40))
     }
 
@@ -166,11 +172,9 @@ struct CustomImagePicker: View {
 #if DEBUG
 struct CustomImagePicker_Previews: PreviewProvider {
     static var previews: some View {
-        CustomImagePicker {
+        CustomImagePicker(onSelect: { _ in
 
-        } onSelect: { _ in
-
-        }
+        }, isPresented: .constant(true), imagePickerModel: ImagePickerViewModel())
 
     }
 }
