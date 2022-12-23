@@ -20,6 +20,8 @@ struct CoupleImagesView: View {
     @State var isFindImage: Bool = false
     @State var imagesURL: [URL] = []
 
+    var imageTapped: ([URL], _ index: Int, _ id: String) -> Void
+
     // MARK: - EnvironmentObjects
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -67,7 +69,7 @@ struct CoupleImagesView: View {
                     .matchedGeometryEffect(id: imagesId.first ?? "",
                                            in: animationNamespace)
                     .onTapGesture {
-                        //                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
+                        imageTapped(imagesURL, 0, imagesId.first ?? "")
                     }
             } else {
                 ProgressView()
@@ -88,7 +90,7 @@ struct CoupleImagesView: View {
                     .matchedGeometryEffect(id: imagesId.first ?? "",
                                            in: animationNamespace)
                     .onTapGesture {
-                        //                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
+                        imageTapped(imagesURL, 0, imagesId.first ?? "")
                     }
                 WebImage(url: imagesURL[1], isAnimating: .constant(true))
                     .resizable()
@@ -98,7 +100,7 @@ struct CoupleImagesView: View {
                     .matchedGeometryEffect(id: imagesId[1] ,
                                            in: animationNamespace)
                     .onTapGesture {
-                        //                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
+                        imageTapped(imagesURL, 1, imagesId[1])
                     }
             } else {
                 ProgressView()
@@ -122,7 +124,7 @@ struct CoupleImagesView: View {
                     .matchedGeometryEffect(id: imagesId.first ?? "",
                                            in: animationNamespace)
                     .onTapGesture {
-                        //                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
+                        imageTapped(imagesURL, 0, imagesId.first ?? "")
                     }
 
                 VStack(spacing: 2) {
@@ -134,7 +136,7 @@ struct CoupleImagesView: View {
                     .matchedGeometryEffect(id: imagesId[1],
                                            in: animationNamespace)
                     .onTapGesture {
-                        //                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
+                        imageTapped(imagesURL, 1, imagesId[1])
                     }
 
                     WebImage(url: imagesURL.last, isAnimating: .constant(true))
@@ -145,11 +147,10 @@ struct CoupleImagesView: View {
                         .matchedGeometryEffect(id: imagesId.last ?? "",
                                                in: animationNamespace)
                         .onTapGesture {
-                            //                        imageTapped(message.imagesId?.first ?? "messageId", imageUrl)
+                            imageTapped(imagesURL, 2, imagesId[2])
                         }
                 }
             }
-
             .cornerRadius(15, corners: isReceive
                           ? [.topLeft, .topRight, .bottomRight] :
                             [.topLeft, .topRight, .bottomLeft])
@@ -201,7 +202,10 @@ struct CoupleImagesView: View {
 struct CoupleImagesView_Previews: PreviewProvider {
     @Namespace static var animation
     static var previews: some View {
-        CoupleImagesView(imagesId: [], isChat: true, isReceive: true, animationNamespace: animation)
+        CoupleImagesView(imagesId: [], isChat: true,
+                         isReceive: true,
+                         animationNamespace: animation,
+                         imageTapped: { _, _, _  in })
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
     }

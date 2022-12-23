@@ -172,10 +172,10 @@ struct ConversationView: View {
                       animationNamespace: messageImageNamespace,
                       isHidden: $isExpandedImage,
                       extendedImageId: .constant(""),
-                      imageTapped: { id, imageURl in
+                      imageTapped: { imagesURl, index, id in
 
             self.imageId = id
-            self.messageImageURL = imageURl
+            self.messageImageURL = imagesURl[index]
 
             withAnimation(.easeInOut) {
                 self.isExpandedImage = true
@@ -212,7 +212,7 @@ struct ConversationView: View {
                       animationNamespace: messageImageNamespace,
                       isHidden: $isExpandedImage,
                       extendedImageId: .constant(""),
-                      imageTapped: {_, _ in})
+                      imageTapped: {_, _, _  in})
         .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
 

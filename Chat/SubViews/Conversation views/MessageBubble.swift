@@ -26,7 +26,7 @@ struct MessageBubble: View {
 
     @Binding var isHidden: Bool
     @Binding var extendedImageId: String
-    var imageTapped: (String, URL?) -> Void
+    var imageTapped: ([URL?], _ index: Int, _ id: String) -> Void
 
     @State private var isShowUnsentMark = false
 
@@ -46,9 +46,7 @@ struct MessageBubble: View {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
-
                         unsentMark
-
                     }
                     .padding()
                     .foregroundColor(message.senderId != viewModel.currentUserUID ? .white : .primary)
@@ -60,8 +58,9 @@ struct MessageBubble: View {
                     CoupleImagesView(imagesId: message.imagesId ?? [],
                                      isChat: true,
                                      isReceive: message.isReply(),
-                                     animationNamespace: animationNamespace
-                    )
+                                     animationNamespace: animationNamespace) { imagesURL, index, id in
+                        imageTapped(imagesURL, index, id)
+                    }
                 }
                 emojiBarView
             }
@@ -150,7 +149,7 @@ struct MessageBubble_Previews: PreviewProvider {
                       highlightedMessage: .constant(Message()),
                       animationNamespace: namespace,
                       isHidden: .constant(true),
-                      extendedImageId: .constant("id")) { _, _ in }
+                      extendedImageId: .constant("id")) { _, _, _ in }
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChannelViewModel())

@@ -39,7 +39,9 @@ struct ChannelMessageBubble: View {
                     CoupleImagesView(imagesId: message.imagesId ?? [],
                                      isChat: false,
                                      isReceive: message.isReply(),
-                                     animationNamespace: animationNamespace)
+                                     animationNamespace: animationNamespace) { _, _, _ in
+
+                    }
                 } else {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
