@@ -57,8 +57,7 @@ struct MessageBubble: View {
                 } else {
                     CoupleImagesView(imagesId: message.imagesId ?? [],
                                      isChat: true,
-                                     isReceive: message.isReply(),
-                                     animationNamespace: animationNamespace) { imagesURL, index, id in
+                                     isReceive: message.isReply()) { imagesURL, index, id in
                         imageTapped(imagesURL, index, id)
                     }
                 }

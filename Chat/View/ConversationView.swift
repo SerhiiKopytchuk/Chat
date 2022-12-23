@@ -31,7 +31,8 @@ struct ConversationView: View {
     @State var highlightMessage: Message?
 
     @State private var isExpandedImage: Bool = false
-    @State private var messageImageURL = URL(string: "")
+    @State private var messageImagesURL: [URL?] = []
+    @State private var imageIndex: Int = 0
 
     @Environment(\.self) private var env
 
@@ -43,18 +44,16 @@ struct ConversationView: View {
 
         VStack(spacing: 0) {
 
-            if !isExpandedImageWithDelay {
                 titleRow
-            }
 
             if isFindChat {
                 VStack(spacing: 0) {
                     messagesScrollView
 
+
                     MessageField(messagingViewModel: messagingViewModel)
                         .ignoresSafeArea(.container, edges: .bottom)
-                        .opacity(loadExpandedContent ? (1 - imageOffsetProgress()) : 1)
-                        .opacity(isExpandedImage ? 0 : 1)
+
                 }
                 .background {
                     Rectangle()
@@ -89,6 +88,16 @@ struct ConversationView: View {
                         }
                         .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
                     }
+            }
+        }
+        .overlay {
+            if isExpandedImage {
+                ImageDetailedView(animationNamespace: messageImageNamespace,
+                                  imagesURL: messageImagesURL,
+                                  pageIndex: imageIndex,
+                                  imagesID: [imageId],
+                                  isPresented: $isExpandedImage,
+                                  isExpandedImageWithDelay: $isExpandedImageWithDelay)
             }
         }
         .overlay {
@@ -151,18 +160,6 @@ struct ConversationView: View {
         .background(Color.background)
         .addBlackOverlay(loadExpandedContent: loadExpandedContent,
                          imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
-        .overlay {
-            if isExpandedImage {
-                FullScreenImageCoverMessage(
-                    animationMessageImageNamespace: messageImageNamespace,
-                    namespaceId: imageId,
-                    isExpandedImage: $isExpandedImage,
-                    isExpandedImageWithDelay: $isExpandedImageWithDelay,
-                    imageOffset: $imageOffset,
-                    messageImageURL: messageImageURL,
-                    loadExpandedContent: $loadExpandedContent)
-            }
-        }
     }
 
     @ViewBuilder private func messageBubble(message: Message) -> some View {
@@ -175,7 +172,8 @@ struct ConversationView: View {
                       imageTapped: { imagesURl, index, id in
 
             self.imageId = id
-            self.messageImageURL = imagesURl[index]
+            self.imageIndex = index
+            self.messageImagesURL = imagesURl
 
             withAnimation(.easeInOut) {
                 self.isExpandedImage = true

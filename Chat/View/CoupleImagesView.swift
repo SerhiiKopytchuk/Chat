@@ -15,10 +15,10 @@ struct CoupleImagesView: View {
     let imagesId: [String]
     let isChat: Bool
     let isReceive: Bool
-    let animationNamespace: Namespace.ID
 
     @State var isFindImage: Bool = false
     @State var imagesURL: [URL] = []
+    @State private var isOpened: [Bool] = [false, false, false]
 
     var imageTapped: ([URL], _ index: Int, _ id: String) -> Void
 
@@ -66,10 +66,11 @@ struct CoupleImagesView: View {
                     .cornerRadius(15, corners: isReceive
                                   ? [.topLeft, .topRight, .bottomRight] :
                                     [.topLeft, .topRight, .bottomLeft])
-                    .matchedGeometryEffect(id: imagesId.first ?? "",
-                                           in: animationNamespace)
                     .onTapGesture {
                         imageTapped(imagesURL, 0, imagesId.first ?? "")
+                        withAnimation {
+                            isOpened[0] = true
+                        }
                     }
             } else {
                 ProgressView()
@@ -87,20 +88,22 @@ struct CoupleImagesView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250)
                     .clipped()
-                    .matchedGeometryEffect(id: imagesId.first ?? "",
-                                           in: animationNamespace)
                     .onTapGesture {
                         imageTapped(imagesURL, 0, imagesId.first ?? "")
+                        withAnimation {
+                            isOpened[0] = true
+                        }
                     }
                 WebImage(url: imagesURL[1], isAnimating: .constant(true))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250)
                     .clipped()
-                    .matchedGeometryEffect(id: imagesId[1] ,
-                                           in: animationNamespace)
                     .onTapGesture {
                         imageTapped(imagesURL, 1, imagesId[1])
+                        withAnimation {
+                            isOpened[1] = true
+                        }
                     }
             } else {
                 ProgressView()
@@ -121,10 +124,11 @@ struct CoupleImagesView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250)
                     .clipped()
-                    .matchedGeometryEffect(id: imagesId.first ?? "",
-                                           in: animationNamespace)
                     .onTapGesture {
                         imageTapped(imagesURL, 0, imagesId.first ?? "")
+                        withAnimation {
+                            isOpened[0] = true
+                        }
                     }
 
                 VStack(spacing: 2) {
@@ -133,10 +137,11 @@ struct CoupleImagesView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250/2)
                     .clipped()
-                    .matchedGeometryEffect(id: imagesId[1],
-                                           in: animationNamespace)
                     .onTapGesture {
                         imageTapped(imagesURL, 1, imagesId[1])
+                        withAnimation {
+                            isOpened[1] = true
+                        }
                     }
 
                     WebImage(url: imagesURL.last, isAnimating: .constant(true))
@@ -144,10 +149,11 @@ struct CoupleImagesView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250/2)
                         .clipped()
-                        .matchedGeometryEffect(id: imagesId.last ?? "",
-                                               in: animationNamespace)
                         .onTapGesture {
                             imageTapped(imagesURL, 2, imagesId[2])
+                            withAnimation {
+                                isOpened[2] = true
+                            }
                         }
                 }
             }
@@ -204,7 +210,6 @@ struct CoupleImagesView_Previews: PreviewProvider {
     static var previews: some View {
         CoupleImagesView(imagesId: [], isChat: true,
                          isReceive: true,
-                         animationNamespace: animation,
                          imageTapped: { _, _, _  in })
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
