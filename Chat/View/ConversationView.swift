@@ -16,22 +16,16 @@ struct ConversationView: View {
     @State var secondUser: User
     @Binding var isFindChat: Bool
 
-    @Namespace private var profileImageNamespace
-    @Namespace private var messageImageNamespace
-
     // MARK: fullscreen profile image properties
     @State private var isExpandedProfile: Bool = false
     @State var profileImageUrl = URL(string: "")
-    @State private var loadExpandedContent = false
-    @State private var imageOffset: CGSize = .zero
-    @State private var isExpandedImageWithDelay = false
-    @State var imageId = ""
 
     @State private var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
     @State private var isExpandedImage: Bool = false
-    @State private var messageImageURL = URL(string: "")
+    @State var messageImagesURL: [URL?] = []
+    @State var imageIndex: Int = 0
 
     @Environment(\.self) private var env
 
@@ -43,9 +37,7 @@ struct ConversationView: View {
 
         VStack(spacing: 0) {
 
-            if !isExpandedImageWithDelay {
                 titleRow
-            }
 
             if isFindChat {
                 VStack(spacing: 0) {
@@ -53,26 +45,15 @@ struct ConversationView: View {
 
                     MessageField(messagingViewModel: messagingViewModel)
                         .ignoresSafeArea(.container, edges: .bottom)
-                        .opacity(loadExpandedContent ? (1 - imageOffsetProgress()) : 1)
-                        .opacity(isExpandedImage ? 0 : 1)
-                }
-                .background {
-                    Rectangle()
-                        .fill(.black)
-                        .opacity(loadExpandedContent ? 1 : 0)
-                        .ignoresSafeArea()
-                }
 
+                }
             } else {
                 createChatButton
             }
         }
         .addRightGestureRecognizer {
-            if !isExpandedImage && !isExpandedProfile {
                 env.dismiss()
-            }
         }
-        .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
             if showMessageEmojiView {
                 lightDarkEmptyBackground
@@ -92,14 +73,17 @@ struct ConversationView: View {
             }
         }
         .overlay {
+            if isExpandedImage {
+                ImageDetailedView(imagesURL: messageImagesURL,
+                                  pageIndex: imageIndex,
+                                  isPresented: $isExpandedImage)
+            }
+        }
+        .overlay {
             if isExpandedProfile {
-                FullScreenImageCoverHeader( name: secondUser.name,
-                                            animationHeaderImageNamespace: profileImageNamespace,
-                                            namespaceId: "profilePhoto",
-                                            isExpandedHeaderImage: $isExpandedProfile,
-                                            imageOffset: $imageOffset,
-                                            headerImageURL: profileImageUrl,
-                                            loadExpandedContent: $loadExpandedContent)
+                ImageDetailedView(imagesURL: [profileImageUrl],
+                                  pageIndex: 0,
+                                  isPresented: $isExpandedProfile)
             }
         }
         .navigationBarHidden(true)
@@ -110,13 +94,10 @@ struct ConversationView: View {
     @ViewBuilder private var titleRow: some View {
         ConversationTitleRow(user: secondUser,
                              environment: _env,
-                             animationNamespace: profileImageNamespace,
                              isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,
                              profileImageURL: $profileImageUrl
         )
-        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                         imageOffsetProgress: imageOffsetProgress())
         .background {
             Color.secondPrimary
                 .ignoresSafeArea()
@@ -149,41 +130,23 @@ struct ConversationView: View {
         .ignoresSafeArea(.all, edges: .top)
         .frame(maxWidth: .infinity)
         .background(Color.background)
-        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
-        .overlay {
-            if isExpandedImage {
-                FullScreenImageCoverMessage(
-                    animationMessageImageNamespace: messageImageNamespace,
-                    namespaceId: imageId,
-                    isExpandedImage: $isExpandedImage,
-                    isExpandedImageWithDelay: $isExpandedImageWithDelay,
-                    imageOffset: $imageOffset,
-                    messageImageURL: messageImageURL,
-                    loadExpandedContent: $loadExpandedContent)
-            }
-        }
     }
 
     @ViewBuilder private func messageBubble(message: Message) -> some View {
         MessageBubble(message: message,
                       showHighlight: $showMessageEmojiView,
                       highlightedMessage: $highlightMessage,
-                      animationNamespace: messageImageNamespace,
-                      isHidden: $isExpandedImage,
-                      extendedImageId: .constant(""),
-                      imageTapped: { id, imageURl in
+                      imageTapped: { imagesURl, index in
 
-            self.imageId = id
-            self.messageImageURL = imageURl
+            self.imageIndex = index
+            self.messageImagesURL = imagesURl
 
-            withAnimation(.easeInOut) {
+            withAnimation(.easeInOut.delay(0.05)) {
                 self.isExpandedImage = true
-                self.isExpandedImageWithDelay = true
             }
 
         })
-        .accessibilityValue(message.imageId != "" ? "image" : "message")
+        .accessibilityValue(message.imagesId != nil ? "image" : "message")
         .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
         .environmentObject(messagingViewModel)
@@ -209,10 +172,7 @@ struct ConversationView: View {
                       showHighlight: $showMessageEmojiView,
                       highlightedMessage: $highlightMessage,
                       showEmojiBarView: true,
-                      animationNamespace: messageImageNamespace,
-                      isHidden: $isExpandedImage,
-                      extendedImageId: .constant(""),
-                      imageTapped: {_, _ in})
+                      imageTapped: {_, _  in})
         .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
 
@@ -260,15 +220,6 @@ struct ConversationView: View {
     }
 
     // MARK: - functions
-
-    private func imageOffsetProgress() -> CGFloat {
-        let progress = imageOffset.height / 100
-        if imageOffset.height < 0 {
-            return 1
-        } else {
-            return 1  - (progress < 1 ? progress : 1)
-        }
-    }
 
 }
 

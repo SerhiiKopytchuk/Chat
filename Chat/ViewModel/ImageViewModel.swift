@@ -15,17 +15,24 @@ class ImageViewModel: ObservableObject {
     let firestoreManager = FirestorePathManager.shared
     let storageManager = StorageReferencesManager.shared
 
-    func saveChatImage(image: UIImage, chatId: String, id: @escaping (String) -> Void) {
+    func saveChat(images: [UIImage], chatId: String?, id: @escaping ([String]) -> Void) {
+        guard let chatId else { return }
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-            let imageId = UUID().uuidString
-            self?.storageManager.getChatMessageImageReference(chatId: chatId, imageId: imageId)
-                .putData(imageData, metadata: nil) { [weak self] _, error in
-                    if error.review(message: "failed to save image") { return }
+            var imagesId: [String] = []
+            images.forEach { image in
+                guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+                let imageId = UUID().uuidString
+                self?.storageManager.getChatMessageImageReference(chatId: chatId, imageId: imageId)
+                    .putData(imageData, metadata: nil) { [weak self] _, error in
+                        if error.review(message: "failed to save image") { return }
 
-                    id(imageId)
-                    self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
-                }
+                        imagesId.append(imageId)
+                        self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
+                        if images.count == imagesId.count {
+                            id(imagesId)
+                        }
+                    }
+            }
         }
     }
 
@@ -46,17 +53,24 @@ class ImageViewModel: ObservableObject {
         }
     }
 
-    func saveChannelMessageImage(image: UIImage, channelId: String, id: @escaping (String) -> Void) {
+    func saveChannelMessages(images: [UIImage], channelId: String?, id: @escaping ([String]) -> Void) {
+        guard let channelId else { return }
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-            let imageId = UUID().uuidString
-            self?.storageManager.getChannelMessageImageReference(channelId: channelId, imageId: imageId)
-                .putData(imageData, metadata: nil) { [weak self] _, error in
-                    if error.review(message: "failed to save image") { return }
+            var imagesId: [String] = []
+            images.forEach { image in
+                guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+                let imageId = UUID().uuidString
+                self?.storageManager.getChannelMessageImageReference(channelId: channelId, imageId: imageId)
+                    .putData(imageData, metadata: nil) { [weak self] _, error in
+                        if error.review(message: "failed to save image") { return }
 
-                    id(imageId)
-                    self?.addIdToChannelFiles(channelId: channelId, fileId: imageId)
-                }
+                        imagesId.append(imageId)
+                        self?.addIdToChannelFiles(channelId: channelId, fileId: imageId)
+                        if images.count == imagesId.count {
+                            id(imagesId)
+                        }
+                    }
+            }
         }
     }
 

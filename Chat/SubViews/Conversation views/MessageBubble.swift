@@ -16,17 +16,8 @@ struct MessageBubble: View {
     @Binding var showHighlight: Bool
     @Binding var highlightedMessage: Message?
     @State var showEmojiBarView = false
-    @State private var imageUrl = URL(string: "")
 
-    @State var isFindImage = false
-
-    var isChat: Bool = true
-
-    let animationNamespace: Namespace.ID
-
-    @Binding var isHidden: Bool
-    @Binding var extendedImageId: String
-    var imageTapped: (String, URL?) -> Void
+    var imageTapped: ( [URL], _ index: Int) -> Void
 
     @State private var isShowUnsentMark = false
 
@@ -42,13 +33,11 @@ struct MessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imageId == "" {
+                if message.imagesId == [] {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
-
                         unsentMark
-
                     }
                     .padding()
                     .foregroundColor(message.senderId != viewModel.currentUserUID ? .white : .primary)
@@ -57,9 +46,12 @@ struct MessageBubble: View {
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
                 } else {
-                    imageView
+                    CoupleImagesView(imagesId: message.imagesId?.sorted() ?? [],
+                                     isChat: true,
+                                     isReceive: message.isReply()) { imagesURL, index in
+                        imageTapped(imagesURL, index)
+                    }
                 }
-
                 emojiBarView
             }
 
@@ -69,36 +61,9 @@ struct MessageBubble: View {
         .onAppear {
             addMessageSnapshotListener()
         }
-        .opacity(extendedImageId == self.message.imageId ? (isHidden ? 0 : 1) : 1)
     }
 
     // MARK: - viewBuilders
-    @ViewBuilder private var imageView: some View {
-        VStack {
-            if isFindImage {
-                WebImage(url: imageUrl, isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
-                                  ? [.topLeft, .topRight, .bottomRight] :
-                                    [.topLeft, .topRight, .bottomLeft])
-                    .matchedGeometryEffect(id: message.imageId ?? "",
-                                           in: animationNamespace)
-                    .onTapGesture {
-                        imageTapped(message.imageId ?? "messageId", imageUrl)
-                    }
-            } else {
-                ProgressView()
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .aspectRatio(contentMode: .fill)
-            }
-
-        }
-        .onAppear {
-            imageSetup()
-        }
-    }
 
     @ViewBuilder private var addedEmojiView: some View {
         if message.isEmojiAdded() {
@@ -154,32 +119,6 @@ struct MessageBubble: View {
             }
         }
     }
-    private func imageSetup() {
-
-        let imageId: String = message.imageId ?? "imageId"
-        var chatId: String = ""
-        var channelId: String = ""
-        var ref: StorageReference
-
-        if isChat {
-            chatId = messagingViewModel.currentChat.id ?? "chatID"
-            ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chatId, imageId: imageId)
-        } else {
-            channelId = channelViewModel.currentChannel.id ?? "channelID"
-            ref = StorageReferencesManager.shared
-                .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
-        }
-
-        ref.downloadURL { url, err in
-            if err != nil {
-                return
-            }
-            self.imageUrl = url
-            withAnimation {
-                self.isFindImage = true
-            }
-        }
-    }
 
     private func addMessageSnapshotListener() {
         messagingViewModel.addSnapshotListenerToMessage(messageId: message.id ?? "someId") { message in
@@ -197,9 +136,7 @@ struct MessageBubble_Previews: PreviewProvider {
                                        senderId: "id"),
                       showHighlight: .constant(false),
                       highlightedMessage: .constant(Message()),
-                      animationNamespace: namespace,
-                      isHidden: .constant(true),
-                      extendedImageId: .constant("id")) { _, _ in }
+                      imageTapped: { _, _ in })
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChannelViewModel())

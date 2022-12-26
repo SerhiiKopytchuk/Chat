@@ -16,7 +16,6 @@ struct ChannelTitleRow: View {
 
     @Environment(\.self) var environment
 
-    let animationNamespace: Namespace.ID
     @Binding var isExpandedProfileImage: Bool
     @Binding var isExpandedDetails: Bool
     @Binding var channelImageURL: URL?
@@ -88,7 +87,6 @@ struct ChannelTitleRow: View {
                         .frame(width: imageSize, height: imageSize)
                         .cornerRadius(imageSize/2)
                         .addLightShadow()
-                        .matchedGeometryEffect(id: "channelPhoto", in: animationNamespace)
                 }
             }
             .onTapGesture {
@@ -136,7 +134,6 @@ struct ChannelTitleRow_Previews: PreviewProvider {
                                          ownerId: "ownerId",
                                          ownerName: "OwnerName",
                                          isPrivate: false),
-                        animationNamespace: namespace,
                         isExpandedProfileImage: .constant(false),
                         isExpandedDetails: .constant(false),
                         channelImageURL: .constant(URL(string: "")),

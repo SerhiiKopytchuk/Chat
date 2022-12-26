@@ -13,21 +13,14 @@ struct ChannelConversationView: View {
     // MARK: - vars
     @State var currentUser: User
 
-    @Namespace private var animationProfileImage
-    @Namespace private var animationMessageImage
-
     @Environment(\.self) var env
 
     @State private var isExpandedChannelImage: Bool = false
     @State private var channelImageURL = URL(string: "")
 
     @State private var isExpandedImage: Bool = false
-    @State private var isExpandedImageWithDelay = false
-    @State private var messageImageURL = URL(string: "")
-    @State var imageId = ""
-
-    @State private var loadExpandedContent = false
-    @State private var imageOffset: CGSize = .zero
+    @State var messageImagesURL: [URL?] = []
+    @State var imageIndex: Int = 0
 
     @State private var isExpandedDetails = false
     @State private var isGoToAddSubscribers = false
@@ -54,19 +47,6 @@ struct ChannelConversationView: View {
 
             messagesScrollView
                 .ignoresSafeArea(.all, edges: .top)
-                .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                                 imageOffsetProgress: imageOffsetProgress())
-                .overlay {
-                    if isExpandedImage {
-                        FullScreenImageCoverMessage(animationMessageImageNamespace: animationMessageImage,
-                                                    namespaceId: imageId,
-                                                    isExpandedImage: $isExpandedImage,
-                                                    isExpandedImageWithDelay: $isExpandedImageWithDelay,
-                                                    imageOffset: $imageOffset,
-                                                    messageImageURL: messageImageURL,
-                                                    loadExpandedContent: $loadExpandedContent)
-                    }
-                }
 
             VStack(spacing: 0) {
                 if isSubscribed {
@@ -78,14 +58,6 @@ struct ChannelConversationView: View {
                         .ignoresSafeArea(.container, edges: .bottom)
                 }
             }
-            .opacity(loadExpandedContent ? (1 - imageOffsetProgress()) : 1)
-            .opacity(isExpandedImage ? 0 : 1)
-        }
-        .background {
-            Rectangle()
-                .fill(.black)
-                .opacity(loadExpandedContent ? 1 : 0)
-                .ignoresSafeArea()
         }
         .addRightGestureRecognizer {
             if !isExpandedImage && !isExpandedChannelImage {
@@ -111,13 +83,12 @@ struct ChannelConversationView: View {
         .navigationBarHidden(true)
         .overlay {
             if isExpandedChannelImage {
-                FullScreenImageCoverHeader(name: channelViewModel.currentChannel.name,
-                                           animationHeaderImageNamespace: animationProfileImage,
-                                           namespaceId: "channelPhoto",
-                                           isExpandedHeaderImage: $isExpandedChannelImage,
-                                           imageOffset: $imageOffset,
-                                           headerImageURL: channelImageURL,
-                                           loadExpandedContent: $loadExpandedContent)
+                ImageDetailedView(imagesURL: [channelImageURL], pageIndex: 0, isPresented: $isExpandedChannelImage)
+            }
+        }
+        .overlay {
+            if isExpandedImage {
+                ImageDetailedView(imagesURL: messageImagesURL, pageIndex: imageIndex, isPresented: $isExpandedImage)
             }
         }
         .alert("Do you really want to delete this channel?", isPresented: $showingAlertOwner) {
@@ -131,11 +102,9 @@ struct ChannelConversationView: View {
     // MARK: - viewBuilders
 
     @ViewBuilder private var header: some View {
-        if !isExpandedImageWithDelay {
             VStack(spacing: 0) {
                 ChannelTitleRow(channel: channelViewModel.currentChannel,
                                 environment: _env,
-                                animationNamespace: animationProfileImage,
                                 isExpandedProfileImage: $isExpandedChannelImage,
                                 isExpandedDetails: $isExpandedDetails,
                                 channelImageURL: $channelImageURL,
@@ -143,13 +112,10 @@ struct ChannelConversationView: View {
                 )
                 expandedDetails
             }
-            .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                             imageOffsetProgress: imageOffsetProgress())
             .background {
                 Color.secondPrimary
                     .ignoresSafeArea()
             }
-        }
     }
 
     @ViewBuilder private var expandedDetails: some View {
@@ -260,25 +226,19 @@ struct ChannelConversationView: View {
     }
 
     @ViewBuilder private func messageBubble(message: Message) -> some View {
-        ChannelMessageBubble(message: message,
-                             animationNamespace: animationMessageImage,
-                             isHidden: $isExpandedImage,
-                             extendedImageId: $imageId) { id, imageUrl in
+        ChannelMessageBubble(message: message) { imagesURL, index in
+            self.messageImagesURL = imagesURL
+            self.imageIndex = index
 
-            self.imageId = id
-            self.messageImageURL = imageUrl
-
-            withAnimation(.easeInOut) {
-                self.isExpandedDetails = false
-                self.isExpandedImage = true
-                self.isExpandedImageWithDelay = true
+            withAnimation(.easeOut) {
+                isExpandedImage = true
             }
         }
-                             .environmentObject(channelViewModel)
-                             .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
-                             .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
-                             .id(message.id)
-                             .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
+        .environmentObject(channelViewModel)
+        .padding(.top, message.id == channelMessagingViewModel.firstMessageId ? 10 : 0)
+        .padding(.bottom, message.id == channelMessagingViewModel.lastMessageId ? 10 : 0)
+        .id(message.id)
+        .frame(maxWidth: .infinity, alignment: message.isReply() ? .leading : .trailing)
     }
 
     @ViewBuilder private var messagingTextField: some View {
@@ -332,15 +292,6 @@ struct ChannelConversationView: View {
     private func editChannelViewModelSetup() {
         editChannelViewModel.currentChannel = channelViewModel.currentChannel
         editChannelViewModel.currentUser = channelViewModel.currentUser
-    }
-
-    private func imageOffsetProgress() -> CGFloat {
-        let progress = imageOffset.height / 100
-        if imageOffset.height < 0 {
-            return 1
-        } else {
-            return 1  - (progress < 1 ? progress : 1)
-        }
     }
 }
 

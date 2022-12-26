@@ -107,10 +107,10 @@ class MessagingViewModel: ObservableObject {
         }
     }
 
-    func sendImage(imageId: String) {
+    func send(imagesId: [String]) {
         DispatchQueue.global(qos: .userInteractive).sync { [weak self] in
 
-            let imageMessage = Message(imageId: imageId, senderId: self?.currentUser.id ?? "id")
+            let imageMessage = Message(imagesId: imagesId, senderId: self?.currentUser.id ?? "id")
 
             do {
                 try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChat.id)
