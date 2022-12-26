@@ -40,11 +40,21 @@ GitHub readme
 
  ----
  
+  ### :white_check_mark: Custom image picker
+
+<p float="left"> 
+<img width="300" alt="imageDetailView" src="https://user-images.githubusercontent.com/97970279/209569622-29c07479-088e-4b8d-a88b-3b183754abc7.png">
+</p>
+
+ ----
+ 
   ### :white_check_mark: Opening Profile/Channel/Message images animation
 
 <p float="left"> 
-<img width="300" alt="OpenMessageImage" src="https://user-images.githubusercontent.com/97970279/197534396-c5ee904d-4031-430c-b703-4102a5df8881.gif">
-<img width="300" alt="OpenProfileImage" src="https://user-images.githubusercontent.com/97970279/197596419-d1741304-7be7-4a42-92dd-e738f628836f.gif">
+<img width="300" alt="imageDetailView" src="https://user-images.githubusercontent.com/97970279/209569250-f5c0bc79-b149-479b-a069-b0f100e2514d.gif">
+<img width="300" alt="OpenProfileImage" src="https://user-images.githubusercontent.com/97970279/209569536-3497272a-928f-46eb-8016-4f4aea3fe841.png">
+<img width="300" alt="OpenProfileImage" src="https://user-images.githubusercontent.com/97970279/209569563-f9a74a3b-a635-4db6-bed7-b1a8b185e92e.png">
+
 </p>
 
  ----
@@ -104,9 +114,12 @@ GitHub readme
  ## Technologies
   - Swift
   - SwiftUI
-  - async, Multithreading
+  - UIKit
+  - GCD
   - Package Manager
   - GIT
   - GSignIn
   - Firebase Auth, Firestore, Storage, Database
   - CoreAnimation
+  - SDWebImageSwiftUI
+  - PhotosUI
