@@ -40,7 +40,7 @@ class PresenceViewModel: ObservableObject {
     }
 
     func observeRemoveOnline() {
-        DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             self?.usersRef.observe(.childRemoved) { snap  in
                 guard let emailToFind = snap.value as? String else { return }
                 if let index = self?.onlineUsers.firstIndex(of: emailToFind) {

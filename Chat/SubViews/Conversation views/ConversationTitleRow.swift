@@ -17,8 +17,6 @@ struct ConversationTitleRow: View {
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
     @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
 
-    let animationNamespace: Namespace.ID
-
     @State private var showingAlert = false
 
     // MARK: image properties
@@ -112,7 +110,6 @@ struct ConversationTitleRow: View {
                             .frame(width: imageSize, height: imageSize)
                             .cornerRadius(imageSize/2)
                             .addLightShadow()
-                            .matchedGeometryEffect(id: "profilePhoto", in: animationNamespace)
                             .accessibilityValue("profile image")
                 }
             }
@@ -160,7 +157,6 @@ struct ConversationTitleRow_Previews: PreviewProvider {
             ConversationTitleRow(user: User(gmail: "gmail@gmail.com",
                                             id: UUID().uuidString,
                                             name: "secondUserName"),
-                                 animationNamespace: namespace,
                                  isFindChat: .constant(true),
                                  isExpandedProfile: .constant(false),
                                  profileImageURL: .constant(URL(string: "")))

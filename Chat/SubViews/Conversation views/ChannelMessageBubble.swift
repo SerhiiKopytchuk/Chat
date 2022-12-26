@@ -17,11 +17,7 @@ struct ChannelMessageBubble: View {
 
     @State var isFindImage = false
 
-    let animationNamespace: Namespace.ID
-
-    @Binding var isHidden: Bool
-    @Binding var extendedImageId: String
-    var imageTapped: (String, URL?) -> Void
+    var imageTapped: ( [URL], _ index: Int) -> Void
 
     @State private var isShowUnsentMark = false
 
@@ -35,7 +31,13 @@ struct ChannelMessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imageId == "" {
+                if message.imagesId != [] {
+                    CoupleImagesView(imagesId: message.imagesId ?? [],
+                                     isChat: false,
+                                     isReceive: message.isReply()) { imagesURL, imageIndex in
+                        imageTapped(imagesURL, imageIndex)
+                    }
+                } else {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
@@ -49,44 +51,15 @@ struct ChannelMessageBubble: View {
                     .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
-                } else {
-                        imageView
                 }
             }
 
         }
         .padding(message.isReply() ? .trailing : .leading, 60)
         .padding(.horizontal, 10)
-        .opacity(extendedImageId == self.message.imageId ? (isHidden ? 0 : 1) : 1)
     }
 
     // MARK: - viewBuilders
-    @ViewBuilder private var imageView: some View {
-        VStack {
-            if isFindImage {
-                WebImage(url: imageUrl, isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
-                                  ? [.topLeft, .topRight, .bottomRight] :
-                                    [.topLeft, .topRight, .bottomLeft])
-                    .matchedGeometryEffect(id: message.imageId ?? "",
-                                           in: animationNamespace)
-                    .onTapGesture {
-                        imageTapped(message.imageId ?? "messageId", imageUrl)
-                    }
-            } else {
-                ProgressView()
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .aspectRatio(contentMode: .fill)
-            }
-
-        }
-        .onAppear {
-            imageSetup()
-        }
-    }
 
     @ViewBuilder private var unsentMark: some View {
         if channelMessagingViewModel.unsentMessages.isContains(message: message) && isShowUnsentMark {
@@ -107,37 +80,14 @@ struct ChannelMessageBubble: View {
             }
         }
     }
-    private func imageSetup() {
-
-        let imageId: String = message.imageId ?? "imageId"
-        var channelId: String = ""
-        var ref: StorageReference
-
-        channelId = channelViewModel.currentChannel.id ?? "channelID"
-        ref = StorageReferencesManager.shared
-            .getChannelMessageImageReference(channelId: channelId, imageId: imageId)
-
-        ref.downloadURL { url, err in
-            if err != nil {
-                return
-            }
-            self.imageUrl = url
-            withAnimation {
-                self.isFindImage = true
-            }
-        }
-    }
 }
 
 struct ChannelMessageBubble_Previews: PreviewProvider {
     @Namespace static var namespace
     static var previews: some View {
         ChannelMessageBubble(message: Message(text: "hello",
-                                              senderId: "id"),
-                             animationNamespace: namespace,
-                             isHidden: .constant(false),
-                             extendedImageId: .constant("")) { _, _ in
-        }
+                                              senderId: "senderId"),
+                             imageTapped: { _, _ in })
                              .environmentObject(UserViewModel())
                              .environmentObject(ChannelViewModel())
                              .environmentObject(ChannelMessagingViewModel())

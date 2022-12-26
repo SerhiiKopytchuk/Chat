@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 import FirebaseStorage
-import UIKit
+import PhotosUI
 
 struct CreateChannelView: View {
     // MARK: - vars
@@ -69,7 +69,12 @@ struct CreateChannelView: View {
                 customAlert
             }
             .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-                ImagePicker(image: $channelImage)
+                CustomImagePicker(onSelect: { assets in
+                    parseImages(with: assets)
+                },
+                                  isPresented: $isShowingImagePicker,
+                                  maxAmountOfImages: 1,
+                                  imagePickerModel: ImagePickerViewModel())
             }
             .navigationBarHidden(true)
         }
@@ -231,6 +236,29 @@ struct CreateChannelView: View {
             }
             .background(Color.black.opacity(0.65))
             .edgesIgnoringSafeArea(.all)
+        }
+    }
+
+    // MARK: - functions
+
+    func parseImages(with assets: [PHAsset]) {
+        guard !assets.isEmpty else { return }
+        isShowingImagePicker = false
+
+        let manager = PHCachingImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            manager.requestImage(for: assets.first ?? PHAsset(),
+                                 targetSize: .init(),
+                                 contentMode: .default,
+                                 options: options) { image, _ in
+                guard let image else { return }
+                DispatchQueue.main.async {
+                    self.channelImage = image
+                }
+            }
         }
     }
 }

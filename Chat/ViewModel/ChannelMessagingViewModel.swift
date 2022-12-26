@@ -94,9 +94,9 @@ class ChannelMessagingViewModel: ObservableObject {
         }
     }
 
-    func sendImage(imageId: String) {
+    func send(imagesId: [String]) {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            let imageMessage = Message(imageId: imageId, senderId: self?.currentUser.id ?? "some id")
+            let imageMessage = Message(imagesId: imagesId, senderId: self?.currentUser.id ?? "some id")
 
             do {
                 try self?.firestoreManager.getChannelMessagesCollectionReference(for: self?.currentChannel.id)

@@ -39,80 +39,97 @@ class UserViewModel: ObservableObject {
     // MARK: - functions
 
     func getCurrentUser(competition: @escaping (User) -> Void) {
-        self.firebaseManager.getUserDocumentReference(for: currentUserUID)
-            .getDocument(as: User.self) { [weak self] result in
-                switch result {
-                case .success(let user):
-                    self?.currentUser = user
-                    competition(user)
-                case .failure(let error):
-                    print(error)
+        DispatchQueue.global(qos: .userInteractive).async {  [weak self] in
+            self?.firebaseManager.getUserDocumentReference(for: self?.currentUserUID)
+                .getDocument(as: User.self) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let user):
+                            self?.currentUser = user
+                            competition(user)
+                        case .failure(let error):
+                            print(error)
+                        }
+                    }
                 }
-            }
+        }
     }
 
     func updateCurrentUser(userId: String) {
-        self.firebaseManager.getUserDocumentReference(for: userId)
-            .addSnapshotListener { [weak self] document, error in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firebaseManager.getUserDocumentReference(for: userId)
+                .addSnapshotListener { document, error in
 
-                if error.review(message: "failed to add snapshotListener") { return }
+                    if error.review(message: "failed to add snapshotListener") { return }
 
-                if let userLocal = try? document?.data(as: User.self) {
-                    self?.currentUser = userLocal
+                    DispatchQueue.main.async {
+                        if let userLocal = try? document?.data(as: User.self) {
+                            self?.currentUser = userLocal
+                        }
+                    }
                 }
-            }
+        }
     }
 
-    func getUser(id: User.ID, competition: @escaping (User) -> Void, failure: @escaping () -> Void) -> User {
-        var userToReturn: User = User()
-        self.firebaseManager.getUserDocumentReference(for: id)
-            .getDocument(as: User.self) { [weak self] result in
-                switch result {
-                case .success(let user):
-                    self?.secondUser = user
-                    userToReturn = user
-                    competition(user)
-                case .failure(let error):
-                    print(error)
-                    failure()
+    func getUser(id: User.ID, competition: @escaping (User) -> Void, failure: @escaping () -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firebaseManager.getUserDocumentReference(for: id)
+                .getDocument(as: User.self) {  result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let user):
+                            self?.secondUser = user
+                            competition(user)
+                        case .failure(let error):
+                            print(error)
+                            failure()
+                        }
+                    }
                 }
-            }
-        return userToReturn
+        }
     }
 
     func getUserByChat(chat: Chat, competition: @escaping (User) -> Void) {
-        self.firebaseManager.getUserDocumentReference(for: self.currentUser.id != chat.user1Id ?
-                                                      chat.user1Id  : chat.user2Id)
-            .getDocument { document, err in
-                if let err = err {
-                    print("Error getting documents: \(err)")
-                } else {
-                    if let locUser = try? document?.data(as: User.self) as? User {
-                        competition(locUser)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firebaseManager.getUserDocumentReference(for: self?.currentUser.id != chat.user1Id ?
+                                                          chat.user1Id  : chat.user2Id)
+                .getDocument { document, err in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                    } else {
+                        if let locUser = try? document?.data(as: User.self) as? User {
+                            DispatchQueue.main.async {
+                                competition(locUser)
+                            }
+                        }
                     }
                 }
-            }
+        }
     }
 
     func getAllUsers() {
-        firebaseManager.userCollection
-            .getDocuments(completion: { querySnapshot, error in
-                guard let documents = querySnapshot?.documents else {
-                    print("Error fetching documets: \(String(describing: error))")
-                    return
-                }
-
-                self.users = documents.compactMap { document -> User? in
-                    do {
-
-                        let user = try document.data(as: User.self)
-                        return self.filterUser(user: user)
-                    } catch {
-                        print("error decoding document into Message: \(error)")
-                        return nil
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.firebaseManager.userCollection
+                .getDocuments(completion: { querySnapshot, error in
+                    guard let documents = querySnapshot?.documents else {
+                        print("Error fetching documets: \(String(describing: error))")
+                        return
                     }
-                }
-            })
+
+                    DispatchQueue.main.async {
+                        self?.users = documents.compactMap { document -> User? in
+                            do {
+
+                                let user = try document.data(as: User.self)
+                                return self?.filterUser(user: user)
+                            } catch {
+                                print("error decoding document into Message: \(error)")
+                                return nil
+                            }
+                        }
+                    }
+                })
+        }
     }
 
     fileprivate func filterUser(user: User) -> User? {
@@ -130,23 +147,32 @@ class UserViewModel: ObservableObject {
     }
 
     func signIn(credential: AuthCredential, competition: @escaping (User) -> Void ) {
-        auth.signIn(with: credential) { [weak self] result, error in
+        withAnimation {
+            isShowLoader = true
+        }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.auth.signIn(with: credential) { result, error in
 
-            if error.review(result: result, failure: {
-                self?.showAlert(text: error?.localizedDescription)
-            }) { return }
+                if error.review(result: result, failure: {
+                    self?.showAlert(text: error?.localizedDescription)
+                }) { return }
 
-            self?.doesUserExist { [weak self] exist in
-                if exist {
-                    self?.setSignedInAndGetCurrentUser { user in
-                        competition(user)
-                    }
-                } else {
-                    self?.createFbUser(name: self?.auth.currentUser?.displayName ?? "someName",
-                                       gmail: self?.auth.currentUser?.email ?? "someEmail@gmail.com")
+                self?.doesUserExist { exist in
+                    DispatchQueue.main.async {
+                        if exist {
+                            self?.setSignedInAndGetCurrentUser { user in
+                                competition(user)
+                                self?.isShowLoader = false
+                            }
+                        } else {
+                            self?.createFbUser(name: self?.auth.currentUser?.displayName ?? "someName",
+                                               gmail: self?.auth.currentUser?.email ?? "someEmail@gmail.com")
 
-                    self?.setSignedInAndGetCurrentUser { user in
-                        competition(user)
+                            self?.setSignedInAndGetCurrentUser { user in
+                                competition(user)
+                                self?.isShowLoader = false
+                            }
+                        }
                     }
                 }
             }
@@ -173,35 +199,45 @@ class UserViewModel: ObservableObject {
     }
 
     func signUp(username: String, email: String, password: String, competition: @escaping (User) -> Void) {
-        isShowLoader = true
-        auth.createUser(withEmail: email, password: password) { [weak self] result, error in
+        withAnimation {
+            isShowLoader = true
+        }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.auth.createUser(withEmail: email, password: password) { result, error in
 
-            if error.review(result: result, failure: {
-                self?.showAlert(text: error?.localizedDescription)
-            }) { return }
+                if error.review(result: result, failure: {
+                    self?.showAlert(text: error?.localizedDescription)
+                }) { return }
 
-            self?.getAllUsers()
-            self?.setSignedInAndGetCurrentUser { user in
-                competition(user)
+                self?.getAllUsers()
+                DispatchQueue.main.async {
+                    self?.setSignedInAndGetCurrentUser { user in
+                        competition(user)
+                    }
+                    self?.isShowLoader = false
+                }
+                self?.createFbUser(name: username, gmail: self?.auth.currentUser?.email ?? "")
+
             }
-            self?.isShowLoader = false
-            self?.createFbUser(name: username, gmail: self?.auth.currentUser?.email ?? "")
-
         }
     }
 
     func signIn(email: String, password: String, competition: @escaping (User) -> Void ) {
         isShowLoader = true
-        auth.signIn(withEmail: email, password: password) { [weak self] result, error in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.auth.signIn(withEmail: email, password: password) { result, error in
 
-            if error.review(result: result, failure: {
-                self?.showAlert(text: error?.localizedDescription)
-            }) { return }
+                if error.review(result: result, failure: {
+                    self?.showAlert(text: error?.localizedDescription)
+                }) { return }
 
-            self?.getAllUsers()
-            self?.isShowLoader = false
-            self?.setSignedInAndGetCurrentUser { user in
-                competition(user)
+                self?.getAllUsers()
+                DispatchQueue.main.async {
+                    self?.isShowLoader = false
+                    self?.setSignedInAndGetCurrentUser { user in
+                        competition(user)
+                    }
+                }
             }
         }
     }
