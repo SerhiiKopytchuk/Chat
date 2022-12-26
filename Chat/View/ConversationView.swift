@@ -19,8 +19,6 @@ struct ConversationView: View {
     // MARK: fullscreen profile image properties
     @State private var isExpandedProfile: Bool = false
     @State var profileImageUrl = URL(string: "")
-    @State private var loadExpandedContent = false
-    @State private var imageOffset: CGSize = .zero
 
     @State private var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
@@ -49,23 +47,13 @@ struct ConversationView: View {
                         .ignoresSafeArea(.container, edges: .bottom)
 
                 }
-                .background {
-                    Rectangle()
-                        .fill(.black)
-                        .opacity(loadExpandedContent ? 1 : 0)
-                        .ignoresSafeArea()
-                }
-
             } else {
                 createChatButton
             }
         }
         .addRightGestureRecognizer {
-            if !isExpandedImage && !isExpandedProfile {
                 env.dismiss()
-            }
         }
-        .navigationBarBackButtonHidden(loadExpandedContent)
         .overlay(content: {
             if showMessageEmojiView {
                 lightDarkEmptyBackground
@@ -110,8 +98,6 @@ struct ConversationView: View {
                              isExpandedProfile: $isExpandedProfile,
                              profileImageURL: $profileImageUrl
         )
-        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                         imageOffsetProgress: imageOffsetProgress())
         .background {
             Color.secondPrimary
                 .ignoresSafeArea()
@@ -144,16 +130,12 @@ struct ConversationView: View {
         .ignoresSafeArea(.all, edges: .top)
         .frame(maxWidth: .infinity)
         .background(Color.background)
-        .addBlackOverlay(loadExpandedContent: loadExpandedContent,
-                         imageOffsetProgress: isExpandedProfile ? imageOffsetProgress() : 1)
     }
 
     @ViewBuilder private func messageBubble(message: Message) -> some View {
         MessageBubble(message: message,
                       showHighlight: $showMessageEmojiView,
                       highlightedMessage: $highlightMessage,
-                      isHidden: $isExpandedImage,
-                      extendedImageId: .constant(""),
                       imageTapped: { imagesURl, index in
 
             self.imageIndex = index
@@ -190,8 +172,6 @@ struct ConversationView: View {
                       showHighlight: $showMessageEmojiView,
                       highlightedMessage: $highlightMessage,
                       showEmojiBarView: true,
-                      isHidden: $isExpandedImage,
-                      extendedImageId: .constant(""),
                       imageTapped: {_, _  in})
         .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
@@ -240,15 +220,6 @@ struct ConversationView: View {
     }
 
     // MARK: - functions
-
-    private func imageOffsetProgress() -> CGFloat {
-        let progress = imageOffset.height / 100
-        if imageOffset.height < 0 {
-            return 1
-        } else {
-            return 1  - (progress < 1 ? progress : 1)
-        }
-    }
 
 }
 

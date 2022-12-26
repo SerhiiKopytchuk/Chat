@@ -9,8 +9,7 @@ import SwiftUI
 import Firebase
 import GoogleSignIn
 import FirebaseStorage
-// Apple HIG
-// Apple Human Interface Guidelines
+import PhotosUI
 
 // SF Symbols
 struct SignUpView: View {
@@ -109,7 +108,12 @@ struct SignUpView: View {
             }
             .navigationBarHidden(true)
             .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-                ImagePicker(image: $image)
+                CustomImagePicker(onSelect: { assets in
+                    parseImages(with: assets)
+                },
+                                  isPresented: $isShowingImagePicker,
+                                  maxAmountOfImages: 1,
+                                  imagePickerModel: ImagePickerViewModel())
             }
         } else {
             SignInView(isPresented: $isPresentSignInView)
@@ -399,6 +403,27 @@ struct SignUpView: View {
         self.viewModel.clearPreviousDataBeforeSignIn()
         self.channelViewModel.clearPreviousDataBeforeSignIn()
         self.chattingViewModel.clearDataBeforeSingIn()
+    }
+
+    func parseImages(with assets: [PHAsset]) {
+        guard !assets.isEmpty else { return }
+        isShowingImagePicker = false
+
+        let manager = PHCachingImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            manager.requestImage(for: assets.first ?? PHAsset(),
+                                 targetSize: .init(),
+                                 contentMode: .default,
+                                 options: options) { image, _ in
+                guard let image else { return }
+                DispatchQueue.main.async {
+                    self.image = image
+                }
+            }
+        }
     }
 }
 

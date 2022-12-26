@@ -17,11 +17,7 @@ struct ChannelMessageBubble: View {
 
     @State var isFindImage = false
 
-    let animationNamespace: Namespace.ID
-
-    @Binding var isHidden: Bool
-    @Binding var extendedImageId: String
-    var imageTapped: (String, URL?) -> Void
+    var imageTapped: ( [URL], _ index: Int) -> Void
 
     @State private var isShowUnsentMark = false
 
@@ -38,8 +34,8 @@ struct ChannelMessageBubble: View {
                 if message.imagesId != [] {
                     CoupleImagesView(imagesId: message.imagesId ?? [],
                                      isChat: false,
-                                     isReceive: message.isReply()) { _, _ in
-
+                                     isReceive: message.isReply()) { imagesURL, imageIndex in
+                        imageTapped(imagesURL, imageIndex)
                     }
                 } else {
                     VStack(alignment: .trailing, spacing: 0) {
@@ -61,7 +57,6 @@ struct ChannelMessageBubble: View {
         }
         .padding(message.isReply() ? .trailing : .leading, 60)
         .padding(.horizontal, 10)
-        .opacity(extendedImageId == self.message.imagesId?.first ? (isHidden ? 0 : 1) : 1)
     }
 
     // MARK: - viewBuilders
@@ -91,11 +86,8 @@ struct ChannelMessageBubble_Previews: PreviewProvider {
     @Namespace static var namespace
     static var previews: some View {
         ChannelMessageBubble(message: Message(text: "hello",
-                                              senderId: "id"),
-                             animationNamespace: namespace,
-                             isHidden: .constant(false),
-                             extendedImageId: .constant("")) { _, _ in
-        }
+                                              senderId: "senderId"),
+                             imageTapped: { _, _ in })
                              .environmentObject(UserViewModel())
                              .environmentObject(ChannelViewModel())
                              .environmentObject(ChannelMessagingViewModel())

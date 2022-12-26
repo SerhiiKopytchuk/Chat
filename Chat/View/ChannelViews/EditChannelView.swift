@@ -8,6 +8,7 @@
 import SwiftUI
 import SDWebImageSwiftUI
 import FirebaseStorage
+import PhotosUI
 
 struct EditChannelView: View {
 
@@ -76,7 +77,12 @@ struct EditChannelView: View {
                                             channelId: channelViewModel.currentChannel.id ?? "some id") { _ in }
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $channelImage)
+            CustomImagePicker(onSelect: { assets in
+                parseImages(with: assets)
+            },
+                              isPresented: $isShowingImagePicker,
+                              maxAmountOfImages: 1,
+                              imagePickerModel: ImagePickerViewModel())
         }
         .overlay {
             customAlert
@@ -191,6 +197,27 @@ struct EditChannelView: View {
             }
             withAnimation(.easeInOut) {
                 self.imageUrl = url
+            }
+        }
+    }
+
+    func parseImages(with assets: [PHAsset]) {
+        guard !assets.isEmpty else { return }
+        isShowingImagePicker = false
+
+        let manager = PHCachingImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            manager.requestImage(for: assets.first ?? PHAsset(),
+                                 targetSize: .init(),
+                                 contentMode: .default,
+                                 options: options) { image, _ in
+                guard let image else { return }
+                DispatchQueue.main.async {
+                    self.channelImage = image
+                }
             }
         }
     }

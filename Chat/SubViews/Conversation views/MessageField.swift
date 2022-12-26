@@ -40,6 +40,7 @@ struct MessageField: View {
                 self.selectedImages = []
                 parseImages(with: assets)
             }, isPresented: $isShowingImagePicker,
+                              maxAmountOfImages: 3,
                               imagePickerModel: ImagePickerViewModel())
         })
         .frame( height: height < 160 ? self.height : 160)

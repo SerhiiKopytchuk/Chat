@@ -36,56 +36,7 @@ struct ImageDetailedView: View {
 
             Color.clear
 
-            WebImage(url: imagesURL[pageIndex])
-                .resizable()
-                .scaledToFit()
-                .cornerRadius(10)
-                .padding()
-                .shadow(color: .black.opacity(0.2), radius: 12, x: 2, y: 2)
-                .opacity(isAnimating ? 1 : 0)
-                .offset(imageOffset)
-                .scaleEffect(imageScale)
-                .onTapGesture(count: 2) {
-                    if imageScale == 1 {
-                        withAnimation(.spring()) {
-                            imageScale = 5
-                        }
-                    } else {
-                        resetImageState()
-                    }
-                }
-                .gesture(
-                    DragGesture()
-                        .onChanged({ value in
-                                withAnimation(.linear(duration: 1)) {
-                                    imageOffset = value.translation
-                            }
-                        })
-                        .onEnded({ _ in
-                            if imageScale <= 1 {
-                                resetImageState()
-                            }
-                        })
-                )
-                .gesture(
-                    MagnificationGesture()
-                        .onChanged({ value in
-                            withAnimation(.linear) {
-                                if imageScale >= 1 && imageScale <= 5 {
-                                    imageScale = value
-                                } else if imageScale > 5 {
-                                    imageScale = 5
-                                }
-                            }
-                        })
-                        .onEnded({ _ in
-                            if imageScale > 5 {
-                                imageScale = 5
-                            } else if imageScale <= 1 {
-                                resetImageState()
-                            }
-                        })
-                )
+            imageView
         }
         .onAppear {
             withAnimation(.linear(duration: 1)) {
@@ -93,115 +44,188 @@ struct ImageDetailedView: View {
             }
         }
         .overlay(alignment: .topLeading) {
-            Button {
-
-                withAnimation(.easeOut(duration: 0.3).delay(0.05)) {
-                    isPresented = false
-                }
-            } label: {
-                Image(systemName: "arrow.left")
-                    .font(.title3)
-                    .padding(.horizontal)
-                    .padding(.top, 30)
-            }
+            backButton
         }
         .overlay(alignment: .bottom) {
-            Group {
-                HStack {
-                    Button {
-                        withAnimation(.spring()) {
-                            if imageScale > 1 {
-                                imageScale -= 1
-
-                                if imageScale <= 1 {
-                                    resetImageState()
-                                }
-                            }
-                        }
-                    } label: {
-                        ControlImageView(icon: "minus.magnifyingglass")
-                    }
-
-                    Button {
-                        resetImageState()
-                    } label: {
-                        ControlImageView(icon: "arrow.up.left.and.down.right.magnifyingglass")
-                    }
-
-                    Button {
-                        withAnimation(.spring()) {
-                            if imageScale < 5 {
-                                imageScale += 1
-
-                                if imageScale > 5 {
-                                    imageScale = 5
-                                }
-                            }
-                        }
-                    } label: {
-                        ControlImageView(icon: "plus.magnifyingglass")
-                    }
-
-                }
-                .padding(EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20))
-                .background(.ultraThinMaterial)
-                .cornerRadius(12)
-                .opacity(isAnimating ? 1 : 0)
-            }
-            .padding(.bottom, 30)
+            controlCenter
         }
         .overlay(alignment: .topTrailing) {
-            if imagesURL.count > 1 {
-                HStack(spacing: 20) {
-                    Image(systemName: isDrawerOpen ? "chevron.compact.right" : "chevron.compact.left")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 40)
-                        .padding(8)
-                        .foregroundColor(.secondary)
-                        .onTapGesture {
-                            withAnimation(.easeOut) {
-                                isDrawerOpen.toggle()
-                            }
-                        }
-
-                    ForEach(imagesURL, id: \.self) { imageURL in
-                        WebImage(url: imageURL)
-                            .resizable()
-                            .scaledToFit()
-                            .cornerRadius(8)
-                            .shadow(radius: 4)
-                            .opacity(isDrawerOpen ? 1 : 0)
-                            .animation(.easeOut(duration: 0.5), value: isDrawerOpen)
-                            .onTapGesture {
-                                isAnimating = true
-                                self.pageIndex = imagesURL.firstIndex(of: imageURL) ?? 0
-                            }
-                    }
-
-                    Spacer()
-                }
-                .padding(EdgeInsets(top: 16, leading: 8, bottom: 16, trailing: 8))
-                .background(.ultraThinMaterial)
-                .cornerRadius(12)
-                .opacity(isAnimating ? 1 : 0)
-                .frame(width: 260)
-                .padding(.top, UIScreen.main.bounds.height / 12)
-                .offset(x: isDrawerOpen ? 20 : 215)
-            }
+            pageSelector
         }
         .background(Color.background)
     }
 
     // MARK: - ViewBuilders
 
+    @ViewBuilder private var imageView: some View {
+        WebImage(url: imagesURL[pageIndex])
+            .resizable()
+            .scaledToFit()
+            .cornerRadius(10)
+            .padding()
+            .shadow(color: .black.opacity(0.2), radius: 12, x: 2, y: 2)
+            .opacity(isAnimating ? 1 : 0)
+            .offset(imageOffset)
+            .scaleEffect(imageScale)
+            .onTapGesture(count: 2) {
+                if imageScale == 1 {
+                    withAnimation(.spring()) {
+                        imageScale = 5
+                    }
+                } else {
+                    resetImageState()
+                }
+            }
+            .gesture(
+                DragGesture()
+                    .onChanged({ value in
+                        withAnimation(.linear(duration: 1)) {
+                            imageOffset = value.translation
+                        }
+                    })
+                    .onEnded({ _ in
+                        if imageScale <= 1 {
+                            resetImageState()
+                        }
+                    })
+            )
+            .gesture(
+                MagnificationGesture()
+                    .onChanged({ value in
+                        withAnimation(.linear) {
+                            if imageScale >= 1 && imageScale <= 5 {
+                                imageScale = value
+                            } else if imageScale > 5 {
+                                imageScale = 5
+                            }
+                        }
+                    })
+                    .onEnded({ _ in
+                        if imageScale > 5 {
+                            imageScale = 5
+                        } else if imageScale <= 1 {
+                            resetImageState()
+                        }
+                    })
+            )
+    }
+
+    @ViewBuilder private var backButton: some View {
+        Button {
+            withAnimation(.easeOut(duration: 0.3).delay(0.05)) {
+                isPresented = false
+            }
+        } label: {
+            Image(systemName: "arrow.left")
+                .font(.title3)
+                .padding(.horizontal)
+                .padding(.top, 30)
+        }
+    }
+
+    @ViewBuilder private var controlCenter: some View {
+        Group {
+            HStack {
+
+                Button {
+                    minusScale()
+                } label: {
+                    ControlImageView(icon: "minus.magnifyingglass")
+                }
+
+                Button {
+                    resetImageState()
+                } label: {
+                    ControlImageView(icon: "arrow.up.left.and.down.right.magnifyingglass")
+                }
+
+                Button {
+                    plusScale()
+                } label: {
+                    ControlImageView(icon: "plus.magnifyingglass")
+                }
+
+            }
+            .padding(EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20))
+            .background(.ultraThinMaterial)
+            .cornerRadius(12)
+            .opacity(isAnimating ? 1 : 0)
+        }
+        .padding(.bottom, 30)
+    }
+
+    @ViewBuilder private var pageSelector: some View {
+        if imagesURL.count > 1 {
+            HStack(spacing: 20) {
+                Image(systemName: isDrawerOpen ? "chevron.compact.right" : "chevron.compact.left")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 40)
+                    .padding(8)
+                    .foregroundColor(.secondary)
+                    .onTapGesture {
+                        withAnimation(.easeOut) {
+                            isDrawerOpen.toggle()
+                        }
+                    }
+
+                ForEach(imagesURL, id: \.self) { imageURL in
+                    WebImage(url: imageURL)
+                        .resizable()
+                        .scaledToFit()
+                        .cornerRadius(8)
+                        .shadow(radius: 4)
+                        .opacity(isDrawerOpen ? 1 : 0)
+                        .animation(.easeOut(duration: 0.5), value: isDrawerOpen)
+                        .onTapGesture {
+                            isAnimating = true
+                            self.pageIndex = imagesURL.firstIndex(of: imageURL) ?? 0
+                        }
+                }
+
+                Spacer()
+            }
+            .padding(EdgeInsets(top: 16, leading: 8, bottom: 16, trailing: 8))
+            .background(.ultraThinMaterial)
+            .cornerRadius(12)
+            .opacity(isAnimating ? 1 : 0)
+            .frame(width: 260)
+            .padding(.top, UIScreen.main.bounds.height / 12)
+            .offset(x: isDrawerOpen ? 20 : 215)
+        }
+    }
+
     // MARK: - functions
 
-    func resetImageState() {
+    private func minusScale() {
+        withAnimation(.spring()) {
+            if imageScale > 1 {
+                imageScale -= 1
+
+                if imageScale <= 1 {
+                    resetImageState()
+                }
+            }
+        }
+    }
+
+    private func resetImageState() {
         return withAnimation(.spring()) {
             imageScale = 1
             imageOffset = .zero
             print(UIScreen.main.bounds)
+        }
+    }
+
+    private func plusScale() {
+        withAnimation(.spring()) {
+            if imageScale < 5 {
+                imageScale += 1
+
+                if imageScale > 5 {
+                    imageScale = 5
+                }
+            }
         }
     }
 }

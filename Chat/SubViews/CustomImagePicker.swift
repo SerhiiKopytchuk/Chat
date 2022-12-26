@@ -15,6 +15,8 @@ struct CustomImagePicker: View {
     var onSelect: ([PHAsset]) -> Void
     @Binding var isPresented: Bool
 
+    let maxAmountOfImages: Int
+
     // MARK: - EnvironmentObjects
 
     @StateObject var imagePickerModel: ImagePickerViewModel
@@ -65,11 +67,13 @@ struct CustomImagePicker: View {
                             return imageAsset.asset
                         }
                         onSelect(imageAssets)
+                        imagePickerModel.selectedImages = []
                     } label: {
-                        Text("Send \(imagePickerModel.selectedImages.count) " +
-                             (imagePickerModel.selectedImages.count == 1 ?
-                              "image" :
-                                "images"))
+                        Text(maxAmountOfImages > 1 ?
+                             "Send \(imagePickerModel.selectedImages.count) " +
+                             (imagePickerModel.selectedImages.count == 1 ? "image" : "images") :
+                                "Choose"
+                        )
                         .font(.callout)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -129,10 +133,11 @@ struct CustomImagePicker: View {
                         Circle()
                             .fill(.blue)
 
-                        Text("\(imagePickerModel.selectedImages[index].assetIndex + 1)")
-                            .font(.caption2.bold())
-                            .foregroundColor(.white)
-
+                        if maxAmountOfImages > 1 {
+                            Text("\(imagePickerModel.selectedImages[index].assetIndex + 1)")
+                                .font(.caption2.bold())
+                                .foregroundColor(.white)
+                        }
                     }
                 }
                 .frame(width: 20, height: 20)
@@ -151,18 +156,24 @@ struct CustomImagePicker: View {
 
     func imageTap(imageAsset: ImageAsset) {
         withAnimation(.easeInOut) {
-            if let index = imagePickerModel.selectedImages.firstIndex(where: { asset in
-                asset.id == imageAsset.id
-            }) {
-                imagePickerModel.selectedImages.remove(at: index)
-                imagePickerModel.selectedImages.enumerated().forEach { item in
-                    imagePickerModel.selectedImages[item.offset].assetIndex = item.offset
-                }
+            if maxAmountOfImages == 1 {
+                var newAsset = imageAsset
+                newAsset.assetIndex = imagePickerModel.selectedImages.count
+                imagePickerModel.selectedImages = [newAsset]
             } else {
-                if imagePickerModel.selectedImages.count < 3 {
-                    var newAsset = imageAsset
-                    newAsset.assetIndex = imagePickerModel.selectedImages.count
-                    imagePickerModel.selectedImages.append(newAsset)
+                if let index = imagePickerModel.selectedImages.firstIndex(where: { asset in
+                    asset.id == imageAsset.id
+                }) {
+                    imagePickerModel.selectedImages.remove(at: index)
+                    imagePickerModel.selectedImages.enumerated().forEach { item in
+                        imagePickerModel.selectedImages[item.offset].assetIndex = item.offset
+                    }
+                } else {
+                    if imagePickerModel.selectedImages.count < maxAmountOfImages {
+                        var newAsset = imageAsset
+                        newAsset.assetIndex = imagePickerModel.selectedImages.count
+                        imagePickerModel.selectedImages.append(newAsset)
+                    }
                 }
             }
         }
@@ -174,8 +185,9 @@ struct CustomImagePicker_Previews: PreviewProvider {
     static var previews: some View {
         CustomImagePicker(onSelect: { _ in
 
-        }, isPresented: .constant(true), imagePickerModel: ImagePickerViewModel())
-
+        }, isPresented: .constant(true),
+                          maxAmountOfImages: 3,
+                          imagePickerModel: ImagePickerViewModel())
     }
 }
 #endif

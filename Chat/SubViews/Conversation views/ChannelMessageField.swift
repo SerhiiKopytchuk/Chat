@@ -36,7 +36,9 @@ struct ChannelMessageField: View {
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
             CustomImagePicker(onSelect: { assets in
                 parseImages(with: assets)
-            }, isPresented: $isShowingImagePicker,
+            },
+                              isPresented: $isShowingImagePicker,
+                              maxAmountOfImages: 3,
                               imagePickerModel: ImagePickerViewModel())
         }
         .frame( height: height < 160 ? self.height : 160)

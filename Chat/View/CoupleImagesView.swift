@@ -29,80 +29,53 @@ struct CoupleImagesView: View {
     // MARK: - body
 
     var body: some View {
-        switch imagesId.count {
-        case 1:
-            oneImageView()
-                .onAppear {
-                    imageSetup()
-                }
-        case 2:
-            twoImagesView()
-                .onAppear {
-                    imageSetup()
-                }
-        case 3:
-            threeImagesView()
-                .onAppear {
-                    imageSetup()
-                }
-        default:
-            oneImageView()
-                .onAppear {
-                    imageSetup()
-                }
-        }
-    }
-
-    // MARK: - ViewBuilders
-
-    @ViewBuilder func oneImageView() -> some View {
-        VStack {
+        ZStack {
             if isFindImage {
-                imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3 * 2), height: 250))
-                    .cornerRadius(15, corners: isReceive
-                                  ? [.topLeft, .topRight, .bottomRight] :
-                                    [.topLeft, .topRight, .bottomLeft])
+                switch imagesId.count {
+                case 1:
+                    oneImageView()
+                case 2:
+                    twoImagesView()
+                case 3:
+                    threeImagesView()
+                default:
+                    oneImageView()
+                }
             } else {
                 ProgressView()
                     .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
                     .aspectRatio(contentMode: .fill)
             }
         }
+        .onAppear {
+            imageSetup()
+        }
+        .cornerRadius(15, corners: isReceive
+                      ? [.topLeft, .topRight, .bottomRight] :
+                        [.topLeft, .topRight, .bottomLeft])
+    }
+
+    // MARK: - ViewBuilders
+
+    @ViewBuilder func oneImageView() -> some View {
+        imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3 * 2), height: 250))
     }
 
     @ViewBuilder func twoImagesView() -> some View {
-        if isFindImage {
-            HStack(spacing: 2) {
-                imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
-                imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
-            }
-            .cornerRadius(15, corners: isReceive
-                          ? [.topLeft, .topRight, .bottomRight] :
-                            [.topLeft, .topRight, .bottomLeft])
-        } else {
-            ProgressView()
-                .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                .aspectRatio(contentMode: .fill)
+        HStack(spacing: 2) {
+            imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
+            imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
         }
     }
 
     @ViewBuilder func threeImagesView() -> some View {
-        if isFindImage {
-            HStack(spacing: 2) {
-                imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
+        HStack(spacing: 2) {
+            imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
 
-                VStack(spacing: 2) {
-                    imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
-                    imageView(imageIndex: 2, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
-                }
+            VStack(spacing: 2) {
+                imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
+                imageView(imageIndex: 2, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
             }
-            .cornerRadius(15, corners: isReceive
-                          ? [.topLeft, .topRight, .bottomRight] :
-                            [.topLeft, .topRight, .bottomLeft])
-        } else {
-            ProgressView()
-                .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                .aspectRatio(contentMode: .fill)
         }
     }
 

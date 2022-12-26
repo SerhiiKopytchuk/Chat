@@ -16,15 +16,8 @@ struct MessageBubble: View {
     @Binding var showHighlight: Bool
     @Binding var highlightedMessage: Message?
     @State var showEmojiBarView = false
-    @State private var imageUrl = URL(string: "")
 
-    @State var isFindImage = false
-
-    var isChat: Bool = true
-
-    @Binding var isHidden: Bool
-    @Binding var extendedImageId: String
-    var imageTapped: ([URL], _ index: Int) -> Void
+    var imageTapped: ( [URL], _ index: Int) -> Void
 
     @State private var isShowUnsentMark = false
 
@@ -68,7 +61,6 @@ struct MessageBubble: View {
         .onAppear {
             addMessageSnapshotListener()
         }
-        .opacity(extendedImageId == self.message.imagesId?.first ? (isHidden ? 0 : 1) : 1)
     }
 
     // MARK: - viewBuilders
@@ -144,8 +136,7 @@ struct MessageBubble_Previews: PreviewProvider {
                                        senderId: "id"),
                       showHighlight: .constant(false),
                       highlightedMessage: .constant(Message()),
-                      isHidden: .constant(true),
-                      extendedImageId: .constant("id")) { _, _ in }
+                      imageTapped: { _, _ in })
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChannelViewModel())

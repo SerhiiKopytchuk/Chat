@@ -9,6 +9,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 import FirebaseStorage
 import UIKit
+import PhotosUI
 
 struct EditProfileView: View {
     // MARK: - vars
@@ -78,7 +79,12 @@ struct EditProfileView: View {
                                             userId: userViewModel.currentUser.id)
         })
         .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
-            ImagePicker(image: $profileImage)
+            CustomImagePicker(onSelect: { assets in
+                parseImages(with: assets)
+            },
+                              isPresented: $isShowingImagePicker,
+                              maxAmountOfImages: 1,
+                              imagePickerModel: ImagePickerViewModel())
         }
     }
 
@@ -197,6 +203,28 @@ struct EditProfileView: View {
             }
         }
     }
+
+    func parseImages(with assets: [PHAsset]) {
+        guard !assets.isEmpty else { return }
+        isShowingImagePicker = false
+
+        let manager = PHCachingImageManager.default()
+        let options = PHImageRequestOptions()
+        options.isSynchronous = true
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            manager.requestImage(for: assets.first ?? PHAsset(),
+                                 targetSize: .init(),
+                                 contentMode: .default,
+                                 options: options) { image, _ in
+                guard let image else { return }
+                DispatchQueue.main.async {
+                    self.profileImage = image
+                }
+            }
+        }
+    }
+
 }
 
 struct EditProfileView_Previews: PreviewProvider {
