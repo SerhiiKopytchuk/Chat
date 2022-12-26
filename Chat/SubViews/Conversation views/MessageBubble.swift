@@ -22,11 +22,9 @@ struct MessageBubble: View {
 
     var isChat: Bool = true
 
-    let animationNamespace: Namespace.ID
-
     @Binding var isHidden: Bool
     @Binding var extendedImageId: String
-    var imageTapped: ([URL?], _ index: Int, _ id: String) -> Void
+    var imageTapped: ([URL], _ index: Int) -> Void
 
     @State private var isShowUnsentMark = false
 
@@ -55,10 +53,10 @@ struct MessageBubble: View {
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
                 } else {
-                    CoupleImagesView(imagesId: message.imagesId ?? [],
+                    CoupleImagesView(imagesId: message.imagesId?.sorted() ?? [],
                                      isChat: true,
-                                     isReceive: message.isReply()) { imagesURL, index, id in
-                        imageTapped(imagesURL, index, id)
+                                     isReceive: message.isReply()) { imagesURL, index in
+                        imageTapped(imagesURL, index)
                     }
                 }
                 emojiBarView
@@ -146,9 +144,8 @@ struct MessageBubble_Previews: PreviewProvider {
                                        senderId: "id"),
                       showHighlight: .constant(false),
                       highlightedMessage: .constant(Message()),
-                      animationNamespace: namespace,
                       isHidden: .constant(true),
-                      extendedImageId: .constant("id")) { _, _, _ in }
+                      extendedImageId: .constant("id")) { _, _ in }
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChannelViewModel())

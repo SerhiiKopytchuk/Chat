@@ -18,9 +18,8 @@ struct CoupleImagesView: View {
 
     @State var isFindImage: Bool = false
     @State var imagesURL: [URL] = []
-    @State private var isOpened: [Bool] = [false, false, false]
 
-    var imageTapped: ([URL], _ index: Int, _ id: String) -> Void
+    var imageTapped: ([URL], _ index: Int) -> Void
 
     // MARK: - EnvironmentObjects
 
@@ -59,20 +58,10 @@ struct CoupleImagesView: View {
     @ViewBuilder func oneImageView() -> some View {
         VStack {
             if isFindImage {
-                WebImage(url: imagesURL.first)
-                    .resizable()
-                    .transition(.fade(duration: 0.5))
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
+                imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3 * 2), height: 250))
                     .cornerRadius(15, corners: isReceive
                                   ? [.topLeft, .topRight, .bottomRight] :
                                     [.topLeft, .topRight, .bottomLeft])
-                    .onTapGesture {
-                        imageTapped(imagesURL, 0, imagesId.first ?? "")
-                        withAnimation {
-                            isOpened[0] = true
-                        }
-                    }
             } else {
                 ProgressView()
                     .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
@@ -82,80 +71,29 @@ struct CoupleImagesView: View {
     }
 
     @ViewBuilder func twoImagesView() -> some View {
-        HStack(spacing: 2) {
-            if isFindImage {
-                WebImage(url: imagesURL.first, isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250)
-                    .clipped()
-                    .onTapGesture {
-                        imageTapped(imagesURL, 0, imagesId.first ?? "")
-                        withAnimation {
-                            isOpened[0] = true
-                        }
-                    }
-                WebImage(url: imagesURL[1], isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250)
-                    .clipped()
-                    .onTapGesture {
-                        imageTapped(imagesURL, 1, imagesId[1])
-                        withAnimation {
-                            isOpened[1] = true
-                        }
-                    }
-            } else {
-                ProgressView()
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
-                    .aspectRatio(contentMode: .fill)
+        if isFindImage {
+            HStack(spacing: 2) {
+                imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
+                imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
             }
+            .cornerRadius(15, corners: isReceive
+                          ? [.topLeft, .topRight, .bottomRight] :
+                            [.topLeft, .topRight, .bottomLeft])
+        } else {
+            ProgressView()
+                .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
+                .aspectRatio(contentMode: .fill)
         }
-        .cornerRadius(15, corners: isReceive
-                      ? [.topLeft, .topRight, .bottomRight] :
-                        [.topLeft, .topRight, .bottomLeft])
     }
 
     @ViewBuilder func threeImagesView() -> some View {
         if isFindImage {
             HStack(spacing: 2) {
-                WebImage(url: imagesURL.first, isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250)
-                    .clipped()
-                    .onTapGesture {
-                        imageTapped(imagesURL, 0, imagesId.first ?? "")
-                        withAnimation {
-                            isOpened[0] = true
-                        }
-                    }
+                imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
 
                 VStack(spacing: 2) {
-                 WebImage(url: imagesURL[1], isAnimating: .constant(true))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250/2)
-                    .clipped()
-                    .onTapGesture {
-                        imageTapped(imagesURL, 1, imagesId[1])
-                        withAnimation {
-                            isOpened[1] = true
-                        }
-                    }
-
-                    WebImage(url: imagesURL.last, isAnimating: .constant(true))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: (UIScreen.main.bounds.width / 3 ), height: 250/2)
-                        .clipped()
-                        .onTapGesture {
-                            imageTapped(imagesURL, 2, imagesId[2])
-                            withAnimation {
-                                isOpened[2] = true
-                            }
-                        }
+                    imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
+                    imageView(imageIndex: 2, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
                 }
             }
             .cornerRadius(15, corners: isReceive
@@ -166,6 +104,18 @@ struct CoupleImagesView: View {
                 .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
                 .aspectRatio(contentMode: .fill)
         }
+    }
+
+    @ViewBuilder private func imageView(imageIndex: Int, size: CGSize) -> some View {
+        WebImage(url: imagesURL[imageIndex], isAnimating: .constant(true))
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: size.width, height: size.height)
+            .contentShape(Rectangle())
+            .clipped()
+            .onTapGesture {
+                imageTapped(imagesURL, imageIndex)
+            }
     }
 
     // MARK: - functions
@@ -196,7 +146,7 @@ struct CoupleImagesView: View {
                 }
                 self.imagesURL.append(url)
                 if imagesURL.count == imagesId.count {
-                    withAnimation {
+                    withAnimation(.easeOut) {
                         self.isFindImage = true
                     }
                 }
@@ -211,9 +161,9 @@ struct CoupleImagesView_Previews: PreviewProvider {
     static var previews: some View {
         CoupleImagesView(imagesId: [], isChat: true,
                          isReceive: true,
-                         imageTapped: { _, _, _  in })
-            .environmentObject(MessagingViewModel())
-            .environmentObject(ChattingViewModel())
+                         imageTapped: { _, _  in })
+        .environmentObject(MessagingViewModel())
+        .environmentObject(ChattingViewModel())
     }
 }
 #endif

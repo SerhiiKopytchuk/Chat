@@ -16,22 +16,18 @@ struct ConversationView: View {
     @State var secondUser: User
     @Binding var isFindChat: Bool
 
-    @Namespace private var profileImageNamespace
-    @Namespace private var messageImageNamespace
-
     // MARK: fullscreen profile image properties
     @State private var isExpandedProfile: Bool = false
     @State var profileImageUrl = URL(string: "")
     @State private var loadExpandedContent = false
     @State private var imageOffset: CGSize = .zero
-    @State var imageId = ""
 
     @State private var showMessageEmojiView: Bool = false
     @State var highlightMessage: Message?
 
     @State private var isExpandedImage: Bool = false
-    @State private var messageImagesURL: [URL?] = []
-    @State private var imageIndex: Int = 0
+    @State var messageImagesURL: [URL?] = []
+    @State var imageIndex: Int = 0
 
     @Environment(\.self) private var env
 
@@ -110,7 +106,6 @@ struct ConversationView: View {
     @ViewBuilder private var titleRow: some View {
         ConversationTitleRow(user: secondUser,
                              environment: _env,
-                             animationNamespace: profileImageNamespace,
                              isFindChat: $isFindChat,
                              isExpandedProfile: $isExpandedProfile,
                              profileImageURL: $profileImageUrl
@@ -157,16 +152,14 @@ struct ConversationView: View {
         MessageBubble(message: message,
                       showHighlight: $showMessageEmojiView,
                       highlightedMessage: $highlightMessage,
-                      animationNamespace: messageImageNamespace,
                       isHidden: $isExpandedImage,
                       extendedImageId: .constant(""),
-                      imageTapped: { imagesURl, index, id in
+                      imageTapped: { imagesURl, index in
 
-            self.imageId = id
             self.imageIndex = index
             self.messageImagesURL = imagesURl
 
-            withAnimation(.easeInOut) {
+            withAnimation(.easeInOut.delay(0.05)) {
                 self.isExpandedImage = true
             }
 
@@ -197,10 +190,9 @@ struct ConversationView: View {
                       showHighlight: $showMessageEmojiView,
                       highlightedMessage: $highlightMessage,
                       showEmojiBarView: true,
-                      animationNamespace: messageImageNamespace,
                       isHidden: $isExpandedImage,
                       extendedImageId: .constant(""),
-                      imageTapped: {_, _, _  in})
+                      imageTapped: {_, _  in})
         .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
 

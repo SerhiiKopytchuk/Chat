@@ -38,7 +38,7 @@ struct ChannelMessageBubble: View {
                 if message.imagesId != [] {
                     CoupleImagesView(imagesId: message.imagesId ?? [],
                                      isChat: false,
-                                     isReceive: message.isReply()) { _, _, _ in
+                                     isReceive: message.isReply()) { _, _ in
 
                     }
                 } else {
