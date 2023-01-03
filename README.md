@@ -1,5 +1,3 @@
-GitHub readme
-
 # Chat App
 
  ### :white_check_mark: Implemented SignUp/SignIn using firebase Auth and GoogleSignIn
