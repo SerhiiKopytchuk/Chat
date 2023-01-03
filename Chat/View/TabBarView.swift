@@ -48,6 +48,10 @@ struct TabBarView: View {
             })
     }
 
+    private var screenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+
     // MARK: - Body
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -166,10 +170,10 @@ struct TabBarView: View {
         VStack {
             if selection == 0 {
                 chatsScrollView
-                    .transition(.push(from: .leading))
+                    .transition(.offset(x: selection == 0 ? -screenWidth : screenWidth))
             } else {
                 channelsScrollView
-                    .transition(.push(from: .trailing))
+                    .transition(.offset(x: selection == 1 ? screenWidth : -screenWidth))
             }
         }
         .frame(maxWidth: .infinity)
