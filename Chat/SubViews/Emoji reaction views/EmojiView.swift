@@ -40,7 +40,7 @@ struct EmojiView: View {
         .padding(.vertical, 8)
         .background {
             Capsule()
-                .fill(.white)
+                .fill(Color.secondPrimary)
                 .mask {
                     Capsule()
                         .scaleEffect()

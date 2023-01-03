@@ -175,8 +175,6 @@ struct ConversationView: View {
                       imageTapped: {_, _  in})
         .padding(.top, highlightMessage.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, highlightMessage.id == messagingViewModel.lastMessageId ? 10 : 0)
-
-        .environmentObject(messagingViewModel)
         .id(highlightMessage.id)
         .frame(width: rect.width, height: rect.height)
         .offset(x: rect.minX, y: rect.minY)
