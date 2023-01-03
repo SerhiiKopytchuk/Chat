@@ -42,6 +42,8 @@ struct MessageField: View {
             }, isPresented: $isShowingImagePicker,
                               maxAmountOfImages: 3,
                               imagePickerModel: ImagePickerViewModel())
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.hidden)
         })
         .frame( height: height < 160 ? self.height : 160)
         .padding(.horizontal)
