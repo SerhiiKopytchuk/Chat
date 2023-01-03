@@ -137,12 +137,9 @@ struct TabBarView: View {
                     messagingViewModel.currentChat = chat
                     messagingViewModel.getMessages { _ in }
                 }
-
-                .environmentObject(messagingViewModel)
-                .environmentObject(chattingViewModel)
+                .padding(.horizontal)
             }
         }
-        .padding(.horizontal)
     }
 
     @ViewBuilder private var channelsScrollView: some View {
@@ -161,9 +158,9 @@ struct TabBarView: View {
                     }
 
                 }
+                .padding(.horizontal)
             }
         }
-        .padding(.horizontal)
     }
 
     @ViewBuilder private var chatsAndChannelsView: some View {
