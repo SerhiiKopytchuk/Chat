@@ -104,6 +104,14 @@ GitHub readme
 
 ---
 
+  ### :white_check_mark: Startup animation
+  
+<p float="left"> 
+ <img width="300" alt="SingUpDarkMode" src="https://user-images.githubusercontent.com/97970279/210415258-0e60b66d-fd5d-4ef1-8e44-eb63e2686d7e.gif">
+</p>
+
+ ----
+
  ## Description
   Main purpose of this app is making easy and comfortable chatting between two people. 
   To use this app user need to register or log in using gmail or goolge account. 
