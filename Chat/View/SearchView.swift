@@ -39,7 +39,7 @@ struct SearchView: View {
                     self.clearData()
                 }
             }
-                .padding()
+            .padding()
 
             VStack {
                 chatOrChannelPicker
@@ -51,7 +51,7 @@ struct SearchView: View {
                 }
 
             }
-            .padding()
+            .padding(.horizontal)
 
         }
         .addRightGestureRecognizer {
@@ -186,7 +186,8 @@ struct SearchView: View {
                 })
             }
         }
-        .frame(maxWidth: .infinity)
+        .ignoresSafeArea()
+        .scrollDismissesKeyboard(.immediately)
     }
 
     @ViewBuilder private var channelList: some View {
@@ -205,10 +206,10 @@ struct SearchView: View {
                         }
                     }
                 }
-                .environmentObject(viewModel)
-                .environmentObject(channelViewModel)
             }
         }
+        .ignoresSafeArea()
+        .scrollDismissesKeyboard(.immediately)
     }
 
     // MARK: - functions
