@@ -100,8 +100,6 @@ GitHub readme
  <img width="300" alt="SideMenuAnimation" src="https://user-images.githubusercontent.com/97970279/197599010-e890c63d-a695-4767-8caf-ee7a77982cee.gif">
 </p>
 
- ### :white_check_mark: Gesture navigation implemented
-
 ---
 
   ### :white_check_mark: Startup animation
