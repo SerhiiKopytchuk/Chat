@@ -12,17 +12,17 @@ import Firebase
 
 // SF Symbols
 struct RootView: View {
-    
+
     // MARK: - vars
-    
+
     @State private var launchScreenOpacity: CGFloat = 1
     @State private var launchScreenIconScale: CGFloat = 1
-    
+
     @EnvironmentObject var viewModel: UserViewModel
-    
+
     // MARK: - body
     var body: some View {
-        
+
         NavigationStack {
             VStack {
                 if viewModel.signedIn {
@@ -36,27 +36,27 @@ struct RootView: View {
         }
         .overlay(alignment: .center, content: {
             ZStack {
-                
+
                 Color.background
                     .ignoresSafeArea()
-                
+
                 Image("icon")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 128, height: 128)
                     .scaleEffect(launchScreenIconScale, anchor: .center)
-                
+
             }
             .ignoresSafeArea()
             .opacity(launchScreenOpacity)
         })
         .onAppear {
             viewModel.signedIn = viewModel.isSignedIn
-            
+
             withAnimation(.easeOut) {
                 launchScreenIconScale = 0.8
             }
-            
+
             withAnimation(.easeOut(duration: 0.5).delay(0.5)) {
                 launchScreenOpacity = 0
             }

@@ -107,14 +107,16 @@ struct SignUpView: View {
 
             }
             .navigationBarHidden(true)
-            .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
+            .sheet(isPresented: $isShowingImagePicker, content: {
                 CustomImagePicker(onSelect: { assets in
                     parseImages(with: assets)
                 },
                                   isPresented: $isShowingImagePicker,
                                   maxAmountOfImages: 1,
                                   imagePickerModel: ImagePickerViewModel())
-            }
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.hidden)
+            })
         } else {
             SignInView(isPresented: $isPresentSignInView)
                 .transition(.push(from: .trailing))
