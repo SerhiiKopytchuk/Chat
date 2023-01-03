@@ -37,7 +37,7 @@ struct ConversationView: View {
 
         VStack(spacing: 0) {
 
-                titleRow
+            titleRow
 
             if isFindChat {
                 VStack(spacing: 0) {
@@ -52,7 +52,7 @@ struct ConversationView: View {
             }
         }
         .addRightGestureRecognizer {
-                env.dismiss()
+            env.dismiss()
         }
         .overlay(content: {
             if showMessageEmojiView {
@@ -61,15 +61,15 @@ struct ConversationView: View {
         })
         .overlayPreferenceValue(BoundsPreference.self) { values in
             if let highlightMessage = highlightMessage, highlightMessage.isReply() {
-                    if let preference = values.first(where: { item in
-                        item.key == highlightMessage.id
-                    }) {
-                        GeometryReader { proxy in
-                            let rect = proxy[preference.value]
-                            highlightedMessageBubble(for: highlightMessage, rect: rect)
-                        }
-                        .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
+                if let preference = values.first(where: { item in
+                    item.key == highlightMessage.id
+                }) {
+                    GeometryReader { proxy in
+                        let rect = proxy[preference.value]
+                        highlightedMessageBubble(for: highlightMessage, rect: rect)
                     }
+                    .transition(.asymmetric(insertion: .identity, removal: .offset(x: 1)))
+                }
             }
         }
         .overlay {
