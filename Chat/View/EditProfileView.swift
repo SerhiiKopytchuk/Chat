@@ -139,6 +139,7 @@ struct EditProfileView: View {
     @ViewBuilder private var userNameTextField: some View {
         Label {
             TextField("Enter your new name", text: $newName)
+                .autocorrectionDisabled()
                 .padding(.leading, 10)
                 .foregroundColor(.primary)
         } icon: {

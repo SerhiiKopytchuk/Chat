@@ -133,7 +133,7 @@ struct SignUpView: View {
                     Image(systemName: "person")
                         .foregroundColor(.gray)
                     TextField("Full Name", text: $fullName)
-                        .disableAutocorrection(true)
+                        .autocorrectionDisabled()
                         .onChange(of: fullName) { _ in
                             updateButton()
                         }
@@ -143,7 +143,7 @@ struct SignUpView: View {
                         .foregroundColor(.gray)
                     TextField("Email", text: $email)
                         .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                        .autocorrectionDisabled()
                         .onChange(of: email) { _ in
                             updateButton()
                         }
@@ -155,7 +155,7 @@ struct SignUpView: View {
 
                         TextField("Password", text: $password)
                             .autocapitalization(.none)
-                            .disableAutocorrection(true)
+                            .autocorrectionDisabled()
                             .onChange(of: password) { _ in
                                 updateButton()
                             }
@@ -168,7 +168,7 @@ struct SignUpView: View {
                     } else {
                         SecureField("Password", text: $password)
                             .autocapitalization(.none)
-                            .disableAutocorrection(true)
+                            .autocorrectionDisabled()
                             .onChange(of: password) { _ in
                                 updateButton()
                             }
@@ -188,7 +188,7 @@ struct SignUpView: View {
 
                         TextField("Re-enter", text: $retryPassword)
                             .autocapitalization(.none)
-                            .disableAutocorrection(true)
+                            .autocorrectionDisabled()
                             .onChange(of: retryPassword) { _ in
                                 updateButton()
                             }
@@ -201,7 +201,7 @@ struct SignUpView: View {
                     } else {
                         SecureField("Re-enter", text: $retryPassword)
                             .autocapitalization(.none)
-                            .disableAutocorrection(true)
+                            .autocorrectionDisabled()
                             .onChange(of: retryPassword) { _ in
                                 updateButton()
                             }

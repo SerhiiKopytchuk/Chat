@@ -76,6 +76,7 @@ struct SearchView: View {
     @ViewBuilder private var searchingUsers: some View {
         Label {
             TextField("Enter user name", text: $searchUserText)
+                .autocorrectionDisabled()
                 .foregroundColor(.primary)
                 .padding(.leading, 10)
                 .onChange(of: searchUserText, perform: { newValue in
@@ -101,6 +102,7 @@ struct SearchView: View {
     @ViewBuilder private var searchingChannels: some View {
         Label {
             TextField("Enter channel name", text: $searchChannelText)
+                .autocorrectionDisabled()
                 .foregroundColor(.primary)
                 .padding(.leading, 10)
                 .onChange(of: searchChannelText, perform: { newText in

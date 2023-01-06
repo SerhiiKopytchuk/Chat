@@ -122,6 +122,7 @@ struct CreateChannelView: View {
     @ViewBuilder private var channelNameTextField: some View {
         Label {
             TextField("Enter name of your channel", text: $name)
+                .autocorrectionDisabled()
                 .foregroundColor(.primary)
         } icon: {
             Image(systemName: "newspaper.fill")
