@@ -64,7 +64,7 @@ class ChannelViewModel: ObservableObject {
     }
 
     func getSearchChannels() {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             self?.firestoreManager.channelsCollection.whereField("isPrivate", isEqualTo: false)
                 .getDocuments(completion: { querySnapshot, error in
 
@@ -181,7 +181,7 @@ class ChannelViewModel: ObservableObject {
     }
 
     func getChannels(fromUpdate: Bool = false, channelsId: [String] = []) {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
 
             if channelsId.isEmpty {
 
@@ -207,7 +207,7 @@ class ChannelViewModel: ObservableObject {
     }
 
     private func getCurrentUserChannels() {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             for channelId in self?.currentUser.channels ?? [] {
                 self?.firestoreManager.getChannelDocumentReference(for: channelId)
                     .toChannel { channel in
@@ -272,7 +272,7 @@ class ChannelViewModel: ObservableObject {
     }
 
     private func updateChannels() {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             self?.firestoreManager.getUserDocumentReference(for: self?.currentUser.id)
                 .addSnapshotListener { document, error in
 
