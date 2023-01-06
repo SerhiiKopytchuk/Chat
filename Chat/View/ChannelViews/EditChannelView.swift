@@ -41,6 +41,7 @@ struct EditChannelView: View {
                 imageButton
 
                 TextField("Enter channel name", text: $channelName)
+                    .autocorrectionDisabled()
                     .foregroundColor(.primary)
                     .padding(.vertical, 20)
                     .padding(.horizontal, 15)
