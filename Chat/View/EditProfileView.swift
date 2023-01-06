@@ -23,6 +23,8 @@ struct EditProfileView: View {
     private let imageSize: CGFloat = 100
 
     @State private var isShowAlert = false
+    @State private var alertTitle = ""
+    @State private var alertText = ""
 
     @EnvironmentObject private var userViewModel: UserViewModel
     @ObservedObject var editProfileViewModel = EditProfileViewModel()
@@ -65,8 +67,10 @@ struct EditProfileView: View {
                     }
             }
 
-            customAlert
         }
+        .overlay(content: {
+            customAlert
+        })
         .addRightGestureRecognizer {
             env.dismiss()
         }
@@ -160,6 +164,10 @@ struct EditProfileView: View {
         Button {
 
             if !newName.isValidateLengthOfName() {
+                alertTitle = "Failure"
+                alertText = newName.count > 3 ?
+                                "Name should be shorter than 35 symbols" :
+                                "Name should be longer than 3 symbols"
                 withAnimation {
                     self.isShowAlert = true
                 }
@@ -169,6 +177,11 @@ struct EditProfileView: View {
             newName = newName.trim()
             if newName.count > 3 {
                 editProfileViewModel.changeName(newName: newName, userId: userViewModel.currentUser.id )
+                alertText = "Name was changed successfully"
+                alertTitle = "Success"
+                withAnimation {
+                    self.isShowAlert = true
+                }
             }
         } label: {
             Text("save")
@@ -181,12 +194,9 @@ struct EditProfileView: View {
     @ViewBuilder private var customAlert: some View {
         if isShowAlert {
             GeometryReader { geometry in
-                CustomAlert(show: $isShowAlert, text: newName.count > 3 ?
-                                "Name should be shorter than 35 symbols" :
-                                "Name should be longer than 3 symbols")
-
+                CustomAlert(show: $isShowAlert, title: alertTitle, text: alertText)
                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                .frame(maxWidth: geometry.frame(in: .local).width - 20)
+                .frame(maxWidth: geometry.frame(in: .local).width - 40)
             }
             .background(Color.black.opacity(0.65))
             .edgesIgnoringSafeArea(.all)
