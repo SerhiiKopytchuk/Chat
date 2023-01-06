@@ -108,7 +108,7 @@ class UserViewModel: ObservableObject {
     }
 
     func getAllUsers() {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             self?.firebaseManager.userCollection
                 .getDocuments(completion: { querySnapshot, error in
                     guard let documents = querySnapshot?.documents else {

@@ -124,7 +124,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     func getChats(fromUpdate: Bool = false, chatsId: [String] = []) {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
 
             if chatsId.isEmpty {
 
@@ -150,7 +150,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     private func getCurrentUserChats() {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             for chatId in self?.currentUser.chats ?? [] {
                 self?.firestoreManager.getChatDocumentReference(for: chatId)
                     .toChat { chat in
@@ -214,7 +214,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     fileprivate func updateChats() {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             self?.firestoreManager.getUserDocumentReference(for: self?.currentUser.id)
                 .addSnapshotListener { document, error in
 
