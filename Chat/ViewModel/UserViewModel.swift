@@ -134,7 +134,6 @@ class UserViewModel: ObservableObject {
         }
     }
 
-
     fileprivate func filterUser(user: User) -> User? {
         if user.name.contains(self.searchText) && user.name != self.currentUser.name {
             return user
