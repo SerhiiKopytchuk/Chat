@@ -109,28 +109,31 @@ class UserViewModel: ObservableObject {
 
     func getAllUsers() {
         DispatchQueue.global(qos: .utility).async { [weak self] in
-            self?.firebaseManager.userCollection
-                .getDocuments(completion: { querySnapshot, error in
-                    guard let documents = querySnapshot?.documents else {
-                        print("Error fetching documets: \(String(describing: error))")
-                        return
-                    }
+            self?.firebaseManager.userCollection.getDocuments { querySnapshot, error in
+                if let error = error {
+                    print("Error fetching documents: \(error)")
+                    return
+                }
 
-                    DispatchQueue.main.async {
-                        self?.users = documents.compactMap { document -> User? in
-                            do {
+                guard let documents = querySnapshot?.documents else { return }
 
-                                let user = try document.data(as: User.self)
-                                return self?.filterUser(user: user)
-                            } catch {
-                                print("error decoding document into Message: \(error)")
-                                return nil
-                            }
+                DispatchQueue.main.async {
+                    let users = documents.compactMap { document -> User? in
+                        do {
+                            let user = try document.data(as: User.self)
+                            return self?.filterUser(user: user)
+                        } catch {
+                            print("Error decoding document into Message: \(error)")
+                            return nil
                         }
                     }
-                })
+
+                    self?.users = users
+                }
+            }
         }
     }
+
 
     fileprivate func filterUser(user: User) -> User? {
         if user.name.contains(self.searchText) && user.name != self.currentUser.name {
