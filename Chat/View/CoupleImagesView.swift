@@ -31,16 +31,7 @@ struct CoupleImagesView: View {
     var body: some View {
         ZStack {
             if isFindImage {
-                switch imagesId.count {
-                case 1:
-                    oneImageView()
-                case 2:
-                    twoImagesView()
-                case 3:
-                    threeImagesView()
-                default:
-                    oneImageView()
-                }
+                imageView()
             } else {
                 ProgressView()
                     .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
@@ -57,18 +48,31 @@ struct CoupleImagesView: View {
 
     // MARK: - ViewBuilders
 
-    @ViewBuilder func oneImageView() -> some View {
+    @ViewBuilder
+    private func imageView() -> some View {
+        if imagesId.count == 1 {
+            oneImageView()
+        } else if imagesId.count == 2 {
+            twoImagesView()
+        } else if imagesId.count == 3 {
+            threeImagesView()
+        } else {
+            oneImageView()
+        }
+    }
+
+    @ViewBuilder private func oneImageView() -> some View {
         imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3 * 2), height: 250))
     }
 
-    @ViewBuilder func twoImagesView() -> some View {
+    @ViewBuilder private func twoImagesView() -> some View {
         HStack(spacing: 2) {
             imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
             imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
         }
     }
 
-    @ViewBuilder func threeImagesView() -> some View {
+    @ViewBuilder private func threeImagesView() -> some View {
         HStack(spacing: 2) {
             imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
 
