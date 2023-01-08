@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 import SDWebImageSwiftUI
 
 struct ImageDetailedView: View {
@@ -17,7 +18,11 @@ struct ImageDetailedView: View {
     @State private var imageOffset: CGSize = .zero
     @State private var isDrawerOpen: Bool = false
 
+    @State private var showShareButton: Bool = false
+
     let imagesURL: [URL?]
+    @State private var images: [Image] = []
+
     @State var pageIndex: Int
 
     @Binding var isPresented: Bool
@@ -42,9 +47,18 @@ struct ImageDetailedView: View {
             withAnimation(.linear(duration: 1)) {
                 isAnimating = true
             }
+
+            fetchImages()
         }
-        .overlay(alignment: .topLeading) {
-            backButton
+        .overlay(alignment: .top) {
+            HStack {
+                backButton
+
+                Spacer()
+
+                shareImage()
+
+            }
         }
         .overlay(alignment: .bottom) {
             controlCenter
@@ -56,6 +70,19 @@ struct ImageDetailedView: View {
     }
 
     // MARK: - ViewBuilders
+
+    @ViewBuilder private func shareImage() -> some View {
+        if showShareButton {
+            let image = ImageFile(image: images[pageIndex])
+            let imageName = "ChatImage_\(getCurrentDateDescription())"
+            ShareLink(item: image, preview: SharePreview(imageName, image: image.image)) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.title3)
+                    .padding(.horizontal)
+                    .padding(.top, 30)
+            }
+        }
+    }
 
     @ViewBuilder private var imageView: some View {
         WebImage(url: imagesURL[pageIndex])
@@ -227,5 +254,44 @@ struct ImageDetailedView: View {
                 }
             }
         }
+    }
+
+    private func fetchImages() {
+        let fetchImagesGroup = DispatchGroup()
+
+        for url in imagesURL {
+            DispatchQueue.global(qos: .utility).async(group: fetchImagesGroup) {
+                fetchImagesGroup.enter()
+
+                SDWebImageManager.shared.loadImage(with: url,
+                                                   options: .highPriority,
+                                                   progress: nil) { image, _, _, _, finished, _ in
+
+                    self.images.append(Image(uiImage: image ?? UIImage()))
+
+                    if finished {
+                        fetchImagesGroup.leave()
+                    }
+                }
+
+            }
+        }
+
+        fetchImagesGroup.notify(queue: .main) {
+            showShareButton = true
+        }
+    }
+
+    private func getCurrentDateDescription() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH:mm:ss"
+        return dateFormatter.string(from: Date())
+    }
+}
+
+struct ImageFile: Transferable {
+    var image: Image
+    static var transferRepresentation: some TransferRepresentation {
+        ProxyRepresentation(exporting: \.image)
     }
 }
