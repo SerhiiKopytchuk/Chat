@@ -28,10 +28,6 @@ struct MainView: View {
             }
             TabBarView(isShowingSideMenu: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
-                .cornerRadius(isShowingSideMenu ? 20 : 10)
-                .offset(x: isShowingSideMenu ? 300 : 0, y: isShowingSideMenu ? 44 : 0)
-                .scaleEffect(isShowingSideMenu ? 0.8 : 1)
-                .shadow(color: .black, radius: isShowingSideMenu ? 20 : 0)
         }
         .onChange(of: scenePhase, perform: { phase in
             if phase == .active {
