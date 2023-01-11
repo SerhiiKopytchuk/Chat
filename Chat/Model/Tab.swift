@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum Tab: String, CaseIterable {
-    case chats = "character.bubble"
-    case channels = "fibrechannel"
+struct Tab: Identifiable, Hashable {
+    let id = UUID().uuidString
+    let name: String
+    let index: Int
 }
+

@@ -75,7 +75,7 @@ struct CustomTabBar: View {
         let index = CGFloat(selected)
         if index == 0 {return 0}
 
-        let buttonWidth = width / CGFloat(Tab.allCases.count)
+        let buttonWidth = width / CGFloat(2)
 
         return index * buttonWidth
     }

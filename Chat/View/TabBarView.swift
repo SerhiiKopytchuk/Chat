@@ -22,72 +22,65 @@ struct TabBarView: View {
 
     @State private var goToConversation = false
     @State private var goToChannel = false
-    @State private var selection = 0
+
+    let tabs: [Tab] = [
+        Tab(name: "Chat", index: 0),
+        Tab(name: "Channel", index: 1)
+    ]
+
+    @State var offset: CGFloat = 0
+    @State var currentTabIndex: Int = 0
+    @State var isTapped = false
+    @StateObject var gestureManager: InteractionManager = .init()
 
     // MARK: - computed vars
-    var navigationDragGesture: some Gesture {
-        DragGesture()
-            .onEnded({ value in
-                if value.translation.width < 30 {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        selection = 1
-                    }
-                }
-
-                if value.translation.width > 30 {
-                    if selection == 0 {
-                        withAnimation(.spring()) {
-                            isShowingSideMenu.toggle()
-                        }
-                    } else {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            selection = 0
-                        }
-                    }
-                }
-            })
-    }
-
-    private var screenWidth: CGFloat {
-        return UIScreen.main.bounds.width
+    private var screenSize: CGSize {
+        return UIScreen.main.bounds.size
     }
 
     // MARK: - Body
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        ZStack(alignment: .top) {
+            TabView(selection: $currentTabIndex) {
+                chatsScrollView
+                    .ignoresSafeArea()
+                    .offsetX { value in
+                        if currentTabIndex == 0 && !isTapped {
+                            offset = value - (screenSize.width * CGFloat(0))
+                        }
 
-            // MARK: menuButton
-            menuButton
-                .padding(.top)
-                .padding(.leading)
+                        if value == 0 && isTapped {
+                            isTapped = false
+                        }
 
-            // MARK: chats and channels labels
-            VStack(alignment: .leading, spacing: 4) {
-                Text( selection == 0 ? "Chats" : "Channels")
-                    .font(.title2.bold())
-            }
-            .padding(.horizontal)
-            .padding(.top)
-
-            ZStack(alignment: .top) {
-                // MARK: chats and channels lists
-                chatsAndChannelsView
-                    .contentShape(Rectangle())
-                    .gesture(navigationDragGesture)
-                    .safeAreaInset(edge: .top) {
-                        EmptyView()
-                            .frame(height: 65)
+                        if isTapped && gestureManager.isInteracting {
+                            isTapped = false
+                        }
                     }
+                    .tag(0)
 
-                // MARK: CustomTabBar
-                CustomTabBar(selected: $selection)
-                    .padding(.bottom)
-                    .backgroundBlur(radius: 20, opaque: true)
-                    .clipShape(RoundedRectangle(cornerRadius: 0))
-                    .frame(maxHeight: .infinity, alignment: .top)
+                channelsScrollView
+                    .ignoresSafeArea()
+                    .offsetX { value in
+                        if currentTabIndex == 1 && !isTapped {
+                            offset = value - (screenSize.width * CGFloat(1))
+                        }
+
+                        if value == 0 && isTapped {
+                            isTapped = false
+                        }
+
+                        if isTapped && gestureManager.isInteracting {
+                            isTapped = false
+                        }
+                    }
+                    .tag(1)
             }
-            .ignoresSafeArea(.all, edges: .bottom)
-
+            .ignoresSafeArea()
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .onAppear(perform: gestureManager.addGesture)
+            .onDisappear(perform: gestureManager.removeGesture)
+            dynamicTabHeader()
         }
         .navigationDestination(isPresented: $goToConversation, destination: {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
@@ -95,15 +88,48 @@ struct TabBarView: View {
         .navigationDestination(isPresented: $goToChannel, destination: {
             ChannelConversationView(currentUser: viewModel.currentUser, isSubscribed: .constant(true))
         })
-        .frame(maxHeight: .infinity)
-        .background {
-            Color.background
-                .ignoresSafeArea()
-        }
-        .navigationBarHidden(true)
     }
 
     // MARK: - View Builders
+
+    @ViewBuilder
+    func dynamicTabHeader() -> some View {
+        VStack(alignment: .leading, spacing: 22) {
+            Text("Dynamic tabs")
+                .font(.title.bold())
+                .foregroundColor(.white)
+            HStack(spacing: 0) {
+                ForEach(tabs, id: \.self) { tab in
+                    Text(tab.name)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .onTapGesture {
+                            isTapped = true
+                            withAnimation(.easeInOut) {
+                                currentTabIndex = tab.index
+                                offset = -(screenSize.width) * CGFloat(tab.index)
+                            }
+                        }
+                }
+            }
+            .background(alignment: .bottomLeading) {
+                Capsule()
+                    .fill(.white)
+                    .frame(width: (screenSize.width - 30)/CGFloat(tabs.count), height: 4)
+                    .offset(y: 12)
+                    .offset(x: tabOffset(padding: 30))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(15)
+        .background {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
+                .ignoresSafeArea()
+        }
+    }
 
     @ViewBuilder private var menuButton: some View {
         Button {
@@ -163,20 +189,11 @@ struct TabBarView: View {
         }
     }
 
-    @ViewBuilder private var chatsAndChannelsView: some View {
-        VStack {
-            if selection == 0 {
-                chatsScrollView
-                    .transition(.offset(x: selection == 0 ? -screenWidth : screenWidth))
-            } else {
-                channelsScrollView
-                    .transition(.offset(x: selection == 1 ? screenWidth : -screenWidth))
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .ignoresSafeArea(.all, edges: .bottom)
-    }
+    // MARK: - functions
 
+    func tabOffset(padding: CGFloat) -> CGFloat {
+        return (-offset / screenSize.width) * ((screenSize.width - padding) / CGFloat(2))
+    }
 }
 
 struct TabBarView_Previews: PreviewProvider {
