@@ -12,6 +12,7 @@
 		400142EA282EBA8500E5D497 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 400142E9282EBA8500E5D497 /* Assets.xcassets */; };
 		400142ED282EBA8500E5D497 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 400142EC282EBA8500E5D497 /* Preview Assets.xcassets */; };
 		4001F19D2848950600D17CCA /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4001F19C2848950600D17CCA /* User.swift */; };
+		400D0D812971B9030057F5B8 /* SizePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400D0D802971B9030057F5B8 /* SizePreferenceKey.swift */; };
 		400E81A82868583A006A606E /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E81A72868583A006A606E /* Channel.swift */; };
 		400E81AA286859AD006A606E /* ChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E81A9286859AD006A606E /* ChannelViewModel.swift */; };
 		400E81AD286861EE006A606E /* CreateChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E81AC286861EE006A606E /* CreateChannelView.swift */; };
@@ -117,6 +118,7 @@
 		400142E9282EBA8500E5D497 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Chat/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		400142EC282EBA8500E5D497 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4001F19C2848950600D17CCA /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		400D0D802971B9030057F5B8 /* SizePreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizePreferenceKey.swift; sourceTree = "<group>"; };
 		400E81A72868583A006A606E /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		400E81A9286859AD006A606E /* ChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewModel.swift; sourceTree = "<group>"; };
 		400E81AC286861EE006A606E /* CreateChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChannelView.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 				40CA1815291BC34A00B198B8 /* PinchZoomContext.swift */,
 				402E4B60296F1779001ADD65 /* OffsetKey.swift */,
 				402E4B63296F2590001ADD65 /* InteractionManager.swift */,
+				400D0D802971B9030057F5B8 /* SizePreferenceKey.swift */,
 			);
 			path = " Helpers";
 			sourceTree = "<group>";
@@ -672,6 +675,7 @@
 				400142E6282EBA8400E5D497 /* ChatApp.swift in Sources */,
 				409E2B6E2934AA9C002FE204 /* FirestorePathManager.swift in Sources */,
 				40EF995E284746BB0062612E /* ConversationTitleRow.swift in Sources */,
+				400D0D812971B9030057F5B8 /* SizePreferenceKey.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
