@@ -132,6 +132,7 @@ struct TabBarView: View {
                     .offset(y: 12)
                     .offset(x: tabOffset(padding: 30))
             }
+            .padding(.bottom, 5)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(15)
@@ -169,7 +170,6 @@ struct TabBarView: View {
                             goToConversation.toggle()
                         }
                     } failure: { }
-
                     chattingViewModel.currentChat = chat
                     messagingViewModel.currentUser = self.viewModel.currentUser
                     messagingViewModel.currentChat = chat

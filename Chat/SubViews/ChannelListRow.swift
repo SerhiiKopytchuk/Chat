@@ -20,7 +20,6 @@ struct ChannelListRow: View {
 
     // MARK: messages properties
     @State private var imageUrl = URL(string: "")
-    @State private var isFindChannelImage = true
     @State private var isShowImage = false
     private let imageSize: CGFloat = 50
 
@@ -91,8 +90,11 @@ struct ChannelListRow: View {
                 .padding(5)
                 .padding(.trailing)
                 .accessibilityValue("UIImage")
-        } else if isFindChannelImage {
+        } else {
             WebImage(url: imageUrl)
+                .placeholder(content: {
+                    EmptyImageWithCharacterView(text: channel.name, colour: channel.colour, size: imageSize)
+                })
                 .resizable()
                 .scaledToFill()
                 .frame(width: imageSize, height: imageSize)
@@ -102,12 +104,6 @@ struct ChannelListRow: View {
                 .addLightShadow()
                 .padding(5)
                 .padding(.trailing)
-        } else {
-
-            EmptyImageWithCharacterView(text: channel.name, colour: channel.colour, size: imageSize)
-                .padding(5)
-                .padding(.trailing)
-
         }
     }
 
@@ -132,19 +128,14 @@ struct ChannelListRow: View {
 
     // MARK: - functions
     private func imageSetup() {
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .utility).async {
             let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel.id ?? "some id")
-            ref.downloadURL { url, err in
-                if err != nil {
-                    self.isFindChannelImage = false
-                    withAnimation(.easeInOut) {
-                        self.isShowImage = true
+            ref.downloadURL { url, _ in
+                DispatchQueue.main.async {
+                    withAnimation(.easeOut) {
+                        self.imageUrl = url
+                        isShowImage = true
                     }
-                    return
-                }
-                withAnimation(.easeInOut) {
-                    self.imageUrl = url
-                    self.isShowImage = true
                 }
             }
         }
