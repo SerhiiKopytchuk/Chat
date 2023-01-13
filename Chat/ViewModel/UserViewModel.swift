@@ -72,7 +72,7 @@ class UserViewModel: ObservableObject {
     }
 
     func getUser(id: User.ID, competition: @escaping (User) -> Void, failure: @escaping () -> Void) {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.global(qos: .utility).async { [weak self] in
             self?.firebaseManager.getUserDocumentReference(for: id)
                 .getDocument(as: User.self) {  result in
                     DispatchQueue.main.async {

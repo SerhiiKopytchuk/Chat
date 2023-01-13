@@ -21,8 +21,8 @@ struct ChatListRow: View {
 
     // MARK: image properties
     @State private var imageUrl = URL(string: "")
-    @State private var isFindUserImage = true
     @State private var isShowImage = false
+
     private let imageSize: CGFloat = 50
     @State private var lastMessageImageUrl = URL(string: "")
 
@@ -79,22 +79,21 @@ struct ChatListRow: View {
 
     // MARK: - ViewBuilders
     @ViewBuilder private var userImage: some View {
-        if isFindUserImage {
-            WebImage(url: imageUrl)
-                .resizable()
-                .scaledToFill()
-                .frame(width: imageSize, height: imageSize)
-                .cornerRadius(imageSize/2)
-                .clipShape(Circle())
-                .opacity(isShowImage ? 1 : 0)
-                .addLightShadow()
+        WebImage(url: imageUrl)
+            .placeholder(content: {
+                EmptyImageWithCharacterView(text: person.name ,
+                                            colour: person.colour ,
+                                            size: imageSize)
                 .padding(5)
-        } else {
-            EmptyImageWithCharacterView(text: person.name ,
-                                        colour: person.colour ,
-                                        size: imageSize)
-                .padding(5)
-        }
+            })
+            .resizable()
+            .scaledToFill()
+            .frame(width: imageSize, height: imageSize)
+            .cornerRadius(imageSize/2)
+            .clipShape(Circle())
+            .opacity(isShowImage ? 1 : 0)
+            .addLightShadow()
+            .padding(5)
     }
 
     @ViewBuilder private var lastMessagePreview: some View {
@@ -142,26 +141,20 @@ struct ChatListRow: View {
     }
 
     private func secondUserSetup() {
-        DispatchQueue.main.async {
+        DispatchQueue.global(qos: .utility).async {
             self.viewModel.getUserByChat(chat: self.chat) { user in
-                withAnimation {
+
                     self.person = user
 
                     let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
-                    ref.downloadURL { url, err in
-                        if err != nil {
-                            self.isFindUserImage = false
+                    ref.downloadURL { url, _ in
+                        DispatchQueue.main.async {
                             withAnimation(.easeInOut) {
+                                self.imageUrl = url
                                 self.isShowImage = true
                             }
-                            return
-                        }
-                        withAnimation(.easeInOut) {
-                            self.imageUrl = url
-                            self.isShowImage = true
                         }
                     }
-                }
             }
         }
     }
