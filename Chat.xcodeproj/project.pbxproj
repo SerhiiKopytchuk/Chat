@@ -86,7 +86,6 @@
 		40CA1816291BC34A00B198B8 /* PinchZoomContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CA1815291BC34A00B198B8 /* PinchZoomContext.swift */; };
 		40CFF1E028C4EDC7001544CD /* Color + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */; };
 		40D5C41628428B3A0015DFBB /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41528428B3A0015DFBB /* Tab.swift */; };
-		40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41728429F580015DFBB /* CustomTabBar.swift */; };
 		40E2546B2905356400FA604E /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40E2546A2905356400FA604E /* Launch Screen.storyboard */; };
 		40ECD6F328A03DF2006935B1 /* BoundsPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */; };
 		40EDFC25286EF5B500FD7A2A /* DocumentReference + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */; };
@@ -187,7 +186,6 @@
 		40CA1815291BC34A00B198B8 /* PinchZoomContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchZoomContext.swift; sourceTree = "<group>"; };
 		40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color + Extension.swift"; sourceTree = "<group>"; };
 		40D5C41528428B3A0015DFBB /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
-		40D5C41728429F580015DFBB /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		40E2546A2905356400FA604E /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		40ECD6F228A03DF2006935B1 /* BoundsPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundsPreference.swift; sourceTree = "<group>"; };
 		40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DocumentReference + Extension.swift"; sourceTree = "<group>"; };
@@ -331,7 +329,6 @@
 			isa = PBXGroup;
 			children = (
 				408A661328C8C360006101CA /* Conversation views */,
-				40D5C41728429F580015DFBB /* CustomTabBar.swift */,
 				4024EB00283802130082E739 /* CustomAlert.swift */,
 				4076E0AC283FB54A00E21131 /* LoaderView.swift */,
 				406DC3A1284C8B5E00A41964 /* SearchUserListRow.swift */,
@@ -644,7 +641,6 @@
 				40C4F29428C5DCE9008D03C8 /* Blur.swift in Sources */,
 				40A766B828843045002D6FA5 /* removeUsersFromChannelListRow.swift in Sources */,
 				4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */,
-				40D5C41828429F580015DFBB /* CustomTabBar.swift in Sources */,
 				40ECD6F328A03DF2006935B1 /* BoundsPreference.swift in Sources */,
 				403ED1542954802500F4954D /* CoupleImagesView.swift in Sources */,
 				40C64B93285D29830057F7CA /* MessagingViewModel.swift in Sources */,
