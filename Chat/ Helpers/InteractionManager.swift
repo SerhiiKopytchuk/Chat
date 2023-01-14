@@ -23,7 +23,7 @@ class InteractionManager: NSObject, ObservableObject, UIGestureRecognizerDelegat
         }
     }
 
-    func removeGesture(){
+    func removeGesture() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
         guard let window = windowScene.windows.last?.rootViewController else { return }
 
@@ -38,7 +38,8 @@ class InteractionManager: NSObject, ObservableObject, UIGestureRecognizerDelegat
         isInteracting = (gesture.state == .changed)
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 }

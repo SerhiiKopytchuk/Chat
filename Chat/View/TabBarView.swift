@@ -64,6 +64,7 @@ struct TabBarView: View {
 
                 channelsScrollView
                     .offsetX { value in
+                        // indicator offset
                         if !goToConversation {
                             if currentTabIndex == 1 && !isTapped {
                                 offset = value - (screenSize.width * CGFloat(1))
@@ -132,9 +133,9 @@ struct TabBarView: View {
             .background(alignment: .bottomLeading) {
                 Capsule()
                     .fill(.white)
-                    .frame(width: (screenSize.width - 30)/CGFloat(tabs.count), height: 4)
+                    .frame(width: (screenSize.width - 90)/CGFloat(tabs.count), height: 4)
                     .offset(y: 12)
-                    .offset(x: tabOffset(padding: 30))
+                    .offset(x: tabOffset(padding: 30) + 15)
             }
             .padding(.bottom, 5)
         }
