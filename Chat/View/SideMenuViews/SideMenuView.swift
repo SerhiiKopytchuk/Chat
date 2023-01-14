@@ -16,17 +16,22 @@ struct SideMenuView: View {
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
 
     @Binding var isShowingSideMenu: Bool
-    @Binding var isShowingSearchUsers: Bool
+
+    @State var sidebarOffset: CGFloat = 0
+
+    // MARK: - computed properties
+
+    var screenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
 
     // MARK: - body
 
     var body: some View {
-
-            VStack {
+        VStack(alignment: .leading) {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
                     .environmentObject(viewModel)
                     .foregroundColor(.white)
-                    .frame(height: 240)
 
                 ForEach(SideMenuViewModel.allCases, id: \.self) { option in
 
@@ -48,6 +53,7 @@ struct SideMenuView: View {
                         }
                     }
                 }
+
                 Spacer()
             }
             .navigationDestination(for: SideMenuViewModel.self, destination: { option in
@@ -63,19 +69,48 @@ struct SideMenuView: View {
                 }
             })
             .background {
-                Color.mainGradient
+                Rectangle()
+                    .fill(.thinMaterial)
+                    .environment(\.colorScheme, .dark)
                     .ignoresSafeArea()
+
             }
+            .offset(x: sidebarOffset)
+            .gesture(
+                DragGesture()
+                    .onChanged({ value in
+                        print(value.translation.width)
+                        if value.translation.width <= 0 {
+                            sidebarOffset = value.translation.width
+                        }
+                    })
+                    .onEnded({ value in
+                        if abs(value.translation.width) < (screenWidth / 3) {
+                            withAnimation(.easeOut) {
+                                sidebarOffset = 0
+                            }
+                        } else {
+                            withAnimation(.easeOut) {
+                                isShowingSideMenu = false
+                                sidebarOffset = 0
+                            }
+                        }
+                    })
+            )
+            .frame(width: screenWidth * 3 / 4 )
             .navigationBarHidden(true)
     }
 }
 
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
-        SideMenuView(isShowingSideMenu: .constant(true), isShowingSearchUsers: .constant(false))
+        MainView()
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
-
+            .environmentObject(ChannelViewModel())
+            .environmentObject(ChannelMessagingViewModel())
+            .environmentObject(EditChannelViewModel())
+            .preferredColorScheme(.dark)
     }
 }

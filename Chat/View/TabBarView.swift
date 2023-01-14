@@ -146,7 +146,7 @@ struct TabBarView: View {
 
     @ViewBuilder private var menuButton: some View {
         Button {
-            withAnimation(.spring()) {
+            withAnimation(.easeOut) {
                 isShowingSideMenu.toggle()
             }
         } label: {
@@ -227,22 +227,3 @@ struct TabBarView_Previews: PreviewProvider {
             .environmentObject(EditChannelViewModel())
     }
 }
-
-extension View {
-  func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
-    background(
-      GeometryReader { geometryProxy in
-        Color.clear
-          .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
-      }
-    )
-    .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
-  }
-}
-
-struct SizePreferenceKey: PreferenceKey {
-  static var defaultValue: CGSize = .zero
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
-}
-
-// Usage

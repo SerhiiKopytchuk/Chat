@@ -20,14 +20,34 @@ struct MainView: View {
 
     @Environment(\.scenePhase) var scenePhase
 
+    // MARK: - computed properties
+
+    var screenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+
     // MARK: - body
     var body: some View {
         ZStack {
-            if isShowingSideMenu {
-                SideMenuView(isShowingSideMenu: $isShowingSideMenu, isShowingSearchUsers: $showSearchUsers)
-            }
+
             TabBarView(isShowingSideMenu: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
+                .animation(.spring(), value: isShowingSideMenu)
+
+                SideMenuView(isShowingSideMenu: $isShowingSideMenu)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .offset(x: !isShowingSideMenu ? -screenWidth * 3/4 : 0)
+                    .background {
+                        if isShowingSideMenu {
+                            Color.black.opacity(0.15)
+                                .ignoresSafeArea()
+                                .onTapGesture {
+                                    withAnimation(.easeOut) {
+                                        isShowingSideMenu = false
+                                    }
+                                }
+                        }
+                    }
         }
         .onChange(of: scenePhase, perform: { phase in
             if phase == .active {
