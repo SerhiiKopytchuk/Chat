@@ -46,32 +46,36 @@ struct TabBarView: View {
             TabView(selection: $currentTabIndex) {
                 chatsScrollView
                     .offsetX { value in
-                        if currentTabIndex == 0 && !isTapped {
-                            offset = value - (screenSize.width * CGFloat(0))
-                        }
+                        if !goToConversation {
+                            if currentTabIndex == 0 && !isTapped {
+                                offset = value - (screenSize.width * CGFloat(0))
+                            }
 
-                        if value == 0 && isTapped {
-                            isTapped = false
-                        }
+                            if value == 0 && isTapped {
+                                isTapped = false
+                            }
 
-                        if isTapped && gestureManager.isInteracting {
-                            isTapped = false
+                            if isTapped && gestureManager.isInteracting {
+                                isTapped = false
+                            }
                         }
                     }
                     .tag(0)
 
                 channelsScrollView
                     .offsetX { value in
-                        if currentTabIndex == 1 && !isTapped {
-                            offset = value - (screenSize.width * CGFloat(1))
-                        }
+                        if !goToConversation {
+                            if currentTabIndex == 1 && !isTapped {
+                                offset = value - (screenSize.width * CGFloat(1))
+                            }
 
-                        if value == 0 && isTapped {
-                            isTapped = false
-                        }
+                            if value == 0 && isTapped {
+                                isTapped = false
+                            }
 
-                        if isTapped && gestureManager.isInteracting {
-                            isTapped = false
+                            if isTapped && gestureManager.isInteracting {
+                                isTapped = false
+                            }
                         }
                     }
                     .tag(1)
