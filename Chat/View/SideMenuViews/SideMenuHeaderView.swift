@@ -60,7 +60,7 @@ struct SideMenuHeaderView: View {
     private func imageStartSetup() {
         let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUser.id)
         DispatchQueue.global(qos: .utility).async {
-            ref.downloadURL { url, err in
+            ref.downloadURL { url, _ in
                 DispatchQueue.main.async {
                     withAnimation(.easeOut) {
                         self.myImageUrl = url

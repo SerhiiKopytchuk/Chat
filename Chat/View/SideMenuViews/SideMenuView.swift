@@ -79,7 +79,6 @@ struct SideMenuView: View {
             .gesture(
                 DragGesture()
                     .onChanged({ value in
-                        print(value.translation.width)
                         if value.translation.width <= 0 {
                             sidebarOffset = value.translation.width
                         }

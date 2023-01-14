@@ -89,7 +89,7 @@ extension View {
     }
 
     @ViewBuilder
-    func offsetX(competition: @escaping (CGFloat) -> ()) -> some View {
+    func offsetX(competition: @escaping (CGFloat) -> Void) -> some View {
         self
             .overlay {
                 GeometryReader { proxy in
