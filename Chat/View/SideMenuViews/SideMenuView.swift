@@ -17,7 +17,8 @@ struct SideMenuView: View {
 
     @Binding var isShowingSideMenu: Bool
 
-    @State var sidebarOffset: CGFloat = 0
+    @State var sidebarOffset: CGFloat = -10
+    @Binding var sideBarAdditionSpace: CGFloat
 
     // MARK: - computed properties
 
@@ -30,8 +31,8 @@ struct SideMenuView: View {
     var body: some View {
         VStack(alignment: .leading) {
                 SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
-                    .environmentObject(viewModel)
                     .foregroundColor(.white)
+                    .padding(.leading, sideBarAdditionSpace + 20)
 
                 ForEach(SideMenuViewModel.allCases, id: \.self) { option in
 
@@ -53,6 +54,7 @@ struct SideMenuView: View {
                         }
                     }
                 }
+                .padding(.leading, sideBarAdditionSpace + 20)
 
                 Spacer()
             }
@@ -80,23 +82,23 @@ struct SideMenuView: View {
                 DragGesture()
                     .onChanged({ value in
                         if value.translation.width <= 0 {
-                            sidebarOffset = value.translation.width
+                            sidebarOffset = (value.translation.width - 10)
                         }
                     })
                     .onEnded({ value in
                         if abs(value.translation.width) < (screenWidth / 3) {
-                            withAnimation(.easeOut) {
-                                sidebarOffset = 0
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                sidebarOffset = -sideBarAdditionSpace
                             }
                         } else {
-                            withAnimation(.easeOut) {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                                 isShowingSideMenu = false
-                                sidebarOffset = 0
+                                sidebarOffset = -sideBarAdditionSpace
                             }
                         }
                     })
             )
-            .frame(width: screenWidth * 3 / 4 )
+            .frame(width: screenWidth * 3 / 4 + sideBarAdditionSpace)
             .navigationBarHidden(true)
     }
 }

@@ -18,7 +18,7 @@ struct TabBarView: View {
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
-    @Binding var isShowingSideMenu: Bool
+    @Binding var isShowingSideBar: Bool
 
     @State private var goToConversation = false
     @State private var goToChannel = false
@@ -151,15 +151,15 @@ struct TabBarView: View {
 
     @ViewBuilder private var menuButton: some View {
         Button {
-            withAnimation(.easeOut) {
-                isShowingSideMenu.toggle()
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                isShowingSideBar.toggle()
             }
         } label: {
             Image(systemName: "list.bullet")
                 .font(.title3)
                 .foregroundColor(.white)
         }
-        .opacity(isShowingSideMenu ? 0 : 1)
+        .opacity(isShowingSideBar ? 0 : 1)
     }
 
     @ViewBuilder private var chatsScrollView: some View {
@@ -223,12 +223,19 @@ struct TabBarView: View {
 
 struct TabBarView_Previews: PreviewProvider {
     static var previews: some View {
-        TabBarView(isShowingSideMenu: .constant(false))
+        MainView()
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
             .environmentObject(ChannelViewModel())
             .environmentObject(ChannelMessagingViewModel())
             .environmentObject(EditChannelViewModel())
+//        TabBarView(isShowingSideBar: .constant(false))
+//            .environmentObject(UserViewModel())
+//            .environmentObject(MessagingViewModel())
+//            .environmentObject(ChattingViewModel())
+//            .environmentObject(ChannelViewModel())
+//            .environmentObject(ChannelMessagingViewModel())
+//            .environmentObject(EditChannelViewModel())
     }
 }
