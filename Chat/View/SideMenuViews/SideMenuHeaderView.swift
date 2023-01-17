@@ -12,7 +12,6 @@ import SDWebImageSwiftUI
 
 struct SideMenuHeaderView: View {
     // MARK: - vars
-    @Binding var isShowingSideMenu: Bool
     @EnvironmentObject var userViewModel: UserViewModel
 
     // MARK: image properties
@@ -58,11 +57,11 @@ struct SideMenuHeaderView: View {
 
     // MARK: - functions
     private func imageStartSetup() {
-        let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUser.id)
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUserUID)
             ref.downloadURL { url, _ in
                 DispatchQueue.main.async {
-                    withAnimation(.easeOut) {
+                    withAnimation(.easeInOut) {
                         self.myImageUrl = url
                     }
                 }
@@ -73,7 +72,7 @@ struct SideMenuHeaderView: View {
 
 struct SideMenuHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        SideMenuHeaderView(isShowingSideMenu: .constant(true))
+        SideMenuHeaderView()
             .environmentObject(UserViewModel())
     }
 }
