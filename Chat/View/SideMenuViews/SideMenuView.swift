@@ -30,76 +30,77 @@ struct SideMenuView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-                SideMenuHeaderView(isShowingSideMenu: $isShowingSideMenu)
-                    .foregroundColor(.white)
-                    .padding(.leading, sideBarAdditionSpace + 20)
-
-                ForEach(SideMenuViewModel.allCases, id: \.self) { option in
-
-                    if option == SideMenuViewModel.logout {
-                        Button {
-                            if option == SideMenuViewModel.logout {
-                                withAnimation {
-                                    presenceViewModel.setOffline()
-                                    viewModel.signOut()
-                                    viewModel.currentUser.chats = []
-                                }
-                            }
-                        } label: {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    } else {
-                        NavigationLink(value: option) {
-                            SideMenuOptionView(viewModel: option)
-                        }
-                    }
-                }
+            SideMenuHeaderView()
+                .environmentObject(viewModel)
+                .foregroundColor(.white)
                 .padding(.leading, sideBarAdditionSpace + 20)
 
-                Spacer()
-            }
-            .navigationDestination(for: SideMenuViewModel.self, destination: { option in
-                switch option {
-                case .profile:
-                    EditProfileView()
-                case .search:
-                    SearchView()
-                case .createChannel:
-                    CreateChannelView()
-                default:
-                    Text("Sorry. This feature in development.")
-                }
-            })
-            .background {
-                Rectangle()
-                    .fill(.thinMaterial)
-                    .environment(\.colorScheme, .dark)
-                    .ignoresSafeArea()
+            ForEach(SideMenuViewModel.allCases, id: \.self) { option in
 
+                if option == SideMenuViewModel.logout {
+                    Button {
+                        if option == SideMenuViewModel.logout {
+                            withAnimation {
+                                presenceViewModel.setOffline()
+                                viewModel.signOut()
+                                viewModel.currentUser.chats = []
+                            }
+                        }
+                    } label: {
+                        SideMenuOptionView(viewModel: option)
+                    }
+                } else {
+                    NavigationLink(value: option) {
+                        SideMenuOptionView(viewModel: option)
+                    }
+                }
             }
-            .offset(x: sidebarOffset)
-            .gesture(
-                DragGesture()
-                    .onChanged({ value in
-                        if value.translation.width <= 0 {
-                            sidebarOffset = (value.translation.width - 10)
+            .padding(.leading, sideBarAdditionSpace + 20)
+
+            Spacer()
+        }
+        .navigationDestination(for: SideMenuViewModel.self, destination: { option in
+            switch option {
+            case .profile:
+                EditProfileView()
+            case .search:
+                SearchView()
+            case .createChannel:
+                CreateChannelView()
+            default:
+                Text("Sorry. This feature in development.")
+            }
+        })
+        .background {
+            Rectangle()
+                .fill(.thinMaterial)
+                .environment(\.colorScheme, .dark)
+                .ignoresSafeArea()
+
+        }
+        .offset(x: sidebarOffset)
+        .gesture(
+            DragGesture()
+                .onChanged({ value in
+                    if value.translation.width <= 0 {
+                        sidebarOffset = (value.translation.width - 10)
+                    }
+                })
+                .onEnded({ value in
+                    if abs(value.translation.width) < (screenWidth / 3) {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                            sidebarOffset = -sideBarAdditionSpace
                         }
-                    })
-                    .onEnded({ value in
-                        if abs(value.translation.width) < (screenWidth / 3) {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                sidebarOffset = -sideBarAdditionSpace
-                            }
-                        } else {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                isShowingSideMenu = false
-                                sidebarOffset = -sideBarAdditionSpace
-                            }
+                    } else {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                            isShowingSideMenu = false
+                            sidebarOffset = -sideBarAdditionSpace
                         }
-                    })
-            )
-            .frame(width: screenWidth * 3 / 4 + sideBarAdditionSpace)
-            .navigationBarHidden(true)
+                    }
+                })
+        )
+        .frame(width: screenWidth * 3 / 4 + sideBarAdditionSpace)
+        .navigationBarHidden(true)
     }
 }
 
