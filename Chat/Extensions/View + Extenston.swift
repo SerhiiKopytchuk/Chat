@@ -89,7 +89,7 @@ extension View {
     }
 
     @ViewBuilder
-    func offsetX(competition: @escaping (CGFloat) -> ()) -> some View {
+    func offsetX(competition: @escaping (CGFloat) -> Void) -> some View {
         self
             .overlay {
                 GeometryReader { proxy in
@@ -103,4 +103,13 @@ extension View {
             }
     }
 
+    func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
+        background(
+            GeometryReader { geometryProxy in
+                Color.clear
+                    .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
+            }
+        )
+        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+    }
 }

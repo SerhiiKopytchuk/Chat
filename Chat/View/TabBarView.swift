@@ -18,7 +18,7 @@ struct TabBarView: View {
     @EnvironmentObject var channelViewModel: ChannelViewModel
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
-    @Binding var isShowingSideMenu: Bool
+    @Binding var isShowingSideBar: Bool
 
     @State private var goToConversation = false
     @State private var goToChannel = false
@@ -46,32 +46,37 @@ struct TabBarView: View {
             TabView(selection: $currentTabIndex) {
                 chatsScrollView
                     .offsetX { value in
-                        if currentTabIndex == 0 && !isTapped {
-                            offset = value - (screenSize.width * CGFloat(0))
-                        }
+                        if !goToConversation {
+                            if currentTabIndex == 0 && !isTapped {
+                                offset = value - (screenSize.width * CGFloat(0))
+                            }
 
-                        if value == 0 && isTapped {
-                            isTapped = false
-                        }
+                            if value == 0 && isTapped {
+                                isTapped = false
+                            }
 
-                        if isTapped && gestureManager.isInteracting {
-                            isTapped = false
+                            if isTapped && gestureManager.isInteracting {
+                                isTapped = false
+                            }
                         }
                     }
                     .tag(0)
 
                 channelsScrollView
                     .offsetX { value in
-                        if currentTabIndex == 1 && !isTapped {
-                            offset = value - (screenSize.width * CGFloat(1))
-                        }
+                        // indicator offset
+                        if !goToConversation {
+                            if currentTabIndex == 1 && !isTapped {
+                                offset = value - (screenSize.width * CGFloat(1))
+                            }
 
-                        if value == 0 && isTapped {
-                            isTapped = false
-                        }
+                            if value == 0 && isTapped {
+                                isTapped = false
+                            }
 
-                        if isTapped && gestureManager.isInteracting {
-                            isTapped = false
+                            if isTapped && gestureManager.isInteracting {
+                                isTapped = false
+                            }
                         }
                     }
                     .tag(1)
@@ -128,9 +133,9 @@ struct TabBarView: View {
             .background(alignment: .bottomLeading) {
                 Capsule()
                     .fill(.white)
-                    .frame(width: (screenSize.width - 30)/CGFloat(tabs.count), height: 4)
+                    .frame(width: (screenSize.width - 90)/CGFloat(tabs.count), height: 4)
                     .offset(y: 12)
-                    .offset(x: tabOffset(padding: 30))
+                    .offset(x: tabOffset(padding: 30) + 15)
             }
             .padding(.bottom, 5)
         }
@@ -146,15 +151,15 @@ struct TabBarView: View {
 
     @ViewBuilder private var menuButton: some View {
         Button {
-            withAnimation(.spring()) {
-                isShowingSideMenu.toggle()
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                isShowingSideBar.toggle()
             }
         } label: {
             Image(systemName: "list.bullet")
                 .font(.title3)
                 .foregroundColor(.white)
         }
-        .opacity(isShowingSideMenu ? 0 : 1)
+        .opacity(isShowingSideBar ? 0 : 1)
     }
 
     @ViewBuilder private var chatsScrollView: some View {
@@ -218,31 +223,19 @@ struct TabBarView: View {
 
 struct TabBarView_Previews: PreviewProvider {
     static var previews: some View {
-        TabBarView(isShowingSideMenu: .constant(false))
+        MainView()
             .environmentObject(UserViewModel())
             .environmentObject(MessagingViewModel())
             .environmentObject(ChattingViewModel())
             .environmentObject(ChannelViewModel())
             .environmentObject(ChannelMessagingViewModel())
             .environmentObject(EditChannelViewModel())
+//        TabBarView(isShowingSideBar: .constant(false))
+//            .environmentObject(UserViewModel())
+//            .environmentObject(MessagingViewModel())
+//            .environmentObject(ChattingViewModel())
+//            .environmentObject(ChannelViewModel())
+//            .environmentObject(ChannelMessagingViewModel())
+//            .environmentObject(EditChannelViewModel())
     }
 }
-
-extension View {
-  func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
-    background(
-      GeometryReader { geometryProxy in
-        Color.clear
-          .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
-      }
-    )
-    .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
-  }
-}
-
-struct SizePreferenceKey: PreferenceKey {
-  static var defaultValue: CGSize = .zero
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
-}
-
-// Usage

@@ -12,6 +12,8 @@ struct MainView: View {
 
     // MARK: - vars
     @State private var isShowingSideMenu = false
+    @State var sideBarAdditionSpace: CGFloat = 20
+
     @State private var showSearchUsers = false
 
     @EnvironmentObject var viewModel: UserViewModel
@@ -20,14 +22,34 @@ struct MainView: View {
 
     @Environment(\.scenePhase) var scenePhase
 
+    // MARK: - computed properties
+
+    var screenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+
     // MARK: - body
     var body: some View {
         ZStack {
-            if isShowingSideMenu {
-                SideMenuView(isShowingSideMenu: $isShowingSideMenu, isShowingSearchUsers: $showSearchUsers)
-            }
-            TabBarView(isShowingSideMenu: $isShowingSideMenu)
+
+            TabBarView(isShowingSideBar: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
+                .animation(.spring(), value: isShowingSideMenu)
+
+            SideMenuView(isShowingSideMenu: $isShowingSideMenu, sideBarAdditionSpace: $sideBarAdditionSpace)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .offset(x: !isShowingSideMenu ? -screenWidth * 3/4 - sideBarAdditionSpace : -sideBarAdditionSpace)
+                .background {
+                    if isShowingSideMenu {
+                        Color.black.opacity(0.15)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                    isShowingSideMenu = false
+                                }
+                            }
+                    }
+                }
         }
         .onChange(of: scenePhase, perform: { phase in
             if phase == .active {

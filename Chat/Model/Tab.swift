@@ -12,4 +12,3 @@ struct Tab: Identifiable, Hashable {
     let name: String
     let index: Int
 }
-
