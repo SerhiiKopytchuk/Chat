@@ -12,6 +12,8 @@ struct MainView: View {
 
     // MARK: - vars
     @State private var isShowingSideMenu = false
+    @State var sideBarAdditionSpace: CGFloat = 20
+
     @State private var showSearchUsers = false
 
     @EnvironmentObject var viewModel: UserViewModel
@@ -30,24 +32,24 @@ struct MainView: View {
     var body: some View {
         ZStack {
 
-            TabBarView(isShowingSideMenu: $isShowingSideMenu)
+            TabBarView(isShowingSideBar: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
                 .animation(.spring(), value: isShowingSideMenu)
 
-                SideMenuView(isShowingSideMenu: $isShowingSideMenu)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .offset(x: !isShowingSideMenu ? -screenWidth * 3/4 : 0)
-                    .background {
-                        if isShowingSideMenu {
-                            Color.black.opacity(0.15)
-                                .ignoresSafeArea()
-                                .onTapGesture {
-                                    withAnimation(.easeOut) {
-                                        isShowingSideMenu = false
-                                    }
+            SideMenuView(isShowingSideMenu: $isShowingSideMenu, sideBarAdditionSpace: $sideBarAdditionSpace)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .offset(x: !isShowingSideMenu ? -screenWidth * 3/4 - sideBarAdditionSpace : -sideBarAdditionSpace)
+                .background {
+                    if isShowingSideMenu {
+                        Color.black.opacity(0.15)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                    isShowingSideMenu = false
                                 }
-                        }
+                            }
                     }
+                }
         }
         .onChange(of: scenePhase, perform: { phase in
             if phase == .active {
