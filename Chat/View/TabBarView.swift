@@ -19,6 +19,7 @@ struct TabBarView: View {
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
     @Binding var isShowingSideBar: Bool
+    @State private var isShowingEmptyListsMessage = false
 
     @State private var goToConversation = false
     @State private var goToChannel = false
@@ -91,6 +92,11 @@ struct TabBarView: View {
                     headerHeight = size.height
                 }
 
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                isShowingEmptyListsMessage = true
+            }
         }
         .navigationDestination(isPresented: $goToConversation, destination: {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
@@ -208,6 +214,7 @@ struct TabBarView: View {
 
             }
             .frame(maxWidth: .infinity)
+            .opacity(isShowingEmptyListsMessage ? 1 : 0)
         }
 
     }
@@ -248,12 +255,15 @@ struct TabBarView: View {
                     .font(.title)
                     .fontWeight(.light)
 
-                Text("Take the initiative to explore new channels or start your own with a compelling heading and call to action.")
+                Text("Take the initiative to explore new channels or start your own " +
+                     "with a compelling heading and call to action.")
                     .font(.callout)
                     .foregroundColor(.gray)
                     .padding(.horizontal, 20)
                     .multilineTextAlignment(.center)
             }
+            .frame(maxWidth: .infinity)
+            .opacity(isShowingEmptyListsMessage ? 1 : 0)
         }
     }
 
