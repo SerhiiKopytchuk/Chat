@@ -34,10 +34,10 @@ struct MainView: View {
 
             TabBarView(isShowingSideBar: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
-                .animation(.spring(), value: isShowingSideMenu)
 
             SideMenuView(isShowingSideMenu: $isShowingSideMenu, sideBarAdditionSpace: $sideBarAdditionSpace)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .shadow(radius: isShowingSideMenu ? 20 : 0)
                 .offset(x: !isShowingSideMenu ? -screenWidth * 3/4 - sideBarAdditionSpace : -sideBarAdditionSpace)
                 .background {
                     if isShowingSideMenu {
@@ -81,5 +81,6 @@ struct MainView_Previews: PreviewProvider {
             .environmentObject(ChannelViewModel())
             .environmentObject(ChannelMessagingViewModel())
             .environmentObject(EditChannelViewModel())
+//            .preferredColorScheme(.dark)
     }
 }
