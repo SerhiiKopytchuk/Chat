@@ -185,7 +185,7 @@ struct SearchView: View {
                         }
                     }
 
-                })
+                })// here
             }
         }
         .ignoresSafeArea()

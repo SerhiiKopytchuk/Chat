@@ -11,7 +11,7 @@ import SwiftUI
 
 class MessagingViewModel: ObservableObject {
 
-    @Published var currentChat: Chat = Chat()
+    @Published var currentChat: Chat?
     @Published var currentUser: User = User()
 
     @Published private(set) var lastMessageId: String = ""
@@ -23,7 +23,7 @@ class MessagingViewModel: ObservableObject {
 
     func addEmoji(message: Message, emoji: String) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat?.id,
                                                                    messageId: message.id)
             .updateData(["emojiValue": emoji])
         }
@@ -31,7 +31,7 @@ class MessagingViewModel: ObservableObject {
 
     func removeEmoji(message: Message) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id,
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat?.id,
                                                                    messageId: message.id)
             .updateData(["emojiValue": ""])
         }
@@ -39,7 +39,7 @@ class MessagingViewModel: ObservableObject {
 
     func addSnapshotListenerToMessage(messageId: String, competition: @escaping (Message) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat.id, messageId: messageId)
+            self?.firestoreManager.getChatMessageDocumentReference(for: self?.currentChat?.id, messageId: messageId)
                 .addSnapshotListener { document, error in
                     if error != nil { return }
 
@@ -56,7 +56,7 @@ class MessagingViewModel: ObservableObject {
 
             var messages: [Message] = []
 
-            self?.firestoreManager.getChatMessagesCollectionReference(for: self?.currentChat.id)
+            self?.firestoreManager.getChatMessagesCollectionReference(for: self?.currentChat?.id)
                 .addSnapshotListener { querySnapshot, error in
                     DispatchQueue.main.async {
 
@@ -65,7 +65,7 @@ class MessagingViewModel: ObservableObject {
                             return
                         }
 
-                        self?.currentChat.messages = self?.documentsToMessages(messages: &messages,
+                        self?.currentChat?.messages = self?.documentsToMessages(messages: &messages,
                                                                                documents: documents)
                         self?.sortMessages(messages: &messages)
 
@@ -91,7 +91,7 @@ class MessagingViewModel: ObservableObject {
     }
 
     private func sortMessages( messages: inout [Message]) {
-        self.currentChat.messages?.sort { $0.timestamp < $1.timestamp}
+        self.currentChat?.messages?.sort { $0.timestamp < $1.timestamp}
         messages.sort {$0.timestamp < $1.timestamp }
     }
 
@@ -113,7 +113,7 @@ class MessagingViewModel: ObservableObject {
             let imageMessage = Message(imagesId: imagesId, senderId: self?.currentUser.id ?? "id")
 
             do {
-                try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChat.id)
+                try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChat?.id)
                     .document().setData(from: imageMessage)
                 changeLastActivityTime()
             } catch {
@@ -129,7 +129,7 @@ class MessagingViewModel: ObservableObject {
             let newMessage = Message(text: trimmedText, senderId: self.currentUser.id )
 
             do {
-                guard let currentChatId = self.currentChat.id else { return }
+                guard let currentChatId = self.currentChat?.id else { return }
 
                 self.unsentMessages.append(newMessage)
 
@@ -159,7 +159,7 @@ class MessagingViewModel: ObservableObject {
 
     private func changeLastActivityTime() {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
+            self?.firestoreManager.getChatDocumentReference(for: self?.currentChat?.id)
                 .updateData(["lastActivityTimestamp": Date()])
         }
     }

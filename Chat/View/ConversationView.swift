@@ -109,7 +109,7 @@ struct ConversationView: View {
             ScrollView(showsIndicators: false) {
                 VStack {
                     ForEach(
-                        self.messagingViewModel.currentChat.messages ?? [],
+                        self.messagingViewModel.currentChat?.messages ?? [],
                         id: \.id) { message in
                             messageBubble(message: message)
                         }
