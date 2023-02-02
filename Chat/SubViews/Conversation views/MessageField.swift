@@ -113,7 +113,7 @@ struct MessageField: View {
     }
 
     func sendImages() {
-        imageViewModel.saveChat(images: selectedImages, chatId: chattingViewModel.currentChat.id) { imagesId in
+        imageViewModel.saveChat(images: selectedImages, chatId: chattingViewModel.currentChat?.id) { imagesId in
             messagingViewModel.send(imagesId: imagesId)
         }
     }

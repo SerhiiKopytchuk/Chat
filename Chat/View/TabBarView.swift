@@ -170,20 +170,23 @@ struct TabBarView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 ForEach(chattingViewModel.chats, id: \.id) { chat in
                     ChatListRow(chat: chat) {
-                        viewModel.getUser(
-                            id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                        ) { user in
-                            chattingViewModel.secondUser = user
-
-                            DispatchQueue.main.async {
-                                goToConversation.toggle()
-                            }
-                        } failure: { }
                         chattingViewModel.currentChat = chat
                         messagingViewModel.currentUser = self.viewModel.currentUser
                         messagingViewModel.currentChat = chat
+                        viewModel.getUser(
+                            id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
+                        ) { user in chattingViewModel.secondUser = user } failure: { }
                         messagingViewModel.getMessages { _ in }
                     }
+                    .onReceive(chattingViewModel.$secondUser, perform: { user in
+                        if user != nil {
+                            DispatchQueue.main.async {
+                                goToConversation = true
+                            }
+                        } else {
+                            goToConversation = false
+                        }
+                    })
                     .padding(.horizontal)
                 }
             }

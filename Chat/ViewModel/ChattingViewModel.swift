@@ -16,8 +16,8 @@ class ChattingViewModel: ObservableObject {
     // MARK: - vars
 
     @Published var currentUser: User = User()
-    @Published var secondUser = User()
-    @Published var currentChat: Chat = Chat()
+    @Published var secondUser: User?
+    @Published var currentChat: Chat?
 
 //    @Published private(set) var chats: [Chat] = []
     @Published var chats: [Chat] = []
@@ -76,7 +76,7 @@ class ChattingViewModel: ObservableObject {
     fileprivate func chatCreating(competition: @escaping (Chat) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             let newChat = Chat(user1Id: self?.currentUser.id ?? "some id",
-                               user2Id: self?.secondUser.id ?? "some id",
+                               user2Id: self?.secondUser?.id ?? "some id",
                                lastActivityTimestamp: Date())
 
             try? self?.firestoreManager.chatsCollection
@@ -101,22 +101,22 @@ class ChattingViewModel: ObservableObject {
     fileprivate func addChatsIdToUsers() {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             self?.firestoreManager.getUserDocumentReference(for: self?.currentUser.id)
-                .updateData(["chats": FieldValue.arrayUnion([self?.currentChat.id ?? "someChatId"])])
-            self?.firestoreManager.getUserDocumentReference(for: self?.secondUser.id)
-                .updateData(["chats": FieldValue.arrayUnion([self?.currentChat.id ?? "someChatId"])])
+                .updateData(["chats": FieldValue.arrayUnion([self?.currentChat?.id ?? "someChatId"])])
+            self?.firestoreManager.getUserDocumentReference(for: self?.secondUser?.id)
+                .updateData(["chats": FieldValue.arrayUnion([self?.currentChat?.id ?? "someChatId"])])
         }
     }
 
     private func changeLastActivityTimestamp() {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
+            self?.firestoreManager.getChatDocumentReference(for: self?.currentChat?.id)
                 .updateData(["lastActivityTimestamp": Date()])
         }
     }
 
     func changeLastActivityAndSortChats() {
         for index in self.chats.indices {
-            if chats[index].id == self.currentChat.id {
+            if chats[index].id == self.currentChat?.id {
                 chats[index].lastActivityTimestamp = Date()
                 break
             }
@@ -236,7 +236,7 @@ class ChattingViewModel: ObservableObject {
     func deleteChat() {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.deleteFilesFromStorage {
-                self?.firestoreManager.getChatDocumentReference(for: self?.currentChat.id)
+                self?.firestoreManager.getChatDocumentReference(for: self?.currentChat?.id)
                     .delete { error in
                         if error.review(message: "failed to deleteChat") { return }
                     }
@@ -246,18 +246,18 @@ class ChattingViewModel: ObservableObject {
     }
 
     fileprivate func deleteChatIdFromUsersChats() {
-        self.firestoreManager.getUserDocumentReference(for: currentChat.user1Id).updateData([
-            "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
+        self.firestoreManager.getUserDocumentReference(for: currentChat?.user1Id).updateData([
+            "chats": FieldValue.arrayRemove(["\(currentChat?.id ?? "someId")"])
         ])
 
-        self.firestoreManager.getUserDocumentReference(for: currentChat.user2Id).updateData([
-            "chats": FieldValue.arrayRemove(["\(currentChat.id ?? "someId")"])
+        self.firestoreManager.getUserDocumentReference(for: currentChat?.user2Id).updateData([
+            "chats": FieldValue.arrayRemove(["\(currentChat?.id ?? "someId")"])
         ])
     }
 
     fileprivate func deleteFilesFromStorage(competition: @escaping () -> Void ) {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.getCurrentChat(chatId: self?.currentChat.id) { chat in
+            self?.getCurrentChat(chatId: self?.currentChat?.id) { chat in
 
                 competition()
 

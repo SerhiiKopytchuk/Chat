@@ -103,7 +103,7 @@ struct CoupleImagesView: View {
         var references: [StorageReference] = []
 
         if isChat {
-            chatId = messagingViewModel.currentChat.id ?? "chatID"
+            chatId = messagingViewModel.currentChat?.id ?? "chatID"
             imagesId.forEach { id in
                 references.append(StorageReferencesManager.shared
                     .getChatMessageImageReference(chatId: chatId, imageId: id))
