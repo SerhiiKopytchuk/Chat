@@ -27,44 +27,97 @@ struct EditProfileView: View {
     @State private var alertText = ""
 
     @EnvironmentObject private var userViewModel: UserViewModel
+    @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var viewModel: UserViewModel
     @ObservedObject var editProfileViewModel = EditProfileViewModel()
     @ObservedObject private var imageViewModel = ImageViewModel()
 
     @Environment (\.self) var env
 
+    // MARK: - computed vars
+    private var screenSize: CGSize {
+        return UIScreen.main.bounds.size
+    }
+
     // MARK: - body
     var body: some View {
-        ZStack {
+        ZStack(alignment: .center) {
 
-            Color.mainGradient
+            Color.background
                 .ignoresSafeArea()
 
             VStack {
 
-                HeaderWithBackButton(environment: _env, text: "Edit profile")
-                    .padding()
+                HStack {
+                    Button {
+                        env.dismiss()
+                    } label: {
+                        Image(systemName: "arrow.backward")
+                            .imageScale(.large)
+                    }
 
+                    Spacer()
+
+                    Text("Profile".uppercased())
+                        .fontWeight(.medium)
+
+                    Spacer()
+
+                    Image(systemName: "arrow.backward")
+                        .imageScale(.large)
+                        .opacity(0)
+
+                }
+                .padding(.horizontal)
+
+                Spacer()
+
+                changeProfileImageButton
+
+                Text(userViewModel.currentUser.name)
+                    .foregroundColor(Color.secondPrimaryReversed)
+                    .font(.headline)
+                    .padding(.top, 10)
+
+                Text(userViewModel.currentUser.gmail)
+                    .foregroundColor(Color.secondPrimaryReversed)
+                    .font(.callout)
+                    .fontWeight(.light)
+
+                Spacer()
+
+                ZStack {
+                    RoundedRectangle(cornerRadius: 25)
+                        .fill(Color.secondPrimaryReversed)
+                        .ignoresSafeArea()
                     VStack {
-                        changeProfileImageButton
+
+                        // chats and channels tabs
+                        HStack {
+                            Spacer()
+                            chatsImagesView
+                            Spacer()
+                            channelsImagesView
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+
+                        Spacer()
+
+                        Divider()
+                            .overlay(Color.secondPrimary)
 
                         userNameTextField
-
-                        Text(userViewModel.currentUser.gmail)
-                            .font(.callout)
-                            .foregroundColor(.gray)
-                            .padding()
 
                         Spacer()
 
                         saveButton
-                            .padding()
 
                     }
-                    .background {
-                        Color.background
-                            .cornerRadius(30, corners: [.topLeft, .topRight])
-                            .offset(x: 0, y: 50)
-                    }
+
+                }
+                .frame(height: screenSize.height/3)
+
             }
 
         }
@@ -95,11 +148,38 @@ struct EditProfileView: View {
     }
 
     // MARK: - ViewBuilders
+
+    @ViewBuilder private var chatsImagesView: some View {
+        VStack {
+            Text("Chats")
+                .font(.headline)
+                .fontWeight(.light)
+                .foregroundColor(Color.secondPrimary)
+            CoupleChatsImagesRow()
+        }
+        .padding()
+    }
+
+    @ViewBuilder private var channelsImagesView: some View {
+        VStack {
+            Text("Channels")
+                .font(.headline)
+                .fontWeight(.light)
+                .foregroundColor(Color.secondPrimary)
+            CoupleChannelsImagesInRow()
+        }
+        .padding()
+    }
+
     @ViewBuilder private var changeProfileImageButton: some View {
         Button {
             isShowingImagePicker.toggle()
         } label: {
-            if isFindUserImage {
+            ZStack {
+                Circle()
+                    .stroke(Color.secondPrimaryReversed, lineWidth: 3)
+                    .frame(width: imageSize + 2, height: imageSize + 2)
+
                 if self.profileImage != nil {
                     ZStack {
                         Image(uiImage: self.profileImage ?? UIImage())
@@ -109,32 +189,32 @@ struct EditProfileView: View {
                             .cornerRadius(imageSize/2)
                             .addLightShadow()
                     }
-                } else {
-                    ZStack {
-                        WebImage(url: imageUrl)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: imageSize, height: imageSize)
-                            .cornerRadius(imageSize/2)
-                            .addLightShadow()
-                    }
-                }
-            } else {
-                if self.profileImage != nil {
-                        Image(uiImage: self.profileImage ?? UIImage())
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: imageSize, height: imageSize)
-                            .cornerRadius(imageSize/2)
-                            .addLightShadow()
+                } else if isFindUserImage {
+                    WebImage(url: imageUrl)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: imageSize, height: imageSize)
+                        .cornerRadius(imageSize/2)
+                        .addLightShadow()
                 } else {
                     EmptyImageWithCharacterView(text: userViewModel.currentUser.name,
                                                 colour: userViewModel.currentUser.colour,
                                                 size: imageSize)
                 }
+
+                Image(systemName: "camera")
+                    .imageScale(.small)
+                    .background {
+                        Circle()
+                            .fill(Color.secondPrimaryReversed)
+                            .frame(width: 25, height: 25)
+                    }
+                    .foregroundColor(Color.secondPrimary)
+                    .offset(x: imageSize/2 - 15, y: imageSize/2 - 15)
             }
         }
         .frame(width: imageSize, height: imageSize)
+        .transition(.opacity)
         .onAppear {
             imageStartSetup()
         }
@@ -142,21 +222,26 @@ struct EditProfileView: View {
 
     @ViewBuilder private var userNameTextField: some View {
         Label {
-            TextField("Enter your new name", text: $newName)
+            TextField("", text: $newName)
+                .placeholder(when: newName.isEmpty) {
+                    Text("Enter your new name")
+                        .foregroundColor(Color.secondPrimary)
+                        .opacity(0.8)
+                }
                 .autocorrectionDisabled()
                 .padding(.leading, 10)
-                .foregroundColor(.primary)
+                .foregroundColor(Color.secondPrimary)
+                .accentColor(Color.secondPrimary)
         } icon: {
             Image(systemName: "person")
-                .foregroundColor(.primary)
+                .foregroundColor(Color.secondPrimary)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.secondPrimary)
+                .stroke(Color.secondPrimary, lineWidth: 1)
         }
-        .padding(.top, 25)
         .padding()
     }
 
@@ -185,10 +270,20 @@ struct EditProfileView: View {
             }
         } label: {
             Text("save")
-                .toButtonGradientStyle()
+                .font(.title3)
+                .fontWeight(.light)
+                .foregroundColor(Color.secondPrimary)
+                .padding(.vertical)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 15)
+                .background {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(Color.secondPrimary, lineWidth: 1)
+                }
+                .padding(.horizontal)
                 .opacity(newName.isValidateLengthOfName() && newName != userViewModel.currentUser.name ? 1 : 0.6)
         }
-        .disabled(newName != userViewModel.currentUser.name ? false : true)
+            .padding(.bottom)
     }
 
     @ViewBuilder private var customAlert: some View {
@@ -208,7 +303,9 @@ struct EditProfileView: View {
         let ref = StorageReferencesManager.shared.getProfileImageReference(userId: userViewModel.currentUser.id)
         ref.downloadURL { url, err in
             if err != nil {
-                self.isFindUserImage = false
+                withAnimation(.easeInOut) {
+                    self.isFindUserImage = false
+                }
                 return
             }
             withAnimation(.easeInOut) {
@@ -241,8 +338,42 @@ struct EditProfileView: View {
 }
 
 struct EditProfileView_Previews: PreviewProvider {
+    @State static var userViewModel = UserViewModel()
+    @State static var chattingViewModel = ChattingViewModel()
     static var previews: some View {
         EditProfileView()
-            .environmentObject(UserViewModel())
+            .environmentObject(userViewModel)
+            .environmentObject(chattingViewModel)
+            .onAppear {
+                    userViewModel.currentUser = User(gmail: "lollotom0z@gmail.com", id: "", name: "Serhii")
+                chattingViewModel.chats = [
+                    Chat(),
+                    Chat(),
+                    Chat()
+                ]
+            }
+    }
+}
+
+extension View {
+    func placeholder<Content: View>(
+        when shouldShow: Bool,
+        alignment: Alignment = .leading,
+        @ViewBuilder placeholder: () -> Content) -> some View {
+
+        ZStack(alignment: alignment) {
+            placeholder().opacity(shouldShow ? 1 : 0)
+            self
+        }
+    }
+}
+
+extension View {
+    func placeholder(
+        _ text: String,
+        when shouldShow: Bool,
+        alignment: Alignment = .leading) -> some View {
+
+        placeholder(when: shouldShow, alignment: alignment) { Text(text).foregroundColor(.gray) }
     }
 }
