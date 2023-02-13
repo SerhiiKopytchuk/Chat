@@ -26,7 +26,7 @@ struct CoupleChatsImagesRow: View {
         let chatsCount = min(3, chattingViewModel.chats.count)
         HStack {
             HStack(spacing: -imageSize / 2.0) {
-                ForEach(0..<chatsCount, id: \.self) { index in
+                ForEach((0..<chatsCount).reversed(), id: \.self) { index in
                     userImage(for: index)
                 }
 
