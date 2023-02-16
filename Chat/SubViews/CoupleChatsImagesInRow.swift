@@ -70,7 +70,7 @@ struct CoupleChatsImagesRow: View {
                 let ref = StorageReferencesManager.shared.getProfileImageReference(userId: user.id)
                 ref.downloadURL { url, _ in
                     DispatchQueue.main.async {
-                        withAnimation(.easeInOut) {
+                        withAnimation(.easeOut) {
                             imageUrls[index] = url
                             showImage = true
                         }
