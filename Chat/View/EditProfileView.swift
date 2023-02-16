@@ -17,6 +17,8 @@ struct EditProfileView: View {
     @State private var isShowingImagePicker = false
     @State private var newName: String = ""
 
+    @State private var isAnimate = false
+
     // MARK: image properties
     @State private var imageUrl = URL(string: "")
     @State private var isFindUserImage = true
@@ -48,27 +50,7 @@ struct EditProfileView: View {
 
             VStack {
 
-                HStack {
-                    Button {
-                        env.dismiss()
-                    } label: {
-                        Image(systemName: "arrow.backward")
-                            .imageScale(.large)
-                    }
-
-                    Spacer()
-
-                    Text("Profile".uppercased())
-                        .fontWeight(.medium)
-
-                    Spacer()
-
-                    Image(systemName: "arrow.backward")
-                        .imageScale(.large)
-                        .opacity(0)
-
-                }
-                .padding(.horizontal)
+                header
 
                 Spacer()
 
@@ -90,9 +72,9 @@ struct EditProfileView: View {
                     RoundedRectangle(cornerRadius: 25)
                         .fill(Color.secondPrimaryReversed)
                         .ignoresSafeArea()
+
                     VStack {
 
-                        // chats and channels tabs
                         HStack {
                             Spacer()
                             chatsImagesView
@@ -100,6 +82,7 @@ struct EditProfileView: View {
                             channelsImagesView
                             Spacer()
                         }
+                        .opacity(isAnimate ? 1 : 0)
                         .frame(maxWidth: .infinity)
 
                         Spacer()
@@ -117,6 +100,7 @@ struct EditProfileView: View {
 
                 }
                 .frame(height: screenSize.height/3)
+                .offset(y: isAnimate ? 0 : screenSize.height/3)
 
             }
 
@@ -130,6 +114,9 @@ struct EditProfileView: View {
         .navigationBarHidden(true)
         .onAppear {
             newName = userViewModel.currentUser.name
+            withAnimation(.easeOut(duration: 0.45)) {
+                isAnimate = true
+            }
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
             imageViewModel.saveProfileImage(image: newImage,
@@ -148,6 +135,31 @@ struct EditProfileView: View {
     }
 
     // MARK: - ViewBuilders
+
+    @ViewBuilder private var header: some View {
+        HStack {
+            Button {
+                env.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward")
+                    .imageScale(.large)
+            }
+
+            Spacer()
+
+            Text("Profile".uppercased())
+                .fontWeight(.medium)
+
+            Spacer()
+
+            Image(systemName: "arrow.backward")
+                .imageScale(.large)
+                .opacity(0)
+
+        }
+        .offset(y: isAnimate ? 0 : -screenSize.height/4)
+        .padding(.horizontal)
+    }
 
     @ViewBuilder private var chatsImagesView: some View {
         VStack {
