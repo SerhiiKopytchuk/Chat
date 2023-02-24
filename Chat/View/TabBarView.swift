@@ -15,7 +15,7 @@ struct TabBarView: View {
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var messagingViewModel: MessagingViewModel
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var channelViewModel: ChannelViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
     @Binding var isShowingSideBar: Bool
@@ -24,14 +24,16 @@ struct TabBarView: View {
     @State private var goToConversation = false
     @State private var goToChannel = false
 
-    let tabs: [Tab] = [
+    @State private var tabs: [Tab] = [
         Tab(name: "Chats", index: 0),
         Tab(name: "Channels", index: 1)
     ]
 
-    @State var offset: CGFloat = 0
-    @State var currentTabIndex: Int = 0
-    @State var isTapped = false
+    @State private var currentTab: Tab = Tab(name: "Chats", index: 0)
+    @State private var contentOffset: CGFloat = 0
+    @State private var indicatorWidth: CGFloat = 0
+    @State private var indicatorPosition: CGFloat = 0
+
     @State private var headerHeight: CGFloat = 0
 
     // MARK: - computed vars
@@ -42,15 +44,39 @@ struct TabBarView: View {
     // MARK: - Body
     var body: some View {
         ZStack(alignment: .top) {
-            TabView(selection: $currentTabIndex) {
+            TabView(selection: $currentTab) {
+                // MARK: chats tab
+                GeometryReader { proxy in
+                    let size = proxy.size
+                    chatsScrollView
+                        .frame(width: size.width, height: size.height)
+                }
+                .offsetX { rect in
+                    if !isShowingSideBar && !goToConversation && !goToChannel {
+                        if currentTab.name == tabs[0].name && !isShowingSideBar {
+                            contentOffset = rect.minX - (rect.width * 0)
+                        }
+                        updateTabFrame(rect.width)
+                    }
+                }
+                .tag(0)
 
-                chatsScrollView
+                // MARK: channels tab
+                GeometryReader { proxy in
+                    let size = proxy.size
+                    channelsScrollView
+                        .frame(width: size.width, height: size.height)
+                }
+                .offsetX { rect in
+                    if !isShowingSideBar && !goToConversation && !goToChannel {
+                        if currentTab.name == tabs[1].name {
+                            contentOffset = rect.minX - (rect.width * 1)
+                        }
+                        updateTabFrame(rect.width)
+                    }
+                }
+                .tag(1)
 
-                    .tag(0)
-
-                channelsScrollView
-
-                    .tag(1)
             }
             .ignoresSafeArea()
             .tabViewStyle(.page(indexDisplayMode: .never))
@@ -62,9 +88,10 @@ struct TabBarView: View {
 
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                isShowingEmptyListsMessage = true
-            }
+            #warning("refactor this")
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                isShowingEmptyListsMessage = true
+//            }
         }
         .navigationDestination(isPresented: $goToConversation, destination: {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
@@ -78,9 +105,8 @@ struct TabBarView: View {
 
     @ViewBuilder
     func dynamicTabHeader() -> some View {
-        VStack(alignment: .leading, spacing: 22) {
-            HStack(alignment: .center) {
-
+        VStack(alignment: .leading, spacing: 7) {
+            HStack {
                 menuButton
                     .padding(.trailing, 5)
 
@@ -88,33 +114,36 @@ struct TabBarView: View {
                     .font(.title3.bold())
                     .foregroundColor(.white)
             }
+            .padding(.leading, 15)
 
             HStack(spacing: 0) {
-                ForEach(tabs, id: \.self) { tab in
+                ForEach($tabs) { $tab in
+                    Spacer()
                     Text(tab.name)
+                        .tracking(3)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .onTapGesture {
-                            isTapped = true
-                            withAnimation(.easeInOut) {
-                                currentTabIndex = tab.index
-                                offset = -(screenSize.width) * CGFloat(tab.index)
-                            }
+                        .offsetX { rect in
+                            tab.minX = rect.minX
+                            tab.width = rect.width
                         }
+
+                    if tab == tabs.last {
+                        Spacer(minLength: 0)
+                    }
                 }
             }
-            .background(alignment: .bottomLeading) {
-                Capsule()
-                    .fill(.white)
-                    .frame(width: (screenSize.width - 90)/CGFloat(tabs.count), height: 4)
-                    .offset(y: 12)
-                    .offset(x: tabOffset(padding: 30) + 15)
-            }
+            .padding(.top, 15)
+            .overlay(alignment: .bottomLeading, content: {
+                RoundedRectangle(cornerRadius: 5, style: .continuous)
+                    .foregroundColor(.white)
+                    .frame(width: indicatorWidth, height: 4)
+                    .offset(x: indicatorPosition, y: 10)
+            })
             .padding(.bottom, 5)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(15)
+        .padding(.vertical, 15)
         .background {
             Rectangle()
                 .fill(.ultraThinMaterial)
@@ -237,9 +266,27 @@ struct TabBarView: View {
 
     // MARK: - functions
 
-    func tabOffset(padding: CGFloat) -> CGFloat {
-        return (-offset / screenSize.width) * ((screenSize.width - padding) / CGFloat(2))
+    func updateTabFrame(_ tabViewWidth: CGFloat ) {
+        let inputRange = tabs.indices.compactMap { index -> CGFloat? in
+            return CGFloat(index) * tabViewWidth
+        }
+
+        let outputRangeForWidth = tabs.compactMap { tab -> CGFloat? in
+            return tab.width
+        }
+
+        let outputRangeForPosition = tabs.compactMap { tab -> CGFloat? in
+            return tab.minX
+        }
+
+        let widthInterpolation = LinearInterpolation(inputRange: inputRange, outputRange: outputRangeForWidth)
+        let positionInterpolation = LinearInterpolation(inputRange: inputRange, outputRange: outputRangeForPosition)
+
+        indicatorWidth = widthInterpolation.calculate(for: -contentOffset)
+        indicatorPosition = positionInterpolation.calculate(for: -contentOffset)
+
     }
+
 }
 
 struct TabBarView_Previews: PreviewProvider {
@@ -251,12 +298,5 @@ struct TabBarView_Previews: PreviewProvider {
             .environmentObject(ChannelViewModel())
             .environmentObject(ChannelMessagingViewModel())
             .environmentObject(EditChannelViewModel())
-//        TabBarView(isShowingSideBar: .constant(false))
-//            .environmentObject(UserViewModel())
-//            .environmentObject(MessagingViewModel())
-//            .environmentObject(ChattingViewModel())
-//            .environmentObject(ChannelViewModel())
-//            .environmentObject(ChannelMessagingViewModel())
-//            .environmentObject(EditChannelViewModel())
     }
 }
