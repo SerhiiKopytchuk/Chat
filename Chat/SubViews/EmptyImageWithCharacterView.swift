@@ -12,12 +12,13 @@ struct EmptyImageWithCharacterView: View {
     var text: String
     var colour: String
     var size: CGFloat
+    var font: Font = Font.title.bold()
 
     // MARK: - body
     var body: some View {
         if let first = text.first {
             Text(String(first.uppercased()))
-                .font(.title.bold())
+                .font(font)
                 .foregroundColor(.white)
                 .frame(width: size, height: size)
                 .background {

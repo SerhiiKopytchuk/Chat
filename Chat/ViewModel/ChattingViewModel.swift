@@ -19,7 +19,8 @@ class ChattingViewModel: ObservableObject {
     @Published var secondUser = User()
     @Published var currentChat: Chat = Chat()
 
-    @Published private(set) var chats: [Chat] = []
+//    @Published private(set) var chats: [Chat] = []
+    @Published var chats: [Chat] = []
 
     let firestoreManager = FirestorePathManager.shared
 
