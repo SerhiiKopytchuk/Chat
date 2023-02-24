@@ -88,17 +88,15 @@ extension View {
             )
     }
 
-    @ViewBuilder
-    func offsetX(competition: @escaping (CGFloat) -> Void) -> some View {
+    @ViewBuilder func offsetX(completion: @escaping (CGRect) -> Void) -> some View {
         self
             .overlay {
                 GeometryReader { proxy in
-                    let minX = proxy.frame(in: .global).minX
+                    let rect = proxy.frame(in: .global)
+
                     Color.clear
-                        .preference(key: OffsetKey.self, value: minX)
-                        .onPreferenceChange(OffsetKey.self, perform: { value in
-                            competition(value)
-                        })
+                        .preference(key: OffsetKey.self, value: rect)
+                        .onPreferenceChange(OffsetKey.self, perform: completion)
                 }
             }
     }
