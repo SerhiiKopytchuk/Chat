@@ -11,4 +11,7 @@ struct Tab: Identifiable, Hashable {
     let id = UUID().uuidString
     let name: String
     let index: Int
+
+    var width: CGFloat = 0
+    var minX: CGFloat = 0
 }

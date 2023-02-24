@@ -60,6 +60,7 @@
 		40871EAB2955A2BC0011D6FB /* ControlImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40871EAA2955A2BC0011D6FB /* ControlImageView.swift */; };
 		4089D6792888025B00FC987E /* ChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4089D6782888025B00FC987E /* ChatUITests.swift */; };
 		4089D67B2888025B00FC987E /* ChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */; };
+		408B0B5429A8FE5B00AAE470 /* LinearInterpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408B0B5329A8FE5B00AAE470 /* LinearInterpolation.swift */; };
 		408E26122832C44800CE108E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E26112832C44800CE108E /* MainView.swift */; };
 		409146B2299A9B0200455F20 /* CoupleChatsImagesInRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409146B1299A9B0200455F20 /* CoupleChatsImagesInRow.swift */; };
 		409146B6299A9F7700455F20 /* CoupleChannelsImagesInRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409146B5299A9F7700455F20 /* CoupleChannelsImagesInRow.swift */; };
@@ -157,6 +158,7 @@
 		4089D6762888025B00FC987E /* ChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4089D6782888025B00FC987E /* ChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITests.swift; sourceTree = "<group>"; };
 		4089D67A2888025B00FC987E /* ChatUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		408B0B5329A8FE5B00AAE470 /* LinearInterpolation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinearInterpolation.swift; sourceTree = "<group>"; };
 		408E26112832C44800CE108E /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		409146B1299A9B0200455F20 /* CoupleChatsImagesInRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoupleChatsImagesInRow.swift; sourceTree = "<group>"; };
 		409146B5299A9F7700455F20 /* CoupleChannelsImagesInRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoupleChannelsImagesInRow.swift; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 		40ECD6F128A03DD6006935B1 /*  Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				408B0B5329A8FE5B00AAE470 /* LinearInterpolation.swift */,
 				402E4B60296F1779001ADD65 /* PreferenceKeys.swift */,
 			);
 			path = " Helpers";
@@ -603,6 +606,7 @@
 				40A701622896CF74002ECB1C /* EmptyImageWithCharacterView.swift in Sources */,
 				409146B2299A9B0200455F20 /* CoupleChatsImagesInRow.swift in Sources */,
 				40B0A48C2869BC290008374E /* AddUserCreateChannelRow.swift in Sources */,
+				408B0B5429A8FE5B00AAE470 /* LinearInterpolation.swift in Sources */,
 				4024EB0F28393CF40082E739 /* TabBarView.swift in Sources */,
 				409AC7642849E9A300BD00F9 /* SearchView.swift in Sources */,
 				40A78B3C288D9E9B0026C465 /* Text + Extension.swift in Sources */,
