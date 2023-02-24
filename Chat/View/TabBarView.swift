@@ -32,8 +32,6 @@ struct TabBarView: View {
     @State var offset: CGFloat = 0
     @State var currentTabIndex: Int = 0
     @State var isTapped = false
-    @StateObject var gestureManager: InteractionManager = .init()
-
     @State private var headerHeight: CGFloat = 0
 
     // MARK: - computed vars
@@ -45,47 +43,17 @@ struct TabBarView: View {
     var body: some View {
         ZStack(alignment: .top) {
             TabView(selection: $currentTabIndex) {
+
                 chatsScrollView
-                    .offsetX { value in
-                        if !goToConversation {
-                            if currentTabIndex == 0 && !isTapped {
-                                offset = value - (screenSize.width * CGFloat(0))
-                            }
 
-                            if value == 0 && isTapped {
-                                isTapped = false
-                            }
-
-                            if isTapped && gestureManager.isInteracting {
-                                isTapped = false
-                            }
-                        }
-                    }
                     .tag(0)
 
                 channelsScrollView
-                    .offsetX { value in
-                        // indicator offset
-                        if !goToConversation {
-                            if currentTabIndex == 1 && !isTapped {
-                                offset = value - (screenSize.width * CGFloat(1))
-                            }
 
-                            if value == 0 && isTapped {
-                                isTapped = false
-                            }
-
-                            if isTapped && gestureManager.isInteracting {
-                                isTapped = false
-                            }
-                        }
-                    }
                     .tag(1)
             }
             .ignoresSafeArea()
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .onAppear(perform: gestureManager.addGesture)
-            .onDisappear(perform: gestureManager.removeGesture)
 
             dynamicTabHeader()
                 .readSize { size in
