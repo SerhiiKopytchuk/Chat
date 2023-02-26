@@ -200,28 +200,32 @@ struct TabBarView: View {
                     .frame(height: headerHeight  + 5)
             }
         } else {
-            VStack(alignment: .center, spacing: 30) {
-                Image("noChats")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150, alignment: .center)
-                    .addLightShadow()
-
-                Text("No conversations")
-                    .font(.title)
-                    .fontWeight(.light)
-
-                Text("No messages in your inbox, yet! Start chatting with people around you")
-                    .font(.callout)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 20)
-                    .multilineTextAlignment(.center)
-
-            }
-            .frame(maxWidth: .infinity)
-            .opacity(isShowingEmptyChatsList ? 1 : 0)
+            chatsEmptyView
         }
 
+    }
+
+    @ViewBuilder private var chatsEmptyView: some View {
+        VStack(alignment: .center, spacing: 30) {
+            Image("noChats")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 150, height: 150, alignment: .center)
+                .addLightShadow()
+
+            Text("No conversations")
+                .font(.title)
+                .fontWeight(.light)
+
+            Text("No messages in your inbox, yet! Start chatting with people around you")
+                .font(.callout)
+                .foregroundColor(.gray)
+                .padding(.horizontal, 20)
+                .multilineTextAlignment(.center)
+
+        }
+        .frame(maxWidth: .infinity)
+        .opacity(isShowingEmptyChatsList ? 1 : 0)
     }
 
     @ViewBuilder private var channelsScrollView: some View {
@@ -249,27 +253,31 @@ struct TabBarView: View {
                     .frame(height: headerHeight  + 5)
             }
         } else {
-            VStack(alignment: .center, spacing: 30) {
-                Image("noChannels")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150, alignment: .center)
-                    .addLightShadow()
-
-                Text("No channels")
-                    .font(.title)
-                    .fontWeight(.light)
-
-                Text("Take the initiative to explore new channels or start your own " +
-                     "with a compelling heading and call to action.")
-                    .font(.callout)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 20)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .opacity(isShowingEmptyChannelsList ? 1 : 0)
+            chatsEmptyView
         }
+    }
+
+    @ViewBuilder private var channelsEmptyView: some View {
+        VStack(alignment: .center, spacing: 30) {
+            Image("noChannels")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 150, height: 150, alignment: .center)
+                .addLightShadow()
+
+            Text("No channels")
+                .font(.title)
+                .fontWeight(.light)
+
+            Text("Take the initiative to explore new channels or start your own " +
+                 "with a compelling heading and call to action.")
+                .font(.callout)
+                .foregroundColor(.gray)
+                .padding(.horizontal, 20)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .opacity(isShowingEmptyChannelsList ? 1 : 0)
     }
 
     // MARK: - functions
