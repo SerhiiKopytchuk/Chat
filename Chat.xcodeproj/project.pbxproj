@@ -64,7 +64,6 @@
 		408E26122832C44800CE108E /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408E26112832C44800CE108E /* MainView.swift */; };
 		409146B2299A9B0200455F20 /* CoupleChatsImagesInRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409146B1299A9B0200455F20 /* CoupleChatsImagesInRow.swift */; };
 		409146B6299A9F7700455F20 /* CoupleChannelsImagesInRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409146B5299A9F7700455F20 /* CoupleChannelsImagesInRow.swift */; };
-		4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4094461428301F8D00239F7B /* GoogleService-Info.plist */; };
 		409894CC289D937C00720A1E /* AnimatedEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CB289D937C00720A1E /* AnimatedEmoji.swift */; };
 		409894CE289D978000720A1E /* EmojiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409894CD289D978000720A1E /* EmojiView.swift */; };
 		4099D9AD28B7C70500DCE75F /* UIAplication + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */; };
@@ -86,6 +85,7 @@
 		40CFF1E028C4EDC7001544CD /* Color + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */; };
 		40D5C41628428B3A0015DFBB /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D5C41528428B3A0015DFBB /* Tab.swift */; };
 		40E2546B2905356400FA604E /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40E2546A2905356400FA604E /* Launch Screen.storyboard */; };
+		40EBA82C29AB85EB00EC796D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 40EBA82B29AB85EB00EC796D /* GoogleService-Info.plist */; };
 		40EDFC25286EF5B500FD7A2A /* DocumentReference + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */; };
 		40EDFC27286EF5E400FD7A2A /* Query + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */; };
 		40EEDDDE2864682D00B1F38C /* ChattingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EEDDDD2864682D00B1F38C /* ChattingViewModel.swift */; };
@@ -162,7 +162,6 @@
 		408E26112832C44800CE108E /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		409146B1299A9B0200455F20 /* CoupleChatsImagesInRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoupleChatsImagesInRow.swift; sourceTree = "<group>"; };
 		409146B5299A9F7700455F20 /* CoupleChannelsImagesInRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoupleChannelsImagesInRow.swift; sourceTree = "<group>"; };
-		4094461428301F8D00239F7B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		409894CB289D937C00720A1E /* AnimatedEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedEmoji.swift; sourceTree = "<group>"; };
 		409894CD289D978000720A1E /* EmojiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiView.swift; sourceTree = "<group>"; };
 		4099D9AC28B7C70500DCE75F /* UIAplication + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAplication + Extension.swift"; sourceTree = "<group>"; };
@@ -184,6 +183,7 @@
 		40CFF1DF28C4EDC7001544CD /* Color + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color + Extension.swift"; sourceTree = "<group>"; };
 		40D5C41528428B3A0015DFBB /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		40E2546A2905356400FA604E /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		40EBA82B29AB85EB00EC796D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		40EDFC24286EF5B500FD7A2A /* DocumentReference + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DocumentReference + Extension.swift"; sourceTree = "<group>"; };
 		40EDFC26286EF5E400FD7A2A /* Query + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Query + Extension.swift"; sourceTree = "<group>"; };
 		40EEDDDD2864682D00B1F38C /* ChattingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingViewModel.swift; sourceTree = "<group>"; };
@@ -245,8 +245,8 @@
 			children = (
 				40ECD6F128A03DD6006935B1 /*  Helpers */,
 				40EDFC23286EF58400FD7A2A /* Extensions */,
-				4094461428301F8D00239F7B /* GoogleService-Info.plist */,
 				40B2DA18283A7A3900965DC5 /* Chat.entitlements */,
+				40EBA82B29AB85EB00EC796D /* GoogleService-Info.plist */,
 				40C3A104283A958A00A9683A /* Info.plist */,
 				400142F5282EBACF00E5D497 /* Model */,
 				400142F4282EBAC000E5D497 /* ViewModel */,
@@ -547,9 +547,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				400142ED282EBA8500E5D497 /* Preview Assets.xcassets in Resources */,
+				40EBA82C29AB85EB00EC796D /* GoogleService-Info.plist in Resources */,
 				400142EA282EBA8500E5D497 /* Assets.xcassets in Resources */,
 				40E2546B2905356400FA604E /* Launch Screen.storyboard in Resources */,
-				4094461528301F8D00239F7B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -866,7 +866,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Idk.Chat;
+				PRODUCT_BUNDLE_IDENTIFIER = Idk.Koch.Chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
