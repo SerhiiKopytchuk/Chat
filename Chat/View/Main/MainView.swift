@@ -12,7 +12,6 @@ struct MainView: View {
 
     // MARK: - vars
     @State private var isShowingSideMenu = false
-    @State var sideBarAdditionSpace: CGFloat = 20
 
     @State private var showSearchUsers = false
 
@@ -35,10 +34,10 @@ struct MainView: View {
             TabBarView(isShowingSideBar: $isShowingSideMenu)
                 .ignoresSafeArea(.all, edges: .bottom)
 
-            SideMenuView(isShowingSideMenu: $isShowingSideMenu, sideBarAdditionSpace: $sideBarAdditionSpace)
+            SideMenuView(isShowingSideMenu: $isShowingSideMenu)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .shadow(radius: isShowingSideMenu ? 20 : 0)
-                .offset(x: !isShowingSideMenu ? -screenWidth * 3/4 - sideBarAdditionSpace : -sideBarAdditionSpace)
+                .offset(x: !isShowingSideMenu ? -screenWidth * 3/4 : 0)
                 .background {
                     if isShowingSideMenu {
                         Color.black.opacity(0.15)
