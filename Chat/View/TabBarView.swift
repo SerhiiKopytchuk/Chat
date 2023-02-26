@@ -170,6 +170,7 @@ struct TabBarView: View {
                 .scaledToFit()
                 .frame(height: 33)
                 .foregroundColor(Color.secondPrimaryReversed)
+                .padding([.leading, .trailing], 5)
         }
         .padding([.leading, .trailing], 5)
         .opacity(isShowingSideBar ? 0 : 1)
