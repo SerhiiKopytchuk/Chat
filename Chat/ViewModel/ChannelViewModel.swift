@@ -270,7 +270,7 @@ class ChannelViewModel: ObservableObject {
 
     func sortChannels() {
         DispatchQueue.main.async {
-            withAnimation(.easeInOut.delay(0.5)) {
+            withAnimation(.easeInOut) {
                 self.channels.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
             }
         }
