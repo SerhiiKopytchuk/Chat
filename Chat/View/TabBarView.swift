@@ -19,16 +19,17 @@ struct TabBarView: View {
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
     @Binding var isShowingSideBar: Bool
-    @State private var isShowingEmptyListsMessage = false
+    @State private var isShowingEmptyChatsList = false
+    @State private var isShowingEmptyChannelsList = false
 
-    @State private var goToConversation = false
+    @State private var goToChat = false
     @State private var goToChannel = false
 
+    // MARK: tab properties
     @State private var tabs: [Tab] = [
         Tab(name: "Chats", index: 0),
         Tab(name: "Channels", index: 1)
     ]
-
     @State private var currentTab: Tab = Tab(name: "Chats", index: 0)
     @State private var contentOffset: CGFloat = 0
     @State private var indicatorWidth: CGFloat = 0
@@ -52,7 +53,7 @@ struct TabBarView: View {
                         .frame(width: size.width, height: size.height)
                 }
                 .offsetX { rect in
-                    if !isShowingSideBar && !goToConversation && !goToChannel {
+                    if !isShowingSideBar && !goToChat && !goToChannel {
                         if currentTab.name == tabs[0].name && !isShowingSideBar {
                             contentOffset = rect.minX - (rect.width * 0)
                         }
@@ -68,7 +69,7 @@ struct TabBarView: View {
                         .frame(width: size.width, height: size.height)
                 }
                 .offsetX { rect in
-                    if !isShowingSideBar && !goToConversation && !goToChannel {
+                    if !isShowingSideBar && !goToChat && !goToChannel {
                         if currentTab.name == tabs[1].name {
                             contentOffset = rect.minX - (rect.width * 1)
                         }
@@ -87,14 +88,25 @@ struct TabBarView: View {
                 }
 
         }
-        .onAppear {
-            #warning("refactor this")
-            chattingViewModel.chats
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                isShowingEmptyListsMessage = true
-            }
-        }
-        .navigationDestination(isPresented: $goToConversation, destination: {
+        .onReceive(chattingViewModel.$chats
+            .dropFirst(2)
+            .map { $0.count }, perform: { chatsCount in
+                if chatsCount == 0 {
+                    isShowingEmptyChatsList = true
+                } else {
+                    isShowingEmptyChatsList = false
+                }
+            })
+        .onReceive(channelViewModel.$channels
+            .dropFirst(2)
+            .map { $0.count }, perform: { channelsCount in
+                if channelsCount == 0 {
+                    isShowingEmptyChannelsList = true
+                } else {
+                    isShowingEmptyChannelsList = false
+                }
+            })
+        .navigationDestination(isPresented: $goToChat, destination: {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
         })
         .navigationDestination(isPresented: $goToChannel, destination: {
@@ -172,7 +184,7 @@ struct TabBarView: View {
                             chattingViewModel.secondUser = user
 
                             DispatchQueue.main.async {
-                                goToConversation.toggle()
+                                goToChat.toggle()
                             }
                         } failure: { }
                         chattingViewModel.currentChat = chat
@@ -207,7 +219,7 @@ struct TabBarView: View {
 
             }
             .frame(maxWidth: .infinity)
-            .opacity(isShowingEmptyListsMessage ? 1 : 0)
+            .opacity(isShowingEmptyChatsList ? 1 : 0)
         }
 
     }
@@ -256,7 +268,7 @@ struct TabBarView: View {
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .opacity(isShowingEmptyListsMessage ? 1 : 0)
+            .opacity(isShowingEmptyChannelsList ? 1 : 0)
         }
     }
 

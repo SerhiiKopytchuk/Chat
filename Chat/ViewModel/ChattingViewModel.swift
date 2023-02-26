@@ -19,7 +19,6 @@ class ChattingViewModel: ObservableObject {
     @Published var secondUser = User()
     @Published var currentChat: Chat = Chat()
 
-//    @Published private(set) var chats: [Chat] = []
     @Published var chats: [Chat] = []
 
     let firestoreManager = FirestorePathManager.shared
@@ -152,16 +151,21 @@ class ChattingViewModel: ObservableObject {
 
     private func getCurrentUserChats() {
         DispatchQueue.global(qos: .utility).async { [weak self] in
+            var chatsLocal: [Chat] = []
+            let group = DispatchGroup()
+
             for chatId in self?.currentUser.chats ?? [] {
+                group.enter()
                 self?.firestoreManager.getChatDocumentReference(for: chatId)
                     .toChat { chat in
-                        DispatchQueue.main.async {
-                            withAnimation(.easeInOut.delay(0.5)) {
-                                self?.chats.append(chat)
-                                self?.sortChats()
-                            }
-                        }
+                        chatsLocal.append(chat)
+                        group.leave()
                     }
+            }
+
+            group.notify(queue: .main) {
+                chatsLocal.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+                self?.chats = chatsLocal
             }
         }
     }
