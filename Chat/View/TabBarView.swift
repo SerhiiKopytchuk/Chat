@@ -255,7 +255,7 @@ struct TabBarView: View {
                     .frame(height: headerHeight  + 5)
             }
         } else {
-            chatsEmptyView
+            channelsEmptyView
         }
     }
 
