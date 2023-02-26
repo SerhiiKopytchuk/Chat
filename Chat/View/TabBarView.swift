@@ -121,7 +121,6 @@ struct TabBarView: View {
         VStack(alignment: .leading, spacing: 7) {
             HStack {
                 menuButton
-                    .padding(.trailing, 5)
 
                 Text("Chat")
                     .font(.title3.bold())
@@ -162,14 +161,17 @@ struct TabBarView: View {
 
     @ViewBuilder private var menuButton: some View {
         Button {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            withAnimation(.easeOut) {
                 isShowingSideBar.toggle()
             }
         } label: {
             Image(systemName: "list.bullet")
                 .font(.title3)
+                .scaledToFit()
+                .frame(height: 33)
                 .foregroundColor(Color.secondPrimaryReversed)
         }
+        .padding([.leading, .trailing], 5)
         .opacity(isShowingSideBar ? 0 : 1)
     }
 
