@@ -51,6 +51,7 @@ extension View {
         self
             .background(
                 Blur(radius: radius, opaque: opaque)
+                    .ignoresSafeArea()
             )
     }
 

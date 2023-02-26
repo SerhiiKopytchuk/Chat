@@ -89,9 +89,10 @@ struct TabBarView: View {
         }
         .onAppear {
             #warning("refactor this")
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                isShowingEmptyListsMessage = true
-//            }
+            chattingViewModel.chats
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                isShowingEmptyListsMessage = true
+            }
         }
         .navigationDestination(isPresented: $goToConversation, destination: {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
@@ -144,12 +145,7 @@ struct TabBarView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 15)
-        .background {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-//                .environment(\.colorScheme, .dark)
-                .ignoresSafeArea()
-        }
+        .backgroundBlur(radius: 3, opaque: true)
     }
 
     @ViewBuilder private var menuButton: some View {
