@@ -212,7 +212,7 @@ class ChattingViewModel: ObservableObject {
 
     func sortChats() {
         DispatchQueue.main.async {
-            withAnimation(.easeInOut.delay(0.5)) {
+            withAnimation(.easeInOut) {
                 self.chats.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
             }
         }
