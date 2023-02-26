@@ -112,7 +112,7 @@ struct TabBarView: View {
 
                 Text("Chat")
                     .font(.title3.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.secondPrimaryReversed)
             }
             .padding(.leading, 15)
 
@@ -120,9 +120,9 @@ struct TabBarView: View {
                 ForEach($tabs) { $tab in
                     Spacer()
                     Text(tab.name)
-                        .tracking(3)
+                        .tracking(2)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.secondPrimaryReversed)
                         .offsetX { rect in
                             tab.minX = rect.minX
                             tab.width = rect.width
@@ -136,7 +136,7 @@ struct TabBarView: View {
             .padding(.top, 15)
             .overlay(alignment: .bottomLeading, content: {
                 RoundedRectangle(cornerRadius: 5, style: .continuous)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.secondPrimaryReversed)
                     .frame(width: indicatorWidth, height: 4)
                     .offset(x: indicatorPosition, y: 10)
             })
@@ -147,7 +147,7 @@ struct TabBarView: View {
         .background {
             Rectangle()
                 .fill(.ultraThinMaterial)
-                .environment(\.colorScheme, .dark)
+//                .environment(\.colorScheme, .dark)
                 .ignoresSafeArea()
         }
     }
@@ -160,7 +160,7 @@ struct TabBarView: View {
         } label: {
             Image(systemName: "list.bullet")
                 .font(.title3)
-                .foregroundColor(.white)
+                .foregroundColor(Color.secondPrimaryReversed)
         }
         .opacity(isShowingSideBar ? 0 : 1)
     }
