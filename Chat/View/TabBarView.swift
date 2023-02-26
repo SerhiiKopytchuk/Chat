@@ -172,7 +172,6 @@ struct TabBarView: View {
                 .foregroundColor(Color.secondPrimaryReversed)
                 .padding([.leading, .trailing], 5)
         }
-        .padding([.leading, .trailing], 5)
         .opacity(isShowingSideBar ? 0 : 1)
     }
 
