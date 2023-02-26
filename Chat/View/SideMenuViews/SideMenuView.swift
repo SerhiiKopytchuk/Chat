@@ -86,7 +86,7 @@ struct SideMenuView: View {
                     }
                 })
                 .onEnded({ value in
-                    if abs(value.translation.width) < (screenWidth / 3) {
+                    if abs(value.translation.width) < (screenWidth / 3) || value.translation.width > 0 {
                         withAnimation(.easeInOut) {
                             sidebarOffset = 0
                         }
