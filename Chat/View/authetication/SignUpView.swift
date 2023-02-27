@@ -29,6 +29,15 @@ struct SignUpView: View {
     @State private var isShowingImagePicker = false
     @State private var image: UIImage?
 
+    @FocusState private var focusedField: Field?
+
+    enum Field: Hashable {
+        case usernameField
+        case emailField
+        case passwordField
+        case retryPasswordField
+    }
+
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
@@ -42,7 +51,6 @@ struct SignUpView: View {
         if !isPresentSignInView {
             ZStack {
                 VStack(spacing: 30) {
-                    Spacer()
                     HStack {
                         Text("Sign Up")
                             .font(.system(.largeTitle, design: .rounded))
@@ -56,7 +64,7 @@ struct SignUpView: View {
                     userImage
 
                     fields
-                        .padding(.top)
+                        .padding(.top, 10)
 
                     // MARK: buttons
                     VStack {
@@ -68,10 +76,9 @@ struct SignUpView: View {
                             }
                         }
                         .foregroundColor(.brown)
-                        .padding(.top, 20)
 
                         Text("OR")
-                            .padding(.top, 10)
+                            .padding(.top, 5)
                             .font(.system(.title3, design: .rounded))
                             .foregroundColor(.gray)
 
@@ -133,7 +140,16 @@ struct SignUpView: View {
                     Image(systemName: "person")
                         .foregroundColor(.gray)
                     TextField("Full Name", text: $fullName)
+                        .focused($focusedField, equals: .usernameField)
+                        .submitLabel(SubmitLabel.next)
+                        .keyboardType(.namePhonePad)
+                        .textContentType(.name)
                         .autocorrectionDisabled()
+                        .onSubmit({
+                            withAnimation {
+                                focusedField = .emailField
+                            }
+                        })
                         .onChange(of: fullName) { _ in
                             updateButton()
                         }
@@ -142,22 +158,33 @@ struct SignUpView: View {
                     Image(systemName: "mail")
                         .foregroundColor(.gray)
                     TextField("Email", text: $email)
+                        .focused($focusedField, equals: .emailField)
+                        .submitLabel(SubmitLabel.next)
+                        .keyboardType(UIKeyboardType.emailAddress)
+                        .textContentType(UITextContentType.emailAddress)
                         .autocapitalization(.none)
                         .autocorrectionDisabled()
+                        .onSubmit({
+                            focusedField = .passwordField
+                        })
                         .onChange(of: email) { _ in
                             updateButton()
                         }
                 }
+
                 HStack {
                     Image(systemName: "lock")
                         .foregroundColor(.gray)
                     if self.isShowingPassword {
 
                         TextField("Password", text: $password)
+                            .focused($focusedField, equals: .passwordField)
+                            .submitLabel(SubmitLabel.next)
+                            .textContentType(UITextContentType.newPassword)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
-                            .onChange(of: password) { _ in
-                                updateButton()
+                            .onSubmit {
+                                focusedField = .retryPasswordField
                             }
                         Button {
                             self.isShowingPassword.toggle()
@@ -167,8 +194,14 @@ struct SignUpView: View {
                         }
                     } else {
                         SecureField("Password", text: $password)
+                            .focused($focusedField, equals: .passwordField)
+                            .textContentType(UITextContentType.newPassword)
+                            .submitLabel(SubmitLabel.next)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
+                            .onSubmit {
+                                focusedField = .retryPasswordField
+                            }
                             .onChange(of: password) { _ in
                                 updateButton()
                             }
@@ -187,8 +220,14 @@ struct SignUpView: View {
                     if self.isShowingRetryPassword {
 
                         TextField("Re-enter", text: $retryPassword)
+                            .focused($focusedField, equals: .retryPasswordField)
+                            .submitLabel(SubmitLabel.return)
+                            .textContentType(UITextContentType.newPassword)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
+                            .onSubmit {
+                                focusedField = nil
+                            }
                             .onChange(of: retryPassword) { _ in
                                 updateButton()
                             }
@@ -200,8 +239,14 @@ struct SignUpView: View {
                         }
                     } else {
                         SecureField("Re-enter", text: $retryPassword)
+                            .focused($focusedField, equals: .retryPasswordField)
+                            .submitLabel(SubmitLabel.return)
+                            .textContentType(UITextContentType.newPassword)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
+                            .onSubmit({
+                                focusedField = nil
+                            })
                             .onChange(of: retryPassword) { _ in
                                 updateButton()
                             }
@@ -261,7 +306,8 @@ struct SignUpView: View {
 
                 }
             }
-        }.frame(width: 100, height: 100)
+        }
+        .frame(width: 100, height: 100)
     }
 
     @ViewBuilder private var createAccountButton: some View {
@@ -337,7 +383,7 @@ struct SignUpView: View {
                 )
                 .background(.clear)
                 .cornerRadius(35)
-                .padding(.top, 10)
+                .padding(.top, 5)
         }
     }
 
