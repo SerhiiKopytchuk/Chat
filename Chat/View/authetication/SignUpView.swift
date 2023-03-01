@@ -54,69 +54,57 @@ struct SignUpView: View {
     var body: some View {
 
         if !isPresentSignInView {
-            ZStack {
-                VStack(spacing: 30) {
-                    HStack {
-                        Text("Sign Up")
-                            .font(.system(.largeTitle, design: .rounded))
-                            .fontWeight(.bold)
-                            .padding(.leading, 10)
-                            .padding()
-                            .foregroundColor(.primary.opacity(0.6))
-                        Spacer()
-                    }
+            VStack(spacing: 30) {
 
-                    userImage
+                Text("Sign Up")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.system(.largeTitle, design: .rounded))
+                    .fontWeight(.bold)
+                    .padding(.leading, 10)
+                    .padding()
+                    .foregroundColor(.primary.opacity(0.6))
 
-                    fields
-                        .padding(.top, 10)
+                userImage
 
-                    // MARK: buttons
-                    VStack {
-                        createAccountButton
+                fields
+                    .padding(.top, 10)
 
-                        Button("Sign In") {
-                            withAnimation {
-                                self.isPresentSignInView = true
-                            }
+                // MARK: buttons
+                VStack {
+                    createAccountButton
+
+                    Button("Sign In") {
+                        withAnimation {
+                            self.isPresentSignInView = true
                         }
-                        .foregroundColor(.brown)
-
-                        Text("OR")
-                            .padding(.top, 5)
-                            .font(.system(.title3, design: .rounded))
-                            .foregroundColor(.gray)
-
-                        googleButton
-
-                        Spacer()
-
                     }
+                    .foregroundColor(.brown)
+
+                    Text("OR")
+                        .padding(.top, 5)
+                        .font(.system(.title3, design: .rounded))
+                        .foregroundColor(.gray)
+
+                    googleButton
 
                 }
-                .background {
-                    Color.background
-                        .ignoresSafeArea()
-                }
 
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .onAppear {
+                self.clearPreviousDataBeforeSignIn()
+            }
+            .background {
+                Color.background
+                    .ignoresSafeArea()
+            }
+            .overlay {
                 if isShowAlert || viewModel.showAlert {
                     customAlertView
                 }
-
-                if viewModel.isShowLoader {
-                    withAnimation {
-                        GeometryReader { reader in
-                            Loader()
-                                .position(x: reader.size.width/2, y: reader.size.height/2)
-                        }.background {
-                            Color.black
-                                .opacity(0.65)
-                                .edgesIgnoringSafeArea(.all)
-
-                        }
-                    }
-                }
-
+            }
+            .overlay {
+                loader
             }
             .navigationBarHidden(true)
             .sheet(isPresented: $isShowingImagePicker, content: {
@@ -144,48 +132,41 @@ struct SignUpView: View {
                 HStack {
                     Image(systemName: "person")
                         .foregroundColor(.gray)
+
                     TextField("Full Name", text: $fullName)
                         .focused($focusedField, equals: .usernameField)
-                        .submitLabel(SubmitLabel.next)
+                        .submitLabel(.next)
                         .keyboardType(.namePhonePad)
                         .textContentType(.name)
                         .autocorrectionDisabled()
                         .onSubmit({
-                            withAnimation {
-                                focusedField = .emailField
-                            }
+                            focusedField = .emailField
                         })
-                        .onChange(of: fullName) { _ in
-                            updateButton()
-                        }
                 }
                 HStack {
                     Image(systemName: "mail")
                         .foregroundColor(.gray)
+
                     TextField("Email", text: $email)
                         .focused($focusedField, equals: .emailField)
-                        .submitLabel(SubmitLabel.next)
-                        .keyboardType(UIKeyboardType.emailAddress)
-                        .textContentType(UITextContentType.emailAddress)
+                        .submitLabel(.next)
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
                         .autocapitalization(.none)
                         .autocorrectionDisabled()
                         .onSubmit({
                             focusedField = .passwordField
                         })
-                        .onChange(of: email) { _ in
-                            updateButton()
-                        }
                 }
 
                 HStack {
                     Image(systemName: "lock")
                         .foregroundColor(.gray)
                     if self.isShowingPassword {
-
                         TextField("Password", text: $password)
                             .focused($focusedField, equals: .passwordField)
-                            .submitLabel(SubmitLabel.next)
-                            .textContentType(UITextContentType.newPassword)
+                            .textContentType(.password)
+                            .submitLabel(.next)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                             .onSubmit {
@@ -200,15 +181,11 @@ struct SignUpView: View {
                     } else {
                         SecureField("Password", text: $password)
                             .focused($focusedField, equals: .passwordField)
-                            .textContentType(UITextContentType.newPassword)
-                            .submitLabel(SubmitLabel.next)
+                            .submitLabel(.next)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                             .onSubmit {
                                 focusedField = .retryPasswordField
-                            }
-                            .onChange(of: password) { _ in
-                                updateButton()
                             }
                         Button {
                             self.isShowingPassword.toggle()
@@ -216,7 +193,6 @@ struct SignUpView: View {
                             Image(systemName: "eye")
                                 .foregroundColor(.gray)
                         }
-                        .accessibilityLabel("first eye")
                     }
                 }
                 HStack {
@@ -226,16 +202,14 @@ struct SignUpView: View {
 
                         TextField("Re-enter", text: $retryPassword)
                             .focused($focusedField, equals: .retryPasswordField)
-                            .textContentType(UITextContentType.newPassword)
-                            .submitLabel(SubmitLabel.next)
+                            .textContentType(.password)
+                            .submitLabel(.done)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                             .onSubmit {
                                 focusedField = nil
                             }
-                            .onChange(of: retryPassword) { _ in
-                                updateButton()
-                            }
+
                         Button {
                             self.isShowingRetryPassword.toggle()
                         } label: {
@@ -245,23 +219,19 @@ struct SignUpView: View {
                     } else {
                         SecureField("Re-enter", text: $retryPassword)
                             .focused($focusedField, equals: .retryPasswordField)
-                            .submitLabel(SubmitLabel.return)
-                            .textContentType(UITextContentType.newPassword)
+                            .submitLabel(.done)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                             .onSubmit({
                                 focusedField = nil
                             })
-                            .onChange(of: retryPassword) { _ in
-                                updateButton()
-                            }
+
                         Button {
                             self.isShowingRetryPassword.toggle()
                         } label: {
                             Image(systemName: "eye")
                                 .foregroundColor(.gray)
                         }
-                        .accessibilityLabel("second eye")
                     }
 
                 }
@@ -290,29 +260,22 @@ struct SignUpView: View {
                     .cornerRadius(50)
                     .addLightShadow()
             } else {
-                ZStack {
+                ZStack(alignment: .bottomTrailing) {
                     Image(systemName: "person.crop.circle")
                         .resizable()
                         .frame(width: 100, height: 100)
                         .foregroundColor(.gray)
                         .addLightShadow()
-                    VStack(alignment: .trailing) {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Image(systemName: "photo.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .background(Color.background)
-                                .foregroundColor(.gray)
-                                .cornerRadius(15)
-                        }
-                    }
-
+                    Image(systemName: "photo.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .background(Color.background)
+                        .foregroundColor(.gray)
+                        .cornerRadius(15)
                 }
             }
         }
-        .frame(width: 100, height: 100)
+//        .frame(width: 100, height: 100)
     }
 
     @ViewBuilder private var createAccountButton: some View {
@@ -323,24 +286,34 @@ struct SignUpView: View {
                     isShowAlert.toggle()
                 }
             } else {
-                if isValidatedName() {
-                    viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
-                        imageViewModel.saveProfileImage(image: self.image ?? UIImage(), userId: user.id)
-                        chattingViewModel.currentUser = user
-                        chattingViewModel.getChats()
-                        channelViewModel.currentUser = user
-                        channelViewModel.getChannels()
-                        presenceViewModel.startSetup(user: user)
-                    }
+                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
+                    imageViewModel.saveProfileImage(image: self.image ?? UIImage(), userId: user.id)
+                    chattingViewModel.currentUser = user
+                    chattingViewModel.getChats()
+                    channelViewModel.currentUser = user
+                    channelViewModel.getChannels()
+                    presenceViewModel.startSetup(user: user)
                 }
             }
         } label: {
             Text("Create Account")
                 .toButtonGradientStyle()
+                .padding(.horizontal, 80)
+                .opacity(isButtonDisabled ? 0.6 : 1)
+                .cornerRadius(30)
         }
-        .padding(.horizontal, 80)
-        .opacity(isButtonDisabled ? 0.6 : 1)
-        .cornerRadius(30)
+        .onChange(of: fullName, perform: { _ in
+            updateButton()
+        })
+        .onChange(of: email, perform: { _ in
+            updateButton()
+        })
+        .onChange(of: password, perform: { _ in
+            updateButton()
+        })
+        .onChange(of: retryPassword) { _ in
+            updateButton()
+        }
     }
 
     @ViewBuilder private var googleButton: some View {
@@ -353,20 +326,18 @@ struct SignUpView: View {
             GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
 
                 if error != nil {
-                   return
-                 }
+                    return
+                }
 
-                 guard
-                   let authentication = user?.authentication,
-                   let idToken = authentication.idToken
-                 else {
-                   return
-                 }
+                guard
+                    let authentication = user?.authentication,
+                    let idToken = authentication.idToken
+                else {
+                    return
+                }
 
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                                 accessToken: authentication.accessToken)
-
-                self.clearPreviousDataBeforeSignIn()
+                                                               accessToken: authentication.accessToken)
 
                 viewModel.signIn(credential: credential) { user in
                     chattingViewModel.currentUser = user
@@ -386,9 +357,9 @@ struct SignUpView: View {
                     RoundedRectangle(cornerRadius: 35)
                         .stroke(Color.brown, lineWidth: 2)
                 )
-                .background(.clear)
+//                .background(.clear)
                 .cornerRadius(35)
-                .padding(.top, 5)
+//                .padding(.top, 5)
         }
     }
 
@@ -408,6 +379,22 @@ struct SignUpView: View {
             .edgesIgnoringSafeArea(.all)
     }
 
+    @ViewBuilder private var loader: some View {
+        if viewModel.isShowLoader {
+            withAnimation {
+                GeometryReader { reader in
+                    Loader()
+                        .position(x: reader.size.width/2, y: reader.size.height/2)
+                }.background {
+                    Color.black
+                        .opacity(0.65)
+                        .edgesIgnoringSafeArea(.all)
+
+                }
+            }
+        }
+    }
+
     // MARK: - functions
 
     private func updateButton() {
@@ -416,38 +403,16 @@ struct SignUpView: View {
             if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty {
                 isButtonDisabled = true
             } else {
-                if password == retryPassword {
-                    if password.count >= 8 {
-                        if email.contains("@gmail.com") || email.contains("@email.com") {
-                            if fullName.isValidateLengthOfName() {
-                                isButtonDisabled = false
-                            } else {
-                                isButtonDisabled = true
-                            }
-                        } else {
-                            isButtonDisabled = true
-                        }
-                    } else {
-                        isButtonDisabled = true
-                    }
+                if password == retryPassword,
+                   password.count >= 8,
+                   email.contains("@gmail.com") || email.contains("@email.com"),
+                   fullName.isValidateLengthOfName() {
+                    isButtonDisabled = false
                 } else {
                     isButtonDisabled = true
                 }
             }
         }
-    }
-
-    private func isValidatedName() -> Bool {
-        fullName = fullName.trim()
-        updateButton()
-        if isButtonDisabled {
-            withAnimation(.easeInOut) {
-                alertText = "Fill all fields properly!"
-                isShowAlert.toggle()
-            }
-            return false
-        }
-        return true
     }
 
     private func clearPreviousDataBeforeSignIn() {
