@@ -23,6 +23,13 @@ struct SignInView: View {
 
     @Binding var isPresented: Bool
 
+    @FocusState private var focusedField: Field?
+
+    private enum Field: Hashable {
+        case emailField
+        case passwordField
+    }
+
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
     @EnvironmentObject private var channelViewModel: ChannelViewModel
@@ -51,7 +58,7 @@ struct SignInView: View {
                         .foregroundColor(.primary.opacity(0.6))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding()
+                .padding(.horizontal)
 
                 inputFields
 
@@ -60,7 +67,6 @@ struct SignInView: View {
                     signInButton
 
                     Text("OR")
-                        .padding(.top, 50)
                         .font(.system(.title3, design: .rounded))
                         .foregroundColor(.gray)
 
@@ -74,7 +80,6 @@ struct SignInView: View {
                         )
                         .background(.clear)
                         .cornerRadius(35)
-                        .padding(.top, 50)
 
                 }
 
@@ -119,9 +124,17 @@ struct SignInView: View {
                 HStack {
                     Image(systemName: "mail")
                         .foregroundColor(.gray)
+
                     TextField("Email", text: $email)
+                        .focused($focusedField, equals: .emailField)
+                        .submitLabel(SubmitLabel.next)
+                        .keyboardType(UIKeyboardType.emailAddress)
+                        .textContentType(UITextContentType.emailAddress)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
+                        .onSubmit({
+                            self.focusedField = .passwordField
+                        })
                         .onChange(of: email) { _ in
                             updateButton()
                         }
@@ -130,11 +143,18 @@ struct SignInView: View {
                 HStack {
                     Image(systemName: "lock")
                         .foregroundColor(.gray)
+
                     if self.isShowingPassword {
 
                         TextField("Password", text: $password)
+                            .submitLabel(.return)
+                            .focused($focusedField, equals: .passwordField)
+                            .textContentType(UITextContentType.password)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
+                            .onSubmit({
+                                focusedField = nil
+                            })
                             .onChange(of: password) { _ in
                                 updateButton()
                             }
@@ -146,7 +166,13 @@ struct SignInView: View {
                         }
                     } else {
                         SecureField("Password", text: $password)
+                            .submitLabel(.return)
+                            .focused($focusedField, equals: .passwordField)
+                            .textContentType(UITextContentType.password)
                             .disableAutocorrection(true)
+                            .onSubmit({
+                                focusedField = nil
+                            })
                             .onChange(of: password) { _ in
                                 updateButton()
                             }
@@ -194,8 +220,7 @@ struct SignInView: View {
         } label: {
             Text("Sign in")
                 .toButtonGradientStyle()
-                .padding(.leading, 80)
-                .padding(.trailing, 80)
+                .padding(.horizontal, 80)
                 .opacity(isButtonDisabled ? 0.6 : 1 )
 
         }
