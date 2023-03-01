@@ -161,7 +161,7 @@ struct TabBarView: View {
 
     @ViewBuilder private var menuButton: some View {
         Button {
-            withAnimation(.easeOut) {
+            withAnimation(.easeInOut(duration: 0.45)) {
                 isShowingSideBar.toggle()
             }
         } label: {
