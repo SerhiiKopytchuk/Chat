@@ -31,12 +31,17 @@ struct SignUpView: View {
 
     @FocusState private var focusedField: Field?
 
-    enum Field: Hashable {
+    private enum Field: Hashable {
         case usernameField
         case emailField
         case passwordField
         case retryPasswordField
     }
+
+    private var signInTransition = AnyTransition.asymmetric(
+        insertion: .push(from: .trailing),
+        removal: .push(from: .leading)
+    )
 
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
@@ -126,7 +131,7 @@ struct SignUpView: View {
             })
         } else {
             SignInView(isPresented: $isPresentSignInView)
-                .transition(.push(from: .trailing))
+                .transition(signInTransition)
         }
 
     }
@@ -221,8 +226,8 @@ struct SignUpView: View {
 
                         TextField("Re-enter", text: $retryPassword)
                             .focused($focusedField, equals: .retryPasswordField)
-                            .submitLabel(SubmitLabel.return)
                             .textContentType(UITextContentType.newPassword)
+                            .submitLabel(SubmitLabel.next)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                             .onSubmit {
@@ -406,9 +411,7 @@ struct SignUpView: View {
     // MARK: - functions
 
     private func updateButton() {
-        let time: Double = 0.3
-
-        withAnimation(.easeInOut(duration: time)) {
+        withAnimation(.easeInOut(duration: 0.3)) {
 
             if fullName.isEmpty || email.isEmpty || password.isEmpty || retryPassword.isEmpty {
                 isButtonDisabled = true
