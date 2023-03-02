@@ -360,9 +360,9 @@ struct SignUpView: View {
 
     @ViewBuilder private var customAlertView: some View {
         if viewModel.showAlert {
-            CustomAlert(show: $isShowAlert, text: viewModel.alertText)
+            CustomAlert(isShow: $isShowAlert, text: viewModel.alertText)
         } else if isShowAlert {
-            CustomAlert(show: $isShowAlert, text: alertText)
+            CustomAlert(isShow: $isShowAlert, text: alertText)
         }
     }
 
