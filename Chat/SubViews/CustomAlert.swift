@@ -38,12 +38,13 @@ struct CustomAlert: View {
             }
             .padding()
             .padding(.horizontal, 30)
-            .background(Color.background)
+            .background(.red.opacity(0.3))
+            .preferredColorScheme(.dark)
             .cornerRadius(15)
             .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
             .frame(maxWidth: geometry.frame(in: .local).width - 20)
         }
-        .background(Color.black.opacity(0.65))
+        .backgroundBlur(radius: 5, opaque: true)
         .edgesIgnoringSafeArea(.all)
 
     }
