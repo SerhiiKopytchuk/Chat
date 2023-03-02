@@ -230,7 +230,7 @@ struct CreateChannelView: View {
     @ViewBuilder private var customAlert: some View {
         if isShowAlert {
             GeometryReader { geometry in
-                CustomAlert(show: $isShowAlert, text: name.count > 3 ?
+                CustomAlert(isShow: $isShowAlert, text: name.count > 3 ?
                                 "Name should be shorter than 35 symbols" :
                                 "Name should be longer than 3 symbols")
 

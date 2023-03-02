@@ -301,7 +301,7 @@ struct EditProfileView: View {
     @ViewBuilder private var customAlert: some View {
         if isShowAlert {
             GeometryReader { geometry in
-                CustomAlert(show: $isShowAlert, title: alertTitle, text: alertText)
+                CustomAlert(isShow: $isShowAlert, title: alertTitle, text: alertText)
                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                 .frame(maxWidth: geometry.frame(in: .local).width - 40)
             }
