@@ -24,8 +24,7 @@ struct SignUpView: View {
     @State private var isPresentSignInView: Bool = false
     @State private var isShowingPassword: Bool = false
     @State private var isShowingRetryPassword: Bool = false
-    @State private var isShowAlert = false
-    @State private var alertText = ""
+    @State private var alertText: String?
     @State private var isShowingImagePicker = false
     @State private var image: UIImage?
 
@@ -280,7 +279,6 @@ struct SignUpView: View {
             if isButtonDisabled {
                 withAnimation(.easeInOut) {
                     alertText = "Fill all fields properly!"
-                    isShowAlert.toggle()
                 }
             } else {
                 viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
@@ -359,10 +357,10 @@ struct SignUpView: View {
     }
 
     @ViewBuilder private var customAlertView: some View {
-        if viewModel.showAlert {
-            CustomAlert(isShow: $isShowAlert, text: viewModel.alertText, type: .failure)
-        } else if isShowAlert {
-            CustomAlert(isShow: $isShowAlert, text: alertText, type: .failure)
+        if viewModel.alertText != nil {
+            CustomAlert(text: $viewModel.alertText, type: .failure)
+        } else if alertText != nil {
+            CustomAlert(text: $alertText, type: .failure)
         }
     }
 

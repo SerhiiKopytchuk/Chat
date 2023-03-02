@@ -20,7 +20,7 @@ struct CreateChannelView: View {
 
     private let channelImageSize: CGFloat = 100
 
-    @State private var isShowAlert = false
+    @State private var alertText: String?
 
     @Namespace var animation
 
@@ -198,7 +198,9 @@ struct CreateChannelView: View {
 
             if !name.isValidateLengthOfName() {
                 withAnimation {
-                    isShowAlert = true
+                    alertText = name.count > 3 ?
+                    "Name should be shorter than 35 symbols" :
+                    "Name should be longer than 3 symbols"
                 }
                 return
             }
@@ -228,17 +230,8 @@ struct CreateChannelView: View {
     }
 
     @ViewBuilder private var customAlert: some View {
-        if isShowAlert {
-            GeometryReader { geometry in
-                CustomAlert(isShow: $isShowAlert, text: name.count > 3 ?
-                                "Name should be shorter than 35 symbols" :
-                                "Name should be longer than 3 symbols", type: .failure)
-
-                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                .frame(maxWidth: geometry.frame(in: .local).width - 20)
-            }
-            .background(Color.black.opacity(0.65))
-            .edgesIgnoringSafeArea(.all)
+        if alertText != nil {
+            CustomAlert(text: $alertText, type: .failure)
         }
     }
 
