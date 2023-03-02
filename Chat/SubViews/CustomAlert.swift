@@ -14,17 +14,22 @@ struct CustomAlert: View {
     var title: String = "Error"
     var text: String
 
-    
+    var type: AlertType
+
+    enum AlertType: String {
+        case success = "Success"
+        case failure = "Failure"
+    }
 
     @EnvironmentObject private var viewModel: UserViewModel
     // MARK: - body
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                Text(title)
+                Text(type.rawValue)
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundColor(Color.redAlert)
+                    .foregroundColor(type == .failure ? Color.redAlert : Color.greenAlert)
                     .padding(.horizontal)
 
                 Text(text)
@@ -65,7 +70,7 @@ struct CustomAlert: View {
                 viewModel.showAlert = false
             }
         } label: {
-            Text("Close")
+            Text("try again")
                 .padding()
                 .padding(.horizontal, 30)
                 .background(Color.secondPrimary.opacity(0.85))

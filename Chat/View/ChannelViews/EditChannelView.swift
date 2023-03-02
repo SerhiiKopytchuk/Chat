@@ -179,7 +179,7 @@ struct EditChannelView: View {
             GeometryReader { geometry in
                 CustomAlert(isShow: $isShowAlert, text: channelName.count > 3 ?
                                 "Name should be shorter than 35 symbols" :
-                                "Name should be longer than 3 symbols")
+                                "Name should be longer than 3 symbols", type: .success)
 
                 .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
                 .frame(maxWidth: geometry.frame(in: .local).width - 20)
