@@ -61,7 +61,7 @@ struct CustomAlert: View {
                 text = nil
             }
         } label: {
-            Text("try again")
+            Text("close")
                 .padding()
                 .padding(.horizontal, 30)
                 .background(Color.secondPrimary.opacity(0.85))
