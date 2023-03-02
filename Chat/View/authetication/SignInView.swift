@@ -225,9 +225,9 @@ struct SignInView: View {
 
     @ViewBuilder private var customAlert: some View {
         if viewModel.showAlert {
-            CustomAlert(isShow: $isShowAlert, text: viewModel.alertText)
+            CustomAlert(isShow: $isShowAlert, text: viewModel.alertText, type: .failure)
         } else if isShowAlert {
-            CustomAlert(isShow: $isShowAlert, text: alertText)
+            CustomAlert(isShow: $isShowAlert, text: alertText, type: .failure)
         }
     }
 
