@@ -99,9 +99,7 @@ struct SignUpView: View {
                     .ignoresSafeArea()
             }
             .overlay {
-                if isShowAlert || viewModel.showAlert {
-                    customAlertView
-                }
+                customAlertView
             }
             .overlay {
                 loader
@@ -361,19 +359,11 @@ struct SignUpView: View {
     }
 
     @ViewBuilder private var customAlertView: some View {
-        GeometryReader { geometry in
-            if viewModel.showAlert {
-                CustomAlert(show: $isShowAlert, text: viewModel.alertText)
-                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
-            } else {
-                CustomAlert(show: $isShowAlert, text: alertText)
-                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
-            }
-
-        }.background(Color.black.opacity(0.65))
-            .edgesIgnoringSafeArea(.all)
+        if viewModel.showAlert {
+            CustomAlert(show: $isShowAlert, text: viewModel.alertText)
+        } else if isShowAlert {
+            CustomAlert(show: $isShowAlert, text: alertText)
+        }
     }
 
     @ViewBuilder private var loader: some View {

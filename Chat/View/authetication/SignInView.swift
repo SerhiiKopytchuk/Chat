@@ -91,9 +91,7 @@ struct SignInView: View {
                     .ignoresSafeArea()
             }
 
-            if isShowAlert || viewModel.showAlert {
                 customAlert
-            }
 
             if viewModel.isShowLoader {
                 withAnimation {
@@ -227,19 +225,11 @@ struct SignInView: View {
     }
 
     @ViewBuilder private var customAlert: some View {
-        GeometryReader { geometry in
-            if viewModel.showAlert {
-                CustomAlert(show: $isShowAlert, text: viewModel.alertText)
-                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
-            } else {
-                CustomAlert(show: $isShowAlert, text: alertText)
-                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
-            }
-
-        }.background(Color.black.opacity(0.65))
-            .edgesIgnoringSafeArea(.all)
+        if viewModel.showAlert {
+            CustomAlert(show: $isShowAlert, text: viewModel.alertText)
+        } else if isShowAlert {
+            CustomAlert(show: $isShowAlert, text: alertText)
+        }
     }
 
     @ViewBuilder private var googleButton: some View {
