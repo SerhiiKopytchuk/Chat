@@ -285,21 +285,11 @@ struct SignInView: View {
 
     private func updateButton() {
         let time: Double = 0.3
-        // check if enable button
-
         withAnimation(.easeInOut(duration: time)) {
-            if email.isEmpty || password.isEmpty {
+            if email.isEmpty || password.isEmpty || password.count < 8 || email.contains("@gmail.com") {
                 isButtonDisabled = true
             } else {
-                if password.count >= 8 {
-                    if email.contains("@gmail.com") || email.contains("@email.com") {
-                        isButtonDisabled = false
-                    } else {
-                        isButtonDisabled = true
-                    }
-                } else {
-                    isButtonDisabled = true
-                }
+                isButtonDisabled = false
             }
         }
     }
