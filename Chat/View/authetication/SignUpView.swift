@@ -276,9 +276,20 @@ struct SignUpView: View {
 
     @ViewBuilder private var createAccountButton: some View {
         Button {
+            focusedField = nil
             if isButtonDisabled {
                 withAnimation(.easeInOut) {
-                    alertText = "Fill all fields properly!"
+                    if fullName.isEmpty {
+                        alertText = "Please, type your username. (Username must be at least 4 characters long)."
+                    } else if fullName.count < 4 {
+                        alertText = "Username must be at least 4 characters long."
+                    } else if email.isEmpty || !email.contains("@gmail.com") {
+                        alertText = "Please, type correctly your email address. We need it to authenticate you."
+                    } else if password.count < 8 {
+                        alertText = "Your password must be at least 8 characters long."
+                    } else if password != retryPassword {
+                        alertText = "Your passwords aren't matching."
+                    }
                 }
             } else {
                 viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
