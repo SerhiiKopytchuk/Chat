@@ -275,7 +275,6 @@ struct SignUpView: View {
                 }
             }
         }
-//        .frame(width: 100, height: 100)
     }
 
     @ViewBuilder private var createAccountButton: some View {
@@ -357,9 +356,7 @@ struct SignUpView: View {
                     RoundedRectangle(cornerRadius: 35)
                         .stroke(Color.brown, lineWidth: 2)
                 )
-//                .background(.clear)
                 .cornerRadius(35)
-//                .padding(.top, 5)
         }
     }
 

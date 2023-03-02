@@ -127,9 +127,9 @@ struct SignInView: View {
 
                     TextField("Email", text: $email)
                         .focused($focusedField, equals: .emailField)
-                        .submitLabel(SubmitLabel.next)
-                        .keyboardType(UIKeyboardType.emailAddress)
-                        .textContentType(UITextContentType.emailAddress)
+                        .submitLabel(.next)
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
                         .onSubmit({
@@ -147,9 +147,9 @@ struct SignInView: View {
                     if self.isShowingPassword {
 
                         TextField("Password", text: $password)
-                            .submitLabel(.return)
                             .focused($focusedField, equals: .passwordField)
-                            .textContentType(UITextContentType.password)
+                            .textContentType(.password)
+                            .submitLabel(.done)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
                             .onSubmit({
@@ -166,9 +166,8 @@ struct SignInView: View {
                         }
                     } else {
                         SecureField("Password", text: $password)
-                            .submitLabel(.return)
                             .focused($focusedField, equals: .passwordField)
-                            .textContentType(UITextContentType.password)
+                            .submitLabel(.done)
                             .disableAutocorrection(true)
                             .onSubmit({
                                 focusedField = nil
