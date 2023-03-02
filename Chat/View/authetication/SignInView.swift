@@ -107,9 +107,14 @@ struct SignInView: View {
             }
         }
         .addRightGestureRecognizer {
-            withAnimation {
-                self.isPresented = false
+            if alertText == nil {
+                withAnimation {
+                    self.isPresented = false
+                }
             }
+        }
+        .task {
+            clearPreviousDataBeforeSignIn()
         }
     }
 
@@ -195,15 +200,16 @@ struct SignInView: View {
 
     @ViewBuilder private var signInButton: some View {
         Button {
-            // how to automatically change prop
+            focusedField = nil
             if isButtonDisabled {
                 withAnimation(.easeInOut) {
-                    alertText = "Fill all fields properly!"
+                    if email.isEmpty || !email.contains("@gmail.com") {
+                        alertText = "Please, type correctly your email address. We need it to authenticate you."
+                    } else if password.count < 8 {
+                        alertText = "Your password must be at least 8 characters long."
+                    }
                 }
             } else {
-
-                clearPreviousDataBeforeSignIn()
-
                 viewModel.signIn(email: self.email, password: self.password) { user in
                     chattingViewModel.currentUser = user
                     chattingViewModel.getChats()
@@ -254,8 +260,6 @@ struct SignInView: View {
 
                 let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                                accessToken: authentication.accessToken)
-
-                self.clearPreviousDataBeforeSignIn()
 
                 viewModel.signIn(credential: credential) { user in
                     chattingViewModel.currentUser = user

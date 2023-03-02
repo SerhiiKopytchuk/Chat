@@ -35,7 +35,7 @@ struct CustomAlert: View {
 
             }
             .padding(30)
-            .padding(.horizontal, 30)
+            .padding(.horizontal, 10)
             .background(Color.background)
             .cornerRadius(15)
             .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
