@@ -17,28 +17,34 @@ struct CustomAlert: View {
     @EnvironmentObject private var viewModel: UserViewModel
     // MARK: - body
     var body: some View {
-        VStack {
-            Text(title)
-                .font(.title)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
-                .padding(.horizontal)
-                .padding(.top)
+        GeometryReader { geometry in
+            VStack {
+                Text(title)
+                    .font(.title)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .padding(.horizontal)
+                    .padding(.top)
 
-            Text(text)
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .foregroundColor(.primary)
-                .frame(alignment: .center)
-                .padding()
+                Text(text)
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.primary)
+                    .frame(alignment: .center)
+                    .padding()
 
-            closeButton
+                closeButton
 
+            }
+            .padding()
+            .padding(.horizontal, 30)
+            .background(Color.background)
+            .cornerRadius(15)
+            .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
+            .frame(maxWidth: geometry.frame(in: .local).width - 20)
         }
-        .padding()
-        .padding(.horizontal, 30)
-        .background(Color.background)
-        .cornerRadius(15)
+        .background(Color.black.opacity(0.65))
+        .edgesIgnoringSafeArea(.all)
 
     }
 
