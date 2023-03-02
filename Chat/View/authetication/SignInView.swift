@@ -37,62 +37,62 @@ struct SignInView: View {
 
     // MARK: - body
     var body: some View {
-        ZStack {
-            VStack(spacing: 30) {
+        VStack(spacing: 30) {
 
-                HStack(spacing: 15) {
+            HStack(spacing: 15) {
 
-                    Button {
-                        withAnimation {
-                            self.isPresented = false
-                        }
-                    } label: {
-                        Image(systemName: "arrow.backward.circle.fill")
-                            .toButtonLightStyle(size: 40)
+                Button {
+                    withAnimation {
+                        self.isPresented = false
                     }
-
-                    Text("Sign In")
-                        .font(.system(.largeTitle, design: .rounded))
-                        .fontWeight(.bold)
-                        .padding()
-                        .foregroundColor(.primary.opacity(0.6))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding(.horizontal)
-
-                inputFields
-
-                VStack {
-
-                    signInButton
-
-                    Text("OR")
-                        .font(.system(.title3, design: .rounded))
-                        .foregroundColor(.gray)
-
-                    // add google photo
-                    googleButton
-                        .foregroundColor(.brown)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 35)
-                                .stroke(Color.brown, lineWidth: 2)
-                        )
-                        .background(.clear)
-                        .cornerRadius(35)
-
+                } label: {
+                    Image(systemName: "arrow.backward.circle.fill")
+                        .toButtonLightStyle(size: 40)
                 }
 
-                Spacer()
+                Text("Sign In")
+                    .font(.system(.largeTitle, design: .rounded))
+                    .fontWeight(.bold)
+                    .padding()
+                    .foregroundColor(.primary.opacity(0.6))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal)
+
+            inputFields
+
+            VStack {
+
+                signInButton
+
+                Text("OR")
+                    .font(.system(.title3, design: .rounded))
+                    .foregroundColor(.gray)
+
+                // add google photo
+                googleButton
+                    .foregroundColor(.brown)
+                    .padding()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 35)
+                            .stroke(Color.brown, lineWidth: 2)
+                    )
+                    .background(.clear)
+                    .cornerRadius(35)
 
             }
-            .background {
-                Color("BG")
-                    .ignoresSafeArea()
-            }
 
-                customAlert
+            Spacer()
 
+        }
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
+        }
+        .overlay {
+            customAlert
+        }
+        .overlay {
             if viewModel.isShowLoader {
                 withAnimation {
                     GeometryReader { reader in
@@ -105,7 +105,6 @@ struct SignInView: View {
                     }
                 }
             }
-
         }
         .addRightGestureRecognizer {
             withAnimation {
