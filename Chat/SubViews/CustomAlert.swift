@@ -10,16 +10,9 @@ import SwiftUI
 
 struct CustomAlert: View {
     // MARK: - vars
-    @Binding var isShow: Bool
-    var title: String = "Error"
-    var text: String
+    @Binding var text: String?
 
     var type: AlertType
-
-    enum AlertType: String {
-        case success = "Success"
-        case failure = "Failure"
-    }
 
     @EnvironmentObject private var viewModel: UserViewModel
     // MARK: - body
@@ -32,7 +25,7 @@ struct CustomAlert: View {
                     .foregroundColor(type == .failure ? Color.redAlert : Color.greenAlert)
                     .padding(.horizontal)
 
-                Text(text)
+                Text(text ?? "")
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .foregroundColor(.primary)
@@ -53,8 +46,7 @@ struct CustomAlert: View {
                 .ignoresSafeArea()
                 .onTapGesture {
                     withAnimation {
-                        isShow = false
-                        viewModel.showAlert = false
+                        text = nil
                     }
                 }
         })
@@ -66,8 +58,7 @@ struct CustomAlert: View {
     @ViewBuilder private var closeButton: some View {
         Button {
             withAnimation {
-                isShow = false
-                viewModel.showAlert = false
+                text = nil
             }
         } label: {
             Text("try again")

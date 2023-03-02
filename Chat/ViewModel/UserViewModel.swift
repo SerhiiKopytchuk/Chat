@@ -27,8 +27,7 @@ class UserViewModel: ObservableObject {
         return auth.currentUser != nil
     }
 
-    @Published var alertText: String = ""
-    @Published var showAlert = false
+    @Published var alertText: String?
 
     let auth = Auth.auth()
     let firebaseManager = FirestorePathManager.shared
@@ -246,7 +245,6 @@ class UserViewModel: ObservableObject {
 
     fileprivate func showAlert(text: String?) {
         self.alertText = text ?? "error"
-        self.showAlert = true
         self.isShowLoader = false
     }
 
