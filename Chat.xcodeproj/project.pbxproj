@@ -97,6 +97,7 @@
 		40EF996628474AA60062612E /* View + Extenston.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EF996528474AA60062612E /* View + Extenston.swift */; };
 		40EF996828474B6F0062612E /* MessageField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EF996728474B6F0062612E /* MessageField.swift */; };
 		40FA6F6228576D01001AAC09 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FA6F6128576D01001AAC09 /* EditProfileView.swift */; };
+		40FBC21329B2061B00E04ACC /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FBC21229B2061B00E04ACC /* Haptics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -196,6 +197,7 @@
 		40EF996528474AA60062612E /* View + Extenston.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View + Extenston.swift"; sourceTree = "<group>"; };
 		40EF996728474B6F0062612E /* MessageField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageField.swift; sourceTree = "<group>"; };
 		40FA6F6128576D01001AAC09 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		40FBC21229B2061B00E04ACC /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -440,6 +442,7 @@
 			children = (
 				408B0B5329A8FE5B00AAE470 /* LinearInterpolation.swift */,
 				402E4B60296F1779001ADD65 /* PreferenceKeys.swift */,
+				40FBC21229B2061B00E04ACC /* Haptics.swift */,
 			);
 			path = " Helpers";
 			sourceTree = "<group>";
@@ -635,6 +638,7 @@
 				4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */,
 				40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */,
 				4021DD09288AA7CA0060B18E /* EditChannelView.swift in Sources */,
+				40FBC21329B2061B00E04ACC /* Haptics.swift in Sources */,
 				4056D6412834024B000A0872 /* ChatListRow.swift in Sources */,
 				4024EB01283802130082E739 /* CustomAlert.swift in Sources */,
 				404303A729535DCD008C8452 /* ImageAsset.swift in Sources */,

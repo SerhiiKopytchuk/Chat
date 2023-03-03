@@ -113,9 +113,6 @@ struct SignInView: View {
                 }
             }
         }
-        .task {
-            clearPreviousDataBeforeSignIn()
-        }
     }
 
     // MARK: - ViewBuilders
@@ -200,24 +197,7 @@ struct SignInView: View {
 
     @ViewBuilder private var signInButton: some View {
         Button {
-            focusedField = nil
-            if isButtonDisabled {
-                withAnimation(.easeInOut) {
-                    if email.isEmpty || !email.contains("@gmail.com") {
-                        alertText = "Please, type correctly your email address. We need it to authenticate you."
-                    } else if password.count < 8 {
-                        alertText = "Your password must be at least 8 characters long."
-                    }
-                }
-            } else {
-                viewModel.signIn(email: self.email, password: self.password) { user in
-                    chattingViewModel.currentUser = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
-                    presenceViewModel.startSetup(user: user)
-                }
-            }
+            signInButtonTapped()
         } label: {
             Text("Sign in")
                 .toButtonGradientStyle()
@@ -238,36 +218,7 @@ struct SignInView: View {
 
     @ViewBuilder private var googleButton: some View {
         Button {
-            // handle singin
-
-            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-
-            // Create Google Sign In configuration object.
-            let config = GIDConfiguration(clientID: clientID)
-
-            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
-
-                if error != nil {
-                    return
-                }
-
-                guard
-                    let authentication = user?.authentication,
-                    let idToken = authentication.idToken
-                else {
-                    return
-                }
-
-                let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                               accessToken: authentication.accessToken)
-
-                viewModel.signIn(credential: credential) { user in
-                    chattingViewModel.currentUser = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
-                }
-            }
+            googleButtonTapped()
         } label: {
             Image("google")
                 .resizable()
@@ -277,16 +228,68 @@ struct SignInView: View {
 
     // MARK: - Functions
 
-    private func clearPreviousDataBeforeSignIn() {
-        self.viewModel.clearPreviousDataBeforeSignIn()
-        self.channelViewModel.clearPreviousDataBeforeSignIn()
-        self.chattingViewModel.clearDataBeforeSingIn()
+    func signInButtonTapped() {
+        focusedField = nil
+        if isButtonDisabled {
+            withAnimation(.easeInOut) {
+                if email.isEmpty || !email.contains("@gmail.com") {
+                    alertText = "Please, type correctly your email address. We need it to authenticate you."
+                } else if password.count < 8 {
+                    alertText = "Your password must be at least 8 characters long."
+                }
+            }
+        } else {
+            viewModel.signIn(email: self.email, password: self.password) { user in
+                chattingViewModel.currentUser = user
+                chattingViewModel.getChats()
+                channelViewModel.currentUser = user
+                channelViewModel.getChannels()
+                presenceViewModel.startSetup(user: user)
+                Haptics.shared.notify(.success)
+            }
+        }
+    }
+
+    func googleButtonTapped() {
+        // handle singin
+
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
+
+            if error != nil {
+                self.alertText = error?.localizedDescription ?? ""
+                print("failed to signIn with google: \(error?.localizedDescription ?? "")")
+                return
+            }
+
+            guard
+                let authentication = user?.authentication,
+                let idToken = authentication.idToken
+            else {
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: authentication.accessToken)
+
+            viewModel.signIn(credential: credential) { user in
+                chattingViewModel.currentUser = user
+                chattingViewModel.getChats()
+                channelViewModel.currentUser = user
+                channelViewModel.getChannels()
+                Haptics.shared.notify(.success)
+            }
+        }
     }
 
     private func updateButton() {
         let time: Double = 0.3
         withAnimation(.easeInOut(duration: time)) {
-            if email.isEmpty || password.isEmpty || password.count < 8 || email.contains("@gmail.com") {
+            if email.isEmpty || password.isEmpty || password.count < 8 || !email.contains("@gmail.com") {
                 isButtonDisabled = true
             } else {
                 isButtonDisabled = false
