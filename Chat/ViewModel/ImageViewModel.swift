@@ -43,7 +43,8 @@ class ImageViewModel: ObservableObject {
         }
     }
 
-    func saveProfileImage(image: UIImage, userId: String) {
+    func saveProfileImage(image: UIImage?, userId: String) {
+        guard let image else { return }
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
             self?.storageManager.getProfileImageReference(userId: userId)

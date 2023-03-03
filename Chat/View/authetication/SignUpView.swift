@@ -45,7 +45,7 @@ struct SignUpView: View {
     @EnvironmentObject var viewModel: UserViewModel
     @EnvironmentObject var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
-    @ObservedObject private var imageViewModel = ImageViewModel()
+    @EnvironmentObject private var imageViewModel: ImageViewModel
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
@@ -359,7 +359,7 @@ struct SignUpView: View {
             }
         } else {
             viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
-                imageViewModel.saveProfileImage(image: self.image ?? UIImage(), userId: user.id)
+                imageViewModel.saveProfileImage(image: self.image, userId: user.id)
                 chattingViewModel.currentUser = user
                 chattingViewModel.getChats()
                 channelViewModel.currentUser = user
