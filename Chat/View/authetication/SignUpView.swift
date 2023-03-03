@@ -276,31 +276,7 @@ struct SignUpView: View {
 
     @ViewBuilder private var createAccountButton: some View {
         Button {
-            focusedField = nil
-            if isButtonDisabled {
-                withAnimation(.easeInOut) {
-                    if fullName.isEmpty {
-                        alertText = "Please, type your username. (Username must be at least 4 characters long)."
-                    } else if fullName.count < 4 {
-                        alertText = "Username must be at least 4 characters long."
-                    } else if email.isEmpty || !email.contains("@gmail.com") {
-                        alertText = "Please, type correctly your email address. We need it to authenticate you."
-                    } else if password.count < 8 {
-                        alertText = "Your password must be at least 8 characters long."
-                    } else if password != retryPassword {
-                        alertText = "Your passwords aren't matching."
-                    }
-                }
-            } else {
-                viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
-                    imageViewModel.saveProfileImage(image: self.image ?? UIImage(), userId: user.id)
-                    chattingViewModel.currentUser = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
-                    presenceViewModel.startSetup(user: user)
-                }
-            }
+            createAccountTapped()
         } label: {
             Text("Create Account")
                 .toButtonGradientStyle()
@@ -324,35 +300,7 @@ struct SignUpView: View {
 
     @ViewBuilder private var googleButton: some View {
         Button {
-
-            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-
-            let config = GIDConfiguration(clientID: clientID)
-
-            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
-
-                if error != nil {
-                    return
-                }
-
-                guard
-                    let authentication = user?.authentication,
-                    let idToken = authentication.idToken
-                else {
-                    return
-                }
-
-                let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                               accessToken: authentication.accessToken)
-
-                viewModel.signIn(credential: credential) { user in
-                    chattingViewModel.currentUser = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
-                }
-
-            }
+            googleButtonTapped()
         } label: {
             Image("google")
                 .resizable()
@@ -392,6 +340,68 @@ struct SignUpView: View {
     }
 
     // MARK: - functions
+
+    private func createAccountTapped() {
+        focusedField = nil
+        if isButtonDisabled {
+            withAnimation(.easeInOut) {
+                if fullName.isEmpty {
+                    alertText = "Please, type your username. (Username must be at least 4 characters long)."
+                } else if fullName.count < 4 {
+                    alertText = "Username must be at least 4 characters long."
+                } else if email.isEmpty || !email.contains("@gmail.com") {
+                    alertText = "Please, type correctly your email address. We need it to authenticate you."
+                } else if password.count < 8 {
+                    alertText = "Your password must be at least 8 characters long."
+                } else if password != retryPassword {
+                    alertText = "Your passwords aren't matching."
+                }
+            }
+        } else {
+            viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
+                imageViewModel.saveProfileImage(image: self.image ?? UIImage(), userId: user.id)
+                chattingViewModel.currentUser = user
+                chattingViewModel.getChats()
+                channelViewModel.currentUser = user
+                channelViewModel.getChannels()
+                presenceViewModel.startSetup(user: user)
+                Haptics.shared.notify(.success)
+            }
+        }
+    }
+
+    private func googleButtonTapped() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        let config = GIDConfiguration(clientID: clientID)
+
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
+
+            if error != nil {
+                print("failed to signIn with google: \(error?.localizedDescription ?? "")")
+                return
+            }
+
+            guard
+                let authentication = user?.authentication,
+                let idToken = authentication.idToken
+            else {
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: authentication.accessToken)
+
+            viewModel.signIn(credential: credential) { user in
+                chattingViewModel.currentUser = user
+                chattingViewModel.getChats()
+                channelViewModel.currentUser = user
+                channelViewModel.getChannels()
+                Haptics.shared.notify(.success)
+            }
+
+        }
+    }
 
     private func updateButton() {
         withAnimation(.easeInOut(duration: 0.3)) {

@@ -50,6 +50,9 @@ struct CustomAlert: View {
                     }
                 }
         })
+        .task {
+            Haptics.shared.notify(type == .success ? .success : .error)
+        }
         .edgesIgnoringSafeArea(.vertical)
 
     }
