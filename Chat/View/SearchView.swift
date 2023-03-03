@@ -159,33 +159,35 @@ struct SearchView: View {
 
     @ViewBuilder private var usersList: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            ForEach(viewModel.users, id: \.id) { user in
-                SearchUserListRow(userName: user.name,
-                                  userGmail: user.gmail,
-                                  id: user.id,
-                                  userColor: user.colour,
-                                  rowTapped: {
+            LazyVStack {
+                ForEach(viewModel.users, id: \.id) { user in
+                    SearchUserListRow(userName: user.name,
+                                      userGmail: user.gmail,
+                                      id: user.id,
+                                      userColor: user.colour,
+                                      rowTapped: {
 
-                    viewModel.secondUser = user
-                    messagingViewModel.currentUser = viewModel.currentUser
-                    chattingViewModel.secondUser = user
-                    chattingViewModel.currentUser = viewModel.currentUser
+                        viewModel.secondUser = user
+                        messagingViewModel.currentUser = viewModel.currentUser
+                        chattingViewModel.secondUser = user
+                        chattingViewModel.currentUser = viewModel.currentUser
 
-                    chattingViewModel.getCurrentChat(with: user) { result in
-                        switch result {
-                        case .success(let chat):
-                            self.messagingViewModel.currentChat = chat
-                            self.messagingViewModel.getMessages { _ in
-                                isFindChat = true
+                        chattingViewModel.getCurrentChat(with: user) { result in
+                            switch result {
+                            case .success(let chat):
+                                self.messagingViewModel.currentChat = chat
+                                self.messagingViewModel.getMessages { _ in
+                                    isFindChat = true
+                                    goToConversation = true
+                                }
+                            case .failure:
+                                isFindChat = false
                                 goToConversation = true
                             }
-                        case .failure:
-                            isFindChat = false
-                            goToConversation = true
                         }
-                    }
 
-                })
+                    })
+                }
             }
         }
         .ignoresSafeArea()
@@ -194,17 +196,19 @@ struct SearchView: View {
 
     @ViewBuilder private var channelList: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            ForEach(channelViewModel.searchChannels, id: \.id) { channel in
-                ChannelListRow(channel: channel) {
+            LazyVStack {
+                ForEach(channelViewModel.searchChannels, id: \.id) { channel in
+                    ChannelListRow(channel: channel) {
 
-                    channelMessagingViewModel.currentUser = viewModel.currentUser
-                    channelMessagingViewModel.currentChannel = channel
-                    channelViewModel.currentUser = viewModel.currentUser
-                    channelViewModel.currentChannel = channel
-                    self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed
-                    channelMessagingViewModel.getMessages { _ in
-                        DispatchQueue.main.async {
-                            self.goToChannelConversation = true
+                        channelMessagingViewModel.currentUser = viewModel.currentUser
+                        channelMessagingViewModel.currentChannel = channel
+                        channelViewModel.currentUser = viewModel.currentUser
+                        channelViewModel.currentChannel = channel
+                        self.isSubscribedToChannel = channelViewModel.doesUsesSubscribed
+                        channelMessagingViewModel.getMessages { _ in
+                            DispatchQueue.main.async {
+                                self.goToChannelConversation = true
+                            }
                         }
                     }
                 }
