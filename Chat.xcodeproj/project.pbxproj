@@ -255,7 +255,7 @@
 				40C3A104283A958A00A9683A /* Info.plist */,
 				400142F5282EBACF00E5D497 /* Model */,
 				400142F4282EBAC000E5D497 /* ViewModel */,
-				400E81AB28686185006A606E /* SubViews */,
+				400E81AB28686185006A606E /* SubView */,
 				400142F3282EBAB900E5D497 /* View */,
 				400142E5282EBA8400E5D497 /* ChatApp.swift */,
 				400142E9282EBA8500E5D497 /* Assets.xcassets */,
@@ -320,18 +320,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		400E81AB28686185006A606E /* SubViews */ = {
+		400E81AB28686185006A606E /* SubView */ = {
 			isa = PBXGroup;
 			children = (
+				40399E7929B7A10000E914CE /* ListRowView */,
 				408A661328C8C360006101CA /* Conversation views */,
 				4024EB00283802130082E739 /* CustomAlert.swift */,
 				4076E0AC283FB54A00E21131 /* LoaderView.swift */,
-				406DC3A1284C8B5E00A41964 /* SearchUserListRow.swift */,
-				4056D6402834024B000A0872 /* ChatListRow.swift */,
-				40B0A48B2869BC290008374E /* AddUserCreateChannelRow.swift */,
-				40153F23286B18F70022DA46 /* ChannelListRow.swift */,
 				401B7D2B287C5508004A467F /* RollingText.swift */,
-				40A766B728843045002D6FA5 /* removeUsersFromChannelListRow.swift */,
 				40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */,
 				40A701612896CF74002ECB1C /* EmptyImageWithCharacterView.swift */,
 				408A661128C8C305006101CA /* Emoji reaction views */,
@@ -343,7 +339,7 @@
 				409146B1299A9B0200455F20 /* CoupleChatsImagesInRow.swift */,
 				409146B5299A9F7700455F20 /* CoupleChannelsImagesInRow.swift */,
 			);
-			path = SubViews;
+			path = SubView;
 			sourceTree = "<group>";
 		};
 		4021DD0A288AA7E30060B18E /* ChannelViews */ = {
@@ -366,6 +362,18 @@
 				40EF9961284747810062612E /* Message.swift */,
 			);
 			path = "Firebase Model";
+			sourceTree = "<group>";
+		};
+		40399E7929B7A10000E914CE /* ListRowView */ = {
+			isa = PBXGroup;
+			children = (
+				4056D6402834024B000A0872 /* ChatListRow.swift */,
+				40153F23286B18F70022DA46 /* ChannelListRow.swift */,
+				406DC3A1284C8B5E00A41964 /* SearchUserListRow.swift */,
+				40A766B728843045002D6FA5 /* removeUsersFromChannelListRow.swift */,
+				40B0A48B2869BC290008374E /* AddUserCreateChannelRow.swift */,
+			);
+			path = ListRowView;
 			sourceTree = "<group>";
 		};
 		4039A6602854A01D00C74377 /* authetication */ = {
