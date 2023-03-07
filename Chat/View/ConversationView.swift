@@ -163,6 +163,7 @@ struct ConversationView: View {
         .onLongPressGesture(perform: {
             if message.isReply() {
                 withAnimation(.easeInOut) {
+                    Haptics.shared.play(.rigid)
                     showMessageEmojiView = true
                     highlightMessage = message
                 }
