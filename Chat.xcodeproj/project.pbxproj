@@ -312,12 +312,8 @@
 		400142F5282EBACF00E5D497 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				40399E7829B7A0A000E914CE /* Firebase Model */,
 				40D5C41528428B3A0015DFBB /* Tab.swift */,
-				40EF9961284747810062612E /* Message.swift */,
-				4001F19C2848950600D17CCA /* User.swift */,
-				406DC3A4284C8F6500A41964 /* Chat.swift */,
-				400E81A72868583A006A606E /* Channel.swift */,
-				40649D18288F2C5F00B8F500 /* ChannelType.swift */,
 				404303A629535DCD008C8452 /* ImageAsset.swift */,
 				405FDEEB29B10DA700A566C3 /* AlertType.swift */,
 			);
@@ -358,6 +354,18 @@
 				4021DD08288AA7CA0060B18E /* EditChannelView.swift */,
 			);
 			path = ChannelViews;
+			sourceTree = "<group>";
+		};
+		40399E7829B7A0A000E914CE /* Firebase Model */ = {
+			isa = PBXGroup;
+			children = (
+				40649D18288F2C5F00B8F500 /* ChannelType.swift */,
+				4001F19C2848950600D17CCA /* User.swift */,
+				406DC3A4284C8F6500A41964 /* Chat.swift */,
+				400E81A72868583A006A606E /* Channel.swift */,
+				40EF9961284747810062612E /* Message.swift */,
+			);
+			path = "Firebase Model";
 			sourceTree = "<group>";
 		};
 		4039A6602854A01D00C74377 /* authetication */ = {
