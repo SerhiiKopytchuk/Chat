@@ -8,6 +8,7 @@
 import SwiftUI
 import PhotosUI
 
+/// used for sharing images
 struct ImageAsset: Identifiable {
     var id = UUID().uuidString
     var asset: PHAsset
