@@ -33,7 +33,7 @@ struct ChannelMessageField: View {
             sendMessageButton
 
         }
-        .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
+        .sheet(isPresented: $isShowingImagePicker) {
             CustomImagePicker(onSelect: { assets in
                 parseImages(with: assets)
             },
