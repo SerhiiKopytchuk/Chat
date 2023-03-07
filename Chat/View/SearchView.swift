@@ -185,13 +185,8 @@ struct SearchView: View {
                                 goToConversation = true
                             }
                         }
-
-<<<<<<< HEAD
-                })// here
-=======
                     })
                 }
->>>>>>> hotfix/fix_minor_bugs_1
             }
         }
         .ignoresSafeArea()

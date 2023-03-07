@@ -178,28 +178,6 @@ struct TabBarView: View {
     @ViewBuilder private var chatsScrollView: some View {
         if !chattingViewModel.chats.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
-<<<<<<< HEAD
-                ForEach(chattingViewModel.chats, id: \.id) { chat in
-                    ChatListRow(chat: chat) {
-                        chattingViewModel.currentChat = chat
-                        messagingViewModel.currentUser = self.viewModel.currentUser
-                        messagingViewModel.currentChat = chat
-                        viewModel.getUser(
-                            id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                        ) { user in chattingViewModel.secondUser = user } failure: { }
-                        messagingViewModel.getMessages { _ in }
-                    }
-                    .onReceive(chattingViewModel.$secondUser, perform: { user in
-                        if user != nil {
-                            DispatchQueue.main.async {
-                                goToConversation = true
-                            }
-                        } else {
-                            goToConversation = false
-                        }
-                    })
-                    .padding(.horizontal)
-=======
                 LazyVStack {
                     ForEach(chattingViewModel.chats, id: \.id) { chat in
                         ChatListRow(chat: chat) {
@@ -219,7 +197,6 @@ struct TabBarView: View {
                         }
                         .padding(.horizontal)
                     }
->>>>>>> hotfix/fix_minor_bugs_1
                 }
             }
             .safeAreaInset(edge: .top) {
