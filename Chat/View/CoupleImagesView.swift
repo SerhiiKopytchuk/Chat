@@ -21,6 +21,8 @@ struct CoupleImagesView: View {
 
     var imageTapped: ([URL], _ index: Int) -> Void
 
+    private let imageHeight: CGFloat = 250
+
     // MARK: - EnvironmentObjects
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
@@ -34,7 +36,7 @@ struct CoupleImagesView: View {
                 imageView()
             } else {
                 ProgressView()
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: 250)
+                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: imageHeight)
                     .aspectRatio(contentMode: .fill)
             }
         }
@@ -62,23 +64,25 @@ struct CoupleImagesView: View {
     }
 
     @ViewBuilder private func oneImageView() -> some View {
-        imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3 * 2), height: 250))
+        imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3 * 2), height: imageHeight))
     }
 
     @ViewBuilder private func twoImagesView() -> some View {
         HStack(spacing: 2) {
-            imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
-            imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
+            imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: imageHeight))
+            imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: imageHeight))
         }
     }
 
     @ViewBuilder private func threeImagesView() -> some View {
         HStack(spacing: 2) {
-            imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250))
+            imageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: imageHeight))
 
             VStack(spacing: 2) {
-                imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
-                imageView(imageIndex: 2, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: 250/2))
+                imageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3),
+                                                      height: (imageHeight - 2)/2))
+                imageView(imageIndex: 2, size: CGSize(width: (UIScreen.main.bounds.width / 3),
+                                                      height: (imageHeight - 2)/2))
             }
         }
     }
@@ -136,7 +140,8 @@ struct CoupleImagesView: View {
 struct CoupleImagesView_Previews: PreviewProvider {
     @Namespace static var animation
     static var previews: some View {
-        CoupleImagesView(imagesId: [], isChat: true,
+        CoupleImagesView(imagesId: [],
+                         isChat: true,
                          isReceive: true,
                          imageTapped: { _, _  in })
         .environmentObject(MessagingViewModel())
