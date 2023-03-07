@@ -26,7 +26,7 @@ struct ChatApp: App {
             let presenceViewModel = PresenceViewModel()
 
             RootView()
-                .onAppear {
+                .task {
                         viewModel.getCurrentUser { user in
                             viewModel.updateCurrentUser(userId: user.id)
                             chattingViewModel.currentUser = user

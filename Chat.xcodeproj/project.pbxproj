@@ -257,7 +257,6 @@
 				400142F4282EBAC000E5D497 /* ViewModel */,
 				400E81AB28686185006A606E /* SubView */,
 				400142F3282EBAB900E5D497 /* View */,
-				400142E5282EBA8400E5D497 /* ChatApp.swift */,
 				400142E9282EBA8500E5D497 /* Assets.xcassets */,
 				400142EB282EBA8500E5D497 /* Preview Content */,
 				40E2546A2905356400FA604E /* Launch Screen.storyboard */,
@@ -276,6 +275,7 @@
 		400142F3282EBAB900E5D497 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				40399E7A29B7A18400E914CE /* ChannelView */,
 				408A661228C8C335006101CA /* Main */,
 				4039A6602854A01D00C74377 /* authetication */,
 				40C3A105283AA2DB00A9683A /* SideMenuViews */,
@@ -283,9 +283,6 @@
 				40EF995F284747740062612E /* ConversationView.swift */,
 				409AC7632849E9A300BD00F9 /* SearchView.swift */,
 				40FA6F6128576D01001AAC09 /* EditProfileView.swift */,
-				400E81AC286861EE006A606E /* CreateChannelView.swift */,
-				40153F27286B32460022DA46 /* ChannelConversationView.swift */,
-				4021DD0A288AA7E30060B18E /* ChannelViews */,
 				403ED1532954802500F4954D /* CoupleImagesView.swift */,
 			);
 			path = View;
@@ -342,16 +339,6 @@
 			path = SubView;
 			sourceTree = "<group>";
 		};
-		4021DD0A288AA7E30060B18E /* ChannelViews */ = {
-			isa = PBXGroup;
-			children = (
-				409F252E2882B574005D0E6A /* addUserToChannelView.swift */,
-				40A766B528842C19002D6FA5 /* removeUsersFromChannelView.swift */,
-				4021DD08288AA7CA0060B18E /* EditChannelView.swift */,
-			);
-			path = ChannelViews;
-			sourceTree = "<group>";
-		};
 		40399E7829B7A0A000E914CE /* Firebase Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -374,6 +361,18 @@
 				40B0A48B2869BC290008374E /* AddUserCreateChannelRow.swift */,
 			);
 			path = ListRowView;
+			sourceTree = "<group>";
+		};
+		40399E7A29B7A18400E914CE /* ChannelView */ = {
+			isa = PBXGroup;
+			children = (
+				409F252E2882B574005D0E6A /* addUserToChannelView.swift */,
+				40A766B528842C19002D6FA5 /* removeUsersFromChannelView.swift */,
+				4021DD08288AA7CA0060B18E /* EditChannelView.swift */,
+				40153F27286B32460022DA46 /* ChannelConversationView.swift */,
+				400E81AC286861EE006A606E /* CreateChannelView.swift */,
+			);
+			path = ChannelView;
 			sourceTree = "<group>";
 		};
 		4039A6602854A01D00C74377 /* authetication */ = {
@@ -415,6 +414,7 @@
 		408A661228C8C335006101CA /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				400142E5282EBA8400E5D497 /* ChatApp.swift */,
 				400142E7282EBA8400E5D497 /* RootView.swift */,
 				408E26112832C44800CE108E /* MainView.swift */,
 			);
