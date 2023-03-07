@@ -117,6 +117,9 @@ struct ConversationView: View {
                 .rotationEffect(Angle(degrees: 180))
             }
             .rotationEffect(Angle(degrees: 180))
+            .onTapGesture {
+                UIApplication.shared.endEditing()
+            }
             .onAppear {
                 proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }
