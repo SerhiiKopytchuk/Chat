@@ -13,6 +13,9 @@ extension Color {
     static let secondPrimary = Color("secondPrimary")
     static let secondPrimaryReversed = Color("secondPrimaryReversed")
 
+    static let redAlert = Color("RedAlert")
+    static let greenAlert = Color("GreenAlert")
+
     static let mainGradient = LinearGradient(gradient:
                                                 Gradient(colors: [
                                                    Color("Gradient1"),

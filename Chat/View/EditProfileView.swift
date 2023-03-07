@@ -24,9 +24,8 @@ struct EditProfileView: View {
     @State private var isFindUserImage = true
     private let imageSize: CGFloat = 100
 
-    @State private var isShowAlert = false
-    @State private var alertTitle = ""
-    @State private var alertText = ""
+    @State private var alertText: String?
+    @State private var alertType: AlertType = .success
 
     @EnvironmentObject private var userViewModel: UserViewModel
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
@@ -261,12 +260,11 @@ struct EditProfileView: View {
         Button {
 
             if !newName.isValidateLengthOfName() {
-                alertTitle = "Failure"
-                alertText = newName.count > 3 ?
-                                "Name should be shorter than 35 symbols" :
-                                "Name should be longer than 3 symbols"
+                alertType = .failure
                 withAnimation {
-                    self.isShowAlert = true
+                    alertText = newName.count > 3 ?
+                                    "Name should be shorter than 35 symbols" :
+                                    "Name should be longer than 3 symbols"
                 }
                 return
             }
@@ -274,10 +272,9 @@ struct EditProfileView: View {
             newName = newName.trim()
             if newName.count > 3 {
                 editProfileViewModel.changeName(newName: newName, userId: userViewModel.currentUser.id )
-                alertText = "Name was changed successfully"
-                alertTitle = "Success"
+                alertType = .success
                 withAnimation {
-                    self.isShowAlert = true
+                    alertText = "Name was changed successfully"
                 }
             }
         } label: {
@@ -299,14 +296,8 @@ struct EditProfileView: View {
     }
 
     @ViewBuilder private var customAlert: some View {
-        if isShowAlert {
-            GeometryReader { geometry in
-                CustomAlert(show: $isShowAlert, title: alertTitle, text: alertText)
-                .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                .frame(maxWidth: geometry.frame(in: .local).width - 40)
-            }
-            .background(Color.black.opacity(0.65))
-            .edgesIgnoringSafeArea(.all)
+        if alertText != nil {
+            CustomAlert(text: $alertText, type: alertType)
         }
     }
 

@@ -107,7 +107,7 @@ struct ConversationView: View {
     @ViewBuilder private var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
-                VStack {
+                LazyVStack {
                     ForEach(
                         self.messagingViewModel.currentChat?.messages ?? [],
                         id: \.id) { message in
@@ -117,6 +117,9 @@ struct ConversationView: View {
                 .rotationEffect(Angle(degrees: 180))
             }
             .rotationEffect(Angle(degrees: 180))
+            .onTapGesture {
+                UIApplication.shared.endEditing()
+            }
             .onAppear {
                 proxy.scrollTo(self.messagingViewModel.lastMessageId, anchor: .bottom)
             }
@@ -125,6 +128,7 @@ struct ConversationView: View {
                     proxy.scrollTo(id, anchor: .bottom)
                 }
             }
+            .scrollDismissesKeyboard(.immediately)
             .padding(.horizontal, 12)
         }
         .ignoresSafeArea(.all, edges: .top)
@@ -149,14 +153,14 @@ struct ConversationView: View {
         .accessibilityValue(message.imagesId != nil ? "image" : "message")
         .padding(.top, message.id == messagingViewModel.firstMessageId ? 10 : 0)
         .padding(.bottom, message.id == messagingViewModel.lastMessageId ? 10 : 0)
-        .environmentObject(messagingViewModel)
         .id(message.id)
         .frame(maxWidth: UIScreen.main.bounds.width,
                alignment: message.isReply() ? .leading : .trailing)
         .anchorPreference(key: BoundsPreference.self, value: .bounds, transform: { anchor in
             return [(message.id  ?? "someId"): anchor]
         })
-        .onLongPressGesture {
+        .onTapGesture { } // don't remove because scrollview isn't working.
+        .onLongPressGesture(perform: {
             if message.isReply() {
                 withAnimation(.easeInOut) {
                     showMessageEmojiView = true
@@ -164,7 +168,7 @@ struct ConversationView: View {
                 }
 
             }
-        }
+        })
     }
 
     @ViewBuilder private func highlightedMessageBubble(for highlightMessage: Message, rect: CGRect) -> some View {

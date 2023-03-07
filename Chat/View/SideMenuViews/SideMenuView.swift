@@ -17,8 +17,7 @@ struct SideMenuView: View {
 
     @Binding var isShowingSideMenu: Bool
 
-    @State var sidebarOffset: CGFloat = -10
-    @Binding var sideBarAdditionSpace: CGFloat
+    @State var sidebarOffset: CGFloat = 0
 
     // MARK: - computed properties
 
@@ -33,7 +32,7 @@ struct SideMenuView: View {
             SideMenuHeaderView()
                 .environmentObject(viewModel)
                 .foregroundColor(.white)
-                .padding(.leading, sideBarAdditionSpace + 20)
+                .padding(.leading)
 
             ForEach(SideMenuViewModel.allCases, id: \.self) { option in
 
@@ -55,7 +54,7 @@ struct SideMenuView: View {
                     }
                 }
             }
-            .padding(.leading, sideBarAdditionSpace + 20)
+            .padding(.leading)
 
             Spacer()
         }
@@ -87,19 +86,19 @@ struct SideMenuView: View {
                     }
                 })
                 .onEnded({ value in
-                    if abs(value.translation.width) < (screenWidth / 3) {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                            sidebarOffset = -sideBarAdditionSpace
+                    if abs(value.translation.width) < (screenWidth / 3) || value.translation.width > 0 {
+                        withAnimation(.easeInOut) {
+                            sidebarOffset = 0
                         }
                     } else {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                             isShowingSideMenu = false
-                            sidebarOffset = -sideBarAdditionSpace
+                            sidebarOffset = 0
                         }
                     }
                 })
         )
-        .frame(width: screenWidth * 3 / 4 + sideBarAdditionSpace)
+        .frame(width: screenWidth * 3 / 4)
         .navigationBarHidden(true)
     }
 }

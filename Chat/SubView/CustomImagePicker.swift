@@ -25,21 +25,8 @@ struct CustomImagePicker: View {
     var body: some View {
         let deviceSize = UIScreen.main.bounds.size
         VStack(spacing: 0) {
-            HStack {
-                Text("Select Images")
-                    .font(.callout.bold())
-                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                Button {
-                    isPresented = false
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title3)
-                        .foregroundColor(.primary)
-                }
-            }
-            .padding([.horizontal, .top])
-            .padding(.bottom, 10)
+            headerView
 
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)) {
@@ -62,33 +49,8 @@ struct CustomImagePicker: View {
             .frame(maxHeight: .infinity)
             .safeAreaInset(edge: .bottom) {
                 if !imagePickerModel.selectedImages.isEmpty {
-                    Button {
-                        let imageAssets = imagePickerModel.selectedImages.compactMap { imageAsset -> PHAsset? in
-                            return imageAsset.asset
-                        }
-                        onSelect(imageAssets)
-                        imagePickerModel.selectedImages = []
-                    } label: {
-                        Text(maxAmountOfImages > 1 ?
-                             "Send \(imagePickerModel.selectedImages.count) " +
-                             (imagePickerModel.selectedImages.count == 1 ? "image" : "images") :
-                                "Choose"
-                        )
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 30)
-                        .padding(.vertical, 10)
-                        .background {
-                            Capsule()
-                                .fill(.blue)
-                        }
-                    }
-                    .disabled(imagePickerModel.selectedImages.isEmpty)
-                    .opacity(imagePickerModel.selectedImages.isEmpty ? 0.6 : 1)
-                    .padding(.vertical)
+                    sendButton
                 }
-
             }
         }
         .onChange(of: isPresented, perform: { _ in
@@ -102,7 +64,26 @@ struct CustomImagePicker: View {
 
     // MARK: - ViewBuilders
 
-    @ViewBuilder func gridBuilder(imageAsset: ImageAsset) -> some View {
+    @ViewBuilder private var headerView: some View {
+        HStack {
+            Text("Select Images")
+                .font(.callout.bold())
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button {
+                isPresented = false
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title3)
+                    .foregroundColor(.primary)
+            }
+        }
+        .padding([.horizontal, .top])
+        .padding(.bottom, 10)
+
+    }
+
+    @ViewBuilder private func gridBuilder(imageAsset: ImageAsset) -> some View {
         GeometryReader { proxy in
             let size = proxy.size
             ZStack {
@@ -117,32 +98,34 @@ struct CustomImagePicker: View {
                         .frame(width: size.width, height: size.height, alignment: .center)
                 }
 
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(.black.opacity(0.1))
+                if maxAmountOfImages > 1 {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(.black.opacity(0.1))
 
-                    Circle()
-                        .fill(.white.opacity(0.25))
-
-                    Circle()
-                        .stroke(.white, lineWidth: 1)
-
-                    if let index = imagePickerModel.selectedImages.firstIndex(where: { asset in
-                        asset.id == imageAsset.id
-                    }) {
                         Circle()
-                            .fill(.blue)
+                            .fill(.white.opacity(0.25))
 
-                        if maxAmountOfImages > 1 {
-                            Text("\(imagePickerModel.selectedImages[index].assetIndex + 1)")
-                                .font(.caption2.bold())
-                                .foregroundColor(.white)
+                        Circle()
+                            .stroke(.white, lineWidth: 1)
+
+                        if let index = imagePickerModel.selectedImages.firstIndex(where: { asset in
+                            asset.id == imageAsset.id
+                        }) {
+                            Circle()
+                                .fill(.blue)
+
+                            if maxAmountOfImages > 1 {
+                                Text("\(imagePickerModel.selectedImages[index].assetIndex + 1)")
+                                    .font(.caption2.bold())
+                                    .foregroundColor(.white)
+                            }
                         }
                     }
+                    .frame(width: 20, height: 20)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding(5)
                 }
-                .frame(width: 20, height: 20)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .padding(5)
             }
             .clipped()
             .onTapGesture {
@@ -152,14 +135,39 @@ struct CustomImagePicker: View {
         .frame(height: 70)
     }
 
+    @ViewBuilder private var sendButton: some View {
+        Button {
+            sendButtonTapped()
+        } label: {
+            Text(maxAmountOfImages > 1 ?
+                 "Send \(imagePickerModel.selectedImages.count) " +
+                 (imagePickerModel.selectedImages.count == 1 ? "image" : "images") :
+                    "Choose"
+            )
+            .font(.callout)
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .padding(.horizontal, 30)
+            .padding(.vertical, 10)
+            .background {
+                Capsule()
+                    .fill(.blue)
+            }
+        }
+        .disabled(imagePickerModel.selectedImages.isEmpty)
+        .opacity(imagePickerModel.selectedImages.isEmpty ? 0.6 : 1)
+        .padding(.vertical)
+    }
+
     // MARK: - functions
 
-    func imageTap(imageAsset: ImageAsset) {
+    private func imageTap(imageAsset: ImageAsset) {
         withAnimation(.easeInOut) {
             if maxAmountOfImages == 1 {
                 var newAsset = imageAsset
                 newAsset.assetIndex = imagePickerModel.selectedImages.count
                 imagePickerModel.selectedImages = [newAsset]
+                sendButtonTapped()
             } else {
                 if let index = imagePickerModel.selectedImages.firstIndex(where: { asset in
                     asset.id == imageAsset.id
@@ -177,6 +185,14 @@ struct CustomImagePicker: View {
                 }
             }
         }
+    }
+
+    private func sendButtonTapped() {
+        let imageAssets = imagePickerModel.selectedImages.compactMap { imageAsset -> PHAsset? in
+            return imageAsset.asset
+        }
+        onSelect(imageAssets)
+        imagePickerModel.selectedImages = []
     }
 }
 

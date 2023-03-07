@@ -33,7 +33,7 @@ struct ChannelMessageField: View {
             sendMessageButton
 
         }
-        .fullScreenCover(isPresented: $isShowingImagePicker, onDismiss: nil) {
+        .sheet(isPresented: $isShowingImagePicker) {
             CustomImagePicker(onSelect: { assets in
                 parseImages(with: assets)
             },
@@ -69,7 +69,6 @@ struct ChannelMessageField: View {
             messageText = messageText.trimmingCharacters(in: .newlines)
             channelMessagingViewModel.sendMessage(text: messageText)
             messageText = ""
-            UIApplication.shared.endEditing()
             channelViewModel.changeLastActivityAndSortChannels()
 
         } label: {

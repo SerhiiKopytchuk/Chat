@@ -19,16 +19,17 @@ struct TabBarView: View {
     @EnvironmentObject private var channelMessagingViewModel: ChannelMessagingViewModel
 
     @Binding var isShowingSideBar: Bool
-    @State private var isShowingEmptyListsMessage = false
+    @State private var isShowingEmptyChatsList = false
+    @State private var isShowingEmptyChannelsList = false
 
-    @State private var goToConversation = false
+    @State private var goToChat = false
     @State private var goToChannel = false
 
+    // MARK: tab properties
     @State private var tabs: [Tab] = [
         Tab(name: "Chats", index: 0),
         Tab(name: "Channels", index: 1)
     ]
-
     @State private var currentTab: Tab = Tab(name: "Chats", index: 0)
     @State private var contentOffset: CGFloat = 0
     @State private var indicatorWidth: CGFloat = 0
@@ -52,7 +53,7 @@ struct TabBarView: View {
                         .frame(width: size.width, height: size.height)
                 }
                 .offsetX { rect in
-                    if !isShowingSideBar && !goToConversation && !goToChannel {
+                    if !isShowingSideBar && !goToChat && !goToChannel {
                         if currentTab.name == tabs[0].name && !isShowingSideBar {
                             contentOffset = rect.minX - (rect.width * 0)
                         }
@@ -68,7 +69,7 @@ struct TabBarView: View {
                         .frame(width: size.width, height: size.height)
                 }
                 .offsetX { rect in
-                    if !isShowingSideBar && !goToConversation && !goToChannel {
+                    if !isShowingSideBar && !goToChat && !goToChannel {
                         if currentTab.name == tabs[1].name {
                             contentOffset = rect.minX - (rect.width * 1)
                         }
@@ -87,13 +88,25 @@ struct TabBarView: View {
                 }
 
         }
-        .onAppear {
-            #warning("refactor this")
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                isShowingEmptyListsMessage = true
-//            }
-        }
-        .navigationDestination(isPresented: $goToConversation, destination: {
+        .onReceive(chattingViewModel.$chats
+            .dropFirst(2)
+            .map { $0.count }, perform: { chatsCount in
+                if chatsCount == 0 {
+                    isShowingEmptyChatsList = true
+                } else {
+                    isShowingEmptyChatsList = false
+                }
+            })
+        .onReceive(channelViewModel.$channels
+            .dropFirst(2)
+            .map { $0.count }, perform: { channelsCount in
+                if channelsCount == 0 {
+                    isShowingEmptyChannelsList = true
+                } else {
+                    isShowingEmptyChannelsList = false
+                }
+            })
+        .navigationDestination(isPresented: $goToChat, destination: {
             ConversationView(secondUser: viewModel.secondUser, isFindChat: .constant(true))
         })
         .navigationDestination(isPresented: $goToChannel, destination: {
@@ -108,7 +121,6 @@ struct TabBarView: View {
         VStack(alignment: .leading, spacing: 7) {
             HStack {
                 menuButton
-                    .padding(.trailing, 5)
 
                 Text("Chat")
                     .font(.title3.bold())
@@ -144,23 +156,21 @@ struct TabBarView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 15)
-        .background {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-//                .environment(\.colorScheme, .dark)
-                .ignoresSafeArea()
-        }
+        .backgroundBlur(radius: 3, opaque: true)
     }
 
     @ViewBuilder private var menuButton: some View {
         Button {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            withAnimation(.easeInOut(duration: 0.45)) {
                 isShowingSideBar.toggle()
             }
         } label: {
             Image(systemName: "list.bullet")
                 .font(.title3)
+                .scaledToFit()
+                .frame(height: 33)
                 .foregroundColor(Color.secondPrimaryReversed)
+                .padding([.leading, .trailing], 5)
         }
         .opacity(isShowingSideBar ? 0 : 1)
     }
@@ -168,6 +178,7 @@ struct TabBarView: View {
     @ViewBuilder private var chatsScrollView: some View {
         if !chattingViewModel.chats.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
+<<<<<<< HEAD
                 ForEach(chattingViewModel.chats, id: \.id) { chat in
                     ChatListRow(chat: chat) {
                         chattingViewModel.currentChat = chat
@@ -188,6 +199,27 @@ struct TabBarView: View {
                         }
                     })
                     .padding(.horizontal)
+=======
+                LazyVStack {
+                    ForEach(chattingViewModel.chats, id: \.id) { chat in
+                        ChatListRow(chat: chat) {
+                            viewModel.getUser(
+                                id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
+                            ) { user in
+                                chattingViewModel.secondUser = user
+
+                                DispatchQueue.main.async {
+                                    goToChat.toggle()
+                                }
+                            } failure: { }
+                            chattingViewModel.currentChat = chat
+                            messagingViewModel.currentUser = self.viewModel.currentUser
+                            messagingViewModel.currentChat = chat
+                            messagingViewModel.getMessages { _ in }
+                        }
+                        .padding(.horizontal)
+                    }
+>>>>>>> hotfix/fix_minor_bugs_1
                 }
             }
             .safeAreaInset(edge: .top) {
@@ -195,48 +227,54 @@ struct TabBarView: View {
                     .frame(height: headerHeight  + 5)
             }
         } else {
-            VStack(alignment: .center, spacing: 30) {
-                Image("noChats")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150, alignment: .center)
-                    .addLightShadow()
-
-                Text("No conversations")
-                    .font(.title)
-                    .fontWeight(.light)
-
-                Text("No messages in your inbox, yet! Start chatting with people around you")
-                    .font(.callout)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 20)
-                    .multilineTextAlignment(.center)
-
-            }
-            .frame(maxWidth: .infinity)
-            .opacity(isShowingEmptyListsMessage ? 1 : 0)
+            chatsEmptyView
         }
 
+    }
+
+    @ViewBuilder private var chatsEmptyView: some View {
+        VStack(alignment: .center, spacing: 30) {
+            Image("noChats")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 150, height: 150, alignment: .center)
+                .addLightShadow()
+
+            Text("No conversations")
+                .font(.title)
+                .fontWeight(.light)
+
+            Text("No messages in your inbox, yet! Start chatting with people around you")
+                .font(.callout)
+                .foregroundColor(.gray)
+                .padding(.horizontal, 20)
+                .multilineTextAlignment(.center)
+
+        }
+        .frame(maxWidth: .infinity)
+        .opacity(isShowingEmptyChatsList ? 1 : 0)
     }
 
     @ViewBuilder private var channelsScrollView: some View {
         if !channelViewModel.channels.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
-                ForEach(channelViewModel.channels, id: \.id) { channel in
-                    ChannelListRow(channel: channel) {
-                        channelViewModel.getChannel(name: channel.name,
-                                                    ownerId: channel.ownerId) { channel, errorDescription in
+                LazyVStack {
+                    ForEach(channelViewModel.channels, id: \.id) { channel in
+                        ChannelListRow(channel: channel) {
+                            channelViewModel.getChannel(name: channel.name,
+                                                        ownerId: channel.ownerId) { channel, errorDescription in
 
-                            guard let channel, errorDescription == nil else { return }
+                                guard let channel, errorDescription == nil else { return }
 
-                            channelMessagingViewModel.currentChannel = channel
-                            channelMessagingViewModel.currentUser = viewModel.currentUser
-                            channelMessagingViewModel.getMessages(competition: { _ in })
-                            self.goToChannel.toggle()
+                                channelMessagingViewModel.currentChannel = channel
+                                channelMessagingViewModel.currentUser = viewModel.currentUser
+                                channelMessagingViewModel.getMessages(competition: { _ in })
+                                self.goToChannel.toggle()
+                            }
+
                         }
-
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
             }
             .safeAreaInset(edge: .top) {
@@ -244,27 +282,31 @@ struct TabBarView: View {
                     .frame(height: headerHeight  + 5)
             }
         } else {
-            VStack(alignment: .center, spacing: 30) {
-                Image("noChannels")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150, alignment: .center)
-                    .addLightShadow()
-
-                Text("No channels")
-                    .font(.title)
-                    .fontWeight(.light)
-
-                Text("Take the initiative to explore new channels or start your own " +
-                     "with a compelling heading and call to action.")
-                    .font(.callout)
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 20)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .opacity(isShowingEmptyListsMessage ? 1 : 0)
+            channelsEmptyView
         }
+    }
+
+    @ViewBuilder private var channelsEmptyView: some View {
+        VStack(alignment: .center, spacing: 30) {
+            Image("noChannels")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 150, height: 150, alignment: .center)
+                .addLightShadow()
+
+            Text("No channels")
+                .font(.title)
+                .fontWeight(.light)
+
+            Text("Take the initiative to explore new channels or start your own " +
+                 "with a compelling heading and call to action.")
+                .font(.callout)
+                .foregroundColor(.gray)
+                .padding(.horizontal, 20)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .opacity(isShowingEmptyChannelsList ? 1 : 0)
     }
 
     // MARK: - functions

@@ -18,10 +18,17 @@ struct SignInView: View {
 
     @State private var isButtonDisabled: Bool = true
     @State private var isShowingPassword: Bool = false
-    @State private var isShowAlert = false
-    @State private var alertText = ""
+
+    @State private var alertText: String?
 
     @Binding var isPresented: Bool
+
+    @FocusState private var focusedField: Field?
+
+    private enum Field: Hashable {
+        case emailField
+        case passwordField
+    }
 
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
@@ -30,66 +37,62 @@ struct SignInView: View {
 
     // MARK: - body
     var body: some View {
-        ZStack {
-            VStack(spacing: 30) {
+        VStack(spacing: 30) {
 
-                HStack(spacing: 15) {
+            HStack(spacing: 15) {
 
-                    Button {
-                        withAnimation {
-                            self.isPresented = false
-                        }
-                    } label: {
-                        Image(systemName: "arrow.backward.circle.fill")
-                            .toButtonLightStyle(size: 40)
+                Button {
+                    withAnimation {
+                        self.isPresented = false
                     }
-
-                    Text("Sign In")
-                        .font(.system(.largeTitle, design: .rounded))
-                        .fontWeight(.bold)
-                        .padding()
-                        .foregroundColor(.primary.opacity(0.6))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding()
-
-                inputFields
-
-                VStack {
-
-                    signInButton
-
-                    Text("OR")
-                        .padding(.top, 50)
-                        .font(.system(.title3, design: .rounded))
-                        .foregroundColor(.gray)
-
-                    // add google photo
-                    googleButton
-                        .foregroundColor(.brown)
-                        .padding()
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 35)
-                                .stroke(Color.brown, lineWidth: 2)
-                        )
-                        .background(.clear)
-                        .cornerRadius(35)
-                        .padding(.top, 50)
-
+                } label: {
+                    Image(systemName: "arrow.backward.circle.fill")
+                        .toButtonLightStyle(size: 40)
                 }
 
-                Spacer()
+                Text("Sign In")
+                    .font(.system(.largeTitle, design: .rounded))
+                    .fontWeight(.bold)
+                    .padding()
+                    .foregroundColor(.primary.opacity(0.6))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal)
+
+            inputFields
+
+            VStack {
+
+                signInButton
+
+                Text("OR")
+                    .font(.system(.title3, design: .rounded))
+                    .foregroundColor(.gray)
+
+                // add google photo
+                googleButton
+                    .foregroundColor(.brown)
+                    .padding()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 35)
+                            .stroke(Color.brown, lineWidth: 2)
+                    )
+                    .background(.clear)
+                    .cornerRadius(35)
 
             }
-            .background {
-                Color("BG")
-                    .ignoresSafeArea()
-            }
 
-            if isShowAlert || viewModel.showAlert {
-                customAlert
-            }
+            Spacer()
 
+        }
+        .background {
+            Color("BG")
+                .ignoresSafeArea()
+        }
+        .overlay {
+            customAlert
+        }
+        .overlay {
             if viewModel.isShowLoader {
                 withAnimation {
                     GeometryReader { reader in
@@ -102,11 +105,12 @@ struct SignInView: View {
                     }
                 }
             }
-
         }
         .addRightGestureRecognizer {
-            withAnimation {
-                self.isPresented = false
+            if alertText == nil {
+                withAnimation {
+                    self.isPresented = false
+                }
             }
         }
     }
@@ -119,9 +123,17 @@ struct SignInView: View {
                 HStack {
                     Image(systemName: "mail")
                         .foregroundColor(.gray)
+
                     TextField("Email", text: $email)
+                        .focused($focusedField, equals: .emailField)
+                        .submitLabel(.next)
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
+                        .onSubmit({
+                            self.focusedField = .passwordField
+                        })
                         .onChange(of: email) { _ in
                             updateButton()
                         }
@@ -130,11 +142,18 @@ struct SignInView: View {
                 HStack {
                     Image(systemName: "lock")
                         .foregroundColor(.gray)
+
                     if self.isShowingPassword {
 
                         TextField("Password", text: $password)
+                            .focused($focusedField, equals: .passwordField)
+                            .textContentType(.password)
+                            .submitLabel(.done)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
+                            .onSubmit({
+                                focusedField = nil
+                            })
                             .onChange(of: password) { _ in
                                 updateButton()
                             }
@@ -146,7 +165,12 @@ struct SignInView: View {
                         }
                     } else {
                         SecureField("Password", text: $password)
+                            .focused($focusedField, equals: .passwordField)
+                            .submitLabel(.done)
                             .disableAutocorrection(true)
+                            .onSubmit({
+                                focusedField = nil
+                            })
                             .onChange(of: password) { _ in
                                 updateButton()
                             }
@@ -173,29 +197,11 @@ struct SignInView: View {
 
     @ViewBuilder private var signInButton: some View {
         Button {
-            // how to automatically change prop
-            if isButtonDisabled {
-                withAnimation(.easeInOut) {
-                    alertText = "Fill all fields properly!"
-                    isShowAlert.toggle()
-                }
-            } else {
-
-                clearPreviousDataBeforeSignIn()
-
-                viewModel.signIn(email: self.email, password: self.password) { user in
-                    chattingViewModel.currentUser = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
-                    presenceViewModel.startSetup(user: user)
-                }
-            }
+            signInButtonTapped()
         } label: {
             Text("Sign in")
                 .toButtonGradientStyle()
-                .padding(.leading, 80)
-                .padding(.trailing, 80)
+                .padding(.horizontal, 80)
                 .opacity(isButtonDisabled ? 0.6 : 1 )
 
         }
@@ -203,55 +209,16 @@ struct SignInView: View {
     }
 
     @ViewBuilder private var customAlert: some View {
-        GeometryReader { geometry in
-            if viewModel.showAlert {
-                CustomAlert(show: $isShowAlert, text: viewModel.alertText)
-                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
-            } else {
-                CustomAlert(show: $isShowAlert, text: alertText)
-                    .position(x: geometry.frame(in: .local).midX, y: geometry.frame(in: .local).midY)
-                    .frame(maxWidth: geometry.frame(in: .local).width - 20)
-            }
-
-        }.background(Color.black.opacity(0.65))
-            .edgesIgnoringSafeArea(.all)
+        if viewModel.alertText != nil {
+            CustomAlert(text: $viewModel.alertText, type: .failure)
+        } else if alertText != nil {
+            CustomAlert(text: $alertText, type: .failure)
+        }
     }
 
     @ViewBuilder private var googleButton: some View {
         Button {
-            // handle singin
-
-            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-
-            // Create Google Sign In configuration object.
-            let config = GIDConfiguration(clientID: clientID)
-
-            GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
-
-                if error != nil {
-                    return
-                }
-
-                guard
-                    let authentication = user?.authentication,
-                    let idToken = authentication.idToken
-                else {
-                    return
-                }
-
-                let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                               accessToken: authentication.accessToken)
-
-                self.clearPreviousDataBeforeSignIn()
-
-                viewModel.signIn(credential: credential) { user in
-                    chattingViewModel.currentUser = user
-                    chattingViewModel.getChats()
-                    channelViewModel.currentUser = user
-                    channelViewModel.getChannels()
-                }
-            }
+            googleButtonTapped()
         } label: {
             Image("google")
                 .resizable()
@@ -261,29 +228,71 @@ struct SignInView: View {
 
     // MARK: - Functions
 
-    private func clearPreviousDataBeforeSignIn() {
-        self.viewModel.clearPreviousDataBeforeSignIn()
-        self.channelViewModel.clearPreviousDataBeforeSignIn()
-        self.chattingViewModel.clearDataBeforeSingIn()
+    func signInButtonTapped() {
+        focusedField = nil
+        if isButtonDisabled {
+            withAnimation(.easeInOut) {
+                if email.isEmpty || !email.contains("@gmail.com") {
+                    alertText = "Please, type correctly your email address. We need it to authenticate you."
+                } else if password.count < 8 {
+                    alertText = "Your password must be at least 8 characters long."
+                }
+            }
+        } else {
+            viewModel.signIn(email: self.email, password: self.password) { user in
+                chattingViewModel.currentUser = user
+                chattingViewModel.getChats()
+                channelViewModel.currentUser = user
+                channelViewModel.getChannels()
+                presenceViewModel.startSetup(user: user)
+                Haptics.shared.notify(.success)
+            }
+        }
+    }
+
+    func googleButtonTapped() {
+        // handle singin
+
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: getRootViewController()) {[self] user, error in
+
+            if error != nil {
+                self.alertText = error?.localizedDescription ?? ""
+                print("failed to signIn with google: \(error?.localizedDescription ?? "")")
+                return
+            }
+
+            guard
+                let authentication = user?.authentication,
+                let idToken = authentication.idToken
+            else {
+                return
+            }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: authentication.accessToken)
+
+            viewModel.signIn(credential: credential) { user in
+                chattingViewModel.currentUser = user
+                chattingViewModel.getChats()
+                channelViewModel.currentUser = user
+                channelViewModel.getChannels()
+                Haptics.shared.notify(.success)
+            }
+        }
     }
 
     private func updateButton() {
         let time: Double = 0.3
-        // check if enable button
-
         withAnimation(.easeInOut(duration: time)) {
-            if email.isEmpty || password.isEmpty {
+            if email.isEmpty || password.isEmpty || password.count < 8 || !email.contains("@gmail.com") {
                 isButtonDisabled = true
             } else {
-                if password.count >= 8 {
-                    if email.contains("@gmail.com") || email.contains("@email.com") {
-                        isButtonDisabled = false
-                    } else {
-                        isButtonDisabled = true
-                    }
-                } else {
-                    isButtonDisabled = true
-                }
+                isButtonDisabled = false
             }
         }
     }

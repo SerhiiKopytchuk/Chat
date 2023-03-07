@@ -198,7 +198,7 @@ struct ChannelConversationView: View {
     @ViewBuilder private var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
-                VStack {
+                LazyVStack {
                     ForEach(
                         self.channelMessagingViewModel.currentChannel.messages ?? [],
                         id: \.id) { message in
@@ -208,9 +208,13 @@ struct ChannelConversationView: View {
                 .frame(width: UIScreen.main.bounds.width)
                 .rotationEffect(Angle(degrees: 180))
             }
+            .scrollDismissesKeyboard(.immediately)
             .rotationEffect(Angle(degrees: 180))
             .padding(.horizontal, 12)
             .background(Color.background)
+            .onTapGesture {
+                UIApplication.shared.endEditing()
+            }
             .onAppear {
                 proxy.scrollTo(self.channelMessagingViewModel.lastMessageId, anchor: .bottom)
             }
