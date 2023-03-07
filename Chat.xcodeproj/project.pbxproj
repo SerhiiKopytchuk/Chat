@@ -247,6 +247,7 @@
 		400142E4282EBA8400E5D497 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				404B283B28C72F940096C8F0 /* Managers */,
 				40ECD6F128A03DD6006935B1 /*  Helpers */,
 				40EDFC23286EF58400FD7A2A /* Extensions */,
 				40B2DA18283A7A3900965DC5 /* Chat.entitlements */,
@@ -293,7 +294,6 @@
 		400142F4282EBAC000E5D497 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				404B283B28C72F940096C8F0 /* Managers */,
 				4056D63C2833DD17000A0872 /* UserViewModel.swift */,
 				4024EB0A28382D960082E739 /* SideMenuViewModel.swift */,
 				4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */,
