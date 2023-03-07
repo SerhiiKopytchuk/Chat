@@ -71,7 +71,6 @@ struct MessageField: View {
             messageText = messageText.trimmingCharacters(in: .newlines)
             messagingViewModel.sendMessage(text: messageText)
             messageText = ""
-            UIApplication.shared.endEditing()
             chattingViewModel.changeLastActivityAndSortChats()
         } label: {
             Image(systemName: "paperplane.fill")
