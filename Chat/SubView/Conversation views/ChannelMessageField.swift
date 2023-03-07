@@ -69,7 +69,6 @@ struct ChannelMessageField: View {
             messageText = messageText.trimmingCharacters(in: .newlines)
             channelMessagingViewModel.sendMessage(text: messageText)
             messageText = ""
-            UIApplication.shared.endEditing()
             channelViewModel.changeLastActivityAndSortChannels()
 
         } label: {
