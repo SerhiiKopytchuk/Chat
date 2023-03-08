@@ -41,7 +41,14 @@ struct ConversationView: View {
 
             if isFindChat {
                 VStack(spacing: 0) {
-                    messagesScrollView
+                    if !(messagingViewModel.currentChat?.messages ?? []).isEmpty {
+                        messagesScrollView
+                    } else {
+                        LottieView(name: "StartChatting", loopMode: .loop)
+                            .frame(width: 300, alignment: .center)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.background)
+                    }
 
                     MessageField(messagingViewModel: messagingViewModel)
                         .ignoresSafeArea(.container, edges: .bottom)
