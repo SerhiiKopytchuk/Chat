@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import FirebaseAuth
+import Lottie
 
 struct TabBarView: View {
 
@@ -211,11 +212,9 @@ struct TabBarView: View {
 
     @ViewBuilder private var chatsEmptyView: some View {
         VStack(alignment: .center, spacing: 30) {
-            Image("noChats")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150, height: 150, alignment: .center)
-                .addLightShadow()
+            LottieView(name: "EmptyChatsList", loopMode: .autoReverse)
+                .scaledToFill()
+                .frame(width: 300, height: 300, alignment: .center)
 
             Text("No conversations")
                 .font(.title)
@@ -265,11 +264,10 @@ struct TabBarView: View {
 
     @ViewBuilder private var channelsEmptyView: some View {
         VStack(alignment: .center, spacing: 30) {
-            Image("noChannels")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 150, height: 150, alignment: .center)
-                .addLightShadow()
+
+            LottieView(name: "EmptyChannelsList", loopMode: .autoReverse)
+                .scaledToFill()
+                .frame(width: 300, height: 300, alignment: .center)
 
             Text("No channels")
                 .font(.title)
