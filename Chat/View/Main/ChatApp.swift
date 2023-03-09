@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import GoogleSignIn
+import Lottie
 
 @main
 struct ChatApp: App {
@@ -56,6 +57,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     // swiftlint:disable:next line_length
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
+        LottieConfiguration.shared.renderingEngine = .mainThread
         return true
     }
 
