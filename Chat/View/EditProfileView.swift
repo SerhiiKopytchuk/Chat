@@ -80,7 +80,9 @@ struct EditProfileView: View {
                     Divider()
                         .overlay(Color.secondPrimary)
 
-                    TextFieldWithBorders(placeholderText: "Enter your new name", text: $newName)
+                    TextFieldWithBorders(iconName: "person",
+                                         placeholderText: "Enter your new name",
+                                         text: $newName)
 
                     Spacer()
 
