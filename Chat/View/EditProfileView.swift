@@ -40,63 +40,60 @@ struct EditProfileView: View {
 
     // MARK: - body
     var body: some View {
-        ZStack(alignment: .center) {
+        VStack {
+            HeaderWithBackButton(environment: _env, text: "profile")
 
-            Color.background
-                .ignoresSafeArea()
+            Spacer()
 
-            VStack {
-                HeaderWithBackButton(environment: _env, text: "profile")
+            changeProfileImageButton
 
-                Spacer()
+            Text(userViewModel.currentUser.name)
+                .foregroundColor(Color.secondPrimaryReversed)
+                .font(.headline)
+                .padding(.top, 10)
 
-                changeProfileImageButton
+            Text(userViewModel.currentUser.gmail)
+                .foregroundColor(Color.secondPrimaryReversed)
+                .font(.callout)
+                .fontWeight(.light)
 
-                Text(userViewModel.currentUser.name)
-                    .foregroundColor(Color.secondPrimaryReversed)
-                    .font(.headline)
-                    .padding(.top, 10)
+            Spacer()
 
-                Text(userViewModel.currentUser.gmail)
-                    .foregroundColor(Color.secondPrimaryReversed)
-                    .font(.callout)
-                    .fontWeight(.light)
+            ZStack {
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(Color.secondPrimaryReversed)
+                    .ignoresSafeArea()
 
-                Spacer()
+                VStack {
 
-                ZStack {
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color.secondPrimaryReversed)
-                        .ignoresSafeArea()
-
-                    VStack {
-
-                        HStack {
-                            Spacer()
-                            chatsImagesView
-                            Spacer()
-                            channelsImagesView
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity)
-
+                    HStack {
                         Spacer()
-
-                        Divider()
-                            .overlay(Color.secondPrimary)
-
-                        userNameTextField
-
+                        chatsImagesView
                         Spacer()
-
-                        saveButton
-
+                        channelsImagesView
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity)
+
+                    Spacer()
+
+                    Divider()
+                        .overlay(Color.secondPrimary)
+
+                    userNameTextField
+
+                    Spacer()
+
+                    saveButton
 
                 }
-                .frame(height: screenSize.height/3)
-            }
 
+            }
+            .frame(height: screenSize.height/3)
+        }
+        .background {
+            Color.background
+                .ignoresSafeArea()
         }
         .overlay(content: {
             customAlert
