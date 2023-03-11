@@ -12,16 +12,16 @@ struct HeaderWithBackButton: View {
     @Environment(\.self) var environment
     var text: String
     var backButtonPressed: () -> Void = {}
+
     // MARK: - body
     var body: some View {
-        HStack(spacing: 15) {
-            backButton
-
-            Text(text)
-                .font(.title.bold())
-                .opacity(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
+        Text(text.uppercased())
+            .fontWeight(.medium)
+            .frame(maxWidth: .infinity)
+            .overlay(alignment: .leading) {
+                backButton
+                    .padding(.horizontal)
+            }
     }
 
     // MARK: - viewBuilders
@@ -30,8 +30,8 @@ struct HeaderWithBackButton: View {
             backButtonPressed()
             environment.dismiss()
         } label: {
-            Image(systemName: "arrow.backward.circle.fill")
-                .toButtonLightStyle(size: 40)
+            Image(systemName: "arrow.backward")
+                .imageScale(.large)
         }
     }
 }
