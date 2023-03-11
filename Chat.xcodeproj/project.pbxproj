@@ -51,6 +51,7 @@
 		40442EAF289575F800E32FEF /* HeaderWithBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */; };
 		404B283D28C72FAF0096C8F0 /* StorageReferencesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404B283C28C72FAF0096C8F0 /* StorageReferencesManager.swift */; };
 		404B877A292F66BB00005C42 /* Thread  + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404B8779292F66BB00005C42 /* Thread  + Extension.swift */; };
+		404E102429BCBDF300F76EE6 /* TextFieldWithBorders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404E102329BCBDF300F76EE6 /* TextFieldWithBorders.swift */; };
 		4056D63B2833D8E8000A0872 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63A2833D8E8000A0872 /* SignUpView.swift */; };
 		4056D63D2833DD17000A0872 /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D63C2833DD17000A0872 /* UserViewModel.swift */; };
 		4056D6412834024B000A0872 /* ChatListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4056D6402834024B000A0872 /* ChatListRow.swift */; };
@@ -154,6 +155,7 @@
 		40442EAE289575F800E32FEF /* HeaderWithBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderWithBackButton.swift; sourceTree = "<group>"; };
 		404B283C28C72FAF0096C8F0 /* StorageReferencesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageReferencesManager.swift; sourceTree = "<group>"; };
 		404B8779292F66BB00005C42 /* Thread  + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Thread  + Extension.swift"; sourceTree = "<group>"; };
+		404E102329BCBDF300F76EE6 /* TextFieldWithBorders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithBorders.swift; sourceTree = "<group>"; };
 		4056D63A2833D8E8000A0872 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		4056D63C2833DD17000A0872 /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
 		4056D6402834024B000A0872 /* ChatListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListRow.swift; sourceTree = "<group>"; };
@@ -357,6 +359,7 @@
 				40871EAA2955A2BC0011D6FB /* ControlImageView.swift */,
 				409146B1299A9B0200455F20 /* CoupleChatsImagesInRow.swift */,
 				409146B5299A9F7700455F20 /* CoupleChannelsImagesInRow.swift */,
+				404E102329BCBDF300F76EE6 /* TextFieldWithBorders.swift */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -689,6 +692,7 @@
 				4024EB0928382B190082E739 /* SideMenuOptionView.swift in Sources */,
 				40FA6F6228576D01001AAC09 /* EditProfileView.swift in Sources */,
 				40EF996628474AA60062612E /* View + Extenston.swift in Sources */,
+				404E102429BCBDF300F76EE6 /* TextFieldWithBorders.swift in Sources */,
 				40871EA72955A1A30011D6FB /* ImageDetailedView.swift in Sources */,
 				4056DA2B28A7ECD100246AC4 /* ResizeableTextView.swift in Sources */,
 				40C4F29428C5DCE9008D03C8 /* Blur.swift in Sources */,

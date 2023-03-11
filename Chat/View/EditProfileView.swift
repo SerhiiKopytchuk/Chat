@@ -80,7 +80,7 @@ struct EditProfileView: View {
                     Divider()
                         .overlay(Color.secondPrimary)
 
-                    userNameTextField
+                    TextFieldWithBorders(placeholderText: "Enter your new name", text: $newName)
 
                     Spacer()
 
@@ -192,31 +192,6 @@ struct EditProfileView: View {
         .onAppear {
             imageStartSetup()
         }
-    }
-
-    @ViewBuilder private var userNameTextField: some View {
-        Label {
-            TextField("", text: $newName)
-                .placeholder(when: newName.isEmpty) {
-                    Text("Enter your new name")
-                        .foregroundColor(Color.secondPrimary)
-                        .opacity(0.8)
-                }
-                .autocorrectionDisabled()
-                .padding(.leading, 10)
-                .foregroundColor(Color.secondPrimary)
-                .accentColor(Color.secondPrimary)
-        } icon: {
-            Image(systemName: "person")
-                .foregroundColor(Color.secondPrimary)
-        }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 15)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.secondPrimary, lineWidth: 1)
-        }
-        .padding()
     }
 
     @ViewBuilder private var saveButton: some View {
