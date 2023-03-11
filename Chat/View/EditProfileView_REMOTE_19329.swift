@@ -46,6 +46,7 @@ struct EditProfileView: View {
                 .ignoresSafeArea()
 
             VStack {
+
                 HeaderWithBackButton(environment: _env, text: "profile")
 
                 Spacer()
