@@ -10,8 +10,10 @@ import SwiftUI
 struct TextFieldWithBorders: View {
 
     // MARK: - Variables
+    var iconName: String
     var placeholderText: String
     @Binding var text: String
+    var color: Color = Color.secondPrimary
 
     // MARK: - body
     var body: some View {
@@ -19,22 +21,22 @@ struct TextFieldWithBorders: View {
             TextField("", text: $text)
                 .placeholder(when: text.isEmpty) {
                     Text(placeholderText)
-                        .foregroundColor(Color.secondPrimary)
+                        .foregroundColor(color)
                         .opacity(0.8)
                 }
                 .autocorrectionDisabled()
                 .padding(.leading, 10)
-                .foregroundColor(Color.secondPrimary)
-                .accentColor(Color.secondPrimary)
+                .foregroundColor(color)
+                .accentColor(color)
         } icon: {
-            Image(systemName: "person")
-                .foregroundColor(Color.secondPrimary)
+            Image(systemName: iconName)
+                .foregroundColor(color)
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 15)
         .background {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.secondPrimary, lineWidth: 1)
+                .stroke(color, lineWidth: 1)
         }
         .padding()
     }
@@ -49,7 +51,7 @@ struct TextFieldWithBorders: View {
 struct TextFieldWithBorders_Previews: PreviewProvider {
     @State static var text: String = "some text"
     static var previews: some View {
-        TextFieldWithBorders(placeholderText: "Placeholder text", text: $text)
+        TextFieldWithBorders(iconName: "person", placeholderText: "Placeholder text", text: $text)
     }
 }
 #endif
