@@ -31,12 +31,15 @@ struct TabBarView: View {
         Tab(name: "Chats", index: 0),
         Tab(name: "Channels", index: 1)
     ]
+
     @State private var currentTab: Tab = Tab(name: "Chats", index: 0)
-    @State private var contentOffset: CGFloat = 0
     @State private var indicatorWidth: CGFloat = 0
     @State private var indicatorPosition: CGFloat = 0
 
     @State private var headerHeight: CGFloat = 0
+
+    @State private var widthInterpolation: LinearInterpolation?
+    @State private var positionInterpolation: LinearInterpolation?
 
     // MARK: - computed vars
     private var screenSize: CGSize {
@@ -48,38 +51,30 @@ struct TabBarView: View {
         ZStack(alignment: .top) {
             TabView(selection: $currentTab) {
                 // MARK: chats tab
-                GeometryReader { proxy in
-                    let size = proxy.size
-                    chatsScrollView
-                        .frame(width: size.width, height: size.height)
-                }
-                .offsetX { rect in
-                    if !isShowingSideBar && !goToChat && !goToChannel {
-                        if currentTab.name == tabs[0].name && !isShowingSideBar {
-                            contentOffset = rect.minX - (rect.width * 0)
+                chatsScrollView
+                    .offsetX { rect in
+
+                        if widthInterpolation == nil || positionInterpolation == nil {
+                            setUpInterpolations(rect.width)
                         }
-                        updateTabFrame(rect.width)
+
+                        if !goToChat && !goToChannel {
+                            // this is required, because tabView not will animate.
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15 ) {
+                                    updateTabFrame(rect.minX)
+                            }
+                        }
+
                     }
-                }
-                .tag(0)
+                    .tag(tabs[0])
 
                 // MARK: channels tab
-                GeometryReader { proxy in
-                    let size = proxy.size
-                    channelsScrollView
-                        .frame(width: size.width, height: size.height)
-                }
-                .offsetX { rect in
-                    if !isShowingSideBar && !goToChat && !goToChannel {
-                        if currentTab.name == tabs[1].name {
-                            contentOffset = rect.minX - (rect.width * 1)
-                        }
-                        updateTabFrame(rect.width)
-                    }
-                }
-                .tag(1)
+                channelsScrollView
+                    .tag(tabs[1])
 
             }
+            .animation(.easeInOut, value: indicatorWidth)
+            .animation(.easeInOut, value: indicatorPosition)
             .ignoresSafeArea()
             .tabViewStyle(.page(indexDisplayMode: .never))
 
@@ -140,6 +135,11 @@ struct TabBarView: View {
                             tab.minX = rect.minX
                             tab.width = rect.width
                         }
+                        .onTapGesture {
+                            withAnimation(.easeInOut) {
+                                currentTab = tab
+                            }
+                        }
 
                     if tab == tabs.last {
                         Spacer(minLength: 0)
@@ -162,7 +162,7 @@ struct TabBarView: View {
 
     @ViewBuilder private var menuButton: some View {
         Button {
-            withAnimation(.easeInOut(duration: 0.45)) {
+            withAnimation(.easeInOut(duration: 0.35)) {
                 isShowingSideBar.toggle()
             }
         } label: {
@@ -286,7 +286,7 @@ struct TabBarView: View {
 
     // MARK: - functions
 
-    func updateTabFrame(_ tabViewWidth: CGFloat ) {
+    func setUpInterpolations(_ tabViewWidth: CGFloat) {
         let inputRange = tabs.indices.compactMap { index -> CGFloat? in
             return CGFloat(index) * tabViewWidth
         }
@@ -299,12 +299,13 @@ struct TabBarView: View {
             return tab.minX
         }
 
-        let widthInterpolation = LinearInterpolation(inputRange: inputRange, outputRange: outputRangeForWidth)
-        let positionInterpolation = LinearInterpolation(inputRange: inputRange, outputRange: outputRangeForPosition)
+        self.widthInterpolation = LinearInterpolation(inputRange: inputRange, outputRange: outputRangeForWidth)
+        self.positionInterpolation = LinearInterpolation(inputRange: inputRange, outputRange: outputRangeForPosition)
+    }
 
-        indicatorWidth = widthInterpolation.calculate(for: -contentOffset)
-        indicatorPosition = positionInterpolation.calculate(for: -contentOffset)
-
+    func updateTabFrame(_ contentOffset: CGFloat) {
+        indicatorWidth = widthInterpolation?.calculate(for: -contentOffset) ?? 0
+        indicatorPosition = positionInterpolation?.calculate(for: -contentOffset) ?? 0
     }
 
 }
