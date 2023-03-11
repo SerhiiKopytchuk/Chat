@@ -46,7 +46,8 @@ struct EditProfileView: View {
                 .ignoresSafeArea()
 
             VStack {
-                HeaderWithBackButton(environment: _env, text: "profile")
+
+                header
 
                 Spacer()
 
@@ -125,6 +126,30 @@ struct EditProfileView: View {
     }
 
     // MARK: - ViewBuilders
+
+    @ViewBuilder private var header: some View {
+        HStack {
+            Button {
+                env.dismiss()
+            } label: {
+                Image(systemName: "arrow.backward")
+                    .imageScale(.large)
+            }
+
+            Spacer()
+
+            Text("Profile".uppercased())
+                .fontWeight(.medium)
+
+            Spacer()
+
+            Image(systemName: "arrow.backward")
+                .imageScale(.large)
+                .opacity(0)
+
+        }
+        .padding(.horizontal)
+    }
 
     @ViewBuilder private var chatsImagesView: some View {
         VStack {
