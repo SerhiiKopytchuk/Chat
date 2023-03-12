@@ -178,23 +178,25 @@ struct TabBarView: View {
     @ViewBuilder private var chatsScrollView: some View {
         if !chattingViewModel.chats.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
-                ForEach(chattingViewModel.chats, id: \.id) { chat in
-                    ChatListRow(chat: chat) {
-                        viewModel.getUser(
-                            id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
-                        ) { user in
-                            chattingViewModel.secondUser = user
+                LazyVStack {
+                    ForEach(chattingViewModel.chats, id: \.id) { chat in
+                        ChatListRow(chat: chat) {
+                            viewModel.getUser(
+                                id: viewModel.currentUser.id != chat.user1Id ? chat.user1Id : chat.user2Id
+                            ) { user in
+                                chattingViewModel.secondUser = user
 
-                            DispatchQueue.main.async {
-                                goToChat.toggle()
-                            }
-                        } failure: { }
-                        chattingViewModel.currentChat = chat
-                        messagingViewModel.currentUser = self.viewModel.currentUser
-                        messagingViewModel.currentChat = chat
-                        messagingViewModel.getMessages { _ in }
+                                DispatchQueue.main.async {
+                                    goToChat.toggle()
+                                }
+                            } failure: { }
+                            chattingViewModel.currentChat = chat
+                            messagingViewModel.currentUser = self.viewModel.currentUser
+                            messagingViewModel.currentChat = chat
+                            messagingViewModel.getMessages { _ in }
+                        }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
             }
             .safeAreaInset(edge: .top) {
@@ -233,21 +235,23 @@ struct TabBarView: View {
     @ViewBuilder private var channelsScrollView: some View {
         if !channelViewModel.channels.isEmpty {
             ScrollView(.vertical, showsIndicators: false) {
-                ForEach(channelViewModel.channels, id: \.id) { channel in
-                    ChannelListRow(channel: channel) {
-                        channelViewModel.getChannel(name: channel.name,
-                                                    ownerId: channel.ownerId) { channel, errorDescription in
+                LazyVStack {
+                    ForEach(channelViewModel.channels, id: \.id) { channel in
+                        ChannelListRow(channel: channel) {
+                            channelViewModel.getChannel(name: channel.name,
+                                                        ownerId: channel.ownerId) { channel, errorDescription in
 
-                            guard let channel, errorDescription == nil else { return }
+                                guard let channel, errorDescription == nil else { return }
 
-                            channelMessagingViewModel.currentChannel = channel
-                            channelMessagingViewModel.currentUser = viewModel.currentUser
-                            channelMessagingViewModel.getMessages(competition: { _ in })
-                            self.goToChannel.toggle()
+                                channelMessagingViewModel.currentChannel = channel
+                                channelMessagingViewModel.currentUser = viewModel.currentUser
+                                channelMessagingViewModel.getMessages(competition: { _ in })
+                                self.goToChannel.toggle()
+                            }
+
                         }
-
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
             }
             .safeAreaInset(edge: .top) {

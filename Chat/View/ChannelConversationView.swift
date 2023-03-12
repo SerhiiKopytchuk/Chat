@@ -198,7 +198,7 @@ struct ChannelConversationView: View {
     @ViewBuilder private var messagesScrollView: some View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
-                VStack {
+                LazyVStack {
                     ForEach(
                         self.channelMessagingViewModel.currentChannel.messages ?? [],
                         id: \.id) { message in
