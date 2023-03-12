@@ -59,10 +59,7 @@ struct TabBarView: View {
                         }
 
                         if !goToChat && !goToChannel {
-                            // this is required, because tabView not will animate.
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15 ) {
-                                    updateTabFrame(rect.minX)
-                            }
+                                updateTabFrame(rect.minX)
                         }
 
                     }
@@ -134,11 +131,6 @@ struct TabBarView: View {
                         .offsetX { rect in
                             tab.minX = rect.minX
                             tab.width = rect.width
-                        }
-                        .onTapGesture {
-                            withAnimation(.easeInOut) {
-                                currentTab = tab
-                            }
                         }
 
                     if tab == tabs.last {
