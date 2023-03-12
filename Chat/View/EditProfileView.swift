@@ -83,6 +83,7 @@ struct EditProfileView: View {
                     TextFieldWithBorders(iconName: "person",
                                          placeholderText: "Enter your new name",
                                          text: $newName)
+                    .padding()
 
                     Spacer()
 
@@ -157,14 +158,12 @@ struct EditProfileView: View {
                     .frame(width: imageSize + 2, height: imageSize + 2)
 
                 if self.profileImage != nil {
-                    ZStack {
                         Image(uiImage: self.profileImage ?? UIImage())
                             .resizable()
                             .scaledToFill()
                             .frame(width: imageSize, height: imageSize)
                             .cornerRadius(imageSize/2)
                             .addLightShadow()
-                    }
                 } else if isFindUserImage {
                     WebImage(url: imageUrl)
                         .resizable()

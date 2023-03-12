@@ -38,7 +38,6 @@ struct TextFieldWithBorders: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(color, lineWidth: 1)
         }
-        .padding()
     }
 
     // MARK: - ViewBuilders
