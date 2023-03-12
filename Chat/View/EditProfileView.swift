@@ -17,8 +17,6 @@ struct EditProfileView: View {
     @State private var isShowingImagePicker = false
     @State private var newName: String = ""
 
-    @State private var isAnimate = false
-
     // MARK: image properties
     @State private var imageUrl = URL(string: "")
     @State private var isFindUserImage = true
@@ -42,67 +40,63 @@ struct EditProfileView: View {
 
     // MARK: - body
     var body: some View {
-        ZStack(alignment: .center) {
+        VStack {
+            HeaderWithBackButton(environment: _env, text: "profile")
 
-            Color.background
-                .ignoresSafeArea()
+            Spacer()
 
-            VStack {
+            changeProfileImageButton
 
-                header
+            Text(userViewModel.currentUser.name)
+                .foregroundColor(Color.secondPrimaryReversed)
+                .font(.headline)
+                .padding(.top, 10)
 
-                Spacer()
+            Text(userViewModel.currentUser.gmail)
+                .foregroundColor(Color.secondPrimaryReversed)
+                .font(.callout)
+                .fontWeight(.light)
 
-                changeProfileImageButton
+            Spacer()
 
-                Text(userViewModel.currentUser.name)
-                    .foregroundColor(Color.secondPrimaryReversed)
-                    .font(.headline)
-                    .padding(.top, 10)
+            ZStack {
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(Color.secondPrimaryReversed)
+                    .ignoresSafeArea()
 
-                Text(userViewModel.currentUser.gmail)
-                    .foregroundColor(Color.secondPrimaryReversed)
-                    .font(.callout)
-                    .fontWeight(.light)
+                VStack {
 
-                Spacer()
-
-                ZStack {
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color.secondPrimaryReversed)
-                        .ignoresSafeArea()
-
-                    VStack {
-
-                        HStack {
-                            Spacer()
-                            chatsImagesView
-                            Spacer()
-                            channelsImagesView
-                            Spacer()
-                        }
-                        .opacity(isAnimate ? 1 : 0)
-                        .frame(maxWidth: .infinity)
-
+                    HStack {
                         Spacer()
-
-                        Divider()
-                            .overlay(Color.secondPrimary)
-
-                        userNameTextField
-
+                        chatsImagesView
                         Spacer()
-
-                        saveButton
-
+                        channelsImagesView
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity)
+
+                    Spacer()
+
+                    Divider()
+                        .overlay(Color.secondPrimary)
+
+                    TextFieldWithBorders(iconName: "person",
+                                         placeholderText: "Enter your new name",
+                                         text: $newName)
+                    .padding()
+
+                    Spacer()
+
+                    saveButton
 
                 }
-                .frame(height: screenSize.height/3)
-                .offset(y: isAnimate ? 0 : screenSize.height/3)
 
             }
-
+            .frame(height: screenSize.height/3)
+        }
+        .background {
+            Color.background
+                .ignoresSafeArea()
         }
         .overlay(content: {
             customAlert
@@ -113,9 +107,6 @@ struct EditProfileView: View {
         .navigationBarHidden(true)
         .onAppear {
             newName = userViewModel.currentUser.name
-            withAnimation(.easeOut(duration: 0.45)) {
-                isAnimate = true
-            }
         }
         .onChange(of: profileImage ?? UIImage(), perform: { newImage in
             imageViewModel.saveProfileImage(image: newImage,
@@ -134,31 +125,6 @@ struct EditProfileView: View {
     }
 
     // MARK: - ViewBuilders
-
-    @ViewBuilder private var header: some View {
-        HStack {
-            Button {
-                env.dismiss()
-            } label: {
-                Image(systemName: "arrow.backward")
-                    .imageScale(.large)
-            }
-
-            Spacer()
-
-            Text("Profile".uppercased())
-                .fontWeight(.medium)
-
-            Spacer()
-
-            Image(systemName: "arrow.backward")
-                .imageScale(.large)
-                .opacity(0)
-
-        }
-        .offset(y: isAnimate ? 0 : -screenSize.height/4)
-        .padding(.horizontal)
-    }
 
     @ViewBuilder private var chatsImagesView: some View {
         VStack {
@@ -192,14 +158,12 @@ struct EditProfileView: View {
                     .frame(width: imageSize + 2, height: imageSize + 2)
 
                 if self.profileImage != nil {
-                    ZStack {
                         Image(uiImage: self.profileImage ?? UIImage())
                             .resizable()
                             .scaledToFill()
                             .frame(width: imageSize, height: imageSize)
                             .cornerRadius(imageSize/2)
                             .addLightShadow()
-                    }
                 } else if isFindUserImage {
                     WebImage(url: imageUrl)
                         .resizable()
@@ -229,31 +193,6 @@ struct EditProfileView: View {
         .onAppear {
             imageStartSetup()
         }
-    }
-
-    @ViewBuilder private var userNameTextField: some View {
-        Label {
-            TextField("", text: $newName)
-                .placeholder(when: newName.isEmpty) {
-                    Text("Enter your new name")
-                        .foregroundColor(Color.secondPrimary)
-                        .opacity(0.8)
-                }
-                .autocorrectionDisabled()
-                .padding(.leading, 10)
-                .foregroundColor(Color.secondPrimary)
-                .accentColor(Color.secondPrimary)
-        } icon: {
-            Image(systemName: "person")
-                .foregroundColor(Color.secondPrimary)
-        }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 15)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.secondPrimary, lineWidth: 1)
-        }
-        .padding()
     }
 
     @ViewBuilder private var saveButton: some View {
