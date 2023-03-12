@@ -58,7 +58,7 @@ struct SearchView: View {
             env.dismiss()
         }
         .background {
-            Color("BG")
+            Color.background
                 .ignoresSafeArea()
         }
         .navigationDestination(isPresented: $goToConversation, destination: {
@@ -74,25 +74,14 @@ struct SearchView: View {
     // MARK: - viewBuilders
 
     @ViewBuilder private var searchingUsers: some View {
-        Label {
-            TextField("Enter user name", text: $searchUserText)
-                .autocorrectionDisabled()
-                .foregroundColor(.primary)
-                .padding(.leading, 10)
-                .onChange(of: searchUserText, perform: { newValue in
-                    viewModel.searchText = newValue
-                    viewModel.getAllUsers()
-                })
-        } icon: {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.primary)
-        }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 15)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.secondPrimary)
-        }
+        TextFieldWithBorders(iconName: "magnifyingglass",
+                             placeholderText: "Enter user name",
+                             text: $searchUserText,
+                             color: Color.secondPrimaryReversed)
+        .onChange(of: searchUserText, perform: { newValue in
+            viewModel.searchText = newValue
+            viewModel.getAllUsers()
+        })
         .padding(.top, 15)
         .padding(.bottom)
 
@@ -100,25 +89,15 @@ struct SearchView: View {
     }
 
     @ViewBuilder private var searchingChannels: some View {
-        Label {
-            TextField("Enter channel name", text: $searchChannelText)
-                .autocorrectionDisabled()
-                .foregroundColor(.primary)
-                .padding(.leading, 10)
-                .onChange(of: searchChannelText, perform: { newText in
-                    channelViewModel.searchText = newText
-                    channelViewModel.getSearchChannels()
-                })
-        } icon: {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.primary)
-        }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 15)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.secondPrimary)
-        }
+
+        TextFieldWithBorders(iconName: "magnifyingglass",
+                             placeholderText: "Enter channel name",
+                             text: $searchChannelText,
+                             color: Color.secondPrimaryReversed)
+        .onChange(of: searchChannelText, perform: { newText in
+            channelViewModel.searchText = newText
+            channelViewModel.getSearchChannels()
+        })
         .padding(.top, 15)
         .padding(.bottom)
 
