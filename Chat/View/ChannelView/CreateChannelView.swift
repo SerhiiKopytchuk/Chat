@@ -33,53 +33,50 @@ struct CreateChannelView: View {
     // MARK: - body
     var body: some View {
 
-        ZStack {
+        VStack {
+            HeaderWithBackButton(environment: _env, text: "Create channel")
 
-            Color.mainGradient
-                .ignoresSafeArea()
+            changeChannelImageView
 
-            VStack {
-                HeaderWithBackButton(environment: _env, text: "Create channel")
-                    .padding()
+            TextFieldWithBorders(iconName: "newspaper.fill",
+                                 placeholderText: "Enter name of your channel",
+                                 text: $name,
+                                 color: Color.secondPrimaryReversed)
+            .padding([.top, .horizontal])
 
-                VStack {
-                    changeChannelImageView
+            TextFieldWithBorders(iconName: "doc.plaintext",
+                                 placeholderText: "Describe your channel",
+                                 text: $description,
+                                 color: Color.secondPrimaryReversed)
+            .padding([.top, .horizontal])
 
-                    channelNameTextField
+            channelCustomTabBar
+                .padding()
 
-                    channelDescriptionTextField
+            Spacer()
 
-                    channelCustomTabBar
-                        .padding()
+            createChannelButton
+                .padding()
 
-                    Spacer()
-
-                    createChannelButton
-                        .padding()
-                }
-                .ignoresSafeArea(.keyboard, edges: .bottom)
-                .background {
-                    Color.background
-                        .cornerRadius(30, corners: [.topLeft, .topRight])
-                        .offset(x: 0, y: 50)
-                }
-
-            }
-            .overlay {
-                customAlert
-            }
-            .sheet(isPresented: $isShowingImagePicker, content: {
-                CustomImagePicker(onSelect: { assets in
-                    parseImages(with: assets)
-                },
-                                  isPresented: $isShowingImagePicker,
-                                  maxAmountOfImages: 1,
-                                  imagePickerModel: ImagePickerViewModel())
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.hidden)
-            })
-            .navigationBarHidden(true)
         }
+        .background {
+            Color.background
+                .ignoresSafeArea()
+        }
+        .overlay {
+            customAlert
+        }
+        .sheet(isPresented: $isShowingImagePicker, content: {
+            CustomImagePicker(onSelect: { assets in
+                parseImages(with: assets)
+            },
+                              isPresented: $isShowingImagePicker,
+                              maxAmountOfImages: 1,
+                              imagePickerModel: ImagePickerViewModel())
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.hidden)
+        })
+        .navigationBarHidden(true)
         .addRightGestureRecognizer {
             env.dismiss()
         }
@@ -89,74 +86,50 @@ struct CreateChannelView: View {
     // MARK: - viewBuilders
     @ViewBuilder private var changeChannelImageView: some View {
         Button {
+            UIApplication.shared.endEditing()
             isShowingImagePicker.toggle()
         } label: {
-            if self.channelImage != nil {
-                ZStack {
-                    Image(uiImage: self.channelImage ?? UIImage())
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: channelImageSize, height: channelImageSize)
-                        .cornerRadius(channelImageSize/2)
-                        .addLightShadow()
+            ZStack {
+
+                Circle()
+                    .stroke(Color.secondPrimaryReversed, lineWidth: 3)
+                    .frame(width: channelImageSize + 1, height: channelImageSize + 1)
+
+                if self.channelImage != nil {
+                        Image(uiImage: self.channelImage ?? UIImage())
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: channelImageSize, height: channelImageSize)
+                            .cornerRadius(channelImageSize/2)
+                            .addLightShadow()
+                } else {
+                    emptyImage
                 }
-            } else {
-                emptyImage
+
+                Image(systemName: "camera")
+                    .imageScale(.small)
+                    .background {
+                        Circle()
+                            .fill(Color.secondPrimaryReversed)
+                            .frame(width: 25, height: 25)
+                    }
+                    .foregroundColor(Color.secondPrimary)
+                    .offset(x: channelImageSize/2 - 15, y: channelImageSize/2 - 15)
             }
 
         }
         .frame(width: channelImageSize, height: channelImageSize)
+        .padding(.vertical)
+        .padding(.top)
     }
 
     @ViewBuilder private var emptyImage: some View {
         Image(systemName: "photo.circle.fill")
-            .symbolRenderingMode(.hierarchical)
             .resizable()
             .frame(width: channelImageSize, height: channelImageSize)
-            .foregroundColor(.secondPrimary)
-            .background(Color.secondPrimaryReversed)
+            .foregroundColor(.secondPrimaryReversed)
             .cornerRadius(channelImageSize/2)
             .addLightShadow()
-    }
-
-    @ViewBuilder private var channelNameTextField: some View {
-        Label {
-            TextField("Enter name of your channel", text: $name)
-                .autocorrectionDisabled()
-                .foregroundColor(.primary)
-        } icon: {
-            Image(systemName: "newspaper.fill")
-                .foregroundColor(.primary)
-                .opacity(0.7)
-        }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 15)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.secondPrimary)
-        }
-        .padding(.top, 25)
-        .padding(5)
-        .padding(.horizontal)
-    }
-
-    @ViewBuilder private var channelDescriptionTextField: some View {
-        Label {
-            TextField("Describe your channel", text: $description)
-                .foregroundColor(.primary)
-        } icon: {
-            Image(systemName: "doc.plaintext")
-                .foregroundColor(.primary)
-                .opacity(0.7)
-        }
-        .padding(.vertical, 20)
-        .padding(.horizontal, 15)
-        .background {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.secondPrimary)
-        }
-        .padding(5)
-        .padding(.horizontal)
     }
 
     @ViewBuilder private var channelCustomTabBar: some View {
@@ -212,7 +185,7 @@ struct CreateChannelView: View {
                 if let channelImageUnwrapped = channelImage {
                     imageViewModel.saveChannelImage(image: channelImageUnwrapped,
                                                     channelId: channel.id ?? "some Id") { _ in
-                }
+                    }
 
                 }
                 if channelImage != nil {
