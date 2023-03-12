@@ -208,16 +208,21 @@ class ChannelViewModel: ObservableObject {
 
     private func getCurrentUserChannels() {
         DispatchQueue.global(qos: .utility).async { [weak self] in
+            var channelsLocal: [Channel] = []
+            let group = DispatchGroup()
+
             for channelId in self?.currentUser.channels ?? [] {
+                group.enter()
                 self?.firestoreManager.getChannelDocumentReference(for: channelId)
                     .toChannel { channel in
-                        DispatchQueue.main.async {
-                            withAnimation(.easeInOut.delay(0.5)) {
-                                self?.channels.append(channel)
-                                self?.sortChannels()
-                            }
-                        }
+                        channelsLocal.append(channel)
+                        group.leave()
                     }
+            }
+
+            group.notify(queue: .main) {
+                channelsLocal.sort { $0.lastActivityTimestamp > $1.lastActivityTimestamp }
+                self?.channels = channelsLocal
             }
         }
     }
