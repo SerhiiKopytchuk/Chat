@@ -129,10 +129,7 @@ struct EditProfileView: View {
         .alert("Everything will be erased. Are you sure?", isPresented: $showDeleteAccountAlert) {
             Button("Delete", role: .destructive) {
                 let group = DispatchGroup()
-                    group.enter()
-                    chattingViewModel.deleteEveryChat {
-                        group.leave()
-                    }
+                    chattingViewModel.deleteEveryChat {}
 
                     channelViewModel.deleteEveryChannel()
 
