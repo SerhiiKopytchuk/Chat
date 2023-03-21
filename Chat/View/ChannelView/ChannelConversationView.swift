@@ -273,7 +273,7 @@ struct ChannelConversationView: View {
 
     @ViewBuilder private var alertDeleteAndCancelChannelButton: some View {
         Button("Delete", role: .destructive) {
-            channelViewModel.deleteChannel()
+            channelViewModel.delete(channel: channelViewModel.currentChannel)
             presentationMode.wrappedValue.dismiss()
         }.foregroundColor(.red)
         Button("Cancel", role: .cancel) {}
