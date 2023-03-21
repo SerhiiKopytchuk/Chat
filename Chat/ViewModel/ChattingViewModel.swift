@@ -238,7 +238,7 @@ class ChattingViewModel: ObservableObject {
     }
 
     func delete(chat: Chat, completion: @escaping () -> Void ) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             self?.deleteFilesFromStorage(for: chat, completion: {
                 self?.firestoreManager.getChatDocumentReference(for: chat.id)
                     .delete { error in
@@ -251,15 +251,15 @@ class ChattingViewModel: ObservableObject {
     }
 
     fileprivate func deleteFilesFromStorage(for chat: Chat, completion: @escaping () -> Void ) {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInteractive).async {
 
-                for element in chat.storageFilesId ?? [] {
-                    let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
-                                                                                           imageId: element)
-                    ref.delete { error in
-                        if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
-                    }
+            for element in chat.storageFilesId ?? [] {
+                let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
+                                                                                       imageId: element)
+                ref.delete { error in
+                    if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
                 }
+            }
 
             completion()
 
@@ -290,6 +290,7 @@ class ChattingViewModel: ObservableObject {
                 completion()
             }
         }
+        completion()
     }
 
 }
