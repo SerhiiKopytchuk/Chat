@@ -25,6 +25,8 @@ struct EditProfileView: View {
     @State private var alertText: String?
     @State private var alertType: AlertType = .success
 
+    @State private var showDeleteAccountAlert = false
+
     @EnvironmentObject private var userViewModel: UserViewModel
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
     @EnvironmentObject private var viewModel: UserViewModel
@@ -89,10 +91,11 @@ struct EditProfileView: View {
 
                     saveButton
 
+                    deleteAccountButton
                 }
 
             }
-            .frame(height: screenSize.height/3)
+            .frame(height: screenSize.height/2.5)
         }
         .background {
             Color.background
@@ -122,6 +125,12 @@ struct EditProfileView: View {
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.hidden)
         })
+        .alert("Everything will be erased. Are you sure?", isPresented: $showDeleteAccountAlert) {
+            Button("Delete", role: .destructive) {
+//                chattingViewModel.deleteUserChats()
+            }.foregroundColor(.red)
+            Button("Cancel", role: .cancel) {}
+        }
     }
 
     // MARK: - ViewBuilders
@@ -217,19 +226,41 @@ struct EditProfileView: View {
                 }
             }
         } label: {
-            Text("save")
+            Text("Save")
                 .font(.title3)
                 .fontWeight(.light)
-                .foregroundColor(Color.secondPrimary)
+                .foregroundColor(Color.green)
                 .padding(.vertical)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 15)
                 .background {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(Color.secondPrimary, lineWidth: 1)
+                        .stroke(Color.green, lineWidth: 1)
                 }
                 .padding(.horizontal)
                 .opacity(newName.isValidateLengthOfName() && newName != userViewModel.currentUser.name ? 1 : 0.6)
+        }
+        .padding(.bottom)
+    }
+
+    @ViewBuilder private var deleteAccountButton: some View {
+        Button {
+            withAnimation {
+                showDeleteAccountAlert.toggle()
+            }
+        } label: {
+            Text("Delete Account")
+                .font(.title3)
+                .fontWeight(.light)
+                .foregroundColor(Color.red)
+                .padding(.vertical)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 15)
+                .background {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(Color.red, lineWidth: 1)
+                }
+                .padding(.horizontal)
         }
             .padding(.bottom)
     }
@@ -294,28 +325,5 @@ struct EditProfileView_Previews: PreviewProvider {
                     Chat()
                 ]
             }
-    }
-}
-
-extension View {
-    func placeholder<Content: View>(
-        when shouldShow: Bool,
-        alignment: Alignment = .leading,
-        @ViewBuilder placeholder: () -> Content) -> some View {
-
-        ZStack(alignment: alignment) {
-            placeholder().opacity(shouldShow ? 1 : 0)
-            self
-        }
-    }
-}
-
-extension View {
-    func placeholder(
-        _ text: String,
-        when shouldShow: Bool,
-        alignment: Alignment = .leading) -> some View {
-
-        placeholder(when: shouldShow, alignment: alignment) { Text(text).foregroundColor(.gray) }
     }
 }
