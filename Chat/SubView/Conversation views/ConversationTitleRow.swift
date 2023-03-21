@@ -84,8 +84,9 @@ struct ConversationTitleRow: View {
         }
         .alert("Do you really want to delete this chat?", isPresented: $showingAlert) {
             Button("Delete", role: .destructive) {
-                chattingViewModel.deleteChat()
-                presentationMode.wrappedValue.dismiss()
+                chattingViewModel.delete(chat: chattingViewModel.currentChat ?? Chat(), completion: {
+                    presentationMode.wrappedValue.dismiss()
+                })
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}
         }

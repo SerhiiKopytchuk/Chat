@@ -296,11 +296,11 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    func deleteChannel() {
+    func delete(channel: Channel?) {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            self?.deleteChannelFiles {
-                self?.removeChannelFromSubscribersAndOwner()
-                self?.firestoreManager.getChannelDocumentReference(for: self?.currentChannel.id)
+            self?.deleteFiles(channel: channel) {
+                self?.removeFromSubscribersAndOwner(channel: channel)
+                self?.firestoreManager.getChannelDocumentReference(for: channel?.id)
                     .delete { err in
                         if err.review(message: "failed to delete channel") { return }
                     }
@@ -308,41 +308,40 @@ class ChannelViewModel: ObservableObject {
         }
     }
 
-    func deleteChannelFiles(competition: @escaping () -> Void) {
+    func deleteFiles(channel: Channel?, competition: @escaping () -> Void) {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            self?.deleteChannelImageFile()
-            self?.deleteChannelMessagesFiles {
+            self?.deleteImageFile(for: channel)
+            self?.deleteMessagesFiles(for: channel, competition: {
                 competition()
-            }
+
+            })
         }
     }
 
-    fileprivate func deleteChannelImageFile() {
-        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: currentChannel.id ?? "someId")
+    fileprivate func deleteImageFile(for channel: Channel?) {
+        let ref = StorageReferencesManager.shared.getChannelImageReference(channelId: channel?.id ?? "someId")
         ref.delete { error in
             if error.review(message: "failed to deleteChannelImageFile") { return }
         }
     }
 
-    fileprivate func deleteChannelMessagesFiles(competition: @escaping () -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.getCurrentChannel(channelId: self?.currentChannel.id ?? "someId") { channel in
-                for element in channel.storageFilesId {
-                    let ref = StorageReferencesManager.shared
-                        .getChannelMessageImageReference(channelId: self?.currentChannel.id ?? "someId",
-                                                         imageId: element)
-                    ref.delete { error in
-                        if error.review(message: "failed to deleteChannelMessagesFiles") { return }
-                    }
+    fileprivate func deleteMessagesFiles(for channel: Channel?, competition: @escaping () -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            for element in channel?.storageFilesId ?? [] {
+                let ref = StorageReferencesManager.shared
+                    .getChannelMessageImageReference(channelId: channel?.id ?? "someId",
+                                                     imageId: element)
+                ref.delete { error in
+                    if error.review(message: "failed to deleteChannelMessagesFiles") { return }
                 }
-                competition()
             }
+            competition()
         }
     }
 
-    fileprivate func removeChannelFromSubscribersAndOwner() {
+    fileprivate func removeFromSubscribersAndOwner(channel: Channel?) {
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            if let subscribersId  = self?.currentChannel.subscribersId {
+            if let subscribersId  = channel?.subscribersId {
                 if !subscribersId.isEmpty {
                     for id in subscribersId {
                         self?.removeChannelFromUserSubscriptions(id: id)
@@ -374,6 +373,16 @@ class ChannelViewModel: ObservableObject {
             self.searchText = ""
             self.channels = []
             self.searchChannels = []
+        }
+    }
+
+    func deleteEveryChannel() {
+        for channel in channels {
+            if channel.ownerId == currentUser.id {
+                delete(channel: channel)
+            } else {
+                removeChannelFromUserSubscriptions(id: channel.id ?? "ChannelId")
+            }
         }
     }
 

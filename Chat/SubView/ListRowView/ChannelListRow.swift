@@ -112,7 +112,7 @@ struct ChannelListRow: View {
             channelViewModel.currentChannel = self.channel
 
             if channel.ownerId == userViewModel.currentUser.id {
-                channelViewModel.deleteChannel()
+                channelViewModel.delete(channel: channelViewModel.currentChannel)
             } else {
                 channelViewModel.removeChannelFromUserSubscriptions(id: self.channelViewModel.currentUser.id)
             }

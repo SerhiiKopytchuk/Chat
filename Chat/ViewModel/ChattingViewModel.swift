@@ -237,44 +237,43 @@ class ChattingViewModel: ObservableObject {
         }
     }
 
-    func deleteChat() {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.deleteFilesFromStorage {
-                self?.firestoreManager.getChatDocumentReference(for: self?.currentChat?.id)
+    func delete(chat: Chat, completion: @escaping () -> Void ) {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.deleteFilesFromStorage(for: chat, completion: {
+                self?.firestoreManager.getChatDocumentReference(for: chat.id)
                     .delete { error in
                         if error.review(message: "failed to deleteChat") { return }
                     }
-                self?.deleteChatIdFromUsersChats()
-            }
+                self?.deleteChatIdFromUsers(for: chat)
+                completion()
+            })
         }
     }
 
-    fileprivate func deleteChatIdFromUsersChats() {
-        self.firestoreManager.getUserDocumentReference(for: currentChat?.user1Id).updateData([
-            "chats": FieldValue.arrayRemove(["\(currentChat?.id ?? "someId")"])
-        ])
+    fileprivate func deleteFilesFromStorage(for chat: Chat, completion: @escaping () -> Void ) {
+        DispatchQueue.global(qos: .userInteractive).async {
 
-        self.firestoreManager.getUserDocumentReference(for: currentChat?.user2Id).updateData([
-            "chats": FieldValue.arrayRemove(["\(currentChat?.id ?? "someId")"])
-        ])
-    }
-
-    fileprivate func deleteFilesFromStorage(competition: @escaping () -> Void ) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.getCurrentChat(chatId: self?.currentChat?.id) { chat in
-
-                competition()
-
-                for element in chat.storageFilesId ?? [] {
-                    let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
-                                                                                           imageId: element)
-
-                    ref.delete { error in
-                        if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
-                    }
+            for element in chat.storageFilesId ?? [] {
+                let ref = StorageReferencesManager.shared.getChatMessageImageReference(chatId: chat.id ?? "some id",
+                                                                                       imageId: element)
+                ref.delete { error in
+                    if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
                 }
             }
+
+            completion()
+
         }
+    }
+
+    fileprivate func deleteChatIdFromUsers(for chat: Chat) {
+        self.firestoreManager.getUserDocumentReference(for: chat.user1Id).updateData([
+            "chats": FieldValue.arrayRemove(["\(chat.id ?? "someId")"])
+        ])
+
+        self.firestoreManager.getUserDocumentReference(for: chat.user2Id).updateData([
+            "chats": FieldValue.arrayRemove(["\(chat.id ?? "someId")"])
+        ])
     }
 
     func clearDataBeforeSingIn() {
@@ -283,6 +282,15 @@ class ChattingViewModel: ObservableObject {
             self.secondUser = User()
             self.chats = []
         }
+    }
+
+    func deleteEveryChat(completion: @escaping () -> Void ) {
+        for chat in chats {
+            delete(chat: chat) {
+                completion()
+            }
+        }
+        completion()
     }
 
 }
