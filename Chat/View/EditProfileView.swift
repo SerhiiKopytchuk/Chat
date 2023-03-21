@@ -29,6 +29,7 @@ struct EditProfileView: View {
 
     @EnvironmentObject private var userViewModel: UserViewModel
     @EnvironmentObject private var chattingViewModel: ChattingViewModel
+    @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var viewModel: UserViewModel
     @ObservedObject var editProfileViewModel = EditProfileViewModel()
     @ObservedObject private var imageViewModel = ImageViewModel()
@@ -127,7 +128,15 @@ struct EditProfileView: View {
         })
         .alert("Everything will be erased. Are you sure?", isPresented: $showDeleteAccountAlert) {
             Button("Delete", role: .destructive) {
-//                chattingViewModel.deleteUserChats()
+                var group = DispatchGroup()
+
+                group.enter()
+                chattingViewModel.deleteEveryChat {
+                    group.leave()
+                }
+
+                channelViewModel.deleteEveryChannel()
+                
             }.foregroundColor(.red)
             Button("Cancel", role: .cancel) {}
         }
