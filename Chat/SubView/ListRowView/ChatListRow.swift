@@ -118,7 +118,7 @@ struct ChatListRow: View {
     @ViewBuilder private var contextMenuButton: some View {
         Button(role: .destructive) {
             chattingViewModel.currentChat = self.chat
-            chattingViewModel.deleteChat()
+            chattingViewModel.delete(chat: chattingViewModel.currentChat ?? Chat(), completion: {})
         } label: {
             Label("remove chat", systemImage: "delete.left")
         }

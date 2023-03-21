@@ -270,4 +270,33 @@ class UserViewModel: ObservableObject {
         self.currentUser = User()
         self.secondUser = User()
     }
+
+    func deleteCurrentUser(completion: @escaping () -> Void ) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.deleteUserPictureFromStorage {
+                self?.firebaseManager.getUserDocumentReference(for: self?.currentUser.id ?? "")
+                    .delete { error in
+                        if error.review(message: "failed to deleteChat") { return }
+                    }
+
+                self?.auth.currentUser?.delete()
+                completion()
+            }
+        }
+    }
+
+    fileprivate func deleteUserPictureFromStorage(completion: @escaping () -> Void ) {
+        DispatchQueue.global(qos: .userInitiated).async {
+
+            let ref = StorageReferencesManager.shared.getProfileImageReference(userId: self.currentUser.id)
+
+            ref.delete { error in
+                if error.review(message: "failed to deleteFilesFromStorage(Chat)") { return }
+            }
+
+            completion()
+
+        }
+    }
+
 }
