@@ -381,7 +381,7 @@ class ChannelViewModel: ObservableObject {
             if channel.ownerId == currentUser.id {
                 delete(channel: channel)
             } else {
-                removeChannelFromUserSubscriptions(id: channel.id ?? "")
+                removeChannelFromUserSubscriptions(id: channel.id ?? "ChannelId")
             }
         }
     }

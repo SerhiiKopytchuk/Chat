@@ -128,17 +128,21 @@ struct EditProfileView: View {
         })
         .alert("Everything will be erased. Are you sure?", isPresented: $showDeleteAccountAlert) {
             Button("Delete", role: .destructive) {
-                let group = DispatchGroup()
 
-                group.enter()
-                chattingViewModel.deleteEveryChat {
-                    group.leave()
-                }
+                DispatchQueue.global(qos: .userInteractive).sync {
 
-                channelViewModel.deleteEveryChannel()
-                group.enter()
-                userViewModel.deleteCurrentUser {
-                    group.leave()
+                    chattingViewModel.deleteEveryChat {}
+
+                    channelViewModel.deleteEveryChannel()
+
+                    userViewModel.deleteCurrentUser {}
+
+                    userViewModel.signedIn = false
+
+                    Haptics.shared.notify(.success)
+
+                    env.dismiss()
+
                 }
 
             }.foregroundColor(.red)

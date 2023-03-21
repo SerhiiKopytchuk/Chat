@@ -280,7 +280,6 @@ class UserViewModel: ObservableObject {
                     }
 
                 self?.auth.currentUser?.delete()
-                self?.signedIn = false
                 completion()
             }
         }
