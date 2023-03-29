@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>943319888610-62d8pmth1stvc4oh3pkvcj7th6pbjpac.apps.googleusercontent.com</string>
+	<string>943319888610-sk99o36sksrgb1lvdr66a250qga2oi5i.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.943319888610-62d8pmth1stvc4oh3pkvcj7th6pbjpac</string>
+	<string>com.googleusercontent.apps.943319888610-sk99o36sksrgb1lvdr66a250qga2oi5i</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAUdfoSrNqTaP9Yit7nyqT_6ZXKQQPihSk</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>Idk.Koch.Chat</string>
+	<string>com.KopytchukSerhii.ChatWithMe</string>
 	<key>PROJECT_ID</key>
 	<string>chatapp-2cd70</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:943319888610:ios:c9313904ae088368b724bb</string>
+	<string>1:943319888610:ios:5155f241f6c3fdabb724bb</string>
 	<key>DATABASE_URL</key>
 	<string>https://chatapp-2cd70-default-rtdb.europe-west1.firebasedatabase.app</string>
 </dict>
