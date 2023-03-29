@@ -9,16 +9,9 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.943319888610-62d8pmth1stvc4oh3pkvcj7th6pbjpac</string>
+				<string>com.googleusercontent.apps.943319888610-sk99o36sksrgb1lvdr66a250qga2oi5i</string>
 			</array>
 		</dict>
 	</array>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
-		<key>UISceneConfigurations</key>
-		<dict/>
-	</dict>
 </dict>
 </plist>

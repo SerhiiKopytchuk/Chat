@@ -113,9 +113,9 @@ class MessagingViewModel: ObservableObject {
             let imageMessage = Message(imagesId: imagesId, senderId: self?.currentUser.id ?? "id")
 
             do {
-                try self?.firestoreManager.getChatMessagesCollectionReference(for: currentChat?.id)
+                try self?.firestoreManager.getChatMessagesCollectionReference(for: self?.currentChat?.id)
                     .document().setData(from: imageMessage)
-                changeLastActivityTime()
+                self?.changeLastActivityTime()
             } catch {
                 print("failed to send message" + error.localizedDescription)
             }
