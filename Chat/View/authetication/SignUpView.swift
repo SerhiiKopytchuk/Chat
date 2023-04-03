@@ -10,6 +10,7 @@ import Firebase
 import GoogleSignIn
 import FirebaseStorage
 import PhotosUI
+import _AuthenticationServices_SwiftUI
 
 // SF Symbols
 struct SignUpView: View {
@@ -49,53 +50,69 @@ struct SignUpView: View {
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
+    @Environment(\.colorScheme) var colorScheme
+
+    private var isButtonsWhite: Bool {
+        return colorScheme == .dark
+    }
+
     // MARK: - Body
     var body: some View {
-
         if !isPresentSignInView {
-            VStack(spacing: 30) {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 30) {
 
-                Text("Sign Up")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.system(.largeTitle, design: .rounded))
-                    .fontWeight(.bold)
-                    .padding(.leading, 10)
-                    .padding()
-                    .foregroundColor(.primary.opacity(0.6))
+                    Text("Sign Up")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(.system(.largeTitle, design: .rounded))
+                        .fontWeight(.bold)
+                        .padding(.leading, 10)
+                        .padding()
+                        .foregroundColor(.primary.opacity(0.6))
 
-                userImage
+                    userImage
 
-                fields
-                    .padding(.top, 10)
+                    fields
+                        .padding(.top, 10)
 
-                // MARK: buttons
-                VStack {
-                    createAccountButton
+                    // MARK: buttons
+                    VStack {
 
-                    Button("Sign In") {
-                        withAnimation {
-                            self.isPresentSignInView = true
+                        createAccountButton
+
+                        Button("Sign In") {
+                            withAnimation {
+                                self.isPresentSignInView = true
+                            }
                         }
+                        .foregroundColor(.brown)
+
+                        Text("OR")
+                            .padding(.top, 5)
+                            .font(.system(.title3, design: .rounded))
+                            .foregroundColor(.gray)
+
+                        authButtons
+
                     }
-                    .foregroundColor(.brown)
-
-                    Text("OR")
-                        .padding(.top, 5)
-                        .font(.system(.title3, design: .rounded))
-                        .foregroundColor(.gray)
-
-                    googleButton
 
                 }
-
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .onAppear {
-                self.clearPreviousDataBeforeSignIn()
-            }
-            .background {
-                Color.background
-                    .ignoresSafeArea()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onAppear {
+                    self.clearPreviousDataBeforeSignIn()
+                }
+                .navigationBarHidden(true)
+                .sheet(isPresented: $isShowingImagePicker, content: {
+                    CustomImagePicker(onSelect: { assets in
+                        parseImages(with: assets)
+                    },
+                                      isPresented: $isShowingImagePicker,
+                                      maxAmountOfImages: 1,
+                                      imagePickerModel: ImagePickerViewModel())
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.hidden)
+                })
+                .padding(.bottom)
             }
             .overlay {
                 customAlertView
@@ -103,17 +120,11 @@ struct SignUpView: View {
             .overlay {
                 loader
             }
-            .navigationBarHidden(true)
-            .sheet(isPresented: $isShowingImagePicker, content: {
-                CustomImagePicker(onSelect: { assets in
-                    parseImages(with: assets)
-                },
-                                  isPresented: $isShowingImagePicker,
-                                  maxAmountOfImages: 1,
-                                  imagePickerModel: ImagePickerViewModel())
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.hidden)
-            })
+            .background {
+                Color.background
+                    .ignoresSafeArea()
+            }
+
         } else {
             SignInView(isPresented: $isPresentSignInView)
                 .transition(signInTransition)
@@ -280,9 +291,10 @@ struct SignUpView: View {
         } label: {
             Text("Create Account")
                 .toButtonGradientStyle()
-                .padding(.horizontal, 80)
+                .padding(.horizontal, 40)
                 .opacity(isButtonDisabled ? 0.6 : 1)
                 .cornerRadius(30)
+                .frame(height: 60)
         }
         .onChange(of: fullName, perform: { _ in
             updateButton()
@@ -298,20 +310,49 @@ struct SignUpView: View {
         }
     }
 
+    @ViewBuilder private var authButtons: some View {
+        Group {
+            appleButton
+            googleButton
+        }
+        .frame(height: 60)
+        .padding(.horizontal, 80)
+        .padding(.bottom, 10)
+    }
+
+    @ViewBuilder private var appleButton: some View {
+        VStack(spacing: 0) {
+            if isButtonsWhite {
+                SignInWithAppleButton(.signUp) { request in
+                    let nonce =  viewModel.randomNonceString()
+                    viewModel.currentNonce = nonce
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = viewModel.sha256(nonce)
+                } onCompletion: { result in
+                    viewModel.signInWithApple(result: result) { user in
+                        handleSuccessAuth(for: user)
+                    }
+                }
+                .signInWithAppleButtonStyle(.white)
+            } else {
+                SignInWithAppleButton(.signUp) { request in
+                    let nonce =  viewModel.randomNonceString()
+                    viewModel.currentNonce = nonce
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = viewModel.sha256(nonce)
+                } onCompletion: { result in
+                    viewModel.signInWithApple(result: result) { user in
+                        handleSuccessAuth(for: user)
+                    }
+                }
+                .signInWithAppleButtonStyle(.black)
+            }
+        }
+    }
+
     @ViewBuilder private var googleButton: some View {
-        Button {
+        CustomSocialButton(image: "google", text: "Sign up with Google", color: .secondPrimary) {
             googleButtonTapped()
-        } label: {
-            Image("google")
-                .resizable()
-                .frame(width: 32, height: 32)
-                .foregroundColor(.brown)
-                .padding()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 35)
-                        .stroke(Color.brown, lineWidth: 2)
-                )
-                .cornerRadius(35)
         }
     }
 
@@ -360,10 +401,7 @@ struct SignUpView: View {
         } else {
             viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
                 imageViewModel.saveProfileImage(image: self.image, userId: user.id)
-                chattingViewModel.currentUser = user
-                chattingViewModel.getChats()
-                channelViewModel.currentUser = user
-                channelViewModel.getChannels()
+                handleSuccessAuth(for: user)
                 presenceViewModel.startSetup(user: user)
                 Haptics.shared.notify(.success)
             }
@@ -393,11 +431,7 @@ struct SignUpView: View {
                                                            accessToken: authentication.accessToken)
 
             viewModel.signIn(credential: credential) { user in
-                chattingViewModel.currentUser = user
-                chattingViewModel.getChats()
-                channelViewModel.currentUser = user
-                channelViewModel.getChannels()
-                Haptics.shared.notify(.success)
+                handleSuccessAuth(for: user)
             }
 
         }
@@ -447,11 +481,12 @@ struct SignUpView: View {
             }
         }
     }
-}
 
-struct SignUpView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpView()
-            .environmentObject(UserViewModel())
+    private func handleSuccessAuth(for user: User) {
+        chattingViewModel.currentUser = user
+        chattingViewModel.getChats()
+        channelViewModel.currentUser = user
+        channelViewModel.getChannels()
+        Haptics.shared.notify(.success)
     }
 }
