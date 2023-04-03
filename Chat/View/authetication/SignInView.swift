@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import GoogleSignIn
+import _AuthenticationServices_SwiftUI
 
 struct SignInView: View {
 
@@ -79,6 +80,22 @@ struct SignInView: View {
                     )
                     .background(.clear)
                     .cornerRadius(35)
+
+                SignInWithAppleButton { request in
+                    let nonce =  viewModel.randomNonceString()
+                    viewModel.currentNonce = nonce
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = viewModel.sha256(nonce)
+                } onCompletion: { result in
+                    viewModel.signInWithApple(result: result) { user in
+                        chattingViewModel.currentUser = user
+                        chattingViewModel.getChats()
+                        channelViewModel.currentUser = user
+                        channelViewModel.getChannels()
+                        Haptics.shared.notify(.success)
+                    }
+                }
+                .frame(width: 280, height: 45, alignment: .center)
 
             }
 
