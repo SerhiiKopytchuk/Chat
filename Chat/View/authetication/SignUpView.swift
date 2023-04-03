@@ -50,6 +50,12 @@ struct SignUpView: View {
 
     @EnvironmentObject var channelViewModel: ChannelViewModel
 
+    @Environment(\.colorScheme) var colorScheme
+
+    private var isButtonsWhite: Bool {
+        return colorScheme == .dark
+    }
+
     // MARK: - Body
     var body: some View {
         if !isPresentSignInView {
@@ -86,9 +92,7 @@ struct SignUpView: View {
                             .font(.system(.title3, design: .rounded))
                             .foregroundColor(.gray)
 
-                        appleButton
-
-                        googleButton
+                        authButtons
 
                     }
 
@@ -287,7 +291,7 @@ struct SignUpView: View {
         } label: {
             Text("Create Account")
                 .toButtonGradientStyle()
-                .padding(.horizontal, 80)
+                .padding(.horizontal, 40)
                 .opacity(isButtonDisabled ? 0.6 : 1)
                 .cornerRadius(30)
                 .frame(height: 60)
@@ -306,36 +310,50 @@ struct SignUpView: View {
         }
     }
 
-    @ViewBuilder private var appleButton: some View {
-        SignInWithAppleButton(.signUp) { request in
-            let nonce =  viewModel.randomNonceString()
-            viewModel.currentNonce = nonce
-            request.requestedScopes = [.fullName, .email]
-            request.nonce = viewModel.sha256(nonce)
-        } onCompletion: { result in
-            viewModel.signInWithApple(result: result) { user in
-                chattingViewModel.currentUser = user
-                chattingViewModel.getChats()
-                channelViewModel.currentUser = user
-                channelViewModel.getChannels()
-                Haptics.shared.notify(.success)
-            }
+    @ViewBuilder private var authButtons: some View {
+        Group {
+            appleButton
+            googleButton
         }
         .frame(height: 60)
         .padding(.horizontal, 80)
         .padding(.bottom, 10)
+    }
 
+    @ViewBuilder private var appleButton: some View {
+        VStack(spacing: 0) {
+            if isButtonsWhite {
+                SignInWithAppleButton(.signUp) { request in
+                    let nonce =  viewModel.randomNonceString()
+                    viewModel.currentNonce = nonce
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = viewModel.sha256(nonce)
+                } onCompletion: { result in
+                    viewModel.signInWithApple(result: result) { user in
+                        handleSuccessAuth(for: user)
+                    }
+                }
+                .signInWithAppleButtonStyle(.white)
+            } else {
+                SignInWithAppleButton(.signUp) { request in
+                    let nonce =  viewModel.randomNonceString()
+                    viewModel.currentNonce = nonce
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = viewModel.sha256(nonce)
+                } onCompletion: { result in
+                    viewModel.signInWithApple(result: result) { user in
+                        handleSuccessAuth(for: user)
+                    }
+                }
+                .signInWithAppleButtonStyle(.black)
+            }
+        }
     }
 
     @ViewBuilder private var googleButton: some View {
-        Button {
+        CustomSocialButton(image: "google", text: "Sign up with Google", color: .secondPrimary) {
             googleButtonTapped()
-        } label: {
-            CustomSocialButton(image: "google", text: "Sign up with Google", color: .primary)
-            .padding(.horizontal, 80)
-            .padding(.bottom, 10)
         }
-        .padding(.bottom)
     }
 
     @ViewBuilder private var customAlertView: some View {
@@ -383,10 +401,7 @@ struct SignUpView: View {
         } else {
             viewModel.signUp(username: self.fullName, email: self.email, password: self.password) { user in
                 imageViewModel.saveProfileImage(image: self.image, userId: user.id)
-                chattingViewModel.currentUser = user
-                chattingViewModel.getChats()
-                channelViewModel.currentUser = user
-                channelViewModel.getChannels()
+                handleSuccessAuth(for: user)
                 presenceViewModel.startSetup(user: user)
                 Haptics.shared.notify(.success)
             }
@@ -416,11 +431,7 @@ struct SignUpView: View {
                                                            accessToken: authentication.accessToken)
 
             viewModel.signIn(credential: credential) { user in
-                chattingViewModel.currentUser = user
-                chattingViewModel.getChats()
-                channelViewModel.currentUser = user
-                channelViewModel.getChannels()
-                Haptics.shared.notify(.success)
+                handleSuccessAuth(for: user)
             }
 
         }
@@ -470,44 +481,12 @@ struct SignUpView: View {
             }
         }
     }
-}
 
-struct SignUpView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpView()
-            .environmentObject(UserViewModel())
-    }
-}
-
-struct CustomSocialButton: View {
-    var image: String
-    var text: String
-    var color: Color
-    var action: (() -> Void)?
-
-    var body: some View {
-        HStack {
-            Button(
-                action: {
-                    action?()
-                },
-                label: {
-                    HStack {
-                        Image(image)
-                            .resizable()
-                            .frame(width: 15, height: 15)
-                            .padding(.horizontal, 12)
-                            .padding(.trailing, 10)
-
-                        Text(text)
-                            .bold()
-                            .foregroundColor(Color.secondPrimary)
-
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity, minHeight: 60)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(color))
-                })
-        }
+    private func handleSuccessAuth(for user: User) {
+        chattingViewModel.currentUser = user
+        chattingViewModel.getChats()
+        channelViewModel.currentUser = user
+        channelViewModel.getChannels()
+        Haptics.shared.notify(.success)
     }
 }

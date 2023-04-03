@@ -36,6 +36,12 @@ struct SignInView: View {
     @EnvironmentObject private var channelViewModel: ChannelViewModel
     @EnvironmentObject private var presenceViewModel: PresenceViewModel
 
+    @Environment(\.colorScheme) var colorScheme
+
+    private var isButtonsWhite: Bool {
+        return colorScheme == .dark
+    }
+
     // MARK: - body
     var body: some View {
         VStack(spacing: 30) {
@@ -70,32 +76,7 @@ struct SignInView: View {
                     .font(.system(.title3, design: .rounded))
                     .foregroundColor(.gray)
 
-                // add google photo
-                googleButton
-                    .foregroundColor(.brown)
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 35)
-                            .stroke(Color.brown, lineWidth: 2)
-                    )
-                    .background(.clear)
-                    .cornerRadius(35)
-
-                SignInWithAppleButton { request in
-                    let nonce =  viewModel.randomNonceString()
-                    viewModel.currentNonce = nonce
-                    request.requestedScopes = [.fullName, .email]
-                    request.nonce = viewModel.sha256(nonce)
-                } onCompletion: { result in
-                    viewModel.signInWithApple(result: result) { user in
-                        chattingViewModel.currentUser = user
-                        chattingViewModel.getChats()
-                        channelViewModel.currentUser = user
-                        channelViewModel.getChannels()
-                        Haptics.shared.notify(.success)
-                    }
-                }
-                .frame(width: 280, height: 45, alignment: .center)
+                authButtons
 
             }
 
@@ -218,9 +199,8 @@ struct SignInView: View {
         } label: {
             Text("Sign in")
                 .toButtonGradientStyle()
-                .padding(.horizontal, 80)
+                .padding(.horizontal, 40)
                 .opacity(isButtonDisabled ? 0.6 : 1 )
-
         }
 
     }
@@ -233,13 +213,49 @@ struct SignInView: View {
         }
     }
 
+    @ViewBuilder private var authButtons: some View {
+        Group {
+            appleButton
+            googleButton
+        }
+        .frame(height: 60)
+        .padding(.horizontal, 80)
+        .padding(.bottom, 10)
+    }
+
     @ViewBuilder private var googleButton: some View {
-        Button {
+        CustomSocialButton(image: "google", text: "Sign in with Google", color: .secondPrimary) {
             googleButtonTapped()
-        } label: {
-            Image("google")
-                .resizable()
-                .frame(width: 32, height: 32)
+        }
+    }
+
+    @ViewBuilder private var appleButton: some View {
+        VStack(spacing: 0) {
+            if isButtonsWhite {
+                SignInWithAppleButton(.signIn) { request in
+                    let nonce =  viewModel.randomNonceString()
+                    viewModel.currentNonce = nonce
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = viewModel.sha256(nonce)
+                } onCompletion: { result in
+                    viewModel.signInWithApple(result: result) { user in
+                        handleSuccessAuth(for: user)
+                    }
+                }
+                .signInWithAppleButtonStyle(.white)
+            } else {
+                SignInWithAppleButton(.signIn) { request in
+                    let nonce =  viewModel.randomNonceString()
+                    viewModel.currentNonce = nonce
+                    request.requestedScopes = [.fullName, .email]
+                    request.nonce = viewModel.sha256(nonce)
+                } onCompletion: { result in
+                    viewModel.signInWithApple(result: result) { user in
+                        handleSuccessAuth(for: user)
+                    }
+                }
+                .signInWithAppleButtonStyle(.black)
+            }
         }
     }
 
@@ -269,7 +285,6 @@ struct SignInView: View {
 
     func googleButtonTapped() {
         // handle singin
-
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
 
         // Create Google Sign In configuration object.
@@ -294,11 +309,7 @@ struct SignInView: View {
                                                            accessToken: authentication.accessToken)
 
             viewModel.signIn(credential: credential) { user in
-                chattingViewModel.currentUser = user
-                chattingViewModel.getChats()
-                channelViewModel.currentUser = user
-                channelViewModel.getChannels()
-                Haptics.shared.notify(.success)
+                handleSuccessAuth(for: user)
             }
         }
     }
@@ -314,6 +325,14 @@ struct SignInView: View {
         }
     }
 
+    private func handleSuccessAuth(for user: User) {
+        chattingViewModel.currentUser = user
+        chattingViewModel.getChats()
+        channelViewModel.currentUser = user
+        channelViewModel.getChannels()
+        Haptics.shared.notify(.success)
+    }
+
 }
 
 struct SignInView_Previews: PreviewProvider {
@@ -322,18 +341,4 @@ struct SignInView_Previews: PreviewProvider {
             .environmentObject(UserViewModel())
     }
 
-}
-
-extension View {
-    func getRootViewController() -> UIViewController {
-        guard let screen = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
-            return .init()
-        }
-
-        guard let root = screen.windows.first?.rootViewController else {
-            return .init()
-        }
-
-        return root
-    }
 }

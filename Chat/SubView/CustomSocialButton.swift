@@ -26,7 +26,7 @@ struct CustomSocialButton: View {
 
                     Text(text)
                         .bold()
-                        .foregroundColor(Color.secondPrimary)
+                        .foregroundColor(Color.primary)
 
                 }
                 .frame(maxWidth: .infinity, minHeight: 60)
