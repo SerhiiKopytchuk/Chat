@@ -48,6 +48,7 @@ struct CustomImagePicker: View {
                 Button("Enable Photos Access") {
                     UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                 }
+                .tint(.blue)
                 .padding()
             }
         }
