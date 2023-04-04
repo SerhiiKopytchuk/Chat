@@ -46,6 +46,7 @@ class ImagePickerViewModel: NSObject, ObservableObject, PHPhotoLibraryChangeObse
             self.haveAccessToLibrary = PHPhotoLibrary.authorizationStatus() == .authorized ||
                                        PHPhotoLibrary.authorizationStatus() == .limited
             if self.haveAccessToLibrary {
+                self.fetchedImages = []
                 self.fetchImages()
             }
         }
