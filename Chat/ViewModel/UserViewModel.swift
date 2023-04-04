@@ -16,7 +16,6 @@ import AuthenticationServices
 
 class UserViewModel: ObservableObject {
 
-
     // MARK: - variables
 
     @Published var signedIn = false
@@ -26,7 +25,7 @@ class UserViewModel: ObservableObject {
     @Published var users: [User] = []
     @Published var searchText = ""
 
-    @Published var currentNonce:String?
+    @Published var currentNonce: String?
 
     var isSignedIn: Bool {
         return auth.currentUser != nil
