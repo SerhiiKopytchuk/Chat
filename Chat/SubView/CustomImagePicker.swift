@@ -38,18 +38,7 @@ struct CustomImagePicker: View {
                     }
                 }
             } else {
-                Text("Our app is need access to your library in order to upload them")
-                    .multilineTextAlignment(.center)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .padding()
-                    .frame(maxHeight: .infinity)
-
-                Button("Enable Photos Access") {
-                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                }
-                .tint(.blue)
-                .padding()
+                accessDeniedMessage
             }
         }
         .onChange(of: isPresented, perform: { _ in
@@ -79,6 +68,21 @@ struct CustomImagePicker: View {
         .padding([.horizontal, .top])
         .padding(.bottom, 10)
 
+    }
+
+    @ViewBuilder private var accessDeniedMessage: some View {
+        Text("Our app is need access to your library in order to upload them")
+            .multilineTextAlignment(.center)
+            .font(.title3)
+            .fontWeight(.semibold)
+            .padding()
+            .frame(maxHeight: .infinity)
+
+        Button("Enable Photos Access") {
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+        }
+        .tint(.blue)
+        .padding()
     }
 
     @ViewBuilder private var grid: some View {
@@ -147,7 +151,6 @@ struct CustomImagePicker: View {
             }
             .contentShape(Rectangle())
             .clipped()
-            .border(.red)
             .onTapGesture {
                 imageTap(imageAsset: imageAsset)
             }
