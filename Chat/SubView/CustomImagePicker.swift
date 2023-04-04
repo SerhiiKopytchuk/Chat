@@ -19,38 +19,26 @@ struct CustomImagePicker: View {
 
     // MARK: - EnvironmentObjects
 
-    @StateObject var imagePickerModel: ImagePickerViewModel
+    @ObservedObject var imagePickerModel: ImagePickerViewModel
 
     // MARK: - body
     var body: some View {
-        let deviceSize = UIScreen.main.bounds.size
         VStack(spacing: 0) {
 
             headerView
 
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)) {
-                    ForEach($imagePickerModel.fetchedImages) { $imageAsset in
-                        gridBuilder(imageAsset: imageAsset)
-                            .onAppear {
-                                if imageAsset.thumbnail == nil {
-                                    let manager = PHCachingImageManager.default()
-                                    manager.requestImage(for: imageAsset.asset,
-                                                         targetSize: CGSize(width: 100, height: 100),
-                                                         contentMode: .aspectFill, options: nil) { image, _ in
-                                        imageAsset.thumbnail = image
-                                    }
-                                }
-                            }
+                if imagePickerModel.haveAccessToLibrary {
+                ScrollView(.vertical, showsIndicators: false) {
+                    grid
+                }
+                .frame(maxHeight: .infinity)
+                .safeAreaInset(edge: .bottom) {
+                    if !imagePickerModel.selectedImages.isEmpty {
+                        sendButton
                     }
                 }
-                .padding()
-            }
-            .frame(maxHeight: .infinity)
-            .safeAreaInset(edge: .bottom) {
-                if !imagePickerModel.selectedImages.isEmpty {
-                    sendButton
-                }
+            } else {
+                accessDeniedMessage
             }
         }
         .onChange(of: isPresented, perform: { _ in
@@ -59,7 +47,6 @@ struct CustomImagePicker: View {
         .onAppear(perform: {
             imagePickerModel.selectedImages = []
         })
-        .frame(maxWidth: (deviceSize.width - 40) > 350 ? 350 : (deviceSize.width - 40))
     }
 
     // MARK: - ViewBuilders
@@ -83,9 +70,44 @@ struct CustomImagePicker: View {
 
     }
 
+    @ViewBuilder private var accessDeniedMessage: some View {
+        Text("Our app is need access to your library in order to upload them")
+            .multilineTextAlignment(.center)
+            .font(.title3)
+            .fontWeight(.semibold)
+            .padding()
+            .frame(maxHeight: .infinity)
+
+        Button("Enable Photos Access") {
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+        }
+        .tint(.blue)
+        .padding()
+    }
+
+    @ViewBuilder private var grid: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)) {
+            ForEach($imagePickerModel.fetchedImages) { $imageAsset in
+                gridBuilder(imageAsset: imageAsset)
+                    .onAppear {
+                        if imageAsset.thumbnail == nil {
+                            let manager = PHCachingImageManager.default()
+                            manager.requestImage(for: imageAsset.asset,
+                                                 targetSize: CGSize(width: 100, height: 100),
+                                                 contentMode: .aspectFill, options: nil) { image, _ in
+                                imageAsset.thumbnail = image
+                            }
+                        }
+                    }
+            }
+        }
+        .padding()
+    }
+
     @ViewBuilder private func gridBuilder(imageAsset: ImageAsset) -> some View {
         GeometryReader { proxy in
             let size = proxy.size
+
             ZStack {
                 if let thumbnail = imageAsset.thumbnail {
                     Image(uiImage: thumbnail)
@@ -127,6 +149,7 @@ struct CustomImagePicker: View {
                     .padding(5)
                 }
             }
+            .contentShape(Rectangle())
             .clipped()
             .onTapGesture {
                 imageTap(imageAsset: imageAsset)
