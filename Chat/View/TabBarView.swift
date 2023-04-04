@@ -51,31 +51,29 @@ struct TabBarView: View {
         ZStack(alignment: .top) {
             TabView(selection: $currentTab) {
                 // MARK: chats tab
-                chatsScrollView
-                    .offsetX { rect in
+                    chatsScrollView
+                        .tag(tabs[0])
+                        .offsetX { rect in
 
-                        if widthInterpolation == nil || positionInterpolation == nil {
-                            setUpInterpolations(rect.width)
-                        }
+                            if widthInterpolation == nil || positionInterpolation == nil {
+                                setUpInterpolations(rect.width)
+                            }
 
-                        if !goToChat && !goToChannel {
+                            if !goToChat && !goToChannel {
                                 updateTabFrame(rect.minX)
-                        }
+                            }
 
-                    }
-                    .tag(tabs[0])
+                        }
 
                 // MARK: channels tab
                 channelsScrollView
                     .tag(tabs[1])
 
             }
-            .animation(.easeInOut, value: indicatorWidth)
-            .animation(.easeInOut, value: indicatorPosition)
             .ignoresSafeArea()
             .tabViewStyle(.page(indexDisplayMode: .never))
 
-            dynamicTabHeader()
+            dynamicTabHeader
                 .readSize { size in
                     headerHeight = size.height
                 }
@@ -110,7 +108,7 @@ struct TabBarView: View {
     // MARK: - View Builders
 
     @ViewBuilder
-    func dynamicTabHeader() -> some View {
+    var dynamicTabHeader: some View {
         VStack(alignment: .leading, spacing: 7) {
             HStack {
                 menuButton
@@ -129,8 +127,10 @@ struct TabBarView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(Color.secondPrimaryReversed)
                         .offsetX { rect in
-                            tab.minX = rect.minX
-                            tab.width = rect.width
+                            if !goToChat && !goToChannel {
+                                tab.minX = rect.minX
+                                tab.width = rect.width
+                            }
                         }
 
                     if tab == tabs.last {
@@ -180,7 +180,7 @@ struct TabBarView: View {
                                 chattingViewModel.secondUser = user
 
                                 DispatchQueue.main.async {
-                                    goToChat.toggle()
+                                    goToChat = true
                                 }
                             } failure: { }
                             chattingViewModel.currentChat = chat
@@ -236,8 +236,11 @@ struct TabBarView: View {
 
                                 channelMessagingViewModel.currentChannel = channel
                                 channelMessagingViewModel.currentUser = viewModel.currentUser
-                                channelMessagingViewModel.getMessages(competition: { _ in })
-                                self.goToChannel.toggle()
+                                channelMessagingViewModel.getMessages(competition: { _ in
+                                    DispatchQueue.main.async {
+                                        self.goToChannel.toggle()
+                                    }
+                                })
                             }
 
                         }
