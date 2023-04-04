@@ -8,11 +8,20 @@
 import SwiftUI
 import PhotosUI
 
-class ImagePickerViewModel: ObservableObject {
+class ImagePickerViewModel: NSObject, ObservableObject, PHPhotoLibraryChangeObserver {
     @Published var fetchedImages: [ImageAsset] = []
     @Published var selectedImages: [ImageAsset] = []
 
-    init() {
+    @Published var haveAccessToLibrary: Bool = false
+
+    override init() {
+        super.init()
+
+        PHPhotoLibrary.shared().register(self)
+
+        let authStatus = PHPhotoLibrary.authorizationStatus()
+        haveAccessToLibrary = authStatus == .authorized || authStatus == .limited
+
         fetchImages()
     }
 
@@ -28,4 +37,18 @@ class ImagePickerViewModel: ObservableObject {
         }
     }
 
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+            updateStatus()
+    }
+
+    private func updateStatus() {
+        DispatchQueue.main.async {
+            self.haveAccessToLibrary = PHPhotoLibrary.authorizationStatus() == .authorized ||
+                                       PHPhotoLibrary.authorizationStatus() == .limited
+            if self.haveAccessToLibrary {
+                self.fetchedImages = []
+                self.fetchImages()
+            }
+        }
+    }
 }

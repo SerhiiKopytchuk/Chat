@@ -48,7 +48,6 @@ struct EditProfileView: View {
 
             Spacer()
 
-
             changeProfileImageButton
 
             Text(userViewModel.currentUser.name)
