@@ -145,7 +145,9 @@ struct CustomImagePicker: View {
                     .padding(5)
                 }
             }
+            .contentShape(Rectangle())
             .clipped()
+            .border(.red)
             .onTapGesture {
                 imageTap(imageAsset: imageAsset)
             }
