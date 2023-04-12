@@ -7,6 +7,7 @@
 import Foundation
 import FirebaseFirestoreSwift
 import FirebaseAuth
+import UIKit
 
 struct Message: Identifiable, Codable {
     @DocumentID var id = "\(UUID())"
@@ -15,6 +16,7 @@ struct Message: Identifiable, Codable {
     var timestamp: Date
     var emojiValue: String
     var imagesId: [String]?
+    var uiImages: [Data]?
 
     internal init(text: String, senderId: String) {
         self.id = UUID().uuidString
@@ -41,6 +43,15 @@ struct Message: Identifiable, Codable {
         self.timestamp = Date()
         self.emojiValue = ""
         self.imagesId = imagesId
+    }
+
+    init(images: [UIImage], senderId: String) {
+        self.id = UUID().uuidString
+        self.text = ""
+        self.senderId = senderId
+        self.timestamp = Date()
+        self.emojiValue = ""
+        self.uiImages = images.compactMap({ $0.data })
     }
 
     func isEmojiAdded() -> Bool {

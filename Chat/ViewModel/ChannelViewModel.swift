@@ -169,7 +169,6 @@ class ChannelViewModel: ObservableObject {
     }
 
     func changeLastActivityAndSortChannels() {
-        DispatchQueue.main.async {
             for index in self.channels.indices {
                 if self.channels[index].id == self.currentChannel.id {
                     self.channels[index].lastActivityTimestamp = Date()
@@ -177,7 +176,6 @@ class ChannelViewModel: ObservableObject {
                 }
             }
             self.sortChannels()
-        }
     }
 
     func getChannels(fromUpdate: Bool = false, channelsId: [String] = []) {

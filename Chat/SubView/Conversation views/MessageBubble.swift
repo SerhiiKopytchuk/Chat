@@ -33,7 +33,7 @@ struct MessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imagesId == [] {
+                if message.imagesId == [] && message.uiImages == nil {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
@@ -46,11 +46,7 @@ struct MessageBubble: View {
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
                 } else {
-                    CoupleImagesView(imagesId: message.imagesId?.sorted() ?? [],
-                                     isChat: true,
-                                     isReceive: message.isReply()) { imagesURL, index in
-                        imageTapped(imagesURL, index)
-                    }
+                    coupleImagesView
                 }
                 emojiBarView
             }
@@ -64,6 +60,22 @@ struct MessageBubble: View {
     }
 
     // MARK: - viewBuilders
+
+    @ViewBuilder private var coupleImagesView: some View {
+        if message.imagesId != [] && message.uiImages == nil {
+            CoupleImagesView(imagesId: message.imagesId?.sorted() ?? [],
+                             uiImages: nil,
+                             isChat: true,
+                             isReceive: message.isReply()) { imagesURL, index in
+                imageTapped(imagesURL, index)
+            }
+        } else {
+            CoupleImagesView(imagesId: [],
+                             uiImages: message.uiImages?.compactMap({ $0.image }),
+                             isChat: true,
+                             isReceive: message.isReply()) { _, _ in }
+        }
+    }
 
     @ViewBuilder private var addedEmojiView: some View {
         if message.isEmojiAdded() {

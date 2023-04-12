@@ -43,6 +43,8 @@
 		4024EB0B28382D960082E739 /* SideMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0A28382D960082E739 /* SideMenuViewModel.swift */; };
 		4024EB0F28393CF40082E739 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4024EB0E28393CF40082E739 /* TabBarView.swift */; };
 		402E4B61296F1779001ADD65 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402E4B60296F1779001ADD65 /* PreferenceKeys.swift */; };
+		402FCC8629E312EF006233CE /* UIImage + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402FCC8529E312EF006233CE /* UIImage + Extension.swift */; };
+		402FCC8829E3130B006233CE /* Data + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402FCC8729E3130B006233CE /* Data + Extension.swift */; };
 		4039A6672854BDAA00C74377 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */; };
 		403ED1542954802500F4954D /* CoupleImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 403ED1532954802500F4954D /* CoupleImagesView.swift */; };
 		404303A529535D64008C8452 /* ImagePickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404303A429535D64008C8452 /* ImagePickerViewModel.swift */; };
@@ -148,6 +150,8 @@
 		4024EB0A28382D960082E739 /* SideMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuViewModel.swift; sourceTree = "<group>"; };
 		4024EB0E28393CF40082E739 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		402E4B60296F1779001ADD65 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
+		402FCC8529E312EF006233CE /* UIImage + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + Extension.swift"; sourceTree = "<group>"; };
+		402FCC8729E3130B006233CE /* Data + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data + Extension.swift"; sourceTree = "<group>"; };
 		4039A6662854BDAA00C74377 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		403ED1532954802500F4954D /* CoupleImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoupleImagesView.swift; sourceTree = "<group>"; };
 		404303A429535D64008C8452 /* ImagePickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerViewModel.swift; sourceTree = "<group>"; };
@@ -503,6 +507,8 @@
 				40BD4FB8290BF517005B117B /* Array + Extension.swift */,
 				40C27277292D0608008924A5 /* Optional + Extension.swift */,
 				404B8779292F66BB00005C42 /* Thread  + Extension.swift */,
+				402FCC8529E312EF006233CE /* UIImage + Extension.swift */,
+				402FCC8729E3130B006233CE /* Data + Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -683,8 +689,10 @@
 				40A766B628842C19002D6FA5 /* removeUsersFromChannelView.swift in Sources */,
 				405FD37F282FEFD200361396 /* SignInView.swift in Sources */,
 				40EF9960284747740062612E /* ConversationView.swift in Sources */,
+				402FCC8829E3130B006233CE /* Data + Extension.swift in Sources */,
 				40871EAB2955A2BC0011D6FB /* ControlImageView.swift in Sources */,
 				4024EB0328382AE80082E739 /* SideMenuView.swift in Sources */,
+				402FCC8629E312EF006233CE /* UIImage + Extension.swift in Sources */,
 				40C6692028894D270087A9DF /* EditChannelViewModel.swift in Sources */,
 				4021DD09288AA7CA0060B18E /* EditChannelView.swift in Sources */,
 				40FBC21329B2061B00E04ACC /* Haptics.swift in Sources */,
@@ -891,6 +899,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
@@ -933,6 +942,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = "";

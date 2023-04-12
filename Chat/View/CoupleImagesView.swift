@@ -13,6 +13,7 @@ struct CoupleImagesView: View {
 
     // MARK: - Variables
     let imagesId: [String]
+    let uiImages: [UIImage]?
     let isChat: Bool
     let isReceive: Bool
 
@@ -32,12 +33,16 @@ struct CoupleImagesView: View {
 
     var body: some View {
         ZStack {
-            if isFindImage {
-                imageView()
+            if uiImages == nil {
+                if isFindImage {
+                    imageView()
+                } else {
+                    ProgressView()
+                        .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: imageHeight)
+                        .aspectRatio(contentMode: .fill)
+                }
             } else {
-                ProgressView()
-                    .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: imageHeight)
-                    .aspectRatio(contentMode: .fill)
+                uiImagesView()
             }
         }
         .onAppear {
@@ -99,6 +104,65 @@ struct CoupleImagesView: View {
             }
     }
 
+    @ViewBuilder
+    private func uiImagesView() -> some View {
+        let imagesCount = uiImages?.count ?? 1
+
+        if imagesCount == 1 {
+            oneUIImageView()
+        } else if imagesCount == 2 {
+            twoUIImagesView()
+        } else if imagesCount == 3 {
+            threeUIImagesView()
+        } else {
+            oneUIImageView()
+        }
+    }
+
+    @ViewBuilder private func oneUIImageView() -> some View {
+        uiImageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3 * 2), height: imageHeight))
+    }
+
+    @ViewBuilder private func twoUIImagesView() -> some View {
+        HStack(spacing: 2) {
+            uiImageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: imageHeight))
+            uiImageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: imageHeight))
+        }
+    }
+
+    @ViewBuilder private func threeUIImagesView() -> some View {
+        HStack(spacing: 2) {
+            uiImageView(imageIndex: 0, size: CGSize(width: (UIScreen.main.bounds.width / 3), height: imageHeight))
+
+            VStack(spacing: 2) {
+                uiImageView(imageIndex: 1, size: CGSize(width: (UIScreen.main.bounds.width / 3),
+                                                      height: (imageHeight - 2)/2))
+                uiImageView(imageIndex: 2, size: CGSize(width: (UIScreen.main.bounds.width / 3),
+                                                      height: (imageHeight - 2)/2))
+            }
+        }
+    }
+
+    @ViewBuilder private func uiImageView(imageIndex: Int, size: CGSize) -> some View {
+        if let uiImage = uiImages?[imageIndex] {
+            Image(uiImage: uiImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: size.width, height: size.height)
+                .contentShape(Rectangle())
+                .clipped()
+                .overlay {
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                }
+                .overlay {
+                    ProgressView()
+                        .frame(width: (UIScreen.main.bounds.width / 3 * 2 ), height: imageHeight)
+                        .aspectRatio(contentMode: .fill)
+                }
+        }
+    }
+
     // MARK: - functions
 
     private func imageSetup() {
@@ -141,6 +205,7 @@ struct CoupleImagesView_Previews: PreviewProvider {
     @Namespace static var animation
     static var previews: some View {
         CoupleImagesView(imagesId: [],
+                         uiImages: nil,
                          isChat: true,
                          isReceive: true,
                          imageTapped: { _, _  in })
