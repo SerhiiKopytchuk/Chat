@@ -35,6 +35,7 @@ struct ChannelMessageField: View {
         }
         .sheet(isPresented: $isShowingImagePicker) {
             CustomImagePicker(onSelect: { assets in
+                self.selectedImages = []
                 parseImages(with: assets)
             },
                               isPresented: $isShowingImagePicker,
@@ -100,21 +101,51 @@ struct ChannelMessageField: View {
                     guard let image else { return }
                     DispatchQueue.main.async {
                         self.selectedImages.append(image)
-                        print(selectedImages.count)
-                    }
-                }
 
-                if assets.count == selectedImages.count {
-                    sendImages()
+                        if assets.count == selectedImages.count {
+                            sendImages()
+                        }
+                    }
                 }
             }
         }
     }
 
     func sendImages() {
-        guard let currentChannelId = channelViewModel.currentChannel.id else { return }
-        imageViewModel.saveChannelMessages(images: selectedImages, channelId: currentChannelId) { imagesId in
-            channelMessagingViewModel.send(imagesId: imagesId)
+        var imagesId: [String] = []
+        selectedImages.forEach { _ in
+            imagesId.append(UUID().uuidString)
+        }
+
+        var imageMessage: Message? = Message(images: selectedImages, senderId: channelViewModel.currentUser.id)
+        let position = channelMessagingViewModel.currentChannel.messages?.count ?? 0
+
+        DispatchQueue.main.async {
+            channelMessagingViewModel.currentChannel.messages?.append(imageMessage ?? Message())
+        }
+
+        imageViewModel.saveChannel(images: selectedImages,
+                                   imagesId: imagesId,
+                                   channelId: channelViewModel.currentChannel.id) { result in
+
+            if imageMessage != nil {
+                channelMessagingViewModel.currentChannel.messages?.remove(at: position)
+                imageMessage = nil
+            }
+
+            switch result {
+            case .success:
+                channelMessagingViewModel.send(imagesId: imagesId)
+            case .failure(let error):
+                print("failed to save channel images: \(error.localizedDescription)")
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            if imageMessage != nil {
+                channelMessagingViewModel.currentChannel.messages?.remove(at: position)
+                imageMessage = nil
+            }
         }
     }
 }

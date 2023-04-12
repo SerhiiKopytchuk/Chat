@@ -112,17 +112,16 @@ class ChannelMessagingViewModel: ObservableObject {
 
     func sendMessage(text: String) {
 
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+        DispatchQueue.main.async { [weak self] in
             if !(self?.messageIsValidated(text: text) ?? false) { return }
             let trimmedText = text.trimmingCharacters(in: .whitespaces)
             let newMessage = Message(text: trimmedText, senderId: self?.currentUser.id ?? "some id")
-            guard let currentChannelId = self?.currentChannel.id else { return }
-
-            DispatchQueue.main.async {
-                self?.unsentMessages.append(newMessage)
-            }
 
             do {
+                guard let currentChannelId = self?.currentChannel.id else { return }
+
+                self?.unsentMessages.append(newMessage)
+
                 try self?.firestoreManager.getChannelMessagesCollectionReference(for: currentChannelId)
                     .document().setData(from: newMessage, completion: { error in
                         if error.review(message: "failed to sendMessage") { return }

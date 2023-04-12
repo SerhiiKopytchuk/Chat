@@ -15,23 +15,42 @@ class ImageViewModel: ObservableObject {
     let firestoreManager = FirestorePathManager.shared
     let storageManager = StorageReferencesManager.shared
 
-    func saveChat(images: [UIImage], chatId: String?, id: @escaping ([String]) -> Void) {
+    func saveChat(images: [UIImage],
+                  imagesId: [String],
+                  chatId: String?,
+                  id: @escaping (Result<Bool, any Error>) -> Void) {
+
         guard let chatId else { return }
+
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            var imagesId: [String] = []
+            var curId = 0
+            var sendImages = 0
+
             images.forEach { image in
                 guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-                let imageId = UUID().uuidString
+                let imageId = imagesId[curId]
+                curId += 1
                 self?.storageManager.getChatMessageImageReference(chatId: chatId, imageId: imageId)
                     .putData(imageData, metadata: nil) { [weak self] _, error in
-                        if error.review(message: "failed to save image") { return }
 
-                        imagesId.append(imageId)
-                        self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
-                        if images.count == imagesId.count {
-                            id(imagesId)
+                        if error.review(message: "failed to save image") {
+                            id(.failure(error!))
+                            return
                         }
+
+                        self?.addIdToChatFiles(chatId: chatId, fileId: imageId)
+
                     }
+                    .observe(.success, handler: { snapshot in
+                        if snapshot.error != nil {
+                            id(.failure(snapshot.error!))
+                            return
+                        }
+                        sendImages += 1
+                        if images.count == sendImages {
+                            id(.success(true))
+                        }
+                    })
             }
         }
     }
@@ -54,23 +73,41 @@ class ImageViewModel: ObservableObject {
         }
     }
 
-    func saveChannelMessages(images: [UIImage], channelId: String?, id: @escaping ([String]) -> Void) {
+    func saveChannel(images: [UIImage],
+                     imagesId: [String],
+                     channelId: String?,
+                     id: @escaping (Result<Bool, any Error>) -> Void) {
         guard let channelId else { return }
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            var imagesId: [String] = []
+
+            var curId = 0
+            var sendImages = 0
+
             images.forEach { image in
                 guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
-                let imageId = UUID().uuidString
+                let imageId = imagesId[curId]
+                curId += 1
                 self?.storageManager.getChannelMessageImageReference(channelId: channelId, imageId: imageId)
                     .putData(imageData, metadata: nil) { [weak self] _, error in
-                        if error.review(message: "failed to save image") { return }
 
-                        imagesId.append(imageId)
-                        self?.addIdToChannelFiles(channelId: channelId, fileId: imageId)
-                        if images.count == imagesId.count {
-                            id(imagesId)
+                        if error.review(message: "failed to save image") {
+                            id(.failure(error!))
+                            return
                         }
+
+                        self?.addIdToChannelFiles(channelId: channelId, fileId: imageId)
+
                     }
+                    .observe(.success, handler: { snapshot in
+                        if snapshot.error != nil {
+                            id(.failure(snapshot.error!))
+                            return
+                        }
+                        sendImages += 1
+                        if images.count == sendImages {
+                            id(.success(true))
+                        }
+                    })
             }
         }
     }

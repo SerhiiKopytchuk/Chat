@@ -31,13 +31,7 @@ struct ChannelMessageBubble: View {
 
             // MARK: message text or image
             ZStack(alignment: .bottomLeading) {
-                if message.imagesId != [] {
-                    CoupleImagesView(imagesId: message.imagesId ?? [],
-                                     isChat: false,
-                                     isReceive: message.isReply()) { imagesURL, imageIndex in
-                        imageTapped(imagesURL, imageIndex)
-                    }
-                } else {
+                if message.imagesId == [] && message.uiImages == nil {
                     VStack(alignment: .trailing, spacing: 0) {
                         Text(message.text)
                             .onAppear(perform: showUnsentMark)
@@ -51,6 +45,8 @@ struct ChannelMessageBubble: View {
                     .cornerRadius(15, corners: message.senderId != viewModel.currentUserUID
                                   ? [.topLeft, .topRight, .bottomRight] : [.topLeft, .topRight, .bottomLeft])
                     .frame(alignment: message.isReply() ? .leading : .trailing)
+                } else {
+                    coupleImagesView
                 }
             }
 
@@ -60,6 +56,22 @@ struct ChannelMessageBubble: View {
     }
 
     // MARK: - viewBuilders
+
+    @ViewBuilder private var coupleImagesView: some View {
+        if message.imagesId != [] && message.uiImages == nil {
+            CoupleImagesView(imagesId: message.imagesId?.sorted() ?? [],
+                             uiImages: nil,
+                             isChat: false,
+                             isReceive: message.isReply()) { imagesURL, index in
+                imageTapped(imagesURL, index)
+            }
+        } else {
+            CoupleImagesView(imagesId: [],
+                             uiImages: message.uiImages?.compactMap({ $0.image }),
+                             isChat: false,
+                             isReceive: message.isReply()) { _, _ in }
+        }
+    }
 
     @ViewBuilder private var unsentMark: some View {
         if channelMessagingViewModel.unsentMessages.isContains(message: message) && isShowUnsentMark {

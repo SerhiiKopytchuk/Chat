@@ -101,20 +101,52 @@ struct MessageField: View {
                     guard let image else { return }
                     DispatchQueue.main.async {
                         self.selectedImages.append(image)
+
+                        if assets.count == selectedImages.count {
+                            sendImages()
+                        }
                     }
                 }
 
-                if assets.count == selectedImages.count {
-                    sendImages()
-                }
             }
         }
     }
 
     func sendImages() {
-        imageViewModel.saveChat(images: selectedImages, chatId: chattingViewModel.currentChat?.id) { imagesId in
-            messagingViewModel.send(imagesId: imagesId)
+        var imagesId: [String] = []
+        selectedImages.forEach { _ in
+            imagesId.append(UUID().uuidString)
         }
+        var imageMessage: Message? = Message(images: selectedImages, senderId: chattingViewModel.currentUser.id)
+        let position = messagingViewModel.currentChat?.messages?.count ?? 0
+        DispatchQueue.main.async {
+            messagingViewModel.currentChat?.messages?.append(imageMessage ?? Message())
+        }
+
+        imageViewModel.saveChat(images: selectedImages,
+                                imagesId: imagesId,
+                                chatId: chattingViewModel.currentChat?.id) { result in
+
+            if imageMessage != nil {
+                messagingViewModel.currentChat?.messages?.remove(at: position)
+                imageMessage = nil
+            }
+
+            switch result {
+            case .success:
+                messagingViewModel.send(imagesId: imagesId)
+            case .failure(let error):
+                print("failed to save chat images: \(error.localizedDescription)")
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            if imageMessage != nil {
+                messagingViewModel.currentChat?.messages?.remove(at: position)
+                imageMessage = nil
+            }
+        }
+
     }
 }
 
